@@ -16,7 +16,7 @@ title: 개요
 | 4 | [변수 선정](x-variables.md) | 변수풀, 대안정보, 변별력 지표, ML 선정 |
 | 5 | [모델링](model-fitting.md) | 전통 스코어카드 vs ML 모형 |
 | 6 | [스코어와 의사결정](output-and-usage.md) | 확률→평점→등급, 성능 판단, 비즈니스 활용 |
-| 7 | [개발 파이프라인](development-process.md) | 전체 흐름, 단계별 Overview, 교육자료 매핑 |
+| 7 | [개발 파이프라인](development-process.md) | 전체 흐름, 단계별 Overview, 가이드북 매핑 |
 
 !!! tip "다음 섹션"
     개요를 마쳤다면, [이론](../part2_theory/index.md)에서 로지스틱 회귀의 수학적 기반(Logit 변환, MLE)을 학습한다.

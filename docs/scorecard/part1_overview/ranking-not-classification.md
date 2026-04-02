@@ -3,15 +3,15 @@
 CSS는 이진 분류(Binary Classification) 문제를 풀지만, 그 **목적**은 일반적인 분류 모형과 근본적으로 다르다. Kaggle 같은 머신러닝 경진대회에서 이진 분류 모형을 평가할 때는 [Precision, Recall](https://en.wikipedia.org/wiki/Precision_and_recall){:target="_blank"}, [F1-Score](https://en.wikipedia.org/wiki/F-score){:target="_blank"} 등의 지표를 사용하는 것이 일반적이다. 그러나 신용평가 현업에서는 이러한 지표를 거의 사용하지 않으며, 대신 **[KS(Kolmogorov-Smirnov)](../part5_scorecard/performance-ks-ar-gini.md)**, **[AR(Accuracy Ratio, Gini)](../part5_scorecard/performance-ks-ar-gini.md)** 등의 지표로 모형을 평가한다. 이 차이는 단순한 관행이 아니라, CSS가 추구하는 목적 자체가 다르기 때문이다.
 
 ??? quote "통계량 참고 링크"
-    **분류 지표** (본 교육자료에서는 다루지 않음)
+    **분류 지표** (본 가이드북에서는 다루지 않음)
 
     - [Precision & Recall — Wikipedia](https://en.wikipedia.org/wiki/Precision_and_recall){:target="_blank"}
     - [F-Score (F1-Score) — Wikipedia](https://en.wikipedia.org/wiki/F-score){:target="_blank"}
     - [Confusion Matrix — Wikipedia](https://en.wikipedia.org/wiki/Confusion_matrix){:target="_blank"}
 
-    **서열화 지표** (본 교육자료에서 상세히 다룸)
+    **서열화 지표** (본 가이드북에서 상세히 다룸)
 
-    - [KS · AR · Gini — 본 교육자료 Part 5](../part5_scorecard/performance-ks-ar-gini.md)
+    - [KS · AR · Gini — 본 가이드북 Part 5](../part5_scorecard/performance-ks-ar-gini.md)
 
 ## 2.1 분류 vs. 서열화: 목적의 차이
 
