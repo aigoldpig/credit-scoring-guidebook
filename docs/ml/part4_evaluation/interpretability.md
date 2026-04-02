@@ -142,43 +142,8 @@ Shapley Value의 정확한 계산은 \(2^p\)개 조합을 평가해야 하므로
 - \(T\): 트리 수, \(L\): 평균 Leaf 수, \(D\): 트리 깊이
 - XGBoost, LightGBM에 내장되어 있어 별도 근사 없이 정확한 값 계산 가능
 
----
-
-## 1.6 SHAP 시각화
-
-### SHAP Summary Plot (Global)
-
-모든 샘플에 대한 SHAP 값을 한 그림에 표시. 변수 중요도와 방향성을 동시에 파악.
-
-```python
-import shap
-explainer = shap.TreeExplainer(model)
-shap_values = explainer.shap_values(X_valid)
-shap.summary_plot(shap_values, X_valid)
-```
-
-- x축: SHAP value (양수 = 부도 확률 ↑, 음수 = 부도 확률 ↓)
-- y축: 변수 (중요도 순 정렬)
-- 색상: 변수의 실제 값 (빨강 = 높음, 파랑 = 낮음)
-
-### SHAP Waterfall Plot (Local)
-
-**개별 고객** 한 명의 예측을 분해하여 각 변수의 기여를 보여준다.
-
-```python
-shap.plots.waterfall(shap_values[0])
-```
-
-- 기대값(base value)에서 시작하여, 각 변수가 예측을 위/아래로 밀어내는 과정을 시각화
-- "이 고객이 왜 거절되었는가?"에 대한 직접적 답변
-
-### SHAP Dependence Plot (Global)
-
-PDP와 유사하지만, 개별 샘플의 SHAP 값을 산점도로 표시. 교호작용까지 색상으로 표현 가능.
-
-```python
-shap.dependence_plot("DTI", shap_values, X_valid)
-```
+!!! example "참고 링크"
+    Lundberg의 [SHAP GitHub 리포지토리](https://github.com/shap/shap)에 이론 설명과 시각화 예시가 잘 정리되어 있다.
 
 !!! tip "다음 페이지"
     [SHAP — 해석의 여정](shap_in_practice.md) --- SHAP을 실무에 적용하려 했을 때 부딪히는 현실적인 벽과, 그 벽을 넘기 위한 고민을 정리한다.

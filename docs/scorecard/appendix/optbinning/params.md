@@ -1,6 +1,6 @@
 # 핵심 파라미터 상세
 
-## 3.1 monotonic_trend — 단조성 제약
+## 2.1 monotonic_trend — 단조성 제약
 
 가장 중요한 파라미터다. WoE(또는 Event Rate)의 방향을 제약한다.
 
@@ -18,7 +18,7 @@
 
 ---
 
-## 3.2 샘플 크기 제약
+## 2.2 샘플 크기 제약
 
 ```python
 optb = OptimalBinning(
@@ -31,7 +31,7 @@ optb = OptimalBinning(
 
 ---
 
-## 3.3 Bin 수 제약
+## 2.3 Bin 수 제약
 
 ```python
 optb = OptimalBinning(
@@ -45,7 +45,7 @@ optb = OptimalBinning(
 
 ---
 
-## 3.4 p-value 제약 — 인접 Bin 간 유의성
+## 2.4 p-value 제약 — 인접 Bin 간 유의성
 
 ```python
 optb = OptimalBinning(
@@ -64,7 +64,7 @@ optb = OptimalBinning(
 
 ---
 
-## 3.5 Special Codes와 Missing 처리
+## 2.5 Special Codes와 Missing 처리
 
 ```python
 optb = OptimalBinning(
@@ -80,7 +80,7 @@ optb = OptimalBinning(
 
 ---
 
-## 3.6 범주형 변수 처리
+## 2.6 범주형 변수 처리
 
 ```python
 optb = OptimalBinning(
@@ -92,7 +92,7 @@ optb = OptimalBinning(
 
 ---
 
-## 3.7 정규화 — gamma 파라미터
+## 2.7 정규화 — gamma 파라미터
 
 ```python
 optb = OptimalBinning(

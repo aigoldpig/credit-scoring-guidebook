@@ -1,6 +1,6 @@
 # 최적화 엔진 — MIP/CP로 IV 최대화
 
-## 2.1 문제 정식화
+## 1.1 문제 정식화
 
 Pre-binning으로 생성된 \(n\)개 Fine Bin을 **어떻게 합병해야 IV가 최대**가 되는지를 수학적 최적화로 푼다.
 
@@ -24,7 +24,7 @@ $$\max \sum_{i,j} V_{ij} \cdot x_{ij} \tag{1}$$
 
 ---
 
-## 2.2 Solver 선택
+## 1.2 Solver 선택
 
 ```python
 optb = OptimalBinning(

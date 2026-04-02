@@ -164,7 +164,7 @@ optbinning은 Guillermo Navas-Palencia가 개발한 오픈소스 라이브러리
     - `max_pvalue`: 인접 Bin 간 허용 최대 p-value → 0.05로 설정하면 ChiMerge와 동일한 통계 기준 적용
     - `special_codes`: Mass Point(0값 등) 별도 처리할 값 지정
 
-    내부 최적화 엔진(MIP/CP) 동작 원리, WoE 변환, BinningProcess 다변량 처리, Scorecard 클래스 등 상세 활용법은 **[부록 A. optbinning 실무 가이드](../../appendix/optbinning-index.md)**를 참고한다.
+    내부 최적화 엔진(MIP/CP) 동작 원리, WoE 변환, BinningProcess 다변량 처리, Scorecard 클래스 등 상세 활용법은 **[부록 A. optbinning 실무 가이드](../../appendix/optbinning/index.md)**를 참고한다.
 
 ---
 

@@ -1,6 +1,6 @@
 # 다변량 처리와 Scorecard
 
-## 5.1 BinningProcess — 다변량 일괄 처리
+## 4.1 BinningProcess — 다변량 일괄 처리
 
 실무에서는 수십~수백 개 변수를 동시에 binning해야 한다. `BinningProcess`가 이를 자동화한다.
 
@@ -71,7 +71,7 @@ print(summary[["name", "dtype", "iv", "quality_score"]])
 
 ---
 
-## 5.2 Scorecard 클래스
+## 4.2 Scorecard 클래스
 
 `BinningProcess` + 로지스틱 회귀 + 점수 변환을 하나의 파이프라인으로 통합한다.
 
@@ -128,7 +128,7 @@ labels = scorecard.predict(X_test)
 
 ---
 
-## 5.3 실무 파라미터 체크리스트
+## 4.3 실무 파라미터 체크리스트
 
 | 상황 | 권장 설정 |
 |------|----------|

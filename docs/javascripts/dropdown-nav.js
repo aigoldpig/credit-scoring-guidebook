@@ -32,13 +32,14 @@
       label: "머신러닝",
       sublabel: "Machine Learning",
       indexPath: "ml/",
-      tabMatches: ["머신러닝", "1. 개요", "2. 뉴럴넷", "3. 트리 앙상블", "4. 평가와 해석", "5. 모델 검증"],
+      tabMatches: ["머신러닝", "1. 개요", "2. 뉴럴넷", "3. 트리 앙상블", "4. 평가와 해석", "5. 모델 검증", "부록"],
       items: [
         { text: "1. 개요", path: "ml/part1_overview/" },
         { text: "2. 뉴럴넷", path: "ml/part2_neural_net/" },
         { text: "3. 트리 앙상블", path: "ml/part3_tree_ensemble/" },
         { text: "4. 해석과 설명", path: "ml/part4_evaluation/" },
-        { text: "5. 모델 검증", path: "ml/part5_validation/" }
+        { text: "5. 모델 검증", path: "ml/part5_validation/" },
+        { text: "부록", path: "ml/appendix/" }
       ]
     }
   ];

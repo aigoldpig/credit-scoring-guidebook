@@ -24,6 +24,7 @@ title: 머신러닝
 | 3 | [트리 앙상블](part3_tree_ensemble/index.md) | CART, RF, Boosting, XGBoost/LightGBM, 하이퍼파라미터 튜닝 |
 | 4 | [해석과 설명](part4_evaluation/index.md) | SHAP, Surrogate Model, 1-Depth GBM/EBM, 해석 가능성 |
 | 5 | [모델 검증](part5_validation/index.md) | 성능 지표(AUC, KS, Gini), OOT 검증, PSI 모니터링, 규제 프레임워크 |
+| 부록 | [보충 자료](appendix/index.md) | SHAP과 Functional ANOVA 심화, Global 해석 방법론 |
 
 ---
 

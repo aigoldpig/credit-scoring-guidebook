@@ -1,6 +1,6 @@
 # Binning Table과 WoE 변환
 
-## 4.1 Binning Table — 결과 분석
+## 3.1 Binning Table — 결과 분석
 
 ```python
 optb.fit(X["utilization_rate"], y)
@@ -37,7 +37,7 @@ optb.binning_table.analysis(pvalue_test="chi2")
 
 ---
 
-## 4.2 WoE 변환 — transform()
+## 3.2 WoE 변환 — transform()
 
 Binning이 완료되면 원본 데이터를 WoE 값으로 치환하여 로지스틱 회귀의 입력으로 사용한다.
 

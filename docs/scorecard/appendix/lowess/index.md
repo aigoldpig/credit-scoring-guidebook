@@ -1,6 +1,32 @@
-# 미니모델링의 정의와 LOWESS 통계 기초
+---
+title: "LOWESS 기반 미니모델링과 기업 여신"
+---
 
-## 1.1 미니모델링이란
+# 부록 C: LOWESS 기반 미니모델링 — 재무비율 변환과 기업 여신 신용평가
+
+> Moody's RiskCalc 모델에서 활용되는 비모수적 재무비율 변환 기법의 방법론, 사상, 효과, 그리고 실무 적용 구조에 대한 기술 분석
+
+!!! note "이 부록의 위치"
+    단변량 로지스틱 회귀 섹션의 **소매 여신 관점**을 보완하여, **기업 여신(corporate lending)** 영역에서의 미니모델링 방법론을 다룬다. Moody's RiskCalc 모델 시리즈에서 공식 사용하는 LOWESS 기반 비모수적 변환 기법의 구조와 실무 적용을 정리한다.
+
+!!! tip "소매 vs 기업 미니모델링"
+    본 가이드북의 단변량 로지스틱 회귀 섹션에서 다룬 방식은 **소매 CSS**에서의 WoE 기반 방식입니다. 이 부록에서 다루는 LOWESS 기반 미니모델링은 **Moody's RiskCalc**가 기업 여신 부도 예측에 사용하는 방식으로, 접근 철학은 같지만 기법이 다릅니다.
+
+## 이 부록에서 다루는 내용
+
+| 섹션 | 제목 | 내용 |
+|------|------|------|
+| 1 | [RiskCalc 프로세스와 사상](riskcalc.md) | 변환 절차, 백분위 변환, 비모수적 접근의 사상(비선형성·투명성·간결성) |
+| 2 | [실증적 근거와 비율별 변환](effects.md) | 5가지 효과(비선형성·정규화·이상치·한계효과·강건성), 재무비율 범주별 변환 특성 |
+| 3 | [3단계 모델 아키텍처](architecture.md) | Transform → Model → Map 구조, 프로빗 모형, 최종 매핑 |
+| 4 | [직관적 이해](intuition.md) | Weight & Smoothing 본질, KNN 비교, Lookup Table, Smoothing vs 실제 불량률 |
+| 5 | [실무 활용과 한계](application.md) | 기업 여신 6대 활용 영역, 적용 조건, 국내 은행 접점, 한계와 고려사항 |
+
+---
+
+## 미니모델링의 정의와 LOWESS 통계 기초
+
+### 미니모델링이란
 
 "미니모델링(Mini-Modeling)"은 Moody's가 RiskCalc 모델 시리즈에서 공식적으로 사용하는 용어다. 각 재무비율을 해당 비율의 **단변량 부도확률(univariate default probability)**로 변환하는 과정을 지칭한다.
 
@@ -13,7 +39,7 @@
 
 ---
 
-## 1.2 LOWESS — Locally Weighted Scatterplot Smoothing
+### LOWESS — Locally Weighted Scatterplot Smoothing
 
 !!! info "정의"
     William S. Cleveland(1979)가 제안한 **비모수적 회귀 기법**. 각 데이터 포인트에 대해 인근 데이터만을 사용하여 가중 최소자승 회귀를 수행하고, 이를 전체 데이터에 걸쳐 반복 적용함으로써 **사전에 함수형태를 가정하지 않고도** 변수 간 관계를 추정한다.
@@ -22,7 +48,7 @@
 
 ### 알고리즘 구조
 
-데이터 포인트 \((x_i, y_i)\)에 대해 평활값 \(\hat{y}_i\)를 구하는 절차는 다음과 같다:
+데이터 포인트 \((x_i, y_i)\)에 대해 smoothing 추정값 \(\hat{y}_i\)를 구하는 절차는 다음과 같다:
 
 **1단계 — 대역폭(bandwidth) 결정**
 
@@ -40,7 +66,7 @@ $$
 W(u) = \begin{cases} (1 - |u|^3)^3 & \text{if } |u| < 1 \\ 0 & \text{otherwise} \end{cases} \tag{B.1}
 $$
 
-**3단계 — 각 \(x_i\)에 대해 가중 최소자승 회귀 수행**
+**3단계 — 각 고유 \(x\)값에 대해 가중 최소자승 회귀 수행**
 
 $$
 \hat{y}_i = \text{WLS}\left(x_j,\; y_j,\; W\!\left(\frac{x_j - x_i}{h_i}\right)\right) \tag{B.2}
@@ -58,7 +84,7 @@ $$
 B(u) = (1 - u^2)^2 \quad \text{if } |u| < 1 \tag{B.3}
 $$
 
-### 대역폭에 따른 평활 결과 비교
+### 대역폭에 따른 smoothing 결과 비교
 
 대역폭(bandwidth) \(f\)는 LOWESS의 가장 중요한 파라미터다. 아래 그림은 동일한 산점도에 \(f\)를 다르게 적용한 결과를 보여준다:
 
@@ -72,9 +98,21 @@ $$
 
 | 파라미터 | 역할 | 영향 |
 |----------|------|------|
-| **\(f\) (bandwidth/span)** | 인근 데이터 비율 (\(0 < f \leq 1\)) | 작을수록 국소 패턴에 민감, 클수록 평활 |
+| **\(f\) (bandwidth/span)** | 인근 데이터 비율 (\(0 < f \leq 1\)) | 작을수록 국소 패턴에 민감, 클수록 smooth |
 | **Tricube weight** | 거리에 따른 가중치 감소 | 가까운 포인트에 높은 가중치 부여 |
 | **Robustness iteration** | 이상치 영향 저감 | 잔차 큰 관측치의 가중치 하향 |
 
 !!! tip "직관적 이해"
-    LOWESS는 "각 점마다 주변 이웃에게 물어본다"는 비유로 이해할 수 있다. 내 주변에 가까운 데이터일수록 큰 목소리를 내고(가중치 ↑), 먼 데이터는 작은 목소리를 낸다(가중치 ↓). 이를 전체 데이터에 걸쳐 반복하면, 사전에 "직선이다" 또는 "2차곡선이다" 같은 가정 없이도 데이터가 스스로 말하는 관계를 추출할 수 있다.
+    위 수식과 절차의 직관적 의미 — bandwidth는 왜 필요한지, 회귀선은 몇 번 긋는지, 산출물은 결국 무엇인지 — 는 [4. 직관적 이해](intuition.md)에서 상세히 다룬다.
+
+---
+
+<div class="source-ref" markdown>
+**참고 문헌**
+
+- Falkenstein, E., Boral, A., & Carty, L. (2000). "RiskCalc for Private Companies: Moody's Default Model." Moody's Investors Service.
+- Dwyer, D., Kocagil, A., & Stein, R. (2004). "The Moody's KMV EDF RiskCalc v3.1 Model." Moody's KMV.
+- Moody's Analytics (2015). "RiskCalc 4.0 France." Modeling Methodology, Quantitative Research Group.
+- Kocagil, A. et al. (2002). "Moody's RiskCalc Model for Privately-Held U.S. Banks." Moody's KMV.
+- Cleveland, W.S. (1979). "Robust Locally Weighted Regression and Smoothing Scatterplots." JASA 74(368): 829-836.
+</div>

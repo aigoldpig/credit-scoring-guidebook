@@ -90,26 +90,25 @@ nav:
     - 부록:
       - scorecard/appendix/index.md
       - "A. optbinning 실무 가이드":
-        - scorecard/appendix/optbinning-index.md
-        - 1. 개요와 Pre-binning: scorecard/appendix/optbinning-overview.md
-        - 2. 최적화 엔진: scorecard/appendix/optbinning-optimizer.md
-        - 3. 핵심 파라미터 상세: scorecard/appendix/optbinning-params.md
-        - 4. Binning Table과 WoE 변환: scorecard/appendix/optbinning-table-woe.md
-        - 5. 다변량 처리와 Scorecard: scorecard/appendix/optbinning-pipeline.md
+        - scorecard/appendix/optbinning/index.md
+        - 1. 최적화 엔진: scorecard/appendix/optbinning/optimizer.md
+        - 2. 핵심 파라미터 상세: scorecard/appendix/optbinning/params.md
+        - 3. Binning Table과 WoE 변환: scorecard/appendix/optbinning/table-woe.md
+        - 4. 다변량 처리와 Scorecard: scorecard/appendix/optbinning/pipeline.md
       - "B. 로지스틱 적합 비교":
-        - scorecard/appendix/logistic-fitting-index.md
-        - 1. 두 방식 비교: scorecard/appendix/woe-vs-dummy.md
-        - 2. WoE 직접 투입: scorecard/appendix/woe-entry.md
-        - 3. 더미 변수 방식: scorecard/appendix/dummy-entry.md
-        - 4. Stepwise 변수 선택: scorecard/appendix/stepwise.md
-        - 5. 통계 검정 이론: scorecard/appendix/score-wald-lr-test.md
+        - scorecard/appendix/logistic-fitting/index.md
+        - 1. WoE 직접 투입: scorecard/appendix/logistic-fitting/woe-entry.md
+        - 2. 더미 변수 방식: scorecard/appendix/logistic-fitting/dummy-entry.md
+        - 3. Stepwise 변수 선택: scorecard/appendix/logistic-fitting/stepwise.md
+        - 4. 통계 검정 이론: scorecard/appendix/logistic-fitting/score-wald-lr-test.md
+        - 5. 심층 비교 — 사상 차이와 수치 예시: scorecard/appendix/logistic-fitting/woe-dummy-deep-dive.md
       - "C. LOWESS 기반 미니모델링":
-        - scorecard/appendix/lowess-index.md
-        - 1. 정의와 LOWESS 기초: scorecard/appendix/lowess-intro.md
-        - 2. RiskCalc 프로세스와 사상: scorecard/appendix/lowess-riskcalc.md
-        - 3. 실증적 근거와 비율별 변환: scorecard/appendix/lowess-effects.md
-        - 4. 3단계 모델 아키텍처: scorecard/appendix/lowess-architecture.md
-        - 5. 실무 활용과 한계: scorecard/appendix/lowess-application.md
+        - scorecard/appendix/lowess/index.md
+        - 1. RiskCalc 프로세스와 사상: scorecard/appendix/lowess/riskcalc.md
+        - 2. 실증적 근거와 비율별 변환: scorecard/appendix/lowess/effects.md
+        - 3. 3단계 모델 아키텍처: scorecard/appendix/lowess/architecture.md
+        - 4. 직관적 이해: scorecard/appendix/lowess/intuition.md
+        - 5. 실무 활용과 한계: scorecard/appendix/lowess/application.md
       - "D. 기호 용어집":
         - scorecard/appendix/glossary.md
   # ── 머신러닝 ──
@@ -150,6 +149,14 @@ nav:
       - ml/part5_validation/index.md
       - 1. 모델 검증과 모니터링: ml/part5_validation/validation.md
       - 2. 규제 프레임워크: ml/part5_validation/regulatory.md
+    - 부록:
+      - ml/appendix/index.md
+      - "A. SHAP과 Functional ANOVA":
+        - ml/appendix/shap-fanova/index.md
+        - 1. Non-identifiability 문제: ml/appendix/shap-fanova/non-identifiability.md
+        - 2. Functional ANOVA: ml/appendix/shap-fanova/functional-anova.md
+        - 3. Purification: ml/appendix/shap-fanova/purification.md
+        - 4. SHAP vs fANOVA: ml/appendix/shap-fanova/shap-vs-fanova.md
 
 plugins:
   - search

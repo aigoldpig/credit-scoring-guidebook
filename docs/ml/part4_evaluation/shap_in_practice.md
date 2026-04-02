@@ -100,5 +100,8 @@ Hooker (2004) ─── Functional ANOVA for ML
 !!! tip "이론을 알고 도구를 쓰자"
     SHAP은 강력한 도구다. 그러나 이론적 배경 — Shapley Value의 조합론적 정의, TreeSHAP의 다항 시간 알고리즘, 그리고 local 해석의 본질적 한계 — 을 이해하지 않고 라이브러리만 돌리면, summary plot의 막대 그래프를 보면서 "변수 중요도가 높다/낮다"를 말하는 수준에 머물게 된다. 이론을 어느 정도 이해한 뒤에 도구를 활용하는 것이, 결국 더 정확하고 신뢰할 수 있는 분석으로 이어진다.
 
+!!! info "부록: 수학적 기초"
+    이 페이지에서 다 풀지 못한 이야기 — Non-identifiability 문제, fANOVA 직교 분해의 수학적 제약 조건, Purification 알고리즘, SHAP과 fANOVA의 본질적 차이 — 는 [부록 A: SHAP과 Functional ANOVA](../appendix/shap-fanova/index.md)에서 자세히 정리했다.
+
 !!! tip "다음 페이지"
     [Surrogate Model](surrogate_model.md) --- 블랙박스 ML 모형의 예측을 전통 스코어카드 형태로 설명하는 대리 모형 접근법을 다룬다.
