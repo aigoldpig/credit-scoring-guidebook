@@ -4267,7 +4267,7 @@
 <p>SHAP의 local 한계를 느끼면서도, 당장의 업무에 치여 이론 공부에 손을 놓고 있었다. 돌이켜 보면, 그 사이사이에 해석 가능성에 대한 고민은 계속 이어지고 있었다.</p>
 <h3 id="2020-surrogate-model">2020년대 초반 — Surrogate Model을 접하다<a class="headerlink" href="#2020-surrogate-model" title="Permanent link">¶</a></h3>
 <p>블랙박스 ML 모형의 예측값을 종속변수로 놓고, 소수의 해석 가능한 변수로 이를 근사하는 회귀 모형을 따로 만드는 접근법이었다. 여기서 중요한 것은, 타겟이 부도 여부(0/1)가 아니라 <strong>모형이 산출한 평점(연속형 변수)</strong>이라는 점이다. 즉 로지스틱 회귀가 아니라 일반 회귀(regression) 문제로, 원래 모형의 출력을 소수의 변수로 "흉내 내는" 것이다.</p>
-<p>개념은 이해했지만, 실제로 적용해보면 한계가 분명했다. Surrogate 모형의 <span class="arithmatex">\(R^2\)</span>가 상당히 낮게 나왔다. 원래 모형이 100개 변수의 복잡한 XGBoost라면, 10개 변수의 회귀 모형으로는 그 출력을 충분히 설명하지 못하는 것이다. Surrogate는 결국 원래 모형의 <strong>근사(approximation)</strong>일 뿐이고, 근사의 충실도(fidelity)가 낮으면 "원래 모형은 이렇게 작동한다"가 아니라 "<strong>대략</strong> 이렇게 작동하는 것 같다"를 보여주는 셈이었다. 씨즈데이터 재직 시절, 실무에서 이 방식을 채택하지는 않았다.</p>
+<p>개념은 이해했지만, 실제로 적용해보면 한계가 분명했다. Surrogate 모형의 <span class="arithmatex">\(R^2\)</span>가 상당히 낮게 나왔다. 원래 모형이 100개 변수의 복잡한 XGBoost라면, 10개 변수의 회귀 모형으로는 그 출력을 충분히 설명하지 못하는 것이다. Surrogate는 결국 원래 모형의 <strong>근사(approximation)</strong>일 뿐이고, 근사의 충실도(fidelity)가 낮으면 "원래 모형은 이렇게 작동한다"가 아니라 "<strong>대략</strong> 이렇게 작동하는 것 같다"를 보여주는 셈이었다. 실무에서 이 방식을 채택하지는 않았다.</p>
 <hr>
 <h3 id="2020-1-depth-gbm">2020년대 중반 — 1-Depth GBM을 우연히 알게 되다<a class="headerlink" href="#2020-1-depth-gbm" title="Permanent link">¶</a></h3>
 <p>구글링을 하다가 우연히, GBM에서 <strong>stump(depth=1)로만 구성된 트리 앙상블</strong>은 해석 가능한 형태로 변환할 수 있다는 것을 알게 되었다. 각 트리가 변수 하나만 사용하므로, 최종 모형이 각 변수의 독립적인 비선형 함수의 합 — 즉 GAM(Generalized Additive Model) — 이 된다는 원리였다.</p>
