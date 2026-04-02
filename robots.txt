@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://aigoldpig.github.io/credit-scoring-guidebook/sitemap.xml

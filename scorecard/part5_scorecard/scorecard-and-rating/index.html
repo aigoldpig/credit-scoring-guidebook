@@ -1,0 +1,5077 @@
+<!DOCTYPE html><html lang="ko" class="no-js"><head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+        <meta name="author" content="정승욱">
+      
+      
+        <link rel="canonical" href="https://aigoldpig.github.io/credit-scoring-guidebook/scorecard/part5_scorecard/scorecard-and-rating/">
+      
+      
+        <link rel="prev" href="../">
+      
+      
+        <link rel="next" href="../performance-ks-ar-gini/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.5">
+    
+    
+      
+        <title>1. 스코어카드 변환 &amp; 등급화 - 신용평가모형(Credit Scoring System) 가이드북</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  <link href="../../../assets/stylesheets/glightbox.min.css" rel="stylesheet"><script src="../../../assets/javascripts/glightbox.min.js"></script><style id="glightbox-style">
+            html.glightbox-open { overflow: initial; height: 100%; }
+            .gslide-title { margin-top: 0px; user-select: text; }
+            .gslide-desc { color: #666; user-select: text; }
+            .gslide-image img { background: white; }
+            .gscrollbar-fixer { padding-right: 15px; }
+            .gdesc-inner { font-size: 0.75rem; }
+            body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color); }
+            body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color); }
+            body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color); }
+        </style></head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          콘텐츠로 이동
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="상단/헤더">
+    <a href="../../.." title="신용평가모형(Credit Scoring System) 가이드북" class="md-header__button md-logo" aria-label="신용평가모형(Credit Scoring System) 가이드북" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m16 11.78 4.24-7.33 1.73 1-5.23 9.05-6.51-3.75L5.46 19H22v2H2V3h2v14.54L9.5 8z"></path></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            신용평가모형(Credit Scoring System) 가이드북
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              1. 스코어카드 변환 &amp; 등급화
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom" aria-label="다크 모드로 전환" type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="다크 모드로 전환" for="__palette_1" hidden="">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"></path></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom" aria-label="라이트 모드로 전환" type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="라이트 모드로 전환" for="__palette_0" hidden="">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"></path></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="검색" placeholder="검색" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required="">
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+      </label>
+      <nav class="md-search__options" aria-label="검색">
+        
+        <button type="reset" class="md-search__icon md-icon" title="지우기" aria-label="지우기" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix="">
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            검색 초기화
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="탭" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Preface
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Traditional Scorecard
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../ml/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  머신러닝
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="네비게이션" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="신용평가모형(Credit Scoring System) 가이드북" class="md-nav__button md-logo" aria-label="신용평가모형(Credit Scoring System) 가이드북" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m16 11.78 4.24-7.33 1.73 1-5.23 9.05-6.51-3.75L5.46 19H22v2H2V3h2v14.54L9.5 8z"></path></svg>
+
+    </a>
+    신용평가모형(Credit Scoring System) 가이드북
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix="">
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Preface
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked="">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Traditional Scorecard
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Traditional Scorecard
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../part1_overview/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. 개요
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    1. 개요
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part1_overview/what-is-css/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. CSS란 · 모형 분류
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part1_overview/ranking-not-classification/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. 분류가 아닌 서열화
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part1_overview/requirements/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. 요건 정의
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part1_overview/x-variables/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. 변수 선정
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part1_overview/model-fitting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. 모델링
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part1_overview/output-and-usage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6. 스코어와 의사결정
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part1_overview/development-process/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7. 개발 파이프라인
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../part2_theory/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. 이론
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    2. 이론
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part2_theory/binary-classification/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. 문제 정의
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part2_theory/logit-transform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. Logit 변환
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part2_theory/mle/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. MLE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../part3_variable_selection/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. 변수 선정
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    3. 변수 선정
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4_2">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../part3_variable_selection/classing/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Classing
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_4_2" id="__nav_2_4_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Classing
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part3_variable_selection/classing/why-classing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. 왜 Classing인가
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part3_variable_selection/classing/fine-classing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. Fine Classing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part3_variable_selection/classing/coarse-classing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. Coarse Classing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part3_variable_selection/classing/decision-criteria/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. 의사결정 기준 종합
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4_3">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../part3_variable_selection/woe_iv/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    WoE / IV
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_4_3" id="__nav_2_4_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    WoE / IV
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part3_variable_selection/woe_iv/woe/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. WoE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part3_variable_selection/woe_iv/woe-transform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. WoE 공간 변환
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part3_variable_selection/woe_iv/iv/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. IV
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4_4">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../part3_variable_selection/univariate_lr/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    단변량 로지스틱 회귀
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_4_4" id="__nav_2_4_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_4_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    단변량 로지스틱 회귀
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part3_variable_selection/univariate_lr/concept/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. 개념과 목적
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part3_variable_selection/univariate_lr/one-hot-no-intercept/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. One-Hot + No Intercept
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part3_variable_selection/univariate_lr/beta-woe-proof/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. β ≈ −WoE 증명
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part3_variable_selection/univariate_lr/significance-test/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. 유의성 검정
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part3_variable_selection/univariate_lr/feedback-loop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. Classing 피드백 루프
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4_5">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../part3_variable_selection/domain_selection/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    정보영역별 변수 선정
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_4_5" id="__nav_2_4_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_4_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    정보영역별 변수 선정
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part3_variable_selection/domain_selection/partial-lr/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. 영역 내 Partial LR
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part3_variable_selection/domain_selection/sign-feedback/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. β 부호 이상과 범주 재조정
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../part4_modeling/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. 모델링
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_5" id="__nav_2_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    4. 모델링
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part4_modeling/simple-vs-full/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. Simple LR vs Full Model
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part4_modeling/multivariate-regression/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. 다변량 회귀
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6" checked="">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. 스코어카드
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_6" id="__nav_2_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    5. 스코어카드
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. 스코어카드 변환 &amp; 등급화
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. 스코어카드 변환 &amp; 등급화
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="목차">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      목차
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+      
+        <li class="md-nav__item">
+  <a href="#11-anchor-score-pdo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 스코어카드 변환: Anchor Score &amp; PDO
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12-rating-grade-pd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 평점 등급화(Rating Grade) &amp; PD 캘리브레이션
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../performance-ks-ar-gini/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. 성능 평가 (KS·AR·Gini)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../oot-validation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. OOT 검증
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../monitoring-and-operations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. 모형 모니터링과 운영
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../regulatory-framework/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. 규제 프레임워크
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_7">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../appendix/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    부록
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_7" id="__nav_2_7_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    부록
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_7_2">
+        
+          
+          <label class="md-nav__link" for="__nav_2_7_2" id="__nav_2_7_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    A. optbinning 실무 가이드
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_7_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_7_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    A. optbinning 실무 가이드
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/optbinning-index/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    optbinning 실무 가이드
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/optbinning-overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. 개요와 Pre-binning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/optbinning-optimizer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. 최적화 엔진
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/optbinning-params/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. 핵심 파라미터 상세
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/optbinning-table-woe/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. Binning Table과 WoE 변환
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/optbinning-pipeline/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. 다변량 처리와 Scorecard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_7_3">
+        
+          
+          <label class="md-nav__link" for="__nav_2_7_3" id="__nav_2_7_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    B. 로지스틱 적합 비교
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_7_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_7_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    B. 로지스틱 적합 비교
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/logistic-fitting-index/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    로지스틱 적합 비교
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/woe-vs-dummy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. 두 방식 비교
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/woe-entry/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. WoE 직접 투입
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/dummy-entry/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. 더미 변수 방식
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/stepwise/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. Stepwise 변수 선택
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/score-wald-lr-test/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. 통계 검정 이론
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_7_4">
+        
+          
+          <label class="md-nav__link" for="__nav_2_7_4" id="__nav_2_7_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    C. LOWESS 기반 미니모델링
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_7_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_7_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    C. LOWESS 기반 미니모델링
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/lowess-index/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LOWESS 기반 미니모델링과 기업 여신
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/lowess-intro/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. 정의와 LOWESS 기초
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/lowess-riskcalc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. RiskCalc 프로세스와 사상
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/lowess-effects/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. 실증적 근거와 비율별 변환
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/lowess-architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. 3단계 모델 아키텍처
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/lowess-application/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. 실무 활용과 한계
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_7_5">
+        
+          
+          <label class="md-nav__link" for="__nav_2_7_5" id="__nav_2_7_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    D. 기호 용어집
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_7_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_7_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    D. 기호 용어집
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix/glossary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    기호 용어집
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../ml/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    머신러닝
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    머신러닝
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../ml/part1_overview/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. ML 기초
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    1. ML 기초
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ml/part1_overview/why_ml/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. 왜 ML인가
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ml/part1_overview/bias_variance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. Bias-Variance Tradeoff
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ml/part1_overview/regularization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. 정규화 — Ridge · Lasso · Shrinkage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ml/part1_overview/baseline_workflow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. Baseline 워크플로우
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ml/part1_overview/data_splitting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. 데이터 분리 전략
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ml/part1_overview/feature_preprocessing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6. 피처 전처리
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ml/part1_overview/feature_selection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7. 피처 선택 · 파생변수
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../ml/part2_neural_net/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. 뉴럴넷
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    2. 뉴럴넷
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ml/part2_neural_net/nn_basics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. 신경망 기초
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ml/part2_neural_net/lr_as_nn/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. LR = 단일 뉴런
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ml/part2_neural_net/tabnet/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. TabNet
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ml/part2_neural_net/rnn_tabular/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. CNN · RNN
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../ml/part3_tree_ensemble/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. 트리 앙상블
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_4" id="__nav_3_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    3. 트리 앙상블
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ml/part3_tree_ensemble/tree_models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. 트리 기반 모델
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ml/part3_tree_ensemble/ensemble/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. 앙상블 — Bagging과 RF
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ml/part3_tree_ensemble/bias_variance_trees/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. 트리에서의 Bias-Variance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ml/part3_tree_ensemble/boosting_fundamentals/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. Boosting 기초
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ml/part3_tree_ensemble/boosting_advanced/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. Boosting 심화
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ml/part3_tree_ensemble/xgb_lgbm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6. XGBoost와 LightGBM
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ml/part3_tree_ensemble/hyperparameter_tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7. 하이퍼파라미터 튜닝
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_5">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../ml/part4_evaluation/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. 해석과 설명
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_5" id="__nav_3_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    4. 해석과 설명
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ml/part4_evaluation/interpretability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. 해석 가능성
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ml/part4_evaluation/shap_in_practice/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. SHAP — 해석의 여정
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ml/part4_evaluation/surrogate_model/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. Surrogate Model
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ml/part4_evaluation/depth1_gbm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. 해석 가능한 ML — 1-Depth GBM과 EBM
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ml/part4_evaluation/depth1_tools_impl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. 도구 · 구현 · 요약
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_6">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../ml/part5_validation/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. 모델 검증
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_6" id="__nav_3_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    5. 모델 검증
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ml/part5_validation/validation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. 모델 검증과 모니터링
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ml/part5_validation/regulatory/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. 규제 프레임워크
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="_1">스코어카드 변환 &amp; 등급화<a class="headerlink" href="#_1" title="Permanent link">¶</a></h1>
+<h2 id="11-anchor-score-pdo">1.1 스코어카드 변환: Anchor Score &amp; PDO<a class="headerlink" href="#11-anchor-score-pdo" title="Permanent link">¶</a></h2>
+<p>WoE 로지스틱 회귀에서 최종 신용점수가 변수별 부분점수의 합으로 표현되는 이유는 로짓의 선형성 때문이다.</p>
+<h3 id="good-odds">왜 Good Odds로 전환하는가?<a class="headerlink" href="#good-odds" title="Permanent link">¶</a></h3>
+<div class="admonition danger">
+<p class="admonition-title">Odds 방향 전환: Bad Odds → Good Odds</p>
+<p>지금까지(개요~단변량 LR)는 <strong>Bad Odds</strong> <span class="arithmatex">\(p/(1-p)\)</span>를 사용했다. 불량 확률 <span class="arithmatex">\(p\)</span>가 높으면 Odds도 높아지므로 이론 설명에 직관적이었다.</p>
+<p>스코어카드 단계에서는 <strong>Good Odds</strong> <span class="arithmatex">\((1-p)/p\)</span>로 전환한다. 이유는 다음과 같다.</p>
+</div>
+<table>
+<thead>
+<tr>
+<th>이유</th>
+<th>설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>점수 방향의 직관성</strong></td>
+<td>"점수가 높으면 우량" — 심사역·고객·경영진 모두 자연스럽게 이해</td>
+</tr>
+<tr>
+<td><strong>WoE 부호와의 일관성</strong></td>
+<td>Good Odds 기준에서 WoE 양수 = 우량 구간, 음수 = 불량 구간. 점수 기여 방향과 부호가 일치</td>
+</tr>
+<tr>
+<td><strong>실무 관행</strong></td>
+<td>NICE·KCB 등 국내 CB사와 해외 주요 CB(FICO, Experian) 모두 "높을수록 우량" 체계</td>
+</tr>
+</tbody>
+</table>
+<p>수식적으로 두 Odds는 역수 관계이므로, 로그를 취하면 <strong>부호만 반전</strong>된다:</p>
+<div class="arithmatex">\[
+\ln\!\left(\frac{1-p}{p}\right) = -\ln\!\left(\frac{p}{1-p}\right)
+\]</div>
+<p>아래 점수 공식에서는 Good Odds의 로그를 직접 사용하여 이 전환을 반영한다.</p>
+<h3 id="_2">수식의 원리 이해<a class="headerlink" href="#_2" title="Permanent link">¶</a></h3>
+<p>Good Odds가 높을수록 우량하므로, 점수와 Good Odds는 <strong>정비례</strong> 관계로 설계된다.</p>
+<div class="arithmatex">\[
+\text{Score}_i = A + B \times \ln\!\left(\frac{1-p_i}{p_i}\right)
+\]</div>
+<p>Good Odds가 클수록(우량할수록) 점수가 높아지는 직관적 구조다. Part 5에서는 y = 1 = Good으로 전환하였으므로, <strong>Good Odds 로지스틱 회귀의 계수를 직접 사용</strong>한다:</p>
+<div class="arithmatex">\[
+\ln\!\left(\frac{1-p}{p}\right) = \beta_0 + \sum_{j=1}^{k} \beta_j \cdot \text{WoE}_{ij}
+\]</div>
+<p>여기서 <span class="arithmatex">\(\beta_0, \beta_j\)</span>는 <strong>Good Odds 모형</strong>(y=1=Good)의 회귀계수다. WoE = ln(%Good/%Bad)와 log-odds 방향이 일치하므로 <span class="arithmatex">\(\beta_j &gt; 0\)</span>이 자연스럽게 성립한다(Part 1~4의 Bad Odds에서는 <span class="arithmatex">\(\beta \approx -\text{WoE}\)</span>였지만, Good Odds 전환 후에는 <span class="arithmatex">\(\beta \approx +\text{WoE}\)</span>가 된다).</p>
+<p>따라서 점수 전개식은:</p>
+<div class="arithmatex">\[
+\text{Score}_i = A + B \times \left[\beta_0 + \sum_{j=1}^{k} \beta_j \cdot \text{WoE}_{ij}\right]
+\]</div>
+<p>WoE가 양수(우량 구간)이면 점수가 올라가고, 음수(불량 구간)이면 내려간다 — <strong>부호의 직관이 완벽하게 일치</strong>한다.</p>
+<div class="admonition info">
+<p class="admonition-title">A — Anchor Score (기준점수)</p>
+<p>특정 <strong>기준 오즈(<span class="arithmatex">\(\theta_0\)</span>)에 대응하는 목표 점수</strong>로, 점수 체계의 기준점(닻)을 설정한다.</p>
+<p><strong>예:</strong> "Odds 1:1(Good:Bad, PD≈50%)일 때 600점" → <span class="arithmatex">\(\theta_0=1\)</span>, <span class="arithmatex">\(A_{\text{target}}=600\)</span></p>
+<p>실무에서 통상 500~700점 범위 내 중간값으로 설정. 기관별 점수 체계 정책에 따라 결정.</p>
+</div>
+<div class="admonition info">
+<p class="admonition-title">B — PDO (Points to Double the Odds)</p>
+<p>오즈(Good:Bad)가 <strong>2배 증가할 때</strong>(불량 확률이 절반으로 줄어들 때) 점수가 몇 점 상승하는지를 결정하는 스케일 파라미터.</p>
+<p><strong>예:</strong> PDO=20이면 Odds가 2배마다 점수 +20점. PDO가 클수록 점수 분포가 넓어짐.</p>
+<p>실무에서 통상 10~25점 사이 설정. 점수 체계의 분해능(Granularity) 조절.</p>
+</div>
+<h3 id="_3">스케일링 상수 유도 — 정확한 수식<a class="headerlink" href="#_3" title="Permanent link">¶</a></h3>
+<p>Score = <span class="arithmatex">\(A_{\text{const}} + B \times \ln(\text{Odds})\)</span> 형태로 표현할 때, Anchor Score 조건과 PDO 정의로부터 <span class="arithmatex">\(A_{\text{const}}\)</span>와 B를 역산한다.</p>
+<p><strong>① PDO 정의에서 B 산출:</strong></p>
+<p>Good Odds = <span class="arithmatex">\(\theta_0\)</span>일 때 Score = <span class="arithmatex">\(A_{\text{target}}\)</span>, Good Odds = <span class="arithmatex">\(2\theta_0\)</span>일 때 Score = <span class="arithmatex">\(A_{\text{target}} + \text{PDO}\)</span></p>
+<div class="arithmatex">\[
+(A_{\text{const}} + B\ln 2\theta_0) - (A_{\text{const}} + B\ln\theta_0) = \text{PDO}
+\]</div>
+<div class="arithmatex">\[
+B(\ln 2\theta_0 - \ln\theta_0) = \text{PDO} \quad \Rightarrow \quad \boxed{B = \frac{\text{PDO}}{\ln 2}} \tag{1}
+\]</div>
+<p><strong>② Anchor Score 조건에서 <span class="arithmatex">\(A_{\text{const}}\)</span> 산출:</strong></p>
+<div class="arithmatex">\[
+A_{\text{target}} = A_{\text{const}} + B\ln\theta_0 \quad \Rightarrow \quad \boxed{A_{\text{const}} = A_{\text{target}} - B \times \ln\theta_0} \tag{2}
+\]</div>
+<div class="admonition note">
+<p class="admonition-title"><span class="arithmatex">\(A_{\text{const}}\)</span>와 <span class="arithmatex">\(A_{\text{target}}\)</span>의 구분</p>
+<p><span class="arithmatex">\(A_{\text{target}}\)</span>은 "기준 Odds에서의 목표 점수(예: 600점)"이고, <span class="arithmatex">\(A_{\text{const}}\)</span>는 수식의 상수항이다. 기준 Odds <span class="arithmatex">\(\theta_0=1\)</span>(<span class="arithmatex">\(\ln 1=0\)</span>)로 설정하면 <span class="arithmatex">\(A_{\text{const}} = A_{\text{target}}\)</span>으로 동일해진다. 이것이 실무에서 "Anchor Score = 600, 기준 Odds = 1:1"로 설정하는 이유다. <span class="arithmatex">\(\theta_0 \neq 1\)</span>이면 두 값이 달라지므로 혼동 주의.</p>
+</div>
+<p><strong>수치 예시:</strong> PDO=20, <span class="arithmatex">\(A_{\text{target}}=600\)</span>, 기준 Odds=1(<span class="arithmatex">\(\ln 1=0\)</span>)이면:</p>
+<div class="arithmatex">\[
+B = \frac{20}{\ln 2} \approx 28.85, \quad A_{\text{const}} = 600 - 28.85 \times 0 = 600
+\]</div>
+<h3 id="_4">스코어카드의 실제 구조 — 고정 부분점수 테이블<a class="headerlink" href="#_4" title="Permanent link">¶</a></h3>
+<p>스코어카드에서 "부분점수"는 고객마다 매번 계산하는 값이 아니다. <strong>각 변수의 구간(Bin)마다 미리 계산된 고정 정수값을 테이블로 만들어두고, 고객의 구간을 찾아 해당 점수를 합산하는 구조</strong>다.</p>
+<p>변수 j의 b번째 구간(Bin)에 대응하는 부분점수(Part Score)는:</p>
+<div class="arithmatex">\[
+\text{PartScore}_{j,b} = B \times \beta_j \times \text{WoE}_{j,b} + \frac{B \times \beta_0}{k} \tag{3}
+\]</div>
+<p>여기서 <span class="arithmatex">\(\text{WoE}_{j,b}\)</span>는 변수 j의 b번째 구간에 사전 계산된 고정값이며, 고객마다 달라지지 않는다. <span class="arithmatex">\(\beta_j\)</span>는 <strong>Good Odds</strong> Full Model의 다변량 회귀계수, k는 모형에 포함된 변수 수, B는 PDO/ln2다. 절편 <span class="arithmatex">\(\beta_0\)</span>는 k개 변수에 균등 배분된다.</p>
+<div class="admonition example">
+<p class="admonition-title">스코어카드 테이블 예시 — 매출액 변수</p>
+<p><strong>모형 설정:</strong> β₀ = +2.50 (Good Odds), β(매출액) = 0.72, B ≈ 28.85, k = 4개 변수</p>
+<p>절편 배분: <span class="arithmatex">\(B \times \beta_0 / k = 28.85 \times 2.50 / 4 \approx +18.0\)</span></p>
+<table>
+<thead>
+<tr>
+<th>구간(Bin)</th>
+<th>매출액 범위</th>
+<th>WoE</th>
+<th>B×β×WoE</th>
+<th>절편 배분</th>
+<th>부분점수(정수)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Bin 1</td>
+<td>500억 이상</td>
+<td>+1.20</td>
+<td>28.85×0.72×1.20 = +24.9</td>
+<td>+18.0</td>
+<td><strong>+43점</strong></td>
+</tr>
+<tr>
+<td>Bin 2</td>
+<td>100~500억</td>
+<td>+0.45</td>
+<td>28.85×0.72×0.45 = +9.3</td>
+<td>+18.0</td>
+<td><strong>+27점</strong></td>
+</tr>
+<tr>
+<td>Bin 3</td>
+<td>30~100억</td>
+<td>−0.10</td>
+<td>28.85×0.72×(−0.10) = −2.1</td>
+<td>+18.0</td>
+<td><strong>+16점</strong></td>
+</tr>
+<tr>
+<td>Bin 4</td>
+<td>30억 미만</td>
+<td>−0.95</td>
+<td>28.85×0.72×(−0.95) = −19.7</td>
+<td>+18.0</td>
+<td><strong>−2점</strong></td>
+</tr>
+</tbody>
+</table>
+<p>WoE가 양수(우량)인 구간일수록 부분점수가 높고, 음수(불량)인 구간일수록 낮다 — <strong>부호의 직관이 완벽하게 일치</strong>한다.</p>
+</div>
+<h3 id="n">n개 변수 합산 — 최종 점수 산출 과정<a class="headerlink" href="#n" title="Permanent link">¶</a></h3>
+<p>최종 점수는 모든 변수의 부분점수를 단순 합산한 것이다:</p>
+<div class="arithmatex">\[
+\text{Score}_i = A_{\text{const}} + \sum_{j=1}^{k} \text{PartScore}_{j, b(i,j)} \tag{4}
+\]</div>
+<p><span class="arithmatex">\(b(i,j)\)</span>는 고객 <span class="arithmatex">\(i\)</span>가 변수 <span class="arithmatex">\(j\)</span>에서 해당하는 Bin 번호다.</p>
+<div class="admonition example">
+<p class="admonition-title">4개 변수 합산 예시 — 기업 A의 점수 산출</p>
+<p><strong>모형:</strong> 매출액, 업력, 부채비율, 신용조회건수 (k=4), <span class="arithmatex">\(A_{\text{const}}\)</span> = 600</p>
+<table>
+<thead>
+<tr>
+<th>변수</th>
+<th>기업 A의 값</th>
+<th>해당 구간</th>
+<th>부분점수</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>매출액</td>
+<td>200억</td>
+<td>Bin 2 (100~500억)</td>
+<td><strong>+27점</strong></td>
+</tr>
+<tr>
+<td>업력</td>
+<td>12년</td>
+<td>Bin 1 (10년 초과)</td>
+<td><strong>+35점</strong></td>
+</tr>
+<tr>
+<td>부채비율</td>
+<td>180%</td>
+<td>Bin 3 (150~250%)</td>
+<td><strong>+12점</strong></td>
+</tr>
+<tr>
+<td>신용조회건수</td>
+<td>3건</td>
+<td>Bin 2 (2~5건)</td>
+<td><strong>+8점</strong></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td><strong>Σ 부분점수</strong></td>
+<td><strong>+82점</strong></td>
+</tr>
+</tbody>
+</table>
+<div class="arithmatex">\[\text{Score}_A = 600 + 82 = \textbf{682점}\]</div>
+<p>기업 A는 682점으로 "일반 양호 거래처" 등급에 해당한다.</p>
+</div>
+<h3 id="lookup">Lookup 테이블 — 운영 시스템 구현<a class="headerlink" href="#lookup" title="Permanent link">¶</a></h3>
+<p>개발 단계에서 산출한 부분점수를 <strong>고정 정수 테이블(Lookup Table)</strong>로 전환하면, 운영 시스템에서는 회귀 계산 없이 <strong>테이블 조회(lookup) + 합산</strong>만으로 점수를 산출할 수 있다.</p>
+<div class="admonition example">
+<p class="admonition-title">Lookup Table 예시 (전체 변수)</p>
+<table>
+<thead>
+<tr>
+<th>변수</th>
+<th>Bin 1</th>
+<th>Bin 2</th>
+<th>Bin 3</th>
+<th>Bin 4</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>매출액</strong></td>
+<td>+43</td>
+<td>+27</td>
+<td>+16</td>
+<td>−2</td>
+</tr>
+<tr>
+<td><strong>업력</strong></td>
+<td>+35</td>
+<td>+20</td>
+<td>+5</td>
+<td>−10</td>
+</tr>
+<tr>
+<td><strong>부채비율</strong></td>
+<td>+30</td>
+<td>+18</td>
+<td>+12</td>
+<td>−5</td>
+</tr>
+<tr>
+<td><strong>신용조회건수</strong></td>
+<td>+25</td>
+<td>+8</td>
+<td>−3</td>
+<td>−15</td>
+</tr>
+</tbody>
+</table>
+<p><strong>점수 산출 절차:</strong></p>
+<ol>
+<li>고객의 각 변수 값을 확인</li>
+<li>해당 Bin을 찾아 부분점수를 조회 (테이블 lookup)</li>
+<li>모든 변수의 부분점수를 합산</li>
+<li><span class="arithmatex">\(A_{\text{const}}\)</span>(600)를 더하여 최종 점수 산출</li>
+</ol>
+<p>이 테이블은 모형 개발 시 <strong>1회만 계산</strong>하고, 이후 운영 시 수만~수십만 건의 고객 점수를 <strong>단순 조회+합산</strong>으로 처리한다. 로지스틱 회귀나 WoE 계산이 실시간으로 필요하지 않으므로, 레거시 전산 시스템에서도 즉시 구현 가능하다는 것이 전통적 스코어카드의 핵심 장점이다.</p>
+</div>
+<div class="admonition success">
+<p class="admonition-title">가산성(Additivity)</p>
+<p>최종 신용점수 = <span class="arithmatex">\(A_{\text{const}}\)</span> + 각 변수 부분점수의 합. 이 구조 덕분에 심사역이 "왜 이 고객의 점수가 낮은가"를 변수별로 분해해서 설명할 수 있고, 전산 시스템에서도 단순 테이블 조회(lookup)로 빠르게 점수를 계산할 수 있다.</p>
+</div>
+<h3 id="_5">점수의 해석<a class="headerlink" href="#_5" title="Permanent link">¶</a></h3>
+<p>스코어카드 점수는 <strong>고객 신용도의 순위 척도</strong>다. 점수가 높을수록 신용도가 높고(PD 낮음), 낮을수록 불량 위험이 높다. 단, 점수의 절대 수준은 Anchor Score와 PDO 설정에 따라 기관마다 달라지므로, 점수 자체보다 <strong>등급별 실제 부도율 대응표(Rating Master Table)</strong>가 더 중요하다.</p>
+<h3 id="score-odds">Score → Odds → 확률 역산 과정<a class="headerlink" href="#score-odds" title="Permanent link">¶</a></h3>
+<p>점수가 주어졌을 때 불량 확률을 역산하는 절차다. Score = <span class="arithmatex">\(A_{\text{const}} + B \times \ln(\text{Odds})\)</span> 공식을 역으로 풀면:</p>
+<div class="arithmatex">\[
+\ln(\text{Odds}) = \frac{\text{Score} - A_{\text{const}}}{B}, \quad \text{Odds} = e^{(\text{Score} - A_{\text{const}})/B}, \quad p = \frac{1}{1 + \text{Odds}}
+\]</div>
+<p><strong>수치 예시</strong> (A_const = 600, B = 28.85):</p>
+<table>
+<thead>
+<tr>
+<th>Score</th>
+<th><span class="arithmatex">\(\ln(\text{Good Odds})\)</span></th>
+<th>Good Odds</th>
+<th>PD = 1/(1+Odds)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>700</td>
+<td>(700−600)/28.85 = +3.47</td>
+<td>32.14 (≈ 32:1)</td>
+<td><strong>3.0%</strong></td>
+</tr>
+<tr>
+<td>650</td>
+<td>(650−600)/28.85 = +1.73</td>
+<td>5.64 (≈ 6:1)</td>
+<td><strong>15.1%</strong></td>
+</tr>
+<tr>
+<td>600</td>
+<td>(600−600)/28.85 = 0.00</td>
+<td>1.000 (1:1)</td>
+<td><strong>50.0%</strong></td>
+</tr>
+<tr>
+<td>550</td>
+<td>(550−600)/28.85 = −1.73</td>
+<td>0.177 (≈ 1:6)</td>
+<td><strong>85.0%</strong></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Anchor Score의 의미</p>
+<p>600점 = Odds 1:1 = PD 50%가 되는 것은 Anchor Score를 Odds 1:1에 설정했기 때문이다. 실무에서는 Intercept Correction 후의 β₀를 사용하므로 실제 600점 고객의 PD는 50%보다 훨씬 낮다(예: 2~5%). 위 표는 <strong>수식 구조를 이해하기 위한 이론적 역산</strong>이며, 실제 PD는 Rating Master Table의 캘리브레이션 PD를 사용한다.</p>
+</div>
+<table>
+<thead>
+<tr>
+<th>점수 구간 예시</th>
+<th>Odds(Good:Bad) 근사</th>
+<th>PD 근사</th>
+<th>실무 의미</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>700점 이상</td>
+<td>수백:1</td>
+<td>0.1% 미만</td>
+<td>우량 거래처, 자동승인 대상</td>
+</tr>
+<tr>
+<td>650~699점</td>
+<td>수십:1</td>
+<td>0.5~1%</td>
+<td>일반 양호 거래처</td>
+</tr>
+<tr>
+<td>600~649점</td>
+<td>10:1 내외</td>
+<td>5~10%</td>
+<td>주의 필요, 추가 심사 검토</td>
+</tr>
+<tr>
+<td>600점 미만</td>
+<td>5:1 이하</td>
+<td>15% 이상</td>
+<td>고위험, 거절 또는 엄격한 조건부 승인</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">정수형 보정</p>
+<p>로지스틱 회귀 산출 부분점수는 소수를 포함한다. 실무 시스템 구현 시 반올림하여 정수화한다. 반올림 오차는 절편 부분점수로 흡수하거나 PDO를 미세 조정하여 처리한다. 정수 변환 후에도 등급별 Bad Rate 단조성이 유지되는지 재확인이 필요하다.</p>
+</div>
+<hr>
+<h2 id="12-rating-grade-pd">1.2 평점 등급화(Rating Grade) &amp; PD 캘리브레이션<a class="headerlink" href="#12-rating-grade-pd" title="Permanent link">¶</a></h2>
+<p>스코어카드 변환으로 연속형 점수가 산출되지만, 실무 심사·한도·금리 정책 적용을 위해서는 <strong>점수를 이산(Discrete) 등급으로 변환</strong>하는 과정이 필요하다. 동시에 각 등급에 실제 부도율(PD)을 대응시키는 캘리브레이션을 수행해야 Basel IRB 모형으로 활용 가능하다.</p>
+<h3 id="_6">등급 구간 설계 원칙<a class="headerlink" href="#_6" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>설계 방식</th>
+<th>내용</th>
+<th>장단점</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>동일 인원 구간</strong> (Equal-frequency)</td>
+<td>각 등급에 동일한 수의 고객이 배치되도록 점수 경계 설정</td>
+<td>각 등급의 통계적 안정성 확보 / 점수 구간 폭이 등급마다 달라짐</td>
+</tr>
+<tr>
+<td><strong>동일 점수 구간</strong> (Equal-width)</td>
+<td>점수 범위를 균등하게 분할 (예: 10점 간격)</td>
+<td>직관적 이해 쉬움 / 고객 분포 쏠림 시 일부 등급 샘플 극소</td>
+</tr>
+<tr>
+<td><strong>업무 기준 구간</strong> (Business-driven)</td>
+<td>기존 심사 정책, 금리 단계, 한도 구분과 연계하여 경계 설정</td>
+<td>현업 적용 용이 / 통계적 최적과 괴리될 수 있음</td>
+</tr>
+<tr>
+<td><strong>PD 기반 구간</strong> (PD-aligned)</td>
+<td>등급 내 PD 범위가 Basel 내부등급 요건에 부합하도록 설계</td>
+<td>IRB 부합성 우수 / 설계 복잡도 높음</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">실무 권장</p>
+<p>등급 수는 통상 10~15개. Basel IRB 최소 요건(BCBS 128 문단 404)은 비불량(Non-default) 7등급 이상 + 불량(Default) 1등급 이상이다. 등급 수가 너무 적으면 PD 차별화가 부족하고, 너무 많으면 등급별 샘플이 적어 통계적 불안정성이 커진다.</p>
+</div>
+<h3 id="beta-distribution-simulation">Beta Distribution Simulation — 등급 구간 최적화<a class="headerlink" href="#beta-distribution-simulation" title="Permanent link">¶</a></h3>
+<p>위 4가지 설계 방식은 어느 것이든 <strong>분석가가 경계점을 직접 지정</strong>해야 한다는 한계가 있다. 등급 수가 10개라면 9개의 경계점을 결정해야 하고, 이들의 조합 공간은 방대하다. Beta Distribution Simulation은 이 탐색 과정을 <strong>체계적으로 자동화</strong>하는 방법이다.</p>
+<h4 id="_7">핵심 아이디어<a class="headerlink" href="#_7" title="Permanent link">¶</a></h4>
+<p>Beta 분포의 CDF(누적분포함수)를 이용해 점수 범위 위에 등급 경계점을 배치한다. Beta 분포의 두 파라미터 <span class="arithmatex">\(\alpha, \beta\)</span>를 변경하면 경계점의 밀집 위치가 달라지므로, 다양한 등급 구조를 체계적으로 탐색할 수 있다.</p>
+<p>K개 등급으로 나눌 때, k번째 경계점은:</p>
+<div class="arithmatex">\[
+\text{Cutoff}_k = S_{\min} + (S_{\max} - S_{\min}) \times F_{\text{Beta}}\!\left(\frac{k}{K};\ \alpha,\ \beta\right) \tag{5}
+\]</div>
+<p>여기서 <span class="arithmatex">\(F_{\text{Beta}}\)</span>는 Beta 분포의 CDF, <span class="arithmatex">\(S_{\min}, S_{\max}\)</span>는 점수의 최솟값·최댓값이다.</p>
+<h4 id="_8">α, β에 따른 경계점 분포 변화<a class="headerlink" href="#_8" title="Permanent link">¶</a></h4>
+<table>
+<thead>
+<tr>
+<th>α, β 조합</th>
+<th>경계점 분포 특성</th>
+<th>적합한 상황</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>α = 1, β = 1</td>
+<td><strong>균등 배분</strong> — Equal-width와 동일</td>
+<td>점수 분포가 균일한 경우</td>
+</tr>
+<tr>
+<td>α &gt; 1, β &gt; 1</td>
+<td><strong>중간 점수대 밀집</strong> — 양 극단은 넓게</td>
+<td>중간 리스크 구간의 세밀한 구분이 필요할 때</td>
+</tr>
+<tr>
+<td>α &lt; 1, β &lt; 1</td>
+<td><strong>양 극단 밀집</strong> — 중간은 넓게</td>
+<td>우량/불량 경계를 정밀하게 나눠야 할 때</td>
+</tr>
+<tr>
+<td>α &gt; 1, β &lt; 1</td>
+<td><strong>저점수대(고위험) 밀집</strong></td>
+<td>불량 집중 구간의 세분화가 중요할 때</td>
+</tr>
+<tr>
+<td>α &lt; 1, β &gt; 1</td>
+<td><strong>고점수대(우량) 밀집</strong></td>
+<td>우량 고객의 세분화가 필요할 때</td>
+</tr>
+</tbody>
+</table>
+<p><a class="glightbox" data-type="image" data-width="100%" data-height="auto" href="../images/beta_pdf_shapes.png" data-desc-position="bottom"><img alt="Beta 분포 PDF — α, β 조합별 형태 변화" src="../images/beta_pdf_shapes.png"></a></p>
+<p>α, β 값을 바꾸면 분포의 형태가 완전히 달라진다. 이 형태가 곧 <strong>경계점이 어디에 촘촘하게 배치되는지</strong>를 결정한다.</p>
+<div class="admonition tip">
+<p class="admonition-title">직관적 이해</p>
+<p>α, β가 모두 1이면 균등분포(직선)다. α를 키우면 경계점이 오른쪽(고점수)으로 쏠리고, β를 키우면 왼쪽(저점수)으로 쏠린다. 둘 다 키우면 중앙에 모이고, 둘 다 줄이면 양 끝에 퍼진다. 이 직관만 있으면 시뮬레이션 결과를 해석할 수 있다.</p>
+</div>
+<h4 id="_9">시뮬레이션 절차<a class="headerlink" href="#_9" title="Permanent link">¶</a></h4>
+<div class="review-item">
+<p><span class="review-badge">1</span>
+  <span class="review-title">탐색 그리드 설정</span></p>
+</div>
+<p><span class="arithmatex">\(\alpha, \beta\)</span> 각각에 대해 탐색 범위를 설정한다. 예를 들어 <span class="arithmatex">\(\alpha \in [0.3,\ 5.0]\)</span>, <span class="arithmatex">\(\beta \in [0.3,\ 5.0]\)</span>을 0.1 간격으로 나누면 약 2,200개의 조합이 생성된다. 등급 수 K도 10~15개 범위에서 함께 탐색할 수 있다.</p>
+<div class="review-item">
+<p><span class="review-badge">2</span>
+  <span class="review-title">각 (α, β) 조합별 등급 구간 생성</span></p>
+</div>
+<p>식 (5)로 K−1개의 경계점을 산출하고, 개발 데이터셋의 각 고객을 해당 등급에 배정한다.</p>
+<div class="review-item">
+<p><span class="review-badge">3</span>
+  <span class="review-title">평가 지표 산출</span></p>
+</div>
+<p>각 등급 구조에 대해 다음 지표를 동시에 평가한다:</p>
+<table>
+<thead>
+<tr>
+<th>평가 기준</th>
+<th>지표</th>
+<th>기준</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>변별력</strong></td>
+<td>AR, KS, AUC</td>
+<td>높을수록 좋음 — 등급이 Good/Bad를 잘 분리하는가</td>
+</tr>
+<tr>
+<td><strong>안정성</strong></td>
+<td>PSI (개발 vs 검증)</td>
+<td>낮을수록 좋음 — 등급 분포가 시간에 따라 안정적인가</td>
+</tr>
+<tr>
+<td><strong>서열화</strong></td>
+<td>등급별 Bad Rate 단조성</td>
+<td>필수 — 등급이 올라갈수록 Bad Rate가 반드시 감소해야 함</td>
+</tr>
+<tr>
+<td><strong>집중도</strong></td>
+<td>등급별 인원 비율</td>
+<td>극단적 쏠림 없이 적정 분포</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">단조성은 Hard Constraint</p>
+<p>변별력·안정성은 최적화 대상(Objective)이지만, Bad Rate 단조성은 <strong>위반 시 해당 조합을 즉시 제외</strong>하는 필수 제약이다. 단조성이 깨진 등급 체계는 아무리 KS가 높아도 사용할 수 없다.</p>
+</div>
+<div class="review-item">
+<p><span class="review-badge">4</span>
+  <span class="review-title">최적 (α, β) 선택</span></p>
+</div>
+<p>단조성을 만족하는 조합 중에서, 변별력·안정성·집중도를 종합 평가하여 최적의 <span class="arithmatex">\((\alpha^*, \beta^*)\)</span>를 선택한다. 실무에서는 가중합 방식으로 단일 스코어를 만들기도 한다:</p>
+<div class="arithmatex">\[
+\text{Score}(\alpha, \beta) = w_1 \times \text{AR} + w_2 \times (1 - \text{PSI}) + w_3 \times \text{균등도}
+\]</div>
+<p>가중치 <span class="arithmatex">\(w_1, w_2, w_3\)</span>는 기관의 정책 우선순위에 따라 결정한다.</p>
+<div class="review-item">
+<p><span class="review-badge">5</span>
+  <span class="review-title">검증 및 확정</span></p>
+</div>
+<p>선정된 등급 구조를 OOT(Out-of-Time) 검증 데이터에 적용하여 동일한 지표를 재확인한다. 개발-검증 간 지표 괴리가 크면 과적합 가능성을 점검하고, 차선 조합을 검토한다.</p>
+<h4 id="_10">시뮬레이션 결과 예시<a class="headerlink" href="#_10" title="Permanent link">¶</a></h4>
+<p>아래는 동일한 가상 데이터(4만 건, 점수 300~850)에 세 가지 <span class="arithmatex">\((\alpha, \beta)\)</span> 조합을 적용한 결과다. 같은 데이터라도 파라미터에 따라 등급 구조가 완전히 달라진다.</p>
+<p><a class="glightbox" data-type="image" data-width="100%" data-height="auto" href="../images/beta_grade_result_comparison.png" data-desc-position="bottom"><img alt="Beta Simulation 등급화 결과 비교" src="../images/beta_grade_result_comparison.png"></a></p>
+<table>
+<thead>
+<tr>
+<th>시나리오</th>
+<th>특징</th>
+<th>판정</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>균등 (α=1, β=1)</strong></td>
+<td>불량률 서열화(단조성) OK. 그러나 1등급(4.4%)·10등급(1.1%) 인원 과소</td>
+<td>보통 — 양 극단 등급의 통계적 안정성 부족</td>
+</tr>
+<tr>
+<td><strong>저점수 밀집 (α=1.5, β=2.5)</strong></td>
+<td>1등급 0.3% → 2등급 0.0%로 <strong>단조성 위반</strong>. 1~2등급 인원 1% 미만</td>
+<td><strong>부적합</strong> — 우량 등급 세분화 과도, 사실상 무의미</td>
+</tr>
+<tr>
+<td><strong>양극단 밀집 (α=0.7, β=0.7)</strong></td>
+<td>단조성 OK, 인원 분포 2.5%~14.5%로 가장 고름. 불량률 곡선 매끄러움</td>
+<td><strong>적합</strong> — 균형 잡힌 등급 구조</td>
+</tr>
+</tbody>
+</table>
+<p>이처럼 시뮬레이션을 통해 수천 개의 <span class="arithmatex">\((\alpha, \beta)\)</span> 조합을 평가하고, 변별력·안정성·서열화·인원 분포를 모두 만족하는 최적 조합을 선택하는 것이 Beta Simulation 등급화의 핵심이다.</p>
+<h4 id="beta">왜 Beta 분포인가?<a class="headerlink" href="#beta" title="Permanent link">¶</a></h4>
+<p>등급 경계점 배치에 Beta 분포를 사용하는 이유는 다음과 같다:</p>
+<table>
+<thead>
+<tr>
+<th>특성</th>
+<th>설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>[0, 1] 정의역</strong></td>
+<td>점수를 [0, 1]로 정규화하면 CDF 값이 바로 경계점 비율이 됨</td>
+</tr>
+<tr>
+<td><strong>2개 파라미터로 다양한 형태</strong></td>
+<td>균등·좌편향·우편향·U자·종형 등 모든 분포 형태를 표현 가능</td>
+</tr>
+<tr>
+<td><strong>연속적 탐색</strong></td>
+<td>α, β를 연속적으로 조절하여 경계점 이동을 매끄럽게 제어</td>
+</tr>
+<tr>
+<td><strong>해석 용이</strong></td>
+<td>α, β 값만으로 경계점 밀집 방향을 직관적으로 이해 가능</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Equal-frequency와의 관계</p>
+<p>Equal-frequency(동일 인원) 방식은 점수의 <strong>경험적 CDF</strong>를 사용한 것으로 볼 수 있다. Beta Simulation은 이를 <strong>모수적(Parametric) CDF</strong>로 일반화한 것이다. Equal-frequency가 데이터에 완전히 종속되는 반면, Beta Simulation은 파라미터를 통해 데이터 의존도를 조절할 수 있다.</p>
+</div>
+<h3 id="monotonicity">등급별 단조성(Monotonicity) 검증<a class="headerlink" href="#monotonicity" title="Permanent link">¶</a></h3>
+<p>등급이 올라갈수록(점수 높을수록) Bad Rate가 반드시 감소해야 한다. 역전 구간이 발생하면 모형의 변별력에 문제가 있거나 등급 경계 설계가 잘못된 것이다.</p>
+<div class="admonition warning">
+<p class="admonition-title">단조성 위반 처리</p>
+<p>① 역전 구간의 등급을 인접 등급과 합병(Merge) → ② 재분할 후 재확인 → ③ 그래도 해결되지 않으면 Binning 재검토 또는 모형 재개발 검토. 단조성 위반은 금감원 검사 및 Basel 검증에서 주요 지적 사항이다.</p>
+</div>
+<h3 id="pd">PD 캘리브레이션 전체 절차<a class="headerlink" href="#pd" title="Permanent link">¶</a></h3>
+<div class="review-item">
+<p><span class="review-badge">1</span>
+  <span class="review-title">개발 샘플 기반 등급별 실측 부도율 산출</span></p>
+</div>
+<p>등급별 불량자 수 / 해당 등급 전체 대상자 수 = 실측 부도율(Observed PD). 다운샘플링 모형의 경우 Intercept Correction 적용 후 PD 역산.</p>
+<div class="review-item">
+<p><span class="review-badge">2</span>
+  <span class="review-title">OOT(Out-of-Time) 샘플 검증</span></p>
+</div>
+<p>개발 샘플 밖의 기간 데이터에서 등급별 부도율을 재산출하여 개발 샘플과 비교. 괴리가 크면 Overfitting 또는 Concept Drift 의심.</p>
+<div class="review-item">
+<p><span class="review-badge">3</span>
+  <span class="review-title">장기평균 PD 조정 (Through-the-Cycle, TTC)</span></p>
+</div>
+<p>개발 시점 경기 국면 영향을 제거하고 경기 전반에 걸친 평균 부도율로 조정. 통상 10~15년 장기 데이터를 활용. 단기 데이터만 있을 경우 외부 벤치마크(CB 데이터, 금융당국 업종별 부도율 통계 등) 참조.</p>
+<div class="review-item">
+<p><span class="review-badge">4</span>
+  <span class="review-title">MoC (Margin of Conservatism) 가산</span></p>
+</div>
+<p>데이터 한계(관측 기간 짧음, 샘플 규모 부족, 모형 추정 불확실성 등)를 감안한 보수적 가산값. Basel IRB에서 MoC 산출 및 적용 문서화는 규제 필수 요건.</p>
+<div class="review-item">
+<p><span class="review-badge">5</span>
+  <span class="review-title">최종 Rating Master Table 완성</span></p>
+</div>
+<p>등급, 점수범위, 캘리브레이션 PD(TTC+MoC), 개발샘플 실측 부도율, OOT 실측 부도율, 샘플 수, 불량 수를 포함한 종합 테이블 작성.</p>
+<hr>
+<h3 id="rating-master-table">Rating Master Table 예시<a class="headerlink" href="#rating-master-table" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>등급</th>
+<th>점수 범위</th>
+<th>샘플 수</th>
+<th>불량 수</th>
+<th>실측 Bad Rate</th>
+<th>TTC PD</th>
+<th>MoC 가산</th>
+<th>최종 PD</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1</strong></td>
+<td>750 이상</td>
+<td>2,850</td>
+<td>2</td>
+<td>0.07%</td>
+<td>0.08%</td>
+<td>0.02%</td>
+<td><strong>0.10%</strong></td>
+</tr>
+<tr>
+<td><strong>2</strong></td>
+<td>720~749</td>
+<td>3,120</td>
+<td>5</td>
+<td>0.16%</td>
+<td>0.18%</td>
+<td>0.04%</td>
+<td><strong>0.22%</strong></td>
+</tr>
+<tr>
+<td><strong>3</strong></td>
+<td>690~719</td>
+<td>4,210</td>
+<td>15</td>
+<td>0.36%</td>
+<td>0.40%</td>
+<td>0.08%</td>
+<td><strong>0.48%</strong></td>
+</tr>
+<tr>
+<td><strong>4</strong></td>
+<td>660~689</td>
+<td>5,480</td>
+<td>38</td>
+<td>0.69%</td>
+<td>0.75%</td>
+<td>0.13%</td>
+<td><strong>0.88%</strong></td>
+</tr>
+<tr>
+<td><strong>5</strong></td>
+<td>630~659</td>
+<td>6,320</td>
+<td>82</td>
+<td>1.30%</td>
+<td>1.40%</td>
+<td>0.22%</td>
+<td><strong>1.62%</strong></td>
+</tr>
+<tr>
+<td><strong>6</strong></td>
+<td>600~629</td>
+<td>5,910</td>
+<td>142</td>
+<td>2.40%</td>
+<td>2.60%</td>
+<td>0.38%</td>
+<td><strong>2.98%</strong></td>
+</tr>
+<tr>
+<td><strong>7</strong></td>
+<td>570~599</td>
+<td>4,650</td>
+<td>186</td>
+<td>4.00%</td>
+<td>4.30%</td>
+<td>0.55%</td>
+<td><strong>4.85%</strong></td>
+</tr>
+<tr>
+<td><strong>8</strong></td>
+<td>540~569</td>
+<td>3,280</td>
+<td>197</td>
+<td>6.00%</td>
+<td>6.40%</td>
+<td>0.75%</td>
+<td><strong>7.15%</strong></td>
+</tr>
+<tr>
+<td><strong>9</strong></td>
+<td>510~539</td>
+<td>2,140</td>
+<td>193</td>
+<td>9.02%</td>
+<td>9.50%</td>
+<td>1.00%</td>
+<td><strong>10.50%</strong></td>
+</tr>
+<tr>
+<td><strong>10</strong></td>
+<td>510 미만</td>
+<td>1,520</td>
+<td>228</td>
+<td>15.00%</td>
+<td>16.00%</td>
+<td>1.50%</td>
+<td><strong>17.50%</strong></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition example">
+<p class="admonition-title">CB사 참고 — NICE·KCB 신용등급 체계</p>
+<p><strong>NICE평가정보</strong>는 개인 신용점수를 1~1,000점 범위로 산출하며 이를 1~10등급으로 매핑한다. 2021년 신용평가 체계 개편 이후 1~3등급(우량)에 전체 인구의 약 70%, 7~10등급(고위험)에 약 5% 이하가 분포하는 구조다. 기업 신용등급은 AAA~D까지 10단계 + 세분화(+/−) 체계로 운영된다.</p>
+<p><strong>KCB(코리아크레딧뷰로)</strong> 역시 1~1,000점 체계를 사용하며, 등급 경계점(Cut-off)은 NICE와 상이하다. 양사 모두 등급별 PD 단조성을 유지하며, 최소 연 1회 이상 모형 성능 모니터링(KS·AR·PSI) 및 등급 재조정을 수행한다.</p>
+<p></p><div class="source-ref">출처: NICE평가정보 '개인신용평가 방법론 공시'(2023), KCB '신용평가모형 운영기준 공시'(2023), 금융위원회 '신용정보법 시행령 개정안'(2020)</div><p></p>
+</div>
+<h3 id="override-notching">Override와 Notching — 정성적 조정<a class="headerlink" href="#override-notching" title="Permanent link">¶</a></h3>
+<p>정량 모형 평점이 모든 신용 판단을 완벽히 반영하지는 못한다. 심사역은 정량 평점을 기준으로 정성적 요소를 반영하여 등급을 상하향 조정(Notching)할 수 있다.</p>
+<table>
+<thead>
+<tr>
+<th>구분</th>
+<th>내용</th>
+<th>실무 기준</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Override 상향</strong></td>
+<td>모형 평점보다 우수하다고 판단하여 등급 상향</td>
+<td>통상 최대 +1~2등급. 사유 문서화 필수.</td>
+</tr>
+<tr>
+<td><strong>Override 하향</strong></td>
+<td>모형 평점보다 위험하다고 판단하여 등급 하향</td>
+<td>통상 최대 −2~3등급. 부정적 정성 정보 명기.</td>
+</tr>
+<tr>
+<td><strong>Hard Floor</strong></td>
+<td>연체 이력, 소송 중, 특수관계인 등 특정 조건에 해당 시 모형 평점 무관하게 최저 등급 제한</td>
+<td>금융당국 지침 또는 내부 심사 정책으로 설정.</td>
+</tr>
+<tr>
+<td><strong>Override Rate 관리</strong></td>
+<td>전체 심사 건 중 Override 비율 관리. 과도한 Override는 모형 신뢰도 저하 신호.</td>
+<td>통상 Override Rate 20~30% 이하 권고.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">Basel IRB Override 요건 (BCBS 128 문단 426)</p>
+<p>Override 발생 시 사유, 방향, 심사역 정보를 반드시 기록하고 주기적으로 Override 패턴을 분석해야 한다. Override Rate가 지속적으로 높다면 모형 자체의 재보정(Recalibration) 또는 재개발 필요성을 검토해야 한다.</p>
+</div>
+<h3 id="_11">등급별 여신 정책 연계<a class="headerlink" href="#_11" title="Permanent link">¶</a></h3>
+<p>Rating Master Table이 완성되면 각 등급에 여신 정책(승인 기준, 한도, 금리 가산)을 연계한다.</p>
+<table>
+<thead>
+<tr>
+<th>등급</th>
+<th>최종 PD</th>
+<th>여신 승인 정책 예시</th>
+<th>금리 가산 예시</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1~3등급</td>
+<td>0.5% 이하</td>
+<td>자동승인 또는 간이심사</td>
+<td>기준금리 + 0.5~1.0%</td>
+</tr>
+<tr>
+<td>4~6등급</td>
+<td>0.5~3%</td>
+<td>일반심사, 조건부 승인 검토</td>
+<td>기준금리 + 1.0~2.5%</td>
+</tr>
+<tr>
+<td>7~8등급</td>
+<td>3~8%</td>
+<td>심층심사, 담보·보증 요건 강화</td>
+<td>기준금리 + 2.5~4.0%</td>
+</tr>
+<tr>
+<td>9~10등급</td>
+<td>8% 이상</td>
+<td>원칙적 거절, 예외승인 시 위원회 심의</td>
+<td>적용 불가 또는 별도 협의</td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden="">
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"></path></svg>
+  맨위로
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      © 정승욱 · 본 자료의 무단 복제·전재·배포를 금합니다. 인용 시 출처를 명시해 주세요.
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.indexes", "toc.integrate", "search.suggest", "search.highlight", "content.code.copy", "content.tabs.link"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\ud074\ub9bd\ubcf4\ub4dc\uc5d0 \ubcf5\uc0ac\ub428", "clipboard.copy": "\ud074\ub9bd\ubcf4\ub4dc\ub85c \ubcf5\uc0ac", "search.result.more.one": "\uc774 \ubb38\uc11c\uc5d0\uc11c 1\uac1c\uc758 \uac80\uc0c9 \uacb0\uacfc \ub354 \ubcf4\uae30", "search.result.more.other": "\uc774 \ubb38\uc11c\uc5d0\uc11c #\uac1c\uc758 \uac80\uc0c9 \uacb0\uacfc \ub354 \ubcf4\uae30", "search.result.none": "\uac80\uc0c9\uc5b4\uc640 \uc77c\uce58\ud558\ub294 \ubb38\uc11c\uac00 \uc5c6\uc2b5\ub2c8\ub2e4", "search.result.one": "1\uac1c\uc758 \uc77c\uce58\ud558\ub294 \ubb38\uc11c", "search.result.other": "#\uac1c\uc758 \uc77c\uce58\ud558\ub294 \ubb38\uc11c", "search.result.placeholder": "\uac80\uc0c9\uc5b4\ub97c \uc785\ub825\ud558\uc138\uc694", "search.result.term.missing": "\ud3ec\ud568\ub418\uc9c0 \uc54a\uc740 \uac80\uc0c9\uc5b4", "select.version": "\ubc84\uc804 \uc120\ud0dd"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../../../javascripts/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+        <script src="../../../javascripts/dropdown-nav.js"></script>
+      
+    
+  
+<script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(()=>{ lightbox.reload(); });
+</script></body></html>
