@@ -159,6 +159,9 @@
 .md-typeset table thead th code {
   color: #fff !important;
 }
+.md-typeset table thead th code {
+  background: rgba(255, 255, 255, 0.18);
+}
 
 .md-typeset table:not([class]) td {
   padding: 0.7em 1.1em;

@@ -9,6 +9,30 @@
          <lastmod>2026-04-02</lastmod>
     </url>
     <url>
+         <loc>https://aigoldpig.github.io/credit-scoring-guidebook/ml/appendix/</loc>
+         <lastmod>2026-04-02</lastmod>
+    </url>
+    <url>
+         <loc>https://aigoldpig.github.io/credit-scoring-guidebook/ml/appendix/shap-fanova/</loc>
+         <lastmod>2026-04-02</lastmod>
+    </url>
+    <url>
+         <loc>https://aigoldpig.github.io/credit-scoring-guidebook/ml/appendix/shap-fanova/functional-anova/</loc>
+         <lastmod>2026-04-02</lastmod>
+    </url>
+    <url>
+         <loc>https://aigoldpig.github.io/credit-scoring-guidebook/ml/appendix/shap-fanova/non-identifiability/</loc>
+         <lastmod>2026-04-02</lastmod>
+    </url>
+    <url>
+         <loc>https://aigoldpig.github.io/credit-scoring-guidebook/ml/appendix/shap-fanova/purification/</loc>
+         <lastmod>2026-04-02</lastmod>
+    </url>
+    <url>
+         <loc>https://aigoldpig.github.io/credit-scoring-guidebook/ml/appendix/shap-fanova/shap-vs-fanova/</loc>
+         <lastmod>2026-04-02</lastmod>
+    </url>
+    <url>
          <loc>https://aigoldpig.github.io/credit-scoring-guidebook/ml/part1_overview/</loc>
          <lastmod>2026-04-02</lastmod>
     </url>
@@ -137,79 +161,75 @@
          <lastmod>2026-04-02</lastmod>
     </url>
     <url>
-         <loc>https://aigoldpig.github.io/credit-scoring-guidebook/scorecard/appendix/dummy-entry/</loc>
-         <lastmod>2026-04-02</lastmod>
-    </url>
-    <url>
          <loc>https://aigoldpig.github.io/credit-scoring-guidebook/scorecard/appendix/glossary/</loc>
          <lastmod>2026-04-02</lastmod>
     </url>
     <url>
-         <loc>https://aigoldpig.github.io/credit-scoring-guidebook/scorecard/appendix/logistic-fitting-index/</loc>
+         <loc>https://aigoldpig.github.io/credit-scoring-guidebook/scorecard/appendix/logistic-fitting/</loc>
          <lastmod>2026-04-02</lastmod>
     </url>
     <url>
-         <loc>https://aigoldpig.github.io/credit-scoring-guidebook/scorecard/appendix/lowess-application/</loc>
+         <loc>https://aigoldpig.github.io/credit-scoring-guidebook/scorecard/appendix/logistic-fitting/dummy-entry/</loc>
          <lastmod>2026-04-02</lastmod>
     </url>
     <url>
-         <loc>https://aigoldpig.github.io/credit-scoring-guidebook/scorecard/appendix/lowess-architecture/</loc>
+         <loc>https://aigoldpig.github.io/credit-scoring-guidebook/scorecard/appendix/logistic-fitting/score-wald-lr-test/</loc>
          <lastmod>2026-04-02</lastmod>
     </url>
     <url>
-         <loc>https://aigoldpig.github.io/credit-scoring-guidebook/scorecard/appendix/lowess-effects/</loc>
+         <loc>https://aigoldpig.github.io/credit-scoring-guidebook/scorecard/appendix/logistic-fitting/stepwise/</loc>
          <lastmod>2026-04-02</lastmod>
     </url>
     <url>
-         <loc>https://aigoldpig.github.io/credit-scoring-guidebook/scorecard/appendix/lowess-index/</loc>
+         <loc>https://aigoldpig.github.io/credit-scoring-guidebook/scorecard/appendix/logistic-fitting/woe-dummy-deep-dive/</loc>
          <lastmod>2026-04-02</lastmod>
     </url>
     <url>
-         <loc>https://aigoldpig.github.io/credit-scoring-guidebook/scorecard/appendix/lowess-intro/</loc>
+         <loc>https://aigoldpig.github.io/credit-scoring-guidebook/scorecard/appendix/logistic-fitting/woe-entry/</loc>
          <lastmod>2026-04-02</lastmod>
     </url>
     <url>
-         <loc>https://aigoldpig.github.io/credit-scoring-guidebook/scorecard/appendix/lowess-riskcalc/</loc>
+         <loc>https://aigoldpig.github.io/credit-scoring-guidebook/scorecard/appendix/lowess/</loc>
          <lastmod>2026-04-02</lastmod>
     </url>
     <url>
-         <loc>https://aigoldpig.github.io/credit-scoring-guidebook/scorecard/appendix/optbinning-index/</loc>
+         <loc>https://aigoldpig.github.io/credit-scoring-guidebook/scorecard/appendix/lowess/application/</loc>
          <lastmod>2026-04-02</lastmod>
     </url>
     <url>
-         <loc>https://aigoldpig.github.io/credit-scoring-guidebook/scorecard/appendix/optbinning-optimizer/</loc>
+         <loc>https://aigoldpig.github.io/credit-scoring-guidebook/scorecard/appendix/lowess/architecture/</loc>
          <lastmod>2026-04-02</lastmod>
     </url>
     <url>
-         <loc>https://aigoldpig.github.io/credit-scoring-guidebook/scorecard/appendix/optbinning-overview/</loc>
+         <loc>https://aigoldpig.github.io/credit-scoring-guidebook/scorecard/appendix/lowess/effects/</loc>
          <lastmod>2026-04-02</lastmod>
     </url>
     <url>
-         <loc>https://aigoldpig.github.io/credit-scoring-guidebook/scorecard/appendix/optbinning-params/</loc>
+         <loc>https://aigoldpig.github.io/credit-scoring-guidebook/scorecard/appendix/lowess/intuition/</loc>
          <lastmod>2026-04-02</lastmod>
     </url>
     <url>
-         <loc>https://aigoldpig.github.io/credit-scoring-guidebook/scorecard/appendix/optbinning-pipeline/</loc>
+         <loc>https://aigoldpig.github.io/credit-scoring-guidebook/scorecard/appendix/lowess/riskcalc/</loc>
          <lastmod>2026-04-02</lastmod>
     </url>
     <url>
-         <loc>https://aigoldpig.github.io/credit-scoring-guidebook/scorecard/appendix/optbinning-table-woe/</loc>
+         <loc>https://aigoldpig.github.io/credit-scoring-guidebook/scorecard/appendix/optbinning/</loc>
          <lastmod>2026-04-02</lastmod>
     </url>
     <url>
-         <loc>https://aigoldpig.github.io/credit-scoring-guidebook/scorecard/appendix/score-wald-lr-test/</loc>
+         <loc>https://aigoldpig.github.io/credit-scoring-guidebook/scorecard/appendix/optbinning/optimizer/</loc>
          <lastmod>2026-04-02</lastmod>
     </url>
     <url>
-         <loc>https://aigoldpig.github.io/credit-scoring-guidebook/scorecard/appendix/stepwise/</loc>
+         <loc>https://aigoldpig.github.io/credit-scoring-guidebook/scorecard/appendix/optbinning/params/</loc>
          <lastmod>2026-04-02</lastmod>
     </url>
     <url>
-         <loc>https://aigoldpig.github.io/credit-scoring-guidebook/scorecard/appendix/woe-entry/</loc>
+         <loc>https://aigoldpig.github.io/credit-scoring-guidebook/scorecard/appendix/optbinning/pipeline/</loc>
          <lastmod>2026-04-02</lastmod>
     </url>
     <url>
-         <loc>https://aigoldpig.github.io/credit-scoring-guidebook/scorecard/appendix/woe-vs-dummy/</loc>
+         <loc>https://aigoldpig.github.io/credit-scoring-guidebook/scorecard/appendix/optbinning/table-woe/</loc>
          <lastmod>2026-04-02</lastmod>
     </url>
     <url>
