@@ -1,0 +1,190 @@
+site_name: "신용평가모형(Credit Scoring System) 가이드북"
+site_url: "https://aigoldpig.github.io/credit-scoring-guidebook/"
+site_author: "정승욱"
+
+theme:
+  name: material
+  language: ko
+  icon:
+    logo: material/chart-line
+  palette:
+    # 라이트 모드
+    - scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/brightness-7
+        name: 다크 모드로 전환
+    # 다크 모드
+    - scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/brightness-4
+        name: 라이트 모드로 전환
+  features:
+    - navigation.tabs           # 상단 탭 내비게이션 (큰 그룹별)
+    - navigation.tabs.sticky    # 스크롤해도 상단 탭 고정
+    - navigation.top            # 맨 위로 버튼
+    - navigation.indexes        # 섹션 인덱스 페이지
+    - toc.integrate             # 오른쪽 TOC를 왼쪽 사이드바에 통합
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.tabs.link         # 탭 동기화 (SAS/Python 탭)
+
+nav:
+  - Preface: index.md
+  # ── 전통 스코어카드 ──
+  - Traditional Scorecard:
+    - scorecard/index.md
+    - "1. 개요":
+      - scorecard/part1_overview/index.md
+      - 1. CSS란 · 모형 분류: scorecard/part1_overview/what-is-css.md
+      - 2. 분류가 아닌 서열화: scorecard/part1_overview/ranking-not-classification.md
+      - 3. 요건 정의: scorecard/part1_overview/requirements.md
+      - 4. 변수 선정: scorecard/part1_overview/x-variables.md
+      - 5. 모델링: scorecard/part1_overview/model-fitting.md
+      - 6. 스코어와 의사결정: scorecard/part1_overview/output-and-usage.md
+      - 7. 개발 파이프라인: scorecard/part1_overview/development-process.md
+    - "2. 이론":
+      - scorecard/part2_theory/index.md
+      - 1. 문제 정의: scorecard/part2_theory/binary-classification.md
+      - 2. Logit 변환: scorecard/part2_theory/logit-transform.md
+      - 3. MLE: scorecard/part2_theory/mle.md
+    - "3. 변수 선정":
+      - scorecard/part3_variable_selection/index.md
+      - Classing:
+        - scorecard/part3_variable_selection/classing/index.md
+        - 1. 왜 Classing인가: scorecard/part3_variable_selection/classing/why-classing.md
+        - 2. Fine Classing: scorecard/part3_variable_selection/classing/fine-classing.md
+        - 3. Coarse Classing: scorecard/part3_variable_selection/classing/coarse-classing.md
+        - 4. 의사결정 기준 종합: scorecard/part3_variable_selection/classing/decision-criteria.md
+      - WoE / IV:
+        - scorecard/part3_variable_selection/woe_iv/index.md
+        - 1. WoE: scorecard/part3_variable_selection/woe_iv/woe.md
+        - 2. WoE 공간 변환: scorecard/part3_variable_selection/woe_iv/woe-transform.md
+        - 3. IV: scorecard/part3_variable_selection/woe_iv/iv.md
+      - 단변량 로지스틱 회귀:
+        - scorecard/part3_variable_selection/univariate_lr/index.md
+        - 1. 개념과 목적: scorecard/part3_variable_selection/univariate_lr/concept.md
+        - 2. One-Hot + No Intercept: scorecard/part3_variable_selection/univariate_lr/one-hot-no-intercept.md
+        - "3. β ≈ −WoE 증명": scorecard/part3_variable_selection/univariate_lr/beta-woe-proof.md
+        - 4. 유의성 검정: scorecard/part3_variable_selection/univariate_lr/significance-test.md
+        - 5. Classing 피드백 루프: scorecard/part3_variable_selection/univariate_lr/feedback-loop.md
+      - 정보영역별 변수 선정:
+        - scorecard/part3_variable_selection/domain_selection/index.md
+        - 1. 영역 내 Partial LR: scorecard/part3_variable_selection/domain_selection/partial-lr.md
+        - 2. β 부호 이상과 범주 재조정: scorecard/part3_variable_selection/domain_selection/sign-feedback.md
+    - "4. 모델링":
+      - scorecard/part4_modeling/index.md
+      - 1. Simple LR vs Full Model: scorecard/part4_modeling/simple-vs-full.md
+      - 2. 다변량 회귀: scorecard/part4_modeling/multivariate-regression.md
+    - "5. 스코어카드":
+      - scorecard/part5_scorecard/index.md
+      - 1. 스코어카드 변환 & 등급화: scorecard/part5_scorecard/scorecard-and-rating.md
+      - 2. 성능 평가 (KS·AR·Gini): scorecard/part5_scorecard/performance-ks-ar-gini.md
+      - 3. OOT 검증: scorecard/part5_scorecard/oot-validation.md
+      - 4. 모형 모니터링과 운영: scorecard/part5_scorecard/monitoring-and-operations.md
+      - 5. 규제 프레임워크: scorecard/part5_scorecard/regulatory-framework.md
+    - 부록:
+      - scorecard/appendix/index.md
+      - "A. optbinning 실무 가이드":
+        - scorecard/appendix/optbinning-index.md
+        - 1. 개요와 Pre-binning: scorecard/appendix/optbinning-overview.md
+        - 2. 최적화 엔진: scorecard/appendix/optbinning-optimizer.md
+        - 3. 핵심 파라미터 상세: scorecard/appendix/optbinning-params.md
+        - 4. Binning Table과 WoE 변환: scorecard/appendix/optbinning-table-woe.md
+        - 5. 다변량 처리와 Scorecard: scorecard/appendix/optbinning-pipeline.md
+      - "B. 로지스틱 적합 비교":
+        - scorecard/appendix/logistic-fitting-index.md
+        - 1. 두 방식 비교: scorecard/appendix/woe-vs-dummy.md
+        - 2. WoE 직접 투입: scorecard/appendix/woe-entry.md
+        - 3. 더미 변수 방식: scorecard/appendix/dummy-entry.md
+        - 4. Stepwise 변수 선택: scorecard/appendix/stepwise.md
+        - 5. 통계 검정 이론: scorecard/appendix/score-wald-lr-test.md
+      - "C. LOWESS 기반 미니모델링":
+        - scorecard/appendix/lowess-index.md
+        - 1. 정의와 LOWESS 기초: scorecard/appendix/lowess-intro.md
+        - 2. RiskCalc 프로세스와 사상: scorecard/appendix/lowess-riskcalc.md
+        - 3. 실증적 근거와 비율별 변환: scorecard/appendix/lowess-effects.md
+        - 4. 3단계 모델 아키텍처: scorecard/appendix/lowess-architecture.md
+        - 5. 실무 활용과 한계: scorecard/appendix/lowess-application.md
+      - "D. 기호 용어집":
+        - scorecard/appendix/glossary.md
+  # ── 머신러닝 ──
+  - 머신러닝:
+    - ml/index.md
+    - "1. ML 기초":
+      - ml/part1_overview/index.md
+      - 1. 왜 ML인가: ml/part1_overview/why_ml.md
+      - 2. Bias-Variance Tradeoff: ml/part1_overview/bias_variance.md
+      - 3. 정규화 — Ridge · Lasso · Shrinkage: ml/part1_overview/regularization.md
+      - 4. Baseline 워크플로우: ml/part1_overview/baseline_workflow.md
+      - 5. 데이터 분리 전략: ml/part1_overview/data_splitting.md
+      - 6. 피처 전처리: ml/part1_overview/feature_preprocessing.md
+      - 7. 피처 선택 · 파생변수: ml/part1_overview/feature_selection.md
+    - "2. 뉴럴넷":
+      - ml/part2_neural_net/index.md
+      - 1. 신경망 기초: ml/part2_neural_net/nn_basics.md
+      - 2. LR = 단일 뉴런: ml/part2_neural_net/lr_as_nn.md
+      - 3. TabNet: ml/part2_neural_net/tabnet.md
+      - 4. CNN · RNN: ml/part2_neural_net/rnn_tabular.md
+    - "3. 트리 앙상블":
+      - ml/part3_tree_ensemble/index.md
+      - 1. 트리 기반 모델: ml/part3_tree_ensemble/tree_models.md
+      - 2. 앙상블 — Bagging과 RF: ml/part3_tree_ensemble/ensemble.md
+      - 3. 트리에서의 Bias-Variance: ml/part3_tree_ensemble/bias_variance_trees.md
+      - 4. Boosting 기초: ml/part3_tree_ensemble/boosting_fundamentals.md
+      - 5. Boosting 심화: ml/part3_tree_ensemble/boosting_advanced.md
+      - 6. XGBoost와 LightGBM: ml/part3_tree_ensemble/xgb_lgbm.md
+      - 7. 하이퍼파라미터 튜닝: ml/part3_tree_ensemble/hyperparameter_tuning.md
+    - "4. 해석과 설명":
+      - ml/part4_evaluation/index.md
+      - 1. 해석 가능성: ml/part4_evaluation/interpretability.md
+      - 2. SHAP — 해석의 여정: ml/part4_evaluation/shap_in_practice.md
+      - 3. Surrogate Model: ml/part4_evaluation/surrogate_model.md
+      - 4. 해석 가능한 ML — 1-Depth GBM과 EBM: ml/part4_evaluation/depth1_gbm.md
+      - 5. 도구 · 구현 · 요약: ml/part4_evaluation/depth1_tools_impl.md
+    - "5. 모델 검증":
+      - ml/part5_validation/index.md
+      - 1. 모델 검증과 모니터링: ml/part5_validation/validation.md
+      - 2. 규제 프레임워크: ml/part5_validation/regulatory.md
+
+plugins:
+  - search
+  - glightbox:                    # 이미지 클릭 시 라이트박스 확대
+      touchNavigation: true
+      loop: false
+      slide_effect: slide
+      width: "100%"
+      height: auto
+      zoomable: true
+      draggable: true
+
+markdown_extensions:
+  - pymdownx.arithmatex:        # MathJax 수식
+      generic: true
+  - admonition                  # callout 박스
+  - pymdownx.details            # 접기/펼치기
+  - pymdownx.superfences        # 코드 블록 확장
+  - pymdownx.tabbed:            # 탭 (SAS/Python 병기용)
+      alternate_style: true
+  - footnotes                    # 각주 [^1] 문법
+  - tables                      # 테이블
+  - attr_list                   # 속성 리스트
+  - md_in_html                  # HTML 내 Markdown (병합 셀 표 대응)
+  - pymdownx.caret              # ^윗첨자^ 문법
+  - toc:
+      permalink: true
+      toc_depth: 2
+
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
+  - javascripts/dropdown-nav.js
+
+extra_css:
+  - stylesheets/extra.css
+
+copyright: "© 정승욱 · 본 자료의 무단 복제·전재·배포를 금합니다. 인용 시 출처를 명시해 주세요."
