@@ -15,7 +15,7 @@
 
     미니모델링의 변환곡선은 이 방대한 데이터로부터 추정된다.
 
-    <div class="source-ref">출처: Moody's Analytics, RiskCalc 모델 개요</div>
+    <div class="source-ref">출처: <a href="https://www.moodys.com/sites/products/productattachments/riskcalc%203.1%20whitepaper.pdf" target="_blank">Moody's KMV EDF RiskCalc v3.1 Whitepaper (2004)</a>, <a href="https://www.moodys.com/sites/products/productattachments/ma_riskcalc_factsheet.pdf" target="_blank">RiskCalc Factsheet</a></div>
 
 ### 내부등급법(IRB) 준거
 
@@ -117,7 +117,7 @@ CPS 항목은 이산적 값 자체가 **자연스러운 범주**가 된다 (0건
 국내 은행이 내부등급법 정교화를 위해 LOWESS 기반 미니모델링을 도입할 경우, **비선형 포착력과 모형 투명성 간의 균형**이라는 이점이 있다. 다만:
 
 - 국내 부도 데이터의 절대적 규모가 Moody's CRD 대비 제한적이므로, **대역폭(bandwidth) 선택 시 과적합 위험**에 대한 별도의 검토가 필요하다
-- 금융위원회의 **AI 기반 신용평가모형 검증체계(2023년 마련)**에서 요구하는 알고리즘 설명 가능성 기준과의 정합성도 확인해야 한다
+- 금융위원회의 **[AI 기반 신용평가모형 검증체계](https://www.fsc.go.kr/no010101/79825)**(2023년 마련)에서 요구하는 알고리즘 설명 가능성 기준과의 정합성도 확인해야 한다
 
 ---
 

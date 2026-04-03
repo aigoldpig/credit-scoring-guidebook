@@ -19,7 +19,7 @@
 | 2 | [성능 평가 (KS·AR·Gini)](performance-ks-ar-gini.md) | KS, AR, Gini, PSI로 모형을 어떻게 검증하는가? |
 | 3 | [OOT 검증](oot-validation.md) | 미래 데이터에서도 모형이 유효한지 어떻게 확인하는가? |
 | 4 | [모형 모니터링과 운영](monitoring-and-operations.md) | 배포 후 성능 열화를 어떻게 감지하고 대응하는가? |
-| 5 | [규제 프레임워크](regulatory-framework.md) | SR 11-7, Basel IRB, 금감원 가이드라인의 요구사항은? |
+| 5 | [규제 프레임워크](regulatory-framework.md) | SR 11-7, Basel IRB, 국내 규제의 요구사항은? |
 
 !!! info "Odds 방향: Good Odds"
     스코어카드 변환부터는 **Good Odds** \((1-p)/p\)를 사용한다. 점수가 높을수록 우량 고객임을 의미하도록 설계하기 위함이다.
