@@ -66,7 +66,7 @@
 
 /* ── 본문 우측 여백 (사이드바와 대칭) ── */
 .md-content {
-  margin-right: 11rem;
+  margin-right: 3rem;
 }
 
 /* ── 타이포그래피 ── */
@@ -511,11 +511,16 @@ mjx-container[display="true"] {
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
-/* 머신러닝 탭 왼쪽 구분선 */
+/* 드롭다운 탭 간격 (구분선 없음) */
 .md-tabs__item--dropdown + .md-tabs__item--dropdown {
   margin-left: 1.2rem;
-  padding-left: 1.2rem;
-  border-left: 1px solid rgba(255, 255, 255, 0.25);
+  padding-left: 0;
+  border-left: none;
+}
+
+/* ── 여신 프로세스 카드 배지 색상 (그린) ── */
+.card--lending .card-part {
+  background: #1bb76e;
 }
 
 /* ── ML 카드 배지 색상 (퍼플) ── */
@@ -552,6 +557,10 @@ mjx-container[display="true"] {
 
 .card-section-header .section-badge--ml {
   background: #8b5cf6;
+}
+
+.card-section-header .section-badge--lending {
+  background: #1bb76e;
 }
 
 .card-section-header .section-badge--appendix {

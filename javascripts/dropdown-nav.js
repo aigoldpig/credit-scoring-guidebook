@@ -41,6 +41,20 @@
         { text: "5. 모델 검증", path: "ml/part5_validation/" },
         { text: "부록", path: "ml/appendix/" }
       ]
+    },
+    {
+      label: "여신 프로세스",
+      sublabel: "Lending Process",
+      indexPath: "lending_process/",
+      tabMatches: ["여신 프로세스", "① 모형 개발", "② 심사·승인", "③ 사후 관리", "④ 부실·추심", "⑤ 리스크·규제", "용어 정리"],
+      items: [
+        { text: "① 모형 개발", path: "lending_process/model-development/" },
+        { text: "② 심사·승인", path: "lending_process/underwriting/" },
+        { text: "③ 사후 관리", path: "lending_process/portfolio-mgmt/" },
+        { text: "④ 부실·추심", path: "lending_process/collection/" },
+        { text: "⑤ 리스크·규제", path: "lending_process/risk-regulation/" },
+        { text: "용어 정리", path: "lending_process/terms/" }
+      ]
     }
   ];
 
