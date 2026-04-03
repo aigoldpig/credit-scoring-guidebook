@@ -12,7 +12,9 @@ title: "PD (Probability of Default)"
 
 ## PD의 네 가지 층위
 
-![PD의 네 가지 층위](images/pd_hierarchy.png)
+<div style="max-width:560px; margin:0 auto;" markdown>
+![](images/pd_hierarchy.png)
+</div>
 
 ---
 

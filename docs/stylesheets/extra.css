@@ -923,3 +923,10 @@ mjx-container[display="true"] {
     overflow-x: auto;
   }
 }
+
+/* ── 모바일 드로어: 헤더에 가리지 않도록 상단 여백 ── */
+@media screen and (max-width: 76.25em) {
+  .md-sidebar--primary .md-sidebar__scrollwrap {
+    top: 3rem;
+  }
+}
