@@ -157,6 +157,19 @@ nav:
         - 2. Functional ANOVA: ml/appendix/shap-fanova/functional-anova.md
         - 3. Purification: ml/appendix/shap-fanova/purification.md
         - 4. SHAP vs fANOVA: ml/appendix/shap-fanova/shap-vs-fanova.md
+  # ── 여신 프로세스 ──
+  - 여신 프로세스:
+    - lending_process/index.md
+    - ① 모형 개발: lending_process/model-development.md
+    - ② 심사·승인: lending_process/underwriting.md
+    - ③ 사후 관리: lending_process/portfolio-mgmt.md
+    - ④ 부실·추심: lending_process/collection.md
+    - ⑤ 리스크·규제: lending_process/risk-regulation.md
+    - 용어 정리:
+      - lending_process/terms/index.md
+      - PD: lending_process/terms/pd.md
+      - LGD: lending_process/terms/lgd.md
+      - EAD: lending_process/terms/ead.md
 
 plugins:
   - search
