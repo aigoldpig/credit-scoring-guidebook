@@ -4833,18 +4833,21 @@
 <p>이 페이지는 현재 작성 중입니다.</p>
 </div>
 <hr>
-<p><a href="../non-identifiability/">1절</a>에서 확인한 것처럼, 제약 없이는 하나의 함수를 무한히 많은 방식으로 분해할 수 있다. Functional ANOVA(fANOVA)는 <strong>수학적 제약 조건을 부과하여 분해를 유일하게 결정</strong>하는 프레임워크다.</p>
+<p><a href="../non-identifiability/">1절</a>에서 확인한 것처럼, 제약 없이는 하나의 함수를 무한히 많은 방식으로 분해할 수 있고, 분해마다 해석이 달라진다. 그러면 <strong>제약을 걸어서 분해를 하나로 고정</strong>하면 되지 않을까? Functional ANOVA(fANOVA)가 바로 그것이다 — 수학적 제약 조건을 부과하여 분해를 <strong>유일하게</strong> 결정하는 프레임워크다.</p>
+<p>이 절에서는 fANOVA의 분해 공식이 실제로 무엇을 계산하는지, 1절의 XOR 예시에 직접 적용해보면서 확인한다. 그런 다음, 유일성을 보장하는 세 가지 제약 조건과 그 핵심인 Integrate-to-Zero 조건을 알아본다.</p>
 <h2 id="_1">분해의 정의<a class="headerlink" href="#_1" title="Permanent link">¶</a></h2>
 <p>임의의 함수 <span class="arithmatex">\(\hat{f}(\mathbf{x})\)</span>를 <strong>모든 변수 부분집합의 효과 합</strong>으로 분해한다:</p>
 <div class="arithmatex">\[
 \hat{f}(\mathbf{x}) = f_0 + \sum_{i} f_i(x_i) + \sum_{i &lt; j} f_{ij}(x_i, x_j) + \cdots + f_{1,\ldots,p}(x_1, \ldots, x_p)
 \tag{1}
 \]</div>
+<p>여기서 <span class="arithmatex">\(f_0\)</span>은 전체 평균(intercept), <span class="arithmatex">\(f_i\)</span>는 변수 <span class="arithmatex">\(i\)</span>의 주효과, <span class="arithmatex">\(f_{ij}\)</span>는 변수 <span class="arithmatex">\(i, j\)</span>의 2차 교호작용이다. 변수가 <span class="arithmatex">\(p\)</span>개이면 가능한 부분집합이 <span class="arithmatex">\(2^p\)</span>개이므로, 최대 <span class="arithmatex">\(2^p\)</span>개의 component가 존재한다.</p>
 <p>각 component <span class="arithmatex">\(f_S\)</span>는 <strong>재귀적으로</strong> 정의된다 (Hooker, 2004):</p>
 <div class="arithmatex">\[
 f_S(\mathbf{x}_S) = \int_{X_{-S}} \left( \hat{f}(\mathbf{x}) - \sum_{V \subset S} f_V(\mathbf{x}_V) \right) d\mathbb{P}(X_{-S})
 \]</div>
-<p>이 수식이 실제로 무엇을 하는지, 각 component별로 풀어서 보자:</p>
+<p>수식이 복잡해 보이지만, 하는 일은 두 단계다: <strong>(1)</strong> <span class="arithmatex">\(S\)</span>에 포함되지 않는 변수들(<span class="arithmatex">\(X_{-S}\)</span>)을 확률분포에 따라 적분(평균)해서 없앤다. <strong>(2)</strong> 이미 구해진 하위 component(<span class="arithmatex">\(f_V\)</span>, <span class="arithmatex">\(V \subset S\)</span>)를 뺀다. "하위 component"란 현재 구하려는 것보다 <strong>더 적은 수의 변수</strong>로 설명되는 효과를 말한다. 예를 들어 <span class="arithmatex">\(f_{12}\)</span>(2변수 효과)의 하위 component는 <span class="arithmatex">\(f_0\)</span>, <span class="arithmatex">\(f_1\)</span>, <span class="arithmatex">\(f_2\)</span>(0~1변수 효과)다.</p>
+<p>이 절차를 가장 단순한 것부터 차례로 풀면, 각 component가 무엇인지 명확해진다:</p>
 <table>
 <thead>
 <tr>
@@ -4857,41 +4860,53 @@ f_S(\mathbf{x}_S) = \int_{X_{-S}} \left( \hat{f}(\mathbf{x}) - \sum_{V \subset S
 <tr>
 <td>Intercept</td>
 <td><span class="arithmatex">\(f_0 = \mathbb{E}[\hat{f}(\mathbf{X})]\)</span></td>
-<td>전체 평균</td>
+<td>전체 평균. 모든 변수를 적분해서 없앤 값</td>
 </tr>
 <tr>
 <td>Main effect</td>
 <td><span class="arithmatex">\(f_1(x_1) = \mathbb{E}[\hat{f}(\mathbf{X}) \mid X_1 = x_1] - f_0\)</span></td>
-<td>나머지를 평균 낸 뒤, 전체 평균을 빼면 순수 효과</td>
+<td><span class="arithmatex">\(X_1\)</span>만 고정하고 나머지를 평균 낸 뒤, 전체 평균을 빼면 <span class="arithmatex">\(X_1\)</span>만의 <strong>순수 효과</strong></td>
 </tr>
 <tr>
 <td>2차 interaction</td>
 <td><span class="arithmatex">\(f_{12} = \mathbb{E}[\hat{f} \mid X_1, X_2] - f_1 - f_2 - f_0\)</span></td>
-<td>하위 효과를 다 빼면 순수 교호작용</td>
+<td>두 변수를 모두 고정했을 때의 값에서, 이미 설명된 효과(전체 평균 + 각각의 주효과)를 빼면 <strong>두 변수가 동시에 특정 조합일 때만 나타나는 효과</strong>가 남는다</td>
 </tr>
 </tbody>
 </table>
-<p>직관: <strong>나머지 변수를 적분(marginalize)해서 없앤 뒤, 이미 설명된 하위 효과를 빼면 해당 집합만의 순수 효과가 남는다.</strong></p>
+<p>핵심 원리: <strong>나머지 변수를 적분해서 없앤 뒤, 더 적은 수의 변수로 이미 설명된 효과를 빼면, 해당 변수 집합만의 순수 효과가 남는다.</strong> 이 "빼기"가 없으면 main effect와 교호작용이 뒤섞이는데, 그것이 1절에서 본 non-identifiability의 원인이었다.</p>
 <h3 id="xor">XOR 함수로 직접 계산해보기<a class="headerlink" href="#xor" title="Permanent link">¶</a></h3>
-<p><a href="../non-identifiability/">1절</a>에서 네 가지 분해를 보았던 XOR 함수에 fANOVA를 적용하자. 균등분포를 가정한다 (4가지 입력이 동일 확률).</p>
+<p>공식이 실제로 어떻게 작동하는지 확인하는 가장 좋은 방법은 직접 계산해보는 것이다. <a href="../non-identifiability/">1절</a>에서 네 가지 분해를 보았던 XOR 함수에 fANOVA를 적용하자. fANOVA가 1절의 네 분해와 <strong>다른</strong> 다섯 번째 분해를 내놓는다면, 그것이 유일한 정답이 된다.</p>
+<p>균등분포를 가정한다 (4가지 입력이 동일 확률 1/4).</p>
 <p>대상 함수: <span class="arithmatex">\(Y(0,0)=0,\; Y(0,1)=1,\; Y(1,0)=1,\; Y(1,1)=0\)</span></p>
 <p><strong>Intercept — 전체 평균:</strong></p>
+<p>가장 먼저 구하는 것은 <span class="arithmatex">\(f_0\)</span>이다. 모든 변수를 적분해서 없앤 값, 즉 <span class="arithmatex">\(Y\)</span>의 기대값이다:</p>
 <div class="arithmatex">\[
 f_0 = \mathbb{E}[Y] = \frac{0 + 1 + 1 + 0}{4} = 0.5
 \]</div>
 <p><strong>Main effect — 나머지를 평균 내고, 전체 평균을 뺀다:</strong></p>
+<p><span class="arithmatex">\(f_1(x_1)\)</span>을 구하려면, <span class="arithmatex">\(X_1\)</span>을 특정 값으로 고정한 상태에서 <span class="arithmatex">\(X_2\)</span>에 대해 평균을 내고, 방금 구한 전체 평균 <span class="arithmatex">\(f_0\)</span>을 뺀다. <span class="arithmatex">\(f_0\)</span>을 빼는 이유는, 전체 평균은 이미 intercept에 담겨 있으므로 main effect에서는 <strong>전체 평균을 초과하는 부분</strong>만 남겨야 하기 때문이다:</p>
 <div class="arithmatex">\[
-f_1(0) = \mathbb{E}[Y \mid X_1=0] - f_0 = \frac{0 + 1}{2} - 0.5 = 0
+f_1(0) = \mathbb{E}[Y \mid X_1=0] - f_0 = \frac{Y(0,0) + Y(0,1)}{2} - 0.5 = \frac{0 + 1}{2} - 0.5 = 0
 \]</div>
 <div class="arithmatex">\[
-f_1(1) = \mathbb{E}[Y \mid X_1=1] - f_0 = \frac{1 + 0}{2} - 0.5 = 0
+f_1(1) = \mathbb{E}[Y \mid X_1=1] - f_0 = \frac{Y(1,0) + Y(1,1)}{2} - 0.5 = \frac{1 + 0}{2} - 0.5 = 0
 \]</div>
-<p><span class="arithmatex">\(f_2\)</span>도 대칭적으로 <span class="arithmatex">\(f_2(0) = 0,\; f_2(1) = 0\)</span>.</p>
-<p>XOR에서는 <span class="arithmatex">\(X_1=0\)</span>의 평균 출력과 <span class="arithmatex">\(X_1=1\)</span>의 평균 출력이 동일하다 (둘 다 0.5). 따라서 main effect는 정확히 0이다. 이것은 <strong>XOR이 순수한 교호작용 함수</strong>라는 직관과 일치한다 — 변수 하나만으로는 출력을 예측할 수 없으니까.</p>
+<p><span class="arithmatex">\(f_2\)</span>도 같은 방식으로 구한다. <span class="arithmatex">\(X_2\)</span>를 고정하고 <span class="arithmatex">\(X_1\)</span>에 대해 평균을 낸다:</p>
+<div class="arithmatex">\[
+f_2(0) = \mathbb{E}[Y \mid X_2=0] - f_0 = \frac{Y(0,0) + Y(1,0)}{2} - 0.5 = \frac{0 + 1}{2} - 0.5 = 0
+\]</div>
+<div class="arithmatex">\[
+f_2(1) = \mathbb{E}[Y \mid X_2=1] - f_0 = \frac{Y(0,1) + Y(1,1)}{2} - 0.5 = \frac{1 + 0}{2} - 0.5 = 0
+\]</div>
+<p><span class="arithmatex">\(X_1\)</span>이든 <span class="arithmatex">\(X_2\)</span>든, 0일 때의 평균 출력과 1일 때의 평균 출력이 동일하다 (둘 다 0.5). 따라서 main effect는 정확히 0이다. 이것은 <strong>XOR이 순수한 교호작용 함수</strong>라는 직관과 일치한다 — 변수 하나만으로는 출력을 예측할 수 없으니까.</p>
 <p><strong>2차 교호작용 — 하위 효과를 모두 빼고 남은 것:</strong></p>
+<p>마지막으로 <span class="arithmatex">\(f_{12}\)</span>를 구한다. 원래 함수에서 intercept(<span class="arithmatex">\(f_0\)</span>)와 main effect(<span class="arithmatex">\(f_1, f_2\)</span>)로 <strong>이미 설명된 부분</strong>을 빼면, 두 변수가 동시에 특정 조합일 때만 나타나는 순수한 효과가 남는다:</p>
 <div class="arithmatex">\[
 f_{12}(x_1, x_2) = Y(x_1, x_2) - f_0 - f_1(x_1) - f_2(x_2)
 \]</div>
+<p>왜 빼는가? 빼지 않으면 <span class="arithmatex">\(f_{12}\)</span>에 main effect와 intercept가 중복으로 담긴다. 1절의 분해 ①이 정확히 이 경우였다 — <span class="arithmatex">\(f_{12}\)</span>가 <span class="arithmatex">\(Y\)</span> 자체였고, 그 안에 전체 평균 0.5가 그대로 들어 있었다.</p>
+<p>XOR에서는 <span class="arithmatex">\(f_1 = f_2 = 0\)</span>이므로, 전체 평균 0.5만 빼면 된다:</p>
 <table>
 <thead>
 <tr>
@@ -4903,18 +4918,19 @@ f_{12}(x_1, x_2) = Y(x_1, x_2) - f_0 - f_1(x_1) - f_2(x_2)
 <tbody>
 <tr>
 <td><span class="arithmatex">\(X_1=0\)</span></td>
-<td><span class="arithmatex">\(0 - 0.5 - 0 - 0 = \mathbf{-0.5}\)</span></td>
-<td><span class="arithmatex">\(1 - 0.5 - 0 - 0 = \mathbf{+0.5}\)</span></td>
+<td><span class="arithmatex">\(0 - 0.5 = \mathbf{-0.5}\)</span></td>
+<td><span class="arithmatex">\(1 - 0.5 = \mathbf{+0.5}\)</span></td>
 </tr>
 <tr>
 <td><span class="arithmatex">\(X_1=1\)</span></td>
-<td><span class="arithmatex">\(1 - 0.5 - 0 - 0 = \mathbf{+0.5}\)</span></td>
-<td><span class="arithmatex">\(0 - 0.5 - 0 - 0 = \mathbf{-0.5}\)</span></td>
+<td><span class="arithmatex">\(1 - 0.5 = \mathbf{+0.5}\)</span></td>
+<td><span class="arithmatex">\(0 - 0.5 = \mathbf{-0.5}\)</span></td>
 </tr>
 </tbody>
 </table>
+<p>읽는 법: <span class="arithmatex">\(f_{12} = +0.5\)</span>인 칸(서로 다른 조합: 0-1, 1-0)은 평균보다 <strong>높고</strong>, <span class="arithmatex">\(f_{12} = -0.5\)</span>인 칸(같은 조합: 0-0, 1-1)은 평균보다 <strong>낮다.</strong> XOR의 "서로 달라야 1"이라는 패턴이 교호작용에 그대로 담겨 있다.</p>
 <h3 id="fanova-vs-1">fANOVA 분해 vs 1절의 네 가지 분해<a class="headerlink" href="#fanova-vs-1" title="Permanent link">¶</a></h3>
-<p>fANOVA가 구한 분해를 1절의 네 분해와 비교하자:</p>
+<p>방금 구한 fANOVA 분해(<span class="arithmatex">\(f_0 = 0.5,\; f_1 = 0,\; f_{12} = [-0.5, 0.5;\; 0.5, -0.5]\)</span>)를 1절의 네 분해와 나란히 놓아보자. 결과부터 말하면, <strong>1절의 네 가지 분해는 어느 것도 fANOVA 분해와 일치하지 않는다:</strong></p>
 <table>
 <thead>
 <tr>
@@ -4927,17 +4943,31 @@ f_{12}(x_1, x_2) = Y(x_1, x_2) - f_0 - f_1(x_1) - f_2(x_2)
 </thead>
 <tbody>
 <tr>
-<td>(a) AND형</td>
+<td>①</td>
+<td>0</td>
+<td>0</td>
+<td>[0, 1; 1, 0]</td>
+<td>✗</td>
+</tr>
+<tr>
+<td>②</td>
 <td>0.25</td>
 <td>±0.25</td>
 <td>[0.25, 0.75; 0.75, -0.75]</td>
 <td>✗</td>
 </tr>
 <tr>
-<td>(d) 순수형</td>
+<td>③</td>
+<td>-0.75</td>
+<td>±0.25 (반대)</td>
+<td>[0.25, 1.75; 1.75, 1.25]</td>
+<td>✗</td>
+</tr>
+<tr>
+<td>④</td>
+<td>-0.25</td>
 <td>0</td>
-<td>0</td>
-<td>[0, 1; 1, 0]</td>
+<td>[0.25, 1.25; 1.25, 0.25]</td>
 <td>✗</td>
 </tr>
 <tr>
@@ -4949,74 +4979,82 @@ f_{12}(x_1, x_2) = Y(x_1, x_2) - f_0 - f_1(x_1) - f_2(x_2)
 </tr>
 </tbody>
 </table>
-<p><strong>1절의 네 가지 분해는 어느 것도 fANOVA 제약을 만족하지 않는다.</strong> fANOVA 분해는 다섯 번째 — 유일한 — 분해다. 이 분해만이 아래에서 설명할 세 가지 제약 조건을 동시에 만족한다.</p>
-<p>분해 (d)와 fANOVA는 main effect가 둘 다 0이라는 점에서 비슷해 보이지만, intercept가 다르다. (d)에서 <span class="arithmatex">\(f_0 = 0\)</span>이고 <span class="arithmatex">\(f_{12}\)</span>의 평균이 0.5인 반면, fANOVA에서는 그 0.5가 <span class="arithmatex">\(f_0\)</span>로 옮겨져서 <span class="arithmatex">\(f_{12}\)</span>의 평균이 정확히 0이 된다.</p>
+<p><span class="arithmatex">\(f_0 = 0.5\)</span>인 분해는 1절에 없었다. fANOVA가 내놓은 이 분해만이 아래에서 설명할 세 가지 제약 조건을 동시에 만족하며, <strong>유일하다.</strong></p>
+<p>분해 ①과 fANOVA는 main effect가 둘 다 0이라는 점에서 비슷해 보이지만, intercept가 다르다. ①에서 <span class="arithmatex">\(f_0 = 0\)</span>이고 <span class="arithmatex">\(f_{12}\)</span>의 평균이 <span class="arithmatex">\((0 + 1 + 1 + 0)/4 = 0.5\)</span>인 반면, fANOVA에서는 그 0.5가 <span class="arithmatex">\(f_0\)</span>로 옮겨져서 <span class="arithmatex">\(f_{12}\)</span>의 평균이 <span class="arithmatex">\((-0.5 + 0.5 + 0.5 + (-0.5))/4 = 0\)</span>이 된다. 이것이 아래에서 다룰 Zero Means 제약의 효과다.</p>
 <hr>
 <h2 id="_2">유일성을 보장하는 제약 조건<a class="headerlink" href="#_2" title="Permanent link">¶</a></h2>
-<p>다음 세 가지 조건이 유일성을 보장한다.</p>
+<p>fANOVA 분해가 유일한 이유는, 다음 세 가지 조건을 동시에 만족하는 분해가 <strong>하나뿐</strong>이기 때문이다. 각 조건이 무엇을 막는지, XOR 예시로 검증해보자.</p>
 <h3 id="zero-means-0">Zero Means (평균 0)<a class="headerlink" href="#zero-means-0" title="Permanent link">¶</a></h3>
 <div class="arithmatex">\[
 \mathbb{E}[f_S(\mathbf{X}_S)] = 0 \quad \forall\, S \neq \emptyset
 \tag{2}
 \]</div>
-<p>모든 component의 기대값이 0이다. 전체 평균은 <span class="arithmatex">\(f_0\)</span> 하나에만 담긴다.</p>
+<p>intercept(<span class="arithmatex">\(f_0\)</span>)를 제외한 <strong>모든 component의 기대값이 0</strong>이어야 한다. 전체 평균은 <span class="arithmatex">\(f_0\)</span> 하나에만 담기고, 나머지 component는 그 평균으로부터의 <strong>편차</strong>만 표현한다. 1절에서 본 분해 ①과 ④의 차이(intercept를 어디에 담을지)를 이 조건이 해결한다.</p>
 <p>XOR 예시로 검증:</p>
 <table>
 <thead>
 <tr>
 <th>component</th>
-<th>기대값</th>
+<th>기대값 계산</th>
+<th>결과</th>
 <th>충족?</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><span class="arithmatex">\(f_1\)</span></td>
-<td><span class="arithmatex">\((0 + 0) / 2 = 0\)</span></td>
+<td><span class="arithmatex">\((0 + 0) / 2\)</span></td>
+<td><span class="arithmatex">\(0\)</span></td>
 <td>✓</td>
 </tr>
 <tr>
 <td><span class="arithmatex">\(f_2\)</span></td>
-<td><span class="arithmatex">\((0 + 0) / 2 = 0\)</span></td>
+<td><span class="arithmatex">\((0 + 0) / 2\)</span></td>
+<td><span class="arithmatex">\(0\)</span></td>
 <td>✓</td>
 </tr>
 <tr>
 <td><span class="arithmatex">\(f_{12}\)</span></td>
-<td><span class="arithmatex">\((-0.5 + 0.5 + 0.5 + (-0.5)) / 4 = 0\)</span></td>
+<td><span class="arithmatex">\((-0.5 + 0.5 + 0.5 + (-0.5)) / 4\)</span></td>
+<td><span class="arithmatex">\(0\)</span></td>
 <td>✓</td>
 </tr>
 </tbody>
 </table>
-<p>반면 1절의 분해 (d)에서 <span class="arithmatex">\(f_{12}\)</span>의 기대값 = <span class="arithmatex">\((0 + 1 + 1 + 0)/4 = 0.5 \neq 0\)</span>. Zero Means를 위반한다.</p>
+<p>반면 1절의 분해 ①에서 <span class="arithmatex">\(f_{12}\)</span>의 기대값 = <span class="arithmatex">\((0 + 1 + 1 + 0)/4 = 0.5 \neq 0\)</span>. 전체 평균 0.5가 교호작용에 남아 있으므로, Zero Means를 위반한다.</p>
 <h3 id="orthogonality">Orthogonality (직교성)<a class="headerlink" href="#orthogonality" title="Permanent link">¶</a></h3>
 <div class="arithmatex">\[
 \mathbb{E}[f_S(\mathbf{X}_S) \cdot f_V(\mathbf{X}_V)] = 0 \quad \forall\, S \neq V
 \tag{3}
 \]</div>
-<p>서로 다른 component는 직교한다. 정보가 겹치지 않는다.</p>
-<p>XOR 예시에서 <span class="arithmatex">\(f_1 = 0\)</span>이므로 <span class="arithmatex">\(f_1 \cdot f_{12} = 0\)</span>은 자명하다. 일반적으로는 non-trivial한 조건이며, main effect가 0이 아닌 함수에서 중요해진다.</p>
+<p>서로 다른 component끼리 곱해서 기대값을 구하면 0이다. 통계학에서 "직교"란 <strong>정보가 겹치지 않는다</strong>는 뜻이다. <span class="arithmatex">\(f_1\)</span>에 담긴 효과와 <span class="arithmatex">\(f_{12}\)</span>에 담긴 효과가 독립적이어서, 하나를 알아도 다른 하나에 대해 아무 정보를 주지 않는다.</p>
+<p>XOR 예시에서 <span class="arithmatex">\(f_1 = f_2 = 0\)</span>이므로, <span class="arithmatex">\(f_1 \cdot f_{12} = 0\)</span>은 자명하다. 일반적으로는 non-trivial한 조건이며, main effect가 0이 아닌 함수에서 중요해진다.</p>
 <h3 id="variance-decomposition">Variance Decomposition (분산 분해)<a class="headerlink" href="#variance-decomposition" title="Permanent link">¶</a></h3>
 <div class="arithmatex">\[
 \sigma^2(\hat{f}) = \sum_{S \subseteq \{1,\ldots,p\}} \sigma^2(f_S)
 \tag{4}
 \]</div>
-<p>총 분산 = 각 component 분산의 합. 직교성의 직접적 결과이다.</p>
+<p>총 분산 = 각 component 분산의 합. 직교성의 직접적 결과이며, 실무적으로 중요한 의미가 있다: <strong>각 component가 전체 분산의 몇 %를 차지하는지</strong>를 계산할 수 있게 된다. 예를 들어 "소득의 main effect가 전체 분산의 40%를 설명하고, 소득×부채 교호작용은 5%에 불과하다"라는 진술이 가능해진다.</p>
 <p>XOR 예시:</p>
 <ul>
-<li>총 분산: <span class="arithmatex">\(\sigma^2(Y) = \mathbb{E}[(Y - 0.5)^2] = (0.25 + 0.25 + 0.25 + 0.25)/4 = 0.25\)</span></li>
+<li>총 분산: <span class="arithmatex">\(\sigma^2(Y) = \mathbb{E}[(Y - 0.5)^2] = \frac{(0-0.5)^2 + (1-0.5)^2 + (1-0.5)^2 + (0-0.5)^2}{4} = \frac{0.25 \times 4}{4} = 0.25\)</span></li>
 <li><span class="arithmatex">\(\sigma^2(f_1) = 0\)</span>, <span class="arithmatex">\(\sigma^2(f_2) = 0\)</span></li>
-<li><span class="arithmatex">\(\sigma^2(f_{12}) = (0.25 + 0.25 + 0.25 + 0.25)/4 = 0.25\)</span></li>
+<li><span class="arithmatex">\(\sigma^2(f_{12}) = \frac{(-0.5)^2 + 0.5^2 + 0.5^2 + (-0.5)^2}{4} = \frac{0.25 \times 4}{4} = 0.25\)</span></li>
 <li>합계: <span class="arithmatex">\(0 + 0 + 0.25 = 0.25\)</span> ✓</li>
 </ul>
 <p>이것은 <strong>XOR의 모든 분산이 교호작용에서 온다</strong>는 것을 의미한다. 변수 하나로는 XOR을 전혀 설명할 수 없으니 직관적으로도 맞다.</p>
 <hr>
 <h2 id="integrate-to-zero">핵심: Integrate-to-Zero<a class="headerlink" href="#integrate-to-zero" title="Permanent link">¶</a></h2>
-<p>위 세 조건 중 가장 실용적이고 강력한 형태:</p>
+<p>위의 세 조건 중 실무에서 가장 직접적으로 쓰이는 것이 있다. Zero Means와 Orthogonality를 하나의 조건으로 합친 강력한 형태인 <strong>Integrate-to-Zero</strong>다. 3절의 Purification 알고리즘이 바로 이 조건을 만족시키는 방향으로 작동하므로, 그 의미를 정확히 이해할 필요가 있다.</p>
 <div class="arithmatex">\[
 \forall\, u \subseteq [d], \quad \forall\, i \in u: \quad \mathbb{E}[f_u(X_u) \mid X_{u \setminus i}] = 0
 \tag{5}
 \]</div>
-<p><strong>"교호작용 텐서의 모든 1차원 slice를 따라 가중평균을 내면 0이다."</strong></p>
+<p>수식이 추상적이므로, 풀어서 읽자. <span class="arithmatex">\(u = \{1, 2\}\)</span>(2차 교호작용)이고 <span class="arithmatex">\(i = 1\)</span>인 경우:</p>
+<blockquote>
+<p><span class="arithmatex">\(f_{12}\)</span>에서 변수 <span class="arithmatex">\(X_1\)</span>의 값을 고정한 채 <span class="arithmatex">\(X_2\)</span> 방향으로 가중평균을 내면, 결과가 0이어야 한다.</p>
+</blockquote>
+<p>좀 더 직관적으로 말하면: <strong>교호작용 테이블의 모든 행(또는 열)의 가중평균이 0이어야 한다.</strong> 만약 어떤 행의 평균이 0이 아니라면, 그 평균값은 해당 행에 고정된 변수(<span class="arithmatex">\(X_1\)</span>)의 main effect이지 교호작용이 아니다 — 교호작용에 main effect가 <strong>누출</strong>되어 있다는 뜻이다.</p>
 <p>이것이 실질적으로 검사하는 것: <strong><span class="arithmatex">\(f_{12}\)</span>에 <span class="arithmatex">\(f_1\)</span>이나 <span class="arithmatex">\(f_2\)</span>에 담겨야 할 효과가 남아 있지 않은가?</strong></p>
 <h3 id="xor_1">XOR 예시로 검증<a class="headerlink" href="#xor_1" title="Permanent link">¶</a></h3>
 <p>fANOVA의 <span class="arithmatex">\(f_{12} = [-0.5, 0.5;\; 0.5, -0.5]\)</span>:</p>
@@ -5032,17 +5070,17 @@ f_{12}(x_1, x_2) = Y(x_1, x_2) - f_0 - f_1(x_1) - f_2(x_2)
 </ul>
 </li>
 </ul>
-<p><strong>모든 slice 평균이 0이다.</strong> <span class="arithmatex">\(f_{12}\)</span>에는 <span class="arithmatex">\(X_1\)</span>만으로 설명 가능한 패턴도, <span class="arithmatex">\(X_2\)</span>만으로 설명 가능한 패턴도 남아 있지 않다. 이것이 <strong>순수한 교호작용</strong>(pure interaction) — 두 변수가 <strong>동시에</strong> 특정 조합일 때만 나타나는, 더 적은 수의 변수로는 설명할 수 없는 효과다.</p>
-<h3 id="1-d">1절의 분해 (d)가 왜 실패하는가<a class="headerlink" href="#1-d" title="Permanent link">¶</a></h3>
-<p>비교: 분해 (d)의 <span class="arithmatex">\(f_{12} = [0, 1;\; 1, 0]\)</span>:</p>
+<p><strong>모든 행/열 평균이 0이다.</strong> <span class="arithmatex">\(f_{12}\)</span>에는 <span class="arithmatex">\(X_1\)</span>만으로 설명 가능한 패턴도, <span class="arithmatex">\(X_2\)</span>만으로 설명 가능한 패턴도 남아 있지 않다. 이것이 <strong>순수한 교호작용</strong>(pure interaction) — 두 변수가 <strong>동시에</strong> 특정 조합일 때만 나타나는, 더 적은 수의 변수로는 설명할 수 없는 효과다.</p>
+<h3 id="1-1">1절의 분해 ①이 왜 실패하는가<a class="headerlink" href="#1-1" title="Permanent link">¶</a></h3>
+<p>비교: 분해 ①의 <span class="arithmatex">\(f_{12} = [0, 1;\; 1, 0]\)</span>:</p>
 <ul>
 <li><span class="arithmatex">\(X_2=0\)</span> 고정, <span class="arithmatex">\(X_1\)</span> 방향 평균: <span class="arithmatex">\((0 + 1)/2 = 0.5 \neq 0\)</span> ✗</li>
 </ul>
-<p>이 0.5는 <span class="arithmatex">\(X_2=0\)</span>일 때의 평균 출력 — 즉 <strong><span class="arithmatex">\(X_2\)</span>의 main effect 또는 intercept</strong>에 해당하는 값이다. 이것이 <span class="arithmatex">\(f_{12}\)</span>에 남아 있다는 것은 교호작용 텐서에 main effect가 <strong>누출</strong>되어 있다는 뜻이다.</p>
+<p>이 0.5는 "<span class="arithmatex">\(X_2=0\)</span>일 때의 평균 출력"이다. 이것은 <span class="arithmatex">\(X_2\)</span>의 값에만 의존하는 효과, 즉 <strong><span class="arithmatex">\(X_2\)</span>의 main effect 또는 intercept</strong>에 해당하는 값이다. 이것이 <span class="arithmatex">\(f_{12}\)</span> 안에 남아 있다는 것은 교호작용 테이블에 main effect가 <strong>누출</strong>되어 있다는 뜻이다.</p>
 <p>fANOVA는 이런 누출을 허용하지 않는다. <strong>교호작용에는 교호작용만, main effect에는 main effect만</strong> — 이 원칙을 수학적으로 강제하는 것이 Integrate-to-Zero 조건이다.</p>
 <hr>
 <p>이 세 조건을 동시에 만족하는 분해는 <strong>유일(unique)</strong>하다. 비로소 "이 변수의 효과가 양이다/음이다"를 신뢰할 수 있게 된다.</p>
-<p>그런데 XGBoost나 EBM 같은 트리 기반 모형은 학습 과정에서 이 제약을 고려하지 않는다. 학습된 shape function이 이미 뒤섞여 있을 때, 이를 사후적으로 바로잡는 알고리즘이 필요하다. → <a href="../purification/">3절. Purification — 트리 모형의 사후 정제</a></p>
+<p>그런데 XGBoost나 EBM 같은 트리 기반 모형은 학습 과정에서 이 제약을 고려하지 않는다. 학습된 shape function이 이미 뒤섞여 있을 때, 이를 <strong>사후적으로</strong> 바로잡는 알고리즘이 필요하다. 다음 절에서 그 알고리즘(Purification)이 어떻게 작동하는지, 구체적인 숫자 예시로 확인한다. → <a href="../purification/">3절. Purification — 트리 모형의 사후 정제</a></p>
 <hr>
 <h2 id="_3">참고문헌<a class="headerlink" href="#_3" title="Permanent link">¶</a></h2>
 <table>

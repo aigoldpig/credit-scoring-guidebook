@@ -4866,8 +4866,9 @@
 <p>이 페이지는 현재 작성 중입니다.</p>
 </div>
 <hr>
+<p>지금까지 fANOVA의 직교 분해(<a href="../functional-anova/">2절</a>)와, 그것을 트리 모형에 사후 적용하는 purification(<a href="../purification/">3절</a>)을 살펴보았다. 그렇다면 실무에서 훨씬 많이 쓰이는 <strong>SHAP</strong>은 같은 문제를 어떻게 처리하는가? 이 절에서는 두 프레임워크의 근본적 차이를 정리하고, 각각이 적합한 상황을 비교한다.</p>
 <h2 id="vs">핵심 차이: 분배 vs 분리<a class="headerlink" href="#vs" title="Permanent link">¶</a></h2>
-<p>SHAP과 fANOVA는 모두 "변수별 기여"를 구하지만, <strong>교호작용(interaction)을 처리하는 방식</strong>이 근본적으로 다르다.</p>
+<p>SHAP과 fANOVA는 모두 "변수별 기여"를 구하지만, <strong>교호작용(interaction)을 처리하는 방식</strong>이 근본적으로 다르다. 한 문장으로 요약하면: <strong>SHAP은 교호작용을 변수들에게 나눠주고, fANOVA는 교호작용을 별도의 항으로 분리한다.</strong></p>
 <table>
 <thead>
 <tr>
@@ -4909,10 +4910,11 @@
 </tr>
 </tbody>
 </table>
+<p>이 표만으로는 차이가 와닿지 않을 수 있다. 구체적인 예시로 각 항목이 실제로 무엇을 의미하는지 확인하자.</p>
 <h2 id="_1">교호작용은 어디로 가는가?<a class="headerlink" href="#_1" title="Permanent link">¶</a></h2>
 <p>두 변수 <span class="arithmatex">\(X_1\)</span>(소득)과 <span class="arithmatex">\(X_2\)</span>(부채)가 교호작용을 일으킨다고 하자. 즉, 소득이 높고 부채가 낮을 때 부도 확률이 <strong>비선형적으로</strong> 급감하는 시너지 효과가 있다.</p>
 <p><strong>SHAP의 처리:</strong></p>
-<p>교호작용의 기여분을 <span class="arithmatex">\(X_1\)</span>과 <span class="arithmatex">\(X_2\)</span>에게 <strong>반씩 나눠준다.</strong></p>
+<p>SHAP은 교호작용의 기여분을 관여한 변수들에게 <strong>반씩 나눠준다.</strong> Shapley Value의 대칭성 공리에 의한 것이다:</p>
 <div class="arithmatex">\[
 \phi_1 = \underbrace{f_1\text{의 기여}}_{\text{주효과}} + \underbrace{\frac{1}{2} f_{12}\text{의 기여}}_{\text{교호작용의 절반}}
 \]</div>
@@ -4925,7 +4927,7 @@
 <p>차주 A: 소득 5,000만 원, 부채 500만 원 → 소득의 SHAP = <strong>-0.8</strong> (부도↓ 크게 기여)</p>
 <p>차주 B: 소득 5,000만 원, 부채 2억 원 → 소득의 SHAP = <strong>-0.2</strong> (부도↓ 약하게 기여)</p>
 </blockquote>
-<p>소득은 같은데 SHAP 값이 다르다. 이유는 소득×부채 교호작용의 기여분이 각 샘플에서 <strong>다른 크기로</strong> 소득의 SHAP에 흡수되기 때문이다. 차주 A에서는 "고소득+저부채" 시너지가 크게 작동하여 소득의 몫이 커지고, 차주 B에서는 시너지가 약해서 소득의 몫이 줄어든다.</p>
+<p>소득은 같은데 SHAP 값이 다르다. 차주 A에서는 "고소득+저부채" 시너지가 크게 작동하여 소득에 분배되는 교호작용 기여분이 크고, 차주 B에서는 시너지가 약해서 소득의 몫이 줄어든다.</p>
 <p>이것이 SHAP이 태생적으로 <strong>local(개별 샘플) 해석</strong>일 수밖에 없는 이유다. 소득 변수의 SHAP 값이 샘플마다 달라지니, "소득의 효과는 이렇다"는 <strong>global 진술을 할 수 없다.</strong></p>
 <div class="admonition warning">
 <p class="admonition-title">SHAP의 교호작용 함정</p>
@@ -4933,12 +4935,13 @@
 <p>실무에서 <code>mean(|SHAP|)</code>로 변수 중요도를 구하는 것이 관행이지만, 이 숫자에는 주효과와 교호작용이 뒤섞여 있다.</p>
 </div>
 <p><strong>fANOVA의 처리:</strong></p>
-<p>교호작용을 분배하지 않고, <strong>별도의 항으로 분리</strong>한다. 직교 제약 조건(<a href="../functional-anova/">2절</a>, 식 2~5)에 의해 각 항이 <strong>유일하게</strong> 결정된다:</p>
+<p>fANOVA는 교호작용을 분배하지 않고, <strong>별도의 항으로 분리</strong>한다. 직교 제약 조건(<a href="../functional-anova/">2절</a>, 식 2~5)에 의해 각 항이 <strong>유일하게</strong> 결정된다:</p>
 <ul>
 <li><span class="arithmatex">\(f_1(X_1)\)</span>: 순수하게 소득만의 효과</li>
 <li><span class="arithmatex">\(f_2(X_2)\)</span>: 순수하게 부채만의 효과</li>
 <li><span class="arithmatex">\(f_{12}(X_1, X_2)\)</span>: 소득과 부채의 <strong>순수 교호작용</strong> — 주효과로는 설명할 수 없는 시너지</li>
 </ul>
+<p>소득이 동일한 두 차주에서 <span class="arithmatex">\(f_1\)</span>(소득의 순수 효과)은 <strong>항상 같다.</strong> 차이가 있다면 그것은 <span class="arithmatex">\(f_{12}\)</span>(교호작용)에 명시적으로 나타난다 — 숨겨지지 않는다.</p>
 <h2 id="_2">왜 이 차이가 중요한가 — 신용평가 실무 관점<a class="headerlink" href="#_2" title="Permanent link">¶</a></h2>
 <p><strong>규제 심사(모형검증)에서 심사역이 묻는 질문:</strong></p>
 <blockquote>
@@ -4950,13 +4953,13 @@
 <li>이것이 소득 자체의 비단조성인지, 다른 변수와의 교호작용 때문인지 <strong>구분할 수 없다</strong></li>
 <li>Lengerich et al. (2020)의 COMPAS 실험에서, XGB의 SHAP 기반 주효과 <strong>부호가</strong> 다른 모형과 <strong>반대</strong>로 나타나는 사례가 보고되었다</li>
 </ul>
-<p>fANOVA로 답하면:</p>
+<p>fANOVA(+ purification)로 답하면:</p>
 <ul>
 <li>주효과 <span class="arithmatex">\(f_1(X_1)\)</span>은 순수하게 소득만의 효과이므로, 단조성 여부를 <strong>정확히</strong> 판단할 수 있다</li>
 <li>비단조적 패턴이 있다면 그것은 교호작용이 아니라 <strong>소득 자체의 비선형성</strong>이다</li>
 </ul>
 <h2 id="_3">공통 한계 — 분포 선택이 해석을 바꾼다<a class="headerlink" href="#_3" title="Permanent link">¶</a></h2>
-<p>SHAP과 fANOVA는 접근 방식이 다르지만, <strong>분포에 의존한다</strong>는 근본적 한계를 공유한다.</p>
+<p>SHAP과 fANOVA는 접근 방식이 다르지만, <strong>결과가 분포에 의존한다</strong>는 근본적 한계를 공유한다. 어떤 방법론을 쓰든, "이 변수의 효과"를 정의하려면 "다른 변수를 어떻게 처리할 것인가"를 결정해야 하고, 그 결정이 곧 분포 선택이기 때문이다.</p>
 <p><strong>SHAP</strong>: background distribution(기준 분포)을 어떻게 잡느냐에 따라 SHAP 값 자체가 달라진다. 훈련 데이터 전체를 쓸 것인가, k-means 클러스터링 대표점을 쓸 것인가, 특정 하위 집단만 쓸 것인가 — 선택에 따라 변수의 기여도 숫자가 변한다.</p>
 <p><strong>fANOVA</strong>: purification에서 가중 평균을 계산할 때 사용하는 분포 <span class="arithmatex">\(\mathbb{P}(X)\)</span>에 따라 main effect 곡선 자체가 달라진다. Lengerich et al. (2020)은 세 가지 가중 방식을 비교했다:</p>
 <table>
@@ -4992,9 +4995,9 @@
 <p>실무적 권장: <strong>훈련 데이터의 empirical distribution</strong>을 기본으로 사용하되, 희소 구간의 해석은 별도로 검증한다.</p>
 </div>
 <h2 id="fanova">fANOVA로 개별 샘플을 설명할 수 있는가?<a class="headerlink" href="#fanova" title="Permanent link">¶</a></h2>
-<p>fANOVA는 global 해석 도구이고, 개별 샘플 설명은 SHAP의 영역이라고 흔히 생각한다. 하지만 교호작용 차수를 제한한 모형에서는 fANOVA가 오히려 <strong>더 정직한 개별 설명</strong>을 제공할 수 있다.</p>
-<h3 id="2-way">2-way까지 제한된 모형 — 설명 가능<a class="headerlink" href="#2-way" title="Permanent link">¶</a></h3>
-<p>GA<span class="arithmatex">\(^2\)</span>M(EBM)이나 depth-2 트리처럼 교호작용을 2-way로 제한하면, 개별 고객의 예측을 component별로 제시할 수 있다:</p>
+<p>fANOVA는 global 해석 도구이고, 개별 샘플 설명은 SHAP의 영역이라고 흔히 생각한다. 하지만 이것은 절반만 맞다. <strong>교호작용 차수를 제한한 모형</strong>에서는 fANOVA가 오히려 더 정직한 개별 설명을 제공할 수 있다. 차수가 높아지면 fANOVA의 한계가 드러나고, 그때 SHAP이 필요해진다.</p>
+<h3 id="2-way-fanova">2-way까지 제한된 모형 — fANOVA가 더 정직하다<a class="headerlink" href="#2-way-fanova" title="Permanent link">¶</a></h3>
+<p>GA<span class="arithmatex">\(^2\)</span>M(EBM)이나 depth-2 트리처럼 교호작용을 2-way로 제한한 모형에서는, 개별 고객의 예측을 component별로 직접 제시할 수 있다:</p>
 <table>
 <thead>
 <tr>
@@ -5031,15 +5034,15 @@
 </tr>
 </tbody>
 </table>
-<p>교호작용을 변수에 나눠줄 필요 없이, <strong>별도의 설명 항목으로 그대로 제시</strong>하면 된다. <span class="arithmatex">\(f_{12}\)</span>는 2차원 heatmap으로 시각화도 가능하다. 이 방식은 SHAP보다 <strong>더 정직한 설명</strong>이다 — 교호작용이 숨겨지지 않으니까.</p>
+<p>교호작용을 변수에 나눠줄 필요 없이, <strong>별도의 설명 항목으로 그대로 제시</strong>하면 된다. <span class="arithmatex">\(f_{12}\)</span>는 2차원 heatmap으로 시각화도 가능하다. 이 방식은 SHAP보다 <strong>더 정직한 설명</strong>이다 — 교호작용이 숨겨지지 않고, 무엇이 주효과이고 무엇이 교호작용인지 명확히 구분되니까.</p>
 <p>EBM이 이 전략을 쓴다. 교호작용을 <strong>2-way까지만 허용</strong>하고 (GA<span class="arithmatex">\(^2\)</span>M의 "²"이 그 뜻이다), 그 중에서도 FAST 알고리즘으로 <strong>유의미한 pair만 선별</strong>한다. 변수 20개 모형이라면:</p>
 <ul>
 <li>main effect: 20개</li>
 <li>선별된 2-way interaction: 10~20개</li>
 <li><strong>총 30~40개 항</strong> → 충분히 제시 가능</li>
 </ul>
-<h3 id="3-way">3-way 이상 — 해석이 급격히 어려워진다<a class="headerlink" href="#3-way" title="Permanent link">¶</a></h3>
-<p>그런데 depth가 깊어져서 <span class="arithmatex">\(X_1, X_2, X_3\)</span>가 혼재된 3-way interaction이 나타나면 상황이 달라진다.</p>
+<h3 id="3-way-fanova">3-way 이상 — fANOVA의 한계가 드러난다<a class="headerlink" href="#3-way-fanova" title="Permanent link">¶</a></h3>
+<p>depth가 깊어져서 <span class="arithmatex">\(X_1, X_2, X_3\)</span>가 혼재된 3-way interaction이 나타나면, 두 가지 문제가 동시에 발생한다.</p>
 <p><strong>시각화의 벽</strong>: 2-way interaction <span class="arithmatex">\(f_{12}(x_1, x_2)\)</span>는 heatmap(2차원 그림)으로 직관적으로 보여줄 수 있다. 하지만 3-way interaction <span class="arithmatex">\(f_{123}(x_1, x_2, x_3)\)</span>는 <strong>3차원 텐서</strong>다. 이것을 시각화하려면 3D 등고선, 또는 <span class="arithmatex">\(x_3\)</span>를 고정하고 2D slice를 여러 장 그려야 한다. 직관적 이해가 급격히 어려워진다.</p>
 <p><strong>항 수의 폭발</strong>: 변수 20개에서 가능한 interaction 수:</p>
 <table>
@@ -5068,8 +5071,9 @@
 </tr>
 </tbody>
 </table>
-<p>3-way만 허용해도 1,140개의 interaction 항이 가능하다. 이 중 유의미한 것만 선별하더라도, <strong>하나하나의 해석 자체가 어렵다</strong> (3차원을 직관적으로 이해하기 힘드니까). 설명 항 수의 문제와 개별 항의 이해 가능성 문제가 동시에 발생한다.</p>
-<p><strong>"설명 가능한 depth 제한"이라는 것</strong>: depth가 5 이상이더라도, 변수 조합을 강제로 <span class="arithmatex">\((X_1, X_2)\)</span> 같은 2-way pair로만 구성하면 각 pair는 2D heatmap으로 표현할 수 있다. 핵심은 트리의 depth가 아니라 <strong>하나의 interaction 항에 관여하는 변수 수</strong>다. EBM이 2-way로 제한하는 것은 바로 이 이유 — 2차원까지는 그림으로 보여줄 수 있고, 3차원부터는 안 되기 때문이다.</p>
+<p>3-way만 허용해도 1,140개의 interaction 항이 가능하다. 이 중 유의미한 것만 선별하더라도, <strong>하나하나의 해석 자체가 어렵다</strong> (3차원을 직관적으로 이해하기 힘드니까). 항 수의 문제와 개별 항의 이해 가능성 문제가 동시에 발생한다.</p>
+<p>이때 SHAP이 빛을 발한다: 교호작용 차수가 아무리 높아도 <strong>변수당 숫자 하나</strong>로 요약해주므로, depth-6 XGBoost 같은 블랙박스에서도 개별 샘플 설명이 가능하다. 교호작용 정보가 숨겨지는 대가를 치르지만, 3-way 이상에서는 그 교호작용을 어차피 해석할 수 없으니 합리적 트레이드오프다.</p>
+<p><strong>참고 — "설명 가능한 depth 제한"</strong>: depth가 5 이상이더라도, 변수 조합을 강제로 2-way pair로만 구성하면 각 pair는 2D heatmap으로 표현할 수 있다. 핵심은 트리의 depth가 아니라 <strong>하나의 interaction 항에 관여하는 변수 수</strong>다. EBM이 2-way로 제한하는 것은 바로 이 이유 — 2차원까지는 그림으로 보여줄 수 있고, 3차원부터는 안 되기 때문이다.</p>
 <h3 id="_4">정리<a class="headerlink" href="#_4" title="Permanent link">¶</a></h3>
 <table>
 <thead>
