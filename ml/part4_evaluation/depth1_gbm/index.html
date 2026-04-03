@@ -4975,7 +4975,7 @@ g(\mu) = \alpha + f_1(x_1) + f_2(x_2) + \cdots + f_p(x_p)
 <h3 id="lou-caruana-microsoft-research-2012-2021">Lou-Caruana 연구 계보 (Microsoft Research, 2012--2021)<a class="headerlink" href="#lou-caruana-microsoft-research-2012-2021" title="Permanent link">¶</a></h3>
 <p>1-Depth GBM 스코어카드의 현대적 부활은 Microsoft Research의 <strong>Rich Caruana</strong> 그룹이 주도했다. 이 팀의 연구가 EBM(Explainable Boosting Machine)으로 이어지며, 현재 해석 가능한 ML의 표준이 되었다.</p>
 <h4 id="1-lou-et-al-2012-gam">(1) Lou et al. (2012) --- 최적 GAM 적합법 비교<a class="headerlink" href="#1-lou-et-al-2012-gam" title="Permanent link">¶</a></h4>
-<p>Lou, Caruana, Gehrke는 다양한 GAM 적합 방법(spline, kernel, tree 등)을 대규모로 비교하여, <strong>shallow bagged trees + gradient boosting</strong>이 가장 우수한 GAM 적합법임을 실증했다. 이것이 1-Depth GBM을 GAM의 핵심 엔진으로 자리잡게 한 논문이다.</p>
+<p>Lou, Caruana, Gehrke는 다양한 GAM 적합 방법(spline, tree 등)을 대규모로 비교하고, <strong>adaptive number of leaves를 가진 bagged tree + gradient boosting</strong> 기반의 새로운 방법을 제안하여 기존 GAM 적합법을 일관되게 능가함을 실증했다. 이것이 1-Depth GBM을 GAM의 핵심 엔진으로 자리잡게 한 논문이다.</p>
 <div class="source-ref">
 출처: Lou, Y., Caruana, R., and Gehrke, J. (2012). "Intelligible Models for Classification and Regression." <em>KDD 2012</em>.
 <a href="https://www.cs.cornell.edu/~yinlou/papers/lou-kdd12.pdf" target="_blank">PDF</a>
@@ -5107,22 +5107,24 @@ F(\mathbf{x}) = F_0 + \sum_{j} f_j(x_j) + \sum_{j &lt; k} f_{jk}(x_j, x_k)
 <li>stump들이 자동으로 최적 분할점을 찾고, 누적하여 비선형 곡선을 형성</li>
 </ul>
 <p>그러나 교호작용이 없기 때문에, 변수 간 시너지를 활용하는 Full GBM보다는 성능이 낮다.</p>
-<h3 id="_3">성능 격차의 실증적 경향<a class="headerlink" href="#_3" title="Permanent link">¶</a></h3>
-<p>문헌에서 보고된 일반적인 경향:</p>
+<h3 id="_3">성능 격차의 일반적 경향<a class="headerlink" href="#_3" title="Permanent link">¶</a></h3>
 <ul>
-<li><strong>전통 LR → 1-Depth GBM</strong>: AUC 1~3%p 향상 (수동 구간화의 정보 손실 회복)</li>
-<li><strong>1-Depth GBM → Full GBM</strong>: AUC 1~3%p 추가 향상 (교호작용 포착)</li>
-<li><strong>EBM (GA<span class="arithmatex">\(^2\)</span>M 모드) → Full GBM</strong>: 격차가 상당히 줄어듦 (선택적 2-way 교호작용으로 대부분 보완)</li>
+<li><strong>전통 LR → 1-Depth GBM</strong>: 수동 구간화의 정보 손실을 회복하면서 성능이 향상되는 경향이 있다. 비선형 패턴이 복잡한 데이터일수록 격차가 커진다.</li>
+<li><strong>1-Depth GBM → Full GBM</strong>: 교호작용을 포착하는 만큼 추가 성능 향상이 가능하지만, 신용평가 데이터에서는 main effect가 지배적이어서 격차가 크지 않은 경우가 많다.</li>
+<li><strong>EBM (GA<span class="arithmatex">\(^2\)</span>M 모드) → Full GBM</strong>: 선택적 2-way 교호작용만으로도 Full GBM과의 격차가 상당히 줄어든다.</li>
 </ul>
 <div class="admonition note">
 <p class="admonition-title">성능 격차는 데이터에 따라 다르다</p>
-<p>교호작용이 중요한 데이터(예: 소득 × 부채비율)에서는 Full GBM과의 격차가 크고, 각 변수가 독립적으로 작용하는 데이터에서는 격차가 거의 없다. Moody's Analytics의 비교 연구에서도 해석 가능한 모형이 비제약 모형 대비 성능 손실이 크지 않다고 보고했다.</p>
+<p>교호작용이 중요한 데이터(예: 소득 × 부채비율)에서는 Full GBM과의 격차가 크고, 각 변수가 독립적으로 작용하는 데이터에서는 격차가 거의 없다.</p>
 </div>
-<div class="source-ref">
+<div class="admonition example">
+<p class="admonition-title">업계 사례: Moody's Analytics의 비교 연구</p>
+<p>Moody's Analytics는 제약이 걸린 로지스틱 회귀(supervised binning + 단조 제약) 스코어카드와 비제약 ML 모형(decision tree, random forest, gradient boosting)을 비교하여, <strong>해석 가능한 모형의 성능 손실이 크지 않다</strong>고 보고했다. 이 연구의 비교 대상은 1-Depth GBM이 아닌 constrained LR이지만, "해석 가능성을 위한 제약이 성능을 크게 희생하지 않는다"는 메시지는 동일하다.</p>
+<p></p><div class="source-ref">
 출처: Moody's Analytics. "Automating Interpretable Machine Learning Scorecards." Whitepaper.
 <a href="https://www.moodys.com/web/en/us/insights/resources/Automating-Interpretable-Scorecards.pdf" target="_blank">PDF</a>
+</div><p></p>
 </div>
-
 <hr>
 <h2 id="45-shape-function">4.5 변수별 효과 곡선 (Shape Function)<a class="headerlink" href="#45-shape-function" title="Permanent link">¶</a></h2>
 <p>1-Depth GBM의 가장 큰 장점은 <strong>각 변수의 효과를 시각화</strong>할 수 있다는 것이다.</p>
@@ -5217,8 +5219,19 @@ F(\mathbf{x}) = F_0 + \sum_{j} f_j(x_j) + \sum_{j &lt; k} f_{jk}(x_j, x_k)
 </tbody>
 </table>
 <div class="admonition tip">
-<p class="admonition-title">Depth = 2도 좋은 선택지</p>
-<p>Depth = 2이면 2-way 교호작용까지 포착하면서도, purification으로 주효과와 교호작용을 깔끔하게 분리할 수 있다. 1-Depth보다 성능이 의미 있게 올라가는 경우가 많다. PiML 라이브러리는 <strong>XGB2</strong> (Depth-2 XGBoost + purification)를 별도의 해석 가능 모형 유형으로 지원한다.</p>
+<p class="admonition-title">Depth = 2도 좋은 선택지: PiML의 XGB2</p>
+<p>Depth = 2이면 2-way 교호작용까지 포착하면서도, purification으로 주효과와 교호작용을 깔끔하게 분리할 수 있다. 1-Depth보다 성능이 의미 있게 올라가는 경우가 많다.</p>
+<p><a href="https://github.com/SelfExplainML/PiML-Toolbox">PiML</a> 라이브러리는 <strong>XGB2</strong> (Depth-2 XGBoost + purification)를 별도의 해석 가능 모형 유형으로 지원한다. XGB2의 작동 원리는 다음과 같다:</p>
+<ol>
+<li><strong>학습</strong>: 일반 XGBoost와 동일하되, <code>max_depth=2</code>로 제한하여 각 트리가 최대 2번만 분할</li>
+<li><strong>재구성</strong>: 학습된 모든 트리의 leaf node 정보를 추출하여, Functional ANOVA 관점에서 GA<span class="arithmatex">\(^2\)</span>M (GAM with pairwise interactions) 형태로 재구성</li>
+<li><strong>Purification</strong>: 교호작용 항에 섞여 있는 주효과 성분을 분리하여, 각 <span class="arithmatex">\(f_j\)</span>는 순수 주효과만, 각 <span class="arithmatex">\(f_{jk}\)</span>는 순수 교호작용만 포함하도록 정제</li>
+</ol>
+<p>결과적으로 XGB2 모형은 main effect plot(변수별 효과 곡선)과 interaction plot(2-way 교호작용 히트맵)을 모두 깔끔하게 제공하며, local 해석도 "이 예측값은 주효과 A + 주효과 B + 교호작용 A×B로 구성된다"는 형태로 분해된다. 단조 제약(<code>monotone_constraints</code>)도 지원한다.</p>
+</div>
+<div class="admonition abstract">
+<p class="admonition-title">이론 심화: 부록 A — SHAP과 Functional ANOVA</p>
+<p>이 페이지에서 다룬 GAM 분해, Purification, SHAP과의 관계 등은 <strong>Functional ANOVA</strong>라는 수학적 프레임워크 위에 서 있다. 분해의 비유일성(non-identifiability) 문제가 왜 발생하는지, fANOVA가 어떤 제약으로 유일한 분해를 보장하는지, Purification 알고리즘이 구체적으로 어떻게 작동하는지에 대한 세부 이론은 <a href="../../appendix/shap-fanova/">부록 A: SHAP과 Functional ANOVA</a>에서 다룬다.</p>
 </div>
 <div class="admonition tip">
 <p class="admonition-title">다음 페이지</p>

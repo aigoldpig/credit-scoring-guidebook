@@ -4386,10 +4386,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#ga2mebm-2-stage" class="md-nav__link">
+  <a href="#ebmga2m-purification" class="md-nav__link">
     <span class="md-ellipsis">
       
-        GA2M(EBM)의 2-Stage 학습도 불완전하다
+        EBM(GA²M)의 학습 구조와 Purification
       
     </span>
   </a>
@@ -4397,7 +4397,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         참고문헌
@@ -4878,7 +4878,7 @@
 </div>
 <hr>
 <h2 id="purification">왜 Purification이 필요한가<a class="headerlink" href="#purification" title="Permanent link">¶</a></h2>
-<p><a href="../functional-anova/">2절</a>에서 fANOVA의 직교 제약(Zero Means, Orthogonality, Integrate-to-Zero)이 분해를 유일하게 결정한다는 것을 확인했다. 문제는, 트리 기반 모형(XGBoost, EBM 등)이 학습 과정에서 이 제약을 <strong>전혀 고려하지 않는다</strong>는 것이다. 트리는 단지 예측 오차를 줄이는 방향으로 분할할 뿐이고, "이 효과가 main에 담겨야 하는가, interaction에 담겨야 하는가"를 구분하지 않는다.</p>
+<p><a href="../functional-anova/">2절</a>에서 fANOVA의 직교 제약(Zero Means, Orthogonality, Integrate-to-Zero)이 분해를 유일하게 결정한다는 것을 확인했다. 문제는, XGBoost 같은 트리 기반 모형이 학습 과정에서 이 제약을 <strong>전혀 고려하지 않는다</strong>는 것이다. 트리는 단지 예측 오차를 줄이는 방향으로 분할할 뿐이고, "이 효과가 main에 담겨야 하는가, interaction에 담겨야 하는가"를 구분하지 않는다. (EBM은 학습 파이프라인에서 분리를 시도하지만, 그것만으로는 완전하지 않다 — 뒤에서 자세히 다룬다.)</p>
 <p>그 결과, 학습된 shape function에서 <strong>main effect와 교호작용이 뒤섞인다.</strong> 본래 <span class="arithmatex">\(f_1(X_1)\)</span>에 있어야 할 효과가 <span class="arithmatex">\(f_{12}(X_1, X_2)\)</span>에 누출되거나, 반대로 교호작용의 일부가 main effect에 흡수된다.</p>
 <p><a href="../non-identifiability/">1절</a>에서 확인한 것처럼, 이 누출은 <strong>예측값을 전혀 바꾸지 않는다.</strong> 예측 성능은 동일하지만 해석이 완전히 달라진다. 이것을 사후적으로(post-hoc) 바로잡아서 fANOVA의 직교 제약을 만족시키는 것이 <strong>purification</strong>(정제)이다.</p>
 <p>이 절에서는 purification이 <strong>구체적으로 무엇을 하는지</strong> 숫자 예시로 먼저 확인한 뒤, 그것을 일반화한 Mass-Moving 알고리즘을 소개한다.</p>
@@ -5288,29 +5288,40 @@
 </tr>
 <tr>
 <td>GA<span class="arithmatex">\(^2\)</span>M (EBM)</td>
-<td>2-stage 분리 시도</td>
-<td>중간 — 여전히 누출 존재 (아래 참조)</td>
+<td>2-stage 분리</td>
+<td>2-stage로 대부분 분리, 잔여 누출은 purification으로 보정 가능 (아래 참조)</td>
 </tr>
 </tbody>
 </table>
 <hr>
-<h2 id="ga2mebm-2-stage">GA2M(EBM)의 2-Stage 학습도 불완전하다<a class="headerlink" href="#ga2mebm-2-stage" title="Permanent link">¶</a></h2>
-<p>EBM은 이 문제를 인지하고 2단계로 학습한다:</p>
-<ol>
-<li><strong>1단계</strong>: main effect만 학습 (변수 하나씩 round-robin boosting)</li>
-<li><strong>2단계</strong>: 잔차(residual)에서 교호작용 학습</li>
-</ol>
-<p>"main effect를 먼저 학습하고, 나머지를 교호작용으로 돌리면 누출이 없지 않을까?" 합리적인 기대이지만, 그럼에도 <strong>누출이 발생</strong>하는 이유가 있다:</p>
+<h2 id="ebmga2m-purification">EBM(GA²M)의 학습 구조와 Purification<a class="headerlink" href="#ebmga2m-purification" title="Permanent link">¶</a></h2>
+<h3 id="_6">핵심 사상 — "개별 효과를 먼저, 조합 효과는 최소한으로"<a class="headerlink" href="#_6" title="Permanent link">¶</a></h3>
+<p>EBM의 설계 철학은 명확하다: <strong>변수 하나하나의 효과를 철저히 학습한 뒤, 그것만으로 설명되지 않는 잔차에서만 2변수 조합 효과를 추가한다.</strong> 3변수 이상의 교호작용은 아예 고려하지 않는다. GA²M의 "²"이 바로 이 제한을 뜻한다.</p>
+<p>왜 2-way까지만? <strong>사람이 그림 한 장으로 이해할 수 있는 한계가 2차원</strong>이기 때문이다. 2-way interaction은 heatmap(행×열에 색상) 한 장으로 직관적으로 보여줄 수 있다. 3-way부터는 가로×세로×깊이의 큐브에 값(예: 부도확률)까지 4차원이 되어, 한 장의 그림으로는 표현할 수 없다. 해석 가능성을 위한 <strong>의도적 제한</strong>이다.</p>
+<h3 id="1">1단계 — 변수 하나씩, 철저하게<a class="headerlink" href="#1" title="Permanent link">¶</a></h3>
+<p>변수를 하나씩 순환(round-robin)하면서, 각 변수에 대해 <strong>단일 변수만 사용하는 shallow tree(stump)</strong>를 잔차에 적합한다:</p>
 <ul>
-<li>1단계에서 변수를 순환하며 학습할 때, <span class="arithmatex">\(X_1\)</span>의 main effect가 <span class="arithmatex">\(X_2\)</span>의 영향을 일부 흡수할 수 있다</li>
-<li>2단계에서 <span class="arithmatex">\(f_{12}\)</span>를 학습할 때, 1단계에서 충분히 학습되지 않은 main effect가 <span class="arithmatex">\(f_{12}\)</span>에 새어들어간다</li>
+<li><span class="arithmatex">\(X_1\)</span>으로 stump → <span class="arithmatex">\(X_2\)</span>로 stump → ... → <span class="arithmatex">\(X_p\)</span>로 stump → 다시 <span class="arithmatex">\(X_1\)</span>부터</li>
+<li><strong>매우 낮은 learning rate</strong>(0.01 수준)로 한 번에 조금씩만 학습한다. 변수 순서가 결과에 미치는 영향을 최소화하기 위한 것이다</li>
+<li>이것을 수천~수만 라운드 반복한다</li>
 </ul>
-<p>Lengerich et al. (2020)의 <strong>MIMIC-III 실험</strong>에서 이를 실증했다: BUN(혈중요소질소) 변수의 main effect가 purification 전후로 <strong>크게 변했다.</strong> 2-stage 학습이라는 ante-hoc 설계만으로는 main effect ↔ interaction 누출을 완전히 방지하지 못한다는 것이다.</p>
-<p>→ 학습 단계의 분리(ante-hoc)만으로는 부족하고, 학습 후 <strong>purification(post-hoc 정제)</strong>이 필요하다. InterpretML의 EBM은 이를 인지하고, <code>explain_global()</code> 시 자동으로 purification을 적용한다.</p>
+<p>각 트리가 변수 1개만 분할하므로, 이 단계에서 학습된 함수는 구조적으로 GAM(<span class="arithmatex">\(f_0 + \sum f_i(x_i)\)</span>)이다. 여기까지는 교호작용이 원천적으로 불가능하다.</p>
+<h3 id="2">2단계 — 효과 큰 변수 쌍만 빠르게 골라서<a class="headerlink" href="#2" title="Permanent link">¶</a></h3>
+<p>1단계 예측으로 설명되지 않은 잔차에서, 이번에는 <strong>2변수 조합</strong>의 교호작용을 학습한다. 그런데 변수가 20개면 가능한 쌍이 <span class="arithmatex">\(\binom{20}{2} = 190\)</span>개다. 이것을 전부 학습하면 해석력이 사라지므로, <strong>효과가 큰 쌍만 선별</strong>해야 한다.</p>
+<p>이때 쓰이는 것이 <strong>FAST 알고리즘</strong>(Lou et al., KDD 2013)이다. 190개 쌍 전부에 대해, 각 변수를 1번씩만 split하는 <strong>2×2 격자(4칸짜리 모델)</strong>를 잔차에 적합한다. 이 4칸 모델은 학습이 거의 즉시 끝나므로 190개를 빠르게 훑을 수 있다. 각 쌍의 RSS(잔차제곱합) 감소량으로 interaction 강도를 랭킹한 뒤, <strong>상위 K개만 선택</strong>해서 본격적으로 2변수 shallow tree로 학습한다.</p>
+<h3 id="_7">그래도 누출은 발생한다<a class="headerlink" href="#_7" title="Permanent link">¶</a></h3>
+<p>이 설계 덕분에 XGBoost depth-2보다는 누출이 적다. 그러나 <strong>완전히 없지는 않다:</strong></p>
+<ul>
+<li>1단계가 유한 라운드에서 끝나므로, main effect가 100% 학습되지 않을 수 있다. 학습되지 못한 main effect는 잔차에 남는다</li>
+<li>2단계 tree가 그 잔차를 학습할 때, 남은 main effect와 순수 교호작용을 <strong>구분하지 않고</strong> 함께 흡수한다</li>
+</ul>
+<p>Lengerich et al. (2020)의 <strong>MIMIC-III 실험</strong>에서 이를 확인했다: BUN(혈중요소질소) 변수가 다수의 interaction에 참여하고 있었는데, purification 전후로 main effect shape function이 <strong>크게 변했다.</strong> 논문의 표현을 빌리면, "even though the GA2M algorithm was designed to estimate interactions based only on residuals after estimating main effects, the interaction terms still capture some main effects."</p>
+<h3 id="purification_4">Purification으로 잔여 누출 보정<a class="headerlink" href="#purification_4" title="Permanent link">¶</a></h3>
+<p>이 잔여 누출을 보정하려면, 학습 후 purification을 적용하면 된다. InterpretML은 <code>interpret.utils.purify()</code> 유틸리티를 제공하며, <a href="https://github.com/LengerichLab/gam_purification">GAM Purification</a> 별도 라이브러리로도 적용할 수 있다.</p>
 <hr>
 <p>Purification은 fANOVA 제약을 트리 모형에 강제하여 <strong>순수한 main effect와 교호작용을 분리</strong>한다. 그렇다면 SHAP은 이 문제를 어떻게 처리하는가? SHAP은 교호작용을 분리하지 않고 <strong>분배</strong>하는, 근본적으로 다른 접근을 취한다. 두 프레임워크의 차이와 각각이 적합한 상황을 다음 절에서 비교한다. → <a href="../shap-vs-fanova/">4절. SHAP vs fANOVA — 무엇이 다른가</a></p>
 <hr>
-<h2 id="_6">참고문헌<a class="headerlink" href="#_6" title="Permanent link">¶</a></h2>
+<h2 id="_8">참고문헌<a class="headerlink" href="#_8" title="Permanent link">¶</a></h2>
 <table>
 <thead>
 <tr>

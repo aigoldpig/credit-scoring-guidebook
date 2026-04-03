@@ -5080,7 +5080,7 @@ f_{12}(x_1, x_2) = Y(x_1, x_2) - f_0 - f_1(x_1) - f_2(x_2)
 <p>fANOVA는 이런 누출을 허용하지 않는다. <strong>교호작용에는 교호작용만, main effect에는 main effect만</strong> — 이 원칙을 수학적으로 강제하는 것이 Integrate-to-Zero 조건이다.</p>
 <hr>
 <p>이 세 조건을 동시에 만족하는 분해는 <strong>유일(unique)</strong>하다. 비로소 "이 변수의 효과가 양이다/음이다"를 신뢰할 수 있게 된다.</p>
-<p>그런데 XGBoost나 EBM 같은 트리 기반 모형은 학습 과정에서 이 제약을 고려하지 않는다. 학습된 shape function이 이미 뒤섞여 있을 때, 이를 <strong>사후적으로</strong> 바로잡는 알고리즘이 필요하다. 다음 절에서 그 알고리즘(Purification)이 어떻게 작동하는지, 구체적인 숫자 예시로 확인한다. → <a href="../purification/">3절. Purification — 트리 모형의 사후 정제</a></p>
+<p>그런데 XGBoost 같은 트리 기반 모형은 학습 과정에서 이 제약을 고려하지 않는다. 학습된 shape function이 이미 뒤섞여 있을 때, 이를 <strong>사후적으로</strong> 바로잡는 알고리즘이 필요하다. 다음 절에서 그 알고리즘(Purification)이 어떻게 작동하는지, 구체적인 숫자 예시로 확인한다. → <a href="../purification/">3절. Purification — 트리 모형의 사후 정제</a></p>
 <hr>
 <h2 id="_3">참고문헌<a class="headerlink" href="#_3" title="Permanent link">¶</a></h2>
 <table>
