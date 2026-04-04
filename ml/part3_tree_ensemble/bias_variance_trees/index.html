@@ -4960,7 +4960,7 @@
 <td>매끈한 곡선</td>
 </tr>
 <tr>
-<td>잘 튜닝된 GBM</td>
+<td>Tree Ensemble</td>
 <td>준연속적 — 리프 수가 충분히 많아 <span class="arithmatex">\(\hat{p}\)</span>가 다양</td>
 <td>곡선에 가까움</td>
 </tr>
@@ -4971,10 +4971,10 @@
 </tr>
 </tbody>
 </table>
-<p><a class="glightbox" data-type="image" data-width="100%" data-height="auto" href="../images/ks_plot_comparison.png" data-desc-position="bottom"><img alt="KS Plot 비교: 로지스틱 회귀(매끈) vs 잘 튜닝된 GBM(준연속) vs 변수 다양성 부족(계단형)" src="../images/ks_plot_comparison.png"></a></p>
+<p><a class="glightbox" data-type="image" data-width="100%" data-height="auto" href="../images/ks_plot_comparison.png" data-desc-position="bottom"><img alt="KS Plot 비교: 로지스틱 회귀(매끈) vs Tree Ensemble(준연속) vs 변수 다양성 부족(계단형)" src="../images/ks_plot_comparison.png"></a></p>
 <div class="admonition warning">
 <p class="admonition-title">depth가 얕다고 반드시 멍청한 것은 아니다</p>
-<p>실무에서 <code>max_depth=2~3</code>은 Boosting의 표준적인 설정이다. 얕은 트리라도 <strong>n_estimators가 충분하고 변수 다양성이 확보</strong>되면, 합산 예측값이 준연속적으로 분포하여 매끈한 KS 곡선이 나온다. 문제는 depth 자체가 아니라 <strong>변수 다양성이 부족할 때</strong>다 — 같은 변수의 같은 지점에서만 반복 분기되면 500그루를 쌓아도 예측 확률은 소수의 값에 몰린다. 이때 KS Plot은 <strong>뚜렷한 계단 형태</strong>를 보이며, 이는 모형이 데이터의 미세한 리스크 차이를 구분하지 못하고 있다는 신호다.</p>
+<p><code>max_depth=2~3</code> 정도의 얕은 트리라도 <strong>n_estimators가 충분하고 변수 다양성이 확보</strong>되면 좋은 성능을 낼 수 있다. 합산 예측값이 준연속적으로 분포하여 매끈한 KS 곡선이 나온다. 문제는 depth 자체가 아니라 <strong>변수 다양성이 부족할 때</strong>다 — 같은 변수의 같은 지점에서만 반복 분기되면 500그루를 쌓아도 예측 확률은 소수의 값에 몰린다. 이때 KS Plot은 <strong>뚜렷한 계단 형태</strong>를 보이며, 이는 모형이 데이터의 미세한 리스크 차이를 구분하지 못하고 있다는 신호다.</p>
 </div>
 <div class="admonition tip">
 <p class="admonition-title">실무 진단법</p>
