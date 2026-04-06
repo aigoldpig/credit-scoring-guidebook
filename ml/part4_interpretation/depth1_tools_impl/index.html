@@ -7,31 +7,31 @@
         <meta name="author" content="정승욱">
       
       
-        <link rel="canonical" href="https://aigoldpig.github.io/credit-scoring-guidebook/ml/part4_evaluation/">
+        <link rel="canonical" href="https://aigoldpig.github.io/credit-scoring-guidebook/ml/part4_interpretation/depth1_tools_impl/">
       
       
-        <link rel="prev" href="../part3_tree_ensemble/hyperparameter_tuning/">
+        <link rel="prev" href="../fanova_concepts/">
       
       
-        <link rel="next" href="interpretability/">
+        <link rel="next" href="../shap_in_practice/">
       
       
         
       
       
-      <link rel="icon" href="../../assets/images/favicon.png">
+      <link rel="icon" href="../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.5">
     
     
       
-        <title>해석과 설명 - 신용평가모형(Credit Scoring System) 가이드북</title>
+        <title>6. 도구 · 구현 · 요약 - 신용평가모형(Credit Scoring System) 가이드북</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -50,15 +50,15 @@
       
     
     
-      <link rel="stylesheet" href="../../stylesheets/extra.css">
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
     
     
-  <link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"><script src="../../assets/javascripts/glightbox.min.js"></script><style id="glightbox-style">
+  <link href="../../../assets/stylesheets/glightbox.min.css" rel="stylesheet"><script src="../../../assets/javascripts/glightbox.min.js"></script><style id="glightbox-style">
             html.glightbox-open { overflow: initial; height: 100%; }
             .gslide-title { margin-top: 0px; user-select: text; }
             .gslide-desc { color: #666; user-select: text; }
@@ -103,7 +103,7 @@
 
 <header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="상단/헤더">
-    <a href="../.." title="신용평가모형(Credit Scoring System) 가이드북" class="md-header__button md-logo" aria-label="신용평가모형(Credit Scoring System) 가이드북" data-md-component="logo">
+    <a href="../../.." title="신용평가모형(Credit Scoring System) 가이드북" class="md-header__button md-logo" aria-label="신용평가모형(Credit Scoring System) 가이드북" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m16 11.78 4.24-7.33 1.73 1-5.23 9.05-6.51-3.75L5.46 19H22v2H2V3h2v14.54L9.5 8z"></path></svg>
@@ -123,7 +123,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              해석과 설명
+              6. 도구 · 구현 · 요약
             
           </span>
         </div>
@@ -218,7 +218,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../.." class="md-tabs__link">
+      <a href="../../.." class="md-tabs__link">
         
   
   
@@ -239,7 +239,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../scorecard/" class="md-tabs__link">
+        <a href="../../../scorecard/" class="md-tabs__link">
           
   
   
@@ -263,7 +263,7 @@
     
     
       <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+        <a href="../../" class="md-tabs__link">
           
   
   
@@ -285,7 +285,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../lending_process/" class="md-tabs__link">
+        <a href="../../../lending_process/" class="md-tabs__link">
           
   
   
@@ -329,7 +329,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="네비게이션" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="신용평가모형(Credit Scoring System) 가이드북" class="md-nav__button md-logo" aria-label="신용평가모형(Credit Scoring System) 가이드북" data-md-component="logo">
+    <a href="../../.." title="신용평가모형(Credit Scoring System) 가이드북" class="md-nav__button md-logo" aria-label="신용평가모형(Credit Scoring System) 가이드북" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m16 11.78 4.24-7.33 1.73 1-5.23 9.05-6.51-3.75L5.46 19H22v2H2V3h2v14.54L9.5 8z"></path></svg>
@@ -347,7 +347,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../.." class="md-nav__link">
+      <a href="../../.." class="md-nav__link">
         
   
   
@@ -407,7 +407,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../scorecard/" class="md-nav__link ">
+            <a href="../../../scorecard/" class="md-nav__link ">
               
   
   
@@ -486,14 +486,14 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../scorecard/part1_overview/" class="md-nav__link ">
+            <a href="../../../scorecard/part1_overview/" class="md-nav__link ">
               
   
   
   <span class="md-ellipsis">
     
   
-    1. 개요
+    ① 개요
   
 
     
@@ -515,7 +515,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    1. 개요
+    ① 개요
   
 
           </label>
@@ -530,7 +530,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../scorecard/part1_overview/what-is-css/" class="md-nav__link">
+      <a href="../../../scorecard/part1_overview/what-is-css/" class="md-nav__link">
         
   
   
@@ -558,7 +558,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../scorecard/part1_overview/ranking-not-classification/" class="md-nav__link">
+      <a href="../../../scorecard/part1_overview/ranking-not-classification/" class="md-nav__link">
         
   
   
@@ -586,7 +586,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../scorecard/part1_overview/requirements/" class="md-nav__link">
+      <a href="../../../scorecard/part1_overview/requirements/" class="md-nav__link">
         
   
   
@@ -614,7 +614,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../scorecard/part1_overview/x-variables/" class="md-nav__link">
+      <a href="../../../scorecard/part1_overview/x-variables/" class="md-nav__link">
         
   
   
@@ -642,7 +642,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../scorecard/part1_overview/model-fitting/" class="md-nav__link">
+      <a href="../../../scorecard/part1_overview/model-fitting/" class="md-nav__link">
         
   
   
@@ -670,7 +670,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../scorecard/part1_overview/output-and-usage/" class="md-nav__link">
+      <a href="../../../scorecard/part1_overview/output-and-usage/" class="md-nav__link">
         
   
   
@@ -698,7 +698,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../scorecard/part1_overview/development-process/" class="md-nav__link">
+      <a href="../../../scorecard/part1_overview/development-process/" class="md-nav__link">
         
   
   
@@ -761,14 +761,14 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../scorecard/part2_theory/" class="md-nav__link ">
+            <a href="../../../scorecard/part2_theory/" class="md-nav__link ">
               
   
   
   <span class="md-ellipsis">
     
   
-    2. 이론
+    ② 이론
   
 
     
@@ -790,7 +790,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    2. 이론
+    ② 이론
   
 
           </label>
@@ -805,7 +805,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../scorecard/part2_theory/binary-classification/" class="md-nav__link">
+      <a href="../../../scorecard/part2_theory/binary-classification/" class="md-nav__link">
         
   
   
@@ -833,7 +833,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../scorecard/part2_theory/logit-transform/" class="md-nav__link">
+      <a href="../../../scorecard/part2_theory/logit-transform/" class="md-nav__link">
         
   
   
@@ -861,7 +861,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../scorecard/part2_theory/mle/" class="md-nav__link">
+      <a href="../../../scorecard/part2_theory/mle/" class="md-nav__link">
         
   
   
@@ -926,14 +926,14 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../scorecard/part3_variable_selection/" class="md-nav__link ">
+            <a href="../../../scorecard/part3_variable_selection/" class="md-nav__link ">
               
   
   
   <span class="md-ellipsis">
     
   
-    3. 변수 선정
+    ③ 변수 선정
   
 
     
@@ -955,7 +955,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    3. 변수 선정
+    ③ 변수 선정
   
 
           </label>
@@ -999,7 +999,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../scorecard/part3_variable_selection/classing/" class="md-nav__link ">
+            <a href="../../../scorecard/part3_variable_selection/classing/" class="md-nav__link ">
               
   
   
@@ -1043,7 +1043,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../scorecard/part3_variable_selection/classing/why-classing/" class="md-nav__link">
+      <a href="../../../scorecard/part3_variable_selection/classing/why-classing/" class="md-nav__link">
         
   
   
@@ -1071,7 +1071,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../scorecard/part3_variable_selection/classing/fine-classing/" class="md-nav__link">
+      <a href="../../../scorecard/part3_variable_selection/classing/fine-classing/" class="md-nav__link">
         
   
   
@@ -1099,7 +1099,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../scorecard/part3_variable_selection/classing/coarse-classing/" class="md-nav__link">
+      <a href="../../../scorecard/part3_variable_selection/classing/coarse-classing/" class="md-nav__link">
         
   
   
@@ -1127,7 +1127,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../scorecard/part3_variable_selection/classing/decision-criteria/" class="md-nav__link">
+      <a href="../../../scorecard/part3_variable_selection/classing/decision-criteria/" class="md-nav__link">
         
   
   
@@ -1190,7 +1190,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../scorecard/part3_variable_selection/woe_iv/" class="md-nav__link ">
+            <a href="../../../scorecard/part3_variable_selection/woe_iv/" class="md-nav__link ">
               
   
   
@@ -1234,7 +1234,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../scorecard/part3_variable_selection/woe_iv/woe/" class="md-nav__link">
+      <a href="../../../scorecard/part3_variable_selection/woe_iv/woe/" class="md-nav__link">
         
   
   
@@ -1262,7 +1262,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../scorecard/part3_variable_selection/woe_iv/woe-transform/" class="md-nav__link">
+      <a href="../../../scorecard/part3_variable_selection/woe_iv/woe-transform/" class="md-nav__link">
         
   
   
@@ -1290,7 +1290,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../scorecard/part3_variable_selection/woe_iv/iv/" class="md-nav__link">
+      <a href="../../../scorecard/part3_variable_selection/woe_iv/iv/" class="md-nav__link">
         
   
   
@@ -1357,7 +1357,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../scorecard/part3_variable_selection/univariate_lr/" class="md-nav__link ">
+            <a href="../../../scorecard/part3_variable_selection/univariate_lr/" class="md-nav__link ">
               
   
   
@@ -1401,7 +1401,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../scorecard/part3_variable_selection/univariate_lr/concept/" class="md-nav__link">
+      <a href="../../../scorecard/part3_variable_selection/univariate_lr/concept/" class="md-nav__link">
         
   
   
@@ -1429,7 +1429,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../scorecard/part3_variable_selection/univariate_lr/one-hot-no-intercept/" class="md-nav__link">
+      <a href="../../../scorecard/part3_variable_selection/univariate_lr/one-hot-no-intercept/" class="md-nav__link">
         
   
   
@@ -1457,7 +1457,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../scorecard/part3_variable_selection/univariate_lr/beta-woe-proof/" class="md-nav__link">
+      <a href="../../../scorecard/part3_variable_selection/univariate_lr/beta-woe-proof/" class="md-nav__link">
         
   
   
@@ -1485,7 +1485,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../scorecard/part3_variable_selection/univariate_lr/significance-test/" class="md-nav__link">
+      <a href="../../../scorecard/part3_variable_selection/univariate_lr/significance-test/" class="md-nav__link">
         
   
   
@@ -1513,7 +1513,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../scorecard/part3_variable_selection/univariate_lr/feedback-loop/" class="md-nav__link">
+      <a href="../../../scorecard/part3_variable_selection/univariate_lr/feedback-loop/" class="md-nav__link">
         
   
   
@@ -1574,7 +1574,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../scorecard/part3_variable_selection/domain_selection/" class="md-nav__link ">
+            <a href="../../../scorecard/part3_variable_selection/domain_selection/" class="md-nav__link ">
               
   
   
@@ -1618,7 +1618,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../scorecard/part3_variable_selection/domain_selection/partial-lr/" class="md-nav__link">
+      <a href="../../../scorecard/part3_variable_selection/domain_selection/partial-lr/" class="md-nav__link">
         
   
   
@@ -1646,7 +1646,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../scorecard/part3_variable_selection/domain_selection/sign-feedback/" class="md-nav__link">
+      <a href="../../../scorecard/part3_variable_selection/domain_selection/sign-feedback/" class="md-nav__link">
         
   
   
@@ -1715,14 +1715,14 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../scorecard/part4_modeling/" class="md-nav__link ">
+            <a href="../../../scorecard/part4_modeling/" class="md-nav__link ">
               
   
   
   <span class="md-ellipsis">
     
   
-    4. 모델링
+    ④ 모델링
   
 
     
@@ -1744,7 +1744,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    4. 모델링
+    ④ 모델링
   
 
           </label>
@@ -1759,7 +1759,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../scorecard/part4_modeling/simple-vs-full/" class="md-nav__link">
+      <a href="../../../scorecard/part4_modeling/simple-vs-full/" class="md-nav__link">
         
   
   
@@ -1787,7 +1787,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../scorecard/part4_modeling/multivariate-regression/" class="md-nav__link">
+      <a href="../../../scorecard/part4_modeling/multivariate-regression/" class="md-nav__link">
         
   
   
@@ -1854,14 +1854,14 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../scorecard/part5_scorecard/" class="md-nav__link ">
+            <a href="../../../scorecard/part5_scorecard/" class="md-nav__link ">
               
   
   
   <span class="md-ellipsis">
     
   
-    5. 스코어카드
+    ⑤ 스코어카드
   
 
     
@@ -1883,7 +1883,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    5. 스코어카드
+    ⑤ 스코어카드
   
 
           </label>
@@ -1898,7 +1898,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../scorecard/part5_scorecard/scorecard-and-rating/" class="md-nav__link">
+      <a href="../../../scorecard/part5_scorecard/scorecard-and-rating/" class="md-nav__link">
         
   
   
@@ -1926,7 +1926,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../scorecard/part5_scorecard/performance-ks-ar-gini/" class="md-nav__link">
+      <a href="../../../scorecard/part5_scorecard/performance-ks-ar-gini/" class="md-nav__link">
         
   
   
@@ -1954,7 +1954,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../scorecard/part5_scorecard/oot-validation/" class="md-nav__link">
+      <a href="../../../scorecard/part5_scorecard/oot-validation/" class="md-nav__link">
         
   
   
@@ -1982,7 +1982,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../scorecard/part5_scorecard/monitoring-and-operations/" class="md-nav__link">
+      <a href="../../../scorecard/part5_scorecard/monitoring-and-operations/" class="md-nav__link">
         
   
   
@@ -2010,7 +2010,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../scorecard/part5_scorecard/regulatory-framework/" class="md-nav__link">
+      <a href="../../../scorecard/part5_scorecard/regulatory-framework/" class="md-nav__link">
         
   
   
@@ -2075,7 +2075,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../scorecard/appendix/" class="md-nav__link ">
+            <a href="../../../scorecard/appendix/" class="md-nav__link ">
               
   
   
@@ -2148,7 +2148,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../scorecard/appendix/optbinning/" class="md-nav__link ">
+            <a href="../../../scorecard/appendix/optbinning/" class="md-nav__link ">
               
   
   
@@ -2192,7 +2192,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../scorecard/appendix/optbinning/optimizer/" class="md-nav__link">
+      <a href="../../../scorecard/appendix/optbinning/optimizer/" class="md-nav__link">
         
   
   
@@ -2220,7 +2220,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../scorecard/appendix/optbinning/params/" class="md-nav__link">
+      <a href="../../../scorecard/appendix/optbinning/params/" class="md-nav__link">
         
   
   
@@ -2248,7 +2248,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../scorecard/appendix/optbinning/table-woe/" class="md-nav__link">
+      <a href="../../../scorecard/appendix/optbinning/table-woe/" class="md-nav__link">
         
   
   
@@ -2276,7 +2276,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../scorecard/appendix/optbinning/pipeline/" class="md-nav__link">
+      <a href="../../../scorecard/appendix/optbinning/pipeline/" class="md-nav__link">
         
   
   
@@ -2343,7 +2343,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../scorecard/appendix/logistic-fitting/" class="md-nav__link ">
+            <a href="../../../scorecard/appendix/logistic-fitting/" class="md-nav__link ">
               
   
   
@@ -2387,7 +2387,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../scorecard/appendix/logistic-fitting/woe-entry/" class="md-nav__link">
+      <a href="../../../scorecard/appendix/logistic-fitting/woe-entry/" class="md-nav__link">
         
   
   
@@ -2415,7 +2415,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../scorecard/appendix/logistic-fitting/dummy-entry/" class="md-nav__link">
+      <a href="../../../scorecard/appendix/logistic-fitting/dummy-entry/" class="md-nav__link">
         
   
   
@@ -2443,7 +2443,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../scorecard/appendix/logistic-fitting/stepwise/" class="md-nav__link">
+      <a href="../../../scorecard/appendix/logistic-fitting/stepwise/" class="md-nav__link">
         
   
   
@@ -2471,7 +2471,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../scorecard/appendix/logistic-fitting/score-wald-lr-test/" class="md-nav__link">
+      <a href="../../../scorecard/appendix/logistic-fitting/score-wald-lr-test/" class="md-nav__link">
         
   
   
@@ -2499,7 +2499,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../scorecard/appendix/logistic-fitting/woe-dummy-deep-dive/" class="md-nav__link">
+      <a href="../../../scorecard/appendix/logistic-fitting/woe-dummy-deep-dive/" class="md-nav__link">
         
   
   
@@ -2566,7 +2566,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../scorecard/appendix/lowess/" class="md-nav__link ">
+            <a href="../../../scorecard/appendix/lowess/" class="md-nav__link ">
               
   
   
@@ -2610,7 +2610,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../scorecard/appendix/lowess/riskcalc/" class="md-nav__link">
+      <a href="../../../scorecard/appendix/lowess/riskcalc/" class="md-nav__link">
         
   
   
@@ -2638,7 +2638,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../scorecard/appendix/lowess/effects/" class="md-nav__link">
+      <a href="../../../scorecard/appendix/lowess/effects/" class="md-nav__link">
         
   
   
@@ -2666,7 +2666,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../scorecard/appendix/lowess/architecture/" class="md-nav__link">
+      <a href="../../../scorecard/appendix/lowess/architecture/" class="md-nav__link">
         
   
   
@@ -2694,7 +2694,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../scorecard/appendix/lowess/intuition/" class="md-nav__link">
+      <a href="../../../scorecard/appendix/lowess/intuition/" class="md-nav__link">
         
   
   
@@ -2722,7 +2722,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../scorecard/appendix/lowess/application/" class="md-nav__link">
+      <a href="../../../scorecard/appendix/lowess/application/" class="md-nav__link">
         
   
   
@@ -2812,7 +2812,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../scorecard/appendix/glossary/" class="md-nav__link">
+      <a href="../../../scorecard/appendix/glossary/" class="md-nav__link">
         
   
   
@@ -2901,7 +2901,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../" class="md-nav__link ">
               
   
   
@@ -2980,14 +2980,14 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../part1_overview/" class="md-nav__link ">
+            <a href="../../part1_overview/" class="md-nav__link ">
               
   
   
   <span class="md-ellipsis">
     
   
-    1. ML 기초
+    ① ML 기초
   
 
     
@@ -3009,7 +3009,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    1. ML 기초
+    ① ML 기초
   
 
           </label>
@@ -3024,7 +3024,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../part1_overview/why_ml/" class="md-nav__link">
+      <a href="../../part1_overview/why_ml/" class="md-nav__link">
         
   
   
@@ -3052,7 +3052,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../part1_overview/bias_variance/" class="md-nav__link">
+      <a href="../../part1_overview/bias_variance/" class="md-nav__link">
         
   
   
@@ -3080,7 +3080,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../part1_overview/regularization/" class="md-nav__link">
+      <a href="../../part1_overview/regularization/" class="md-nav__link">
         
   
   
@@ -3108,7 +3108,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../part1_overview/baseline_workflow/" class="md-nav__link">
+      <a href="../../part1_overview/baseline_workflow/" class="md-nav__link">
         
   
   
@@ -3136,7 +3136,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../part1_overview/data_splitting/" class="md-nav__link">
+      <a href="../../part1_overview/data_splitting/" class="md-nav__link">
         
   
   
@@ -3164,7 +3164,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../part1_overview/feature_preprocessing/" class="md-nav__link">
+      <a href="../../part1_overview/feature_preprocessing/" class="md-nav__link">
         
   
   
@@ -3192,7 +3192,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../part1_overview/feature_selection/" class="md-nav__link">
+      <a href="../../part1_overview/feature_selection/" class="md-nav__link">
         
   
   
@@ -3257,14 +3257,14 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../part2_neural_net/" class="md-nav__link ">
+            <a href="../../part2_neural_net/" class="md-nav__link ">
               
   
   
   <span class="md-ellipsis">
     
   
-    2. 뉴럴넷
+    ② 뉴럴넷
   
 
     
@@ -3286,7 +3286,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    2. 뉴럴넷
+    ② 뉴럴넷
   
 
           </label>
@@ -3301,7 +3301,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../part2_neural_net/nn_basics/" class="md-nav__link">
+      <a href="../../part2_neural_net/nn_basics/" class="md-nav__link">
         
   
   
@@ -3329,7 +3329,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../part2_neural_net/lr_as_nn/" class="md-nav__link">
+      <a href="../../part2_neural_net/lr_as_nn/" class="md-nav__link">
         
   
   
@@ -3357,7 +3357,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../part2_neural_net/tabnet/" class="md-nav__link">
+      <a href="../../part2_neural_net/tabnet/" class="md-nav__link">
         
   
   
@@ -3385,7 +3385,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../part2_neural_net/rnn_tabular/" class="md-nav__link">
+      <a href="../../part2_neural_net/rnn_tabular/" class="md-nav__link">
         
   
   
@@ -3456,14 +3456,14 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../part3_tree_ensemble/" class="md-nav__link ">
+            <a href="../../part3_tree_ensemble/" class="md-nav__link ">
               
   
   
   <span class="md-ellipsis">
     
   
-    3. 트리 앙상블
+    ③ 트리 앙상블
   
 
     
@@ -3485,7 +3485,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    3. 트리 앙상블
+    ③ 트리 앙상블
   
 
           </label>
@@ -3500,7 +3500,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../part3_tree_ensemble/tree_models/" class="md-nav__link">
+      <a href="../../part3_tree_ensemble/tree_models/" class="md-nav__link">
         
   
   
@@ -3528,7 +3528,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../part3_tree_ensemble/ensemble/" class="md-nav__link">
+      <a href="../../part3_tree_ensemble/ensemble/" class="md-nav__link">
         
   
   
@@ -3556,7 +3556,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../part3_tree_ensemble/bias_variance_trees/" class="md-nav__link">
+      <a href="../../part3_tree_ensemble/bias_variance_trees/" class="md-nav__link">
         
   
   
@@ -3584,7 +3584,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../part3_tree_ensemble/boosting_fundamentals/" class="md-nav__link">
+      <a href="../../part3_tree_ensemble/boosting_fundamentals/" class="md-nav__link">
         
   
   
@@ -3612,7 +3612,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../part3_tree_ensemble/boosting_advanced/" class="md-nav__link">
+      <a href="../../part3_tree_ensemble/boosting_advanced/" class="md-nav__link">
         
   
   
@@ -3640,7 +3640,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../part3_tree_ensemble/xgb_lgbm/" class="md-nav__link">
+      <a href="../../part3_tree_ensemble/xgb_lgbm/" class="md-nav__link">
         
   
   
@@ -3668,7 +3668,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../part3_tree_ensemble/hyperparameter_tuning/" class="md-nav__link">
+      <a href="../../part3_tree_ensemble/hyperparameter_tuning/" class="md-nav__link">
         
   
   
@@ -3722,6 +3722,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -3737,14 +3741,14 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="./" class="md-nav__link md-nav__link--active">
+            <a href="../" class="md-nav__link ">
               
   
   
   <span class="md-ellipsis">
     
   
-    4. 해석과 설명
+    ④ 해석과 설명
   
 
     
@@ -3755,7 +3759,7 @@
             </a>
             
               
-              <label class="md-nav__link md-nav__link--active" for="__nav_3_5" id="__nav_3_5_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_3_5" id="__nav_3_5_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
@@ -3766,7 +3770,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    4. 해석과 설명
+    ④ 해석과 설명
   
 
           </label>
@@ -3781,7 +3785,7 @@
   
   
     <li class="md-nav__item">
-      <a href="interpretability/" class="md-nav__link">
+      <a href="../interpretability/" class="md-nav__link">
         
   
   
@@ -3809,14 +3813,14 @@
   
   
     <li class="md-nav__item">
-      <a href="shap_in_practice/" class="md-nav__link">
+      <a href="../shap_theory/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    2. SHAP — 해석의 여정
+    2. SHAP 이론
   
 
     
@@ -3837,14 +3841,14 @@
   
   
     <li class="md-nav__item">
-      <a href="surrogate_model/" class="md-nav__link">
+      <a href="../depth1_gbm/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    3. Surrogate Model
+    3. 1-Depth GBM 스코어카드
   
 
     
@@ -3865,14 +3869,14 @@
   
   
     <li class="md-nav__item">
-      <a href="depth1_gbm/" class="md-nav__link">
+      <a href="../ebm/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    4. 해석 가능한 ML — 1-Depth GBM과 EBM
+    4. EBM (GA²M)
   
 
     
@@ -3893,14 +3897,172 @@
   
   
     <li class="md-nav__item">
-      <a href="depth1_tools_impl/" class="md-nav__link">
+      <a href="../fanova_concepts/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    5. 도구 · 구현 · 요약
+    5. fANOVA 개념과 Purification
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6. 도구 · 구현 · 요약
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6. 도구 · 구현 · 요약
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="목차">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      목차
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+      
+        <li class="md-nav__item">
+  <a href="#61" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1 관련 기법과 오픈소스 도구
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#62" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.2 실무 파라미터 가이드
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#63" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.3 실무 적용 시나리오
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#64" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.4 참고 자료
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#65" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.5 요약
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shap_in_practice/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7. ML 해석을 고민한 기록
   
 
     
@@ -3954,14 +4116,14 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../part5_validation/" class="md-nav__link ">
+            <a href="../../part5_validation/" class="md-nav__link ">
               
   
   
   <span class="md-ellipsis">
     
   
-    5. 모델 검증
+    ⑤ 모델 검증
   
 
     
@@ -3983,7 +4145,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    5. 모델 검증
+    ⑤ 모델 검증
   
 
           </label>
@@ -3998,7 +4160,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../part5_validation/validation/" class="md-nav__link">
+      <a href="../../part5_validation/validation/" class="md-nav__link">
         
   
   
@@ -4026,7 +4188,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../part5_validation/regulatory/" class="md-nav__link">
+      <a href="../../part5_validation/regulatory/" class="md-nav__link">
         
   
   
@@ -4085,7 +4247,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../appendix/" class="md-nav__link ">
+            <a href="../../appendix/" class="md-nav__link ">
               
   
   
@@ -4158,7 +4320,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../appendix/shap-fanova/" class="md-nav__link ">
+            <a href="../../appendix/shap-fanova/" class="md-nav__link ">
               
   
   
@@ -4202,7 +4364,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../appendix/shap-fanova/non-identifiability/" class="md-nav__link">
+      <a href="../../appendix/shap-fanova/non-identifiability/" class="md-nav__link">
         
   
   
@@ -4230,7 +4392,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../appendix/shap-fanova/functional-anova/" class="md-nav__link">
+      <a href="../../appendix/shap-fanova/functional-anova/" class="md-nav__link">
         
   
   
@@ -4258,7 +4420,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../appendix/shap-fanova/purification/" class="md-nav__link">
+      <a href="../../appendix/shap-fanova/purification/" class="md-nav__link">
         
   
   
@@ -4286,7 +4448,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../appendix/shap-fanova/shap-vs-fanova/" class="md-nav__link">
+      <a href="../../appendix/shap-fanova/shap-vs-fanova/" class="md-nav__link">
         
   
   
@@ -4370,7 +4532,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../lending_process/" class="md-nav__link ">
+            <a href="../../../lending_process/" class="md-nav__link ">
               
   
   
@@ -4414,7 +4576,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../lending_process/model-development/" class="md-nav__link">
+      <a href="../../../lending_process/model-development/" class="md-nav__link">
         
   
   
@@ -4442,7 +4604,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../lending_process/underwriting/" class="md-nav__link">
+      <a href="../../../lending_process/underwriting/" class="md-nav__link">
         
   
   
@@ -4470,7 +4632,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../lending_process/portfolio-mgmt/" class="md-nav__link">
+      <a href="../../../lending_process/portfolio-mgmt/" class="md-nav__link">
         
   
   
@@ -4498,7 +4660,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../lending_process/collection/" class="md-nav__link">
+      <a href="../../../lending_process/collection/" class="md-nav__link">
         
   
   
@@ -4526,7 +4688,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../lending_process/risk-regulation/" class="md-nav__link">
+      <a href="../../../lending_process/risk-regulation/" class="md-nav__link">
         
   
   
@@ -4581,7 +4743,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../lending_process/terms/" class="md-nav__link ">
+            <a href="../../../lending_process/terms/" class="md-nav__link ">
               
   
   
@@ -4625,7 +4787,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../lending_process/terms/pd/" class="md-nav__link">
+      <a href="../../../lending_process/terms/pd/" class="md-nav__link">
         
   
   
@@ -4653,7 +4815,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../lending_process/terms/lgd/" class="md-nav__link">
+      <a href="../../../lending_process/terms/lgd/" class="md-nav__link">
         
   
   
@@ -4681,7 +4843,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../lending_process/terms/ead/" class="md-nav__link">
+      <a href="../../../lending_process/terms/ead/" class="md-nav__link">
         
   
   
@@ -4734,52 +4896,345 @@
 
 
 
-<h1 id="_1">해석과 설명<a class="headerlink" href="#_1" title="Permanent link">¶</a></h1>
-<div class="admonition quote">
-<p>SHAP, Surrogate Model, 1-Depth GBM --- ML 모형을 <strong>쓸 수 있게</strong> 만드는 기법들</p>
-</div>
-<hr>
-<h2 id="_2">이 섹션의 구성<a class="headerlink" href="#_2" title="Permanent link">¶</a></h2>
+<h1 id="_1">도구 · 구현 · 요약<a class="headerlink" href="#_1" title="Permanent link">¶</a></h1>
+<h2 id="61">6.1 관련 기법과 오픈소스 도구<a class="headerlink" href="#61" title="Permanent link">¶</a></h2>
+<p>1-Depth GBM은 "해석 가능한 ML" 생태계의 일부다. 같은 철학을 공유하는 기법과 도구를 정리한다.</p>
+<h3 id="_2">관련 모형 계보<a class="headerlink" href="#_2" title="Permanent link">¶</a></h3>
 <table>
 <thead>
 <tr>
-<th style="text-align: center;">#</th>
-<th>페이지</th>
-<th>내용</th>
+<th>기법</th>
+<th>구조</th>
+<th style="text-align: center;">연도</th>
+<th>핵심 저자/기관</th>
+<th style="text-align: center;">교호작용</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: center;">1</td>
-<td><a href="interpretability/">해석 가능성</a></td>
-<td>XAI 개론, PDP, SHAP, TreeSHAP, 시각화</td>
+<td><strong>GAM</strong> (splines)</td>
+<td>가산적 smooth 함수</td>
+<td style="text-align: center;">1986</td>
+<td>Hastie, Tibshirani</td>
+<td style="text-align: center;">없음</td>
 </tr>
 <tr>
-<td style="text-align: center;">2</td>
-<td><a href="shap_in_practice/">SHAP — 해석의 여정</a></td>
-<td>SHAP 실전 활용의 벽, Functional ANOVA로의 여정</td>
+<td><strong>GBM with stumps</strong></td>
+<td>가산적 boosted stump</td>
+<td style="text-align: center;">2001</td>
+<td>Friedman</td>
+<td style="text-align: center;">없음</td>
 </tr>
 <tr>
-<td style="text-align: center;">3</td>
-<td><a href="surrogate_model/">Surrogate Model</a></td>
-<td>대리 모형 파이프라인, R² 한계, 찬반 논쟁</td>
+<td><strong>GA<span class="arithmatex">\(^2\)</span>M</strong></td>
+<td>GAM + 선택적 pairwise</td>
+<td style="text-align: center;">2013</td>
+<td>Lou, Caruana</td>
+<td style="text-align: center;">2-way</td>
 </tr>
 <tr>
-<td style="text-align: center;">4</td>
-<td><a href="depth1_gbm/">해석 가능한 ML: 1-Depth GBM과 EBM</a></td>
-<td>GAM 동치, 학술 계보, 성능 비교, Shape Function</td>
+<td><strong>EBM</strong></td>
+<td>Round-robin cyclic boosting GAM</td>
+<td style="text-align: center;">2019</td>
+<td>Nori, Caruana (Microsoft)</td>
+<td style="text-align: center;">선택적 2-way</td>
 </tr>
 <tr>
-<td style="text-align: center;">5</td>
-<td><a href="depth1_tools_impl/">도구 · 구현 · 요약</a></td>
-<td>오픈소스 도구, 업계 사례, 구현 예시, 참고 자료</td>
+<td><strong>NAM</strong></td>
+<td>Feature별 신경망</td>
+<td style="text-align: center;">2021</td>
+<td>Agarwal, Hinton, Caruana</td>
+<td style="text-align: center;">없음</td>
+</tr>
+<tr>
+<td><strong>GAMI-Net</strong></td>
+<td>신경망 GAM + purified interactions</td>
+<td style="text-align: center;">2021</td>
+<td>Yang, Sudjianto</td>
+<td style="text-align: center;">2-way (purified)</td>
+</tr>
+<tr>
+<td><strong>NODE-GAM</strong></td>
+<td>Oblivious Decision Tree GAM</td>
+<td style="text-align: center;">2022</td>
+<td>Chang, Caruana</td>
+<td style="text-align: center;">없음</td>
+</tr>
+<tr>
+<td><strong>Add-XGBoost</strong></td>
+<td>Feature별 XGBoost + Lasso</td>
+<td style="text-align: center;">2025</td>
+<td>(신용평가 특화)</td>
+<td style="text-align: center;">2-way</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_3">오픈소스 도구<a class="headerlink" href="#_3" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>라이브러리</th>
+<th>설명</th>
+<th>특징</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>InterpretML / EBM</strong></td>
+<td>Microsoft Research의 해석 가능 ML 프레임워크</td>
+<td>GAM의 "정석" 구현. Round-robin 학습, inner/outer bagging</td>
+</tr>
+<tr>
+<td><strong>PiML</strong></td>
+<td>해석 가능 ML 개발 및 진단 도구</td>
+<td><strong>XGB1</strong> (Depth-1), <strong>XGB2</strong> (Depth-2 + purification)을 내장 모형으로 지원</td>
+</tr>
+<tr>
+<td><strong>xBooster</strong></td>
+<td>GBM → 스코어카드 변환기</td>
+<td>XGBoost/LightGBM/CatBoost의 leaf weight를 전통 스코어카드 포인트로 변환</td>
+</tr>
+<tr>
+<td><strong>skorecard</strong></td>
+<td>ING Bank의 스코어카드 파이프라인</td>
+<td>전통 LR 스코어카드 벤치마크용. WoE 구간화 + 로지스틱 회귀</td>
+</tr>
+</tbody>
+</table>
+<div class="source-ref">
+출처: Sudjianto, A. et al. (2023). "PiML Toolbox for Interpretable Machine Learning Model Development and Diagnostics." arXiv:2305.04214.
+<a href="https://arxiv.org/abs/2305.04214" target="_blank">arXiv</a> ·
+<a href="https://github.com/SelfExplainML/PiML-Toolbox" target="_blank">GitHub (PiML)</a> ·
+<a href="https://github.com/interpretml/interpret" target="_blank">GitHub (InterpretML)</a> ·
+<a href="https://github.com/xRiskLab/xBooster" target="_blank">GitHub (xBooster)</a>
+</div>
+
+<hr>
+<h2 id="62">6.2 실무 파라미터 가이드<a class="headerlink" href="#62" title="Permanent link">¶</a></h2>
+<h3 id="_4">핵심 파라미터<a class="headerlink" href="#_4" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>파라미터</th>
+<th>권장 값</th>
+<th>이유</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>max_depth</code></td>
+<td><strong>1</strong></td>
+<td>stump 구조 확보 (GAM 보장)</td>
+</tr>
+<tr>
+<td><code>num_leaves</code></td>
+<td><strong>2</strong></td>
+<td>depth=1이면 leaf는 반드시 2개</td>
+</tr>
+<tr>
+<td><code>monotone_constraints</code></td>
+<td><strong>변수별 지정</strong></td>
+<td><a href="../depth1_gbm/">개요 — 단조성</a> 참조</td>
+</tr>
+<tr>
+<td><code>learning_rate</code></td>
+<td><strong>0.01 ~ 0.05</strong></td>
+<td>낮을수록 shape function이 부드럽고 안정적</td>
+</tr>
+<tr>
+<td><code>n_estimators</code></td>
+<td><strong>1,000 ~ 5,000</strong></td>
+<td>낮은 learning_rate를 보상. early stopping과 병용</td>
+</tr>
+<tr>
+<td><code>colsample_bytree</code></td>
+<td><strong>1.0 권장</strong></td>
+<td>depth-1 stump은 변수 1개만 사용하므로, subsampling하면 shape function이 불안정해질 수 있다</td>
+</tr>
+<tr>
+<td><code>subsample</code></td>
+<td><strong>0.7 ~ 0.9</strong></td>
+<td>row subsampling은 과적합 방지에 유효</td>
+</tr>
+<tr>
+<td><code>reg_alpha</code> / <code>reg_lambda</code></td>
+<td><strong>0.1 ~ 1.0</strong></td>
+<td>leaf weight 크기를 제어하여 개별 stump의 영향력을 제한</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">변수 수 관리</p>
+<p>1-Depth GBM도 전통 스코어카드와 마찬가지로 <strong>최종 변수를 10~20개 내외로 관리</strong>하는 것이 바람직하다. Feature importance로 상위 변수를 선별한 뒤, 해당 변수만으로 재학습하는 2단계 접근이 실무적이다.</p>
+</div>
+<hr>
+<h2 id="63">6.3 실무 적용 시나리오<a class="headerlink" href="#63" title="Permanent link">¶</a></h2>
+<h3 id="1">시나리오 1: 규제 모형 대체<a class="headerlink" href="#1" title="Permanent link">¶</a></h3>
+<p>전통 LR 스코어카드의 대체 모형으로 1-Depth GBM을 제안. GAM 구조이므로 변수별 효과를 점수표처럼 제출할 수 있다.</p>
+<h3 id="2">시나리오 2: 챌린저 모형<a class="headerlink" href="#2" title="Permanent link">¶</a></h3>
+<p>운영 중인 전통 모형(챔피언) 대비 1-Depth GBM(챌린저)의 성능 우위를 OOT에서 검증하여 교체 근거를 확보.</p>
+<h3 id="3">시나리오 3: 변수 탐색 도구<a class="headerlink" href="#3" title="Permanent link">¶</a></h3>
+<p>Full GBM을 바로 만들기 전에, 1-Depth GBM으로 <strong>각 변수의 비선형 효과를 탐색</strong>한다. WoE Classing의 구간 설정에도 참고할 수 있다 — "1-Depth GBM의 효과 곡선이 꺾이는 지점"이 자연스러운 Classing 경계가 된다.</p>
+<h3 id="4-fico-ml">시나리오 4: FICO 방식 — ML로 탐색, 전통으로 배포<a class="headerlink" href="#4-fico-ml" title="Permanent link">¶</a></h3>
+<p>Fahner (2018)의 transmutation 전략. Full GBM으로 패턴을 발견하고, 그 인사이트를 단조성 제약이 있는 스코어카드로 변환하여 배포한다.</p>
+<hr>
+<h2 id="64">6.4 참고 자료<a class="headerlink" href="#64" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>자료</th>
+<th style="text-align: center;">유형</th>
+<th>핵심 내용</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Hastie &amp; Tibshirani (1986). "Generalized Additive Models." <em>Statistical Science</em></td>
+<td style="text-align: center;">논문</td>
+<td>GAM 프레임워크의 원조</td>
+</tr>
+<tr>
+<td>Friedman (2001). "Greedy Function Approximation: A Gradient Boosting Machine." <em>Annals of Statistics</em></td>
+<td style="text-align: center;">논문</td>
+<td>GBM 원논문. Stump = additive model 명시</td>
+</tr>
+<tr>
+<td>Lou et al. (2012). "Intelligible Models for Classification and Regression." <em>KDD</em></td>
+<td style="text-align: center;">논문</td>
+<td>Tree-based GAM이 최적 적합법임을 실증</td>
+</tr>
+<tr>
+<td>Lou et al. (2013). "Accurate Intelligible Models with Pairwise Interactions." <em>KDD</em></td>
+<td style="text-align: center;">논문</td>
+<td>GA<span class="arithmatex">\(^2\)</span>M — 2-way 교호작용 추가</td>
+</tr>
+<tr>
+<td>Caruana et al. (2015). "Intelligible Models for HealthCare." <em>KDD</em></td>
+<td style="text-align: center;">논문</td>
+<td>해석 가능 ML의 필요성을 보여준 대표 사례</td>
+</tr>
+<tr>
+<td>Fahner (2018). "Developing Transparent Credit Risk Scorecards." <em>Data Analytics</em></td>
+<td style="text-align: center;">논문</td>
+<td>FICO의 transmutation 전략. <strong>Best Paper Award</strong></td>
+</tr>
+<tr>
+<td>Nori et al. (2019). "InterpretML." arXiv:1909.09223</td>
+<td style="text-align: center;">논문/도구</td>
+<td>EBM 구현체와 InterpretML 프레임워크</td>
+</tr>
+<tr>
+<td>Lengerich et al. (2020). "Purifying Interaction Effects." <em>AISTATS</em></td>
+<td style="text-align: center;">논문</td>
+<td>Main effect / interaction 분리 알고리즘</td>
+</tr>
+<tr>
+<td>Agarwal et al. (2021). "Neural Additive Models." <em>NeurIPS</em></td>
+<td style="text-align: center;">논문</td>
+<td>신경망 기반 GAM (NAM)</td>
+</tr>
+<tr>
+<td>Yang et al. (2021). "GAMI-Net." <em>Pattern Recognition</em></td>
+<td style="text-align: center;">논문</td>
+<td>Purified interaction이 있는 신경망 GAM</td>
+</tr>
+<tr>
+<td>Chang et al. (2021). "How Interpretable and Trustworthy are GAMs?" <em>KDD</em></td>
+<td style="text-align: center;">논문</td>
+<td>Tree-based GAM이 가장 신뢰할 수 있는 GAM</td>
+</tr>
+<tr>
+<td>Sudjianto et al. (2023). "PiML Toolbox." arXiv:2305.04214</td>
+<td style="text-align: center;">논문/도구</td>
+<td>XGB1, XGB2를 해석 가능 모형으로 내장</td>
+</tr>
+<tr>
+<td>(2025). "Interpretable credit scoring based on Add-XGBoost." <em>Chaos, Solitons &amp; Fractals</em></td>
+<td style="text-align: center;">논문</td>
+<td>Feature별 XGBoost를 가산적으로 결합하는 신용평가 특화 기법</td>
+</tr>
+<tr>
+<td>Moody's Analytics. "Automating Interpretable ML Scorecards."</td>
+<td style="text-align: center;">백서</td>
+<td>해석 가능 모형 vs 비제약 모형 성능 비교</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_5">온라인 가이드<a class="headerlink" href="#_5" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>자료</th>
+<th>설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://selfexplainml.github.io/PiML-Toolbox/_build/html/guides/models/ebm.html">PiML --- EBM 가이드</a></td>
+<td>PiML에서 EBM 학습, shape function 시각화, purification 적용 방법</td>
+</tr>
+<tr>
+<td><a href="https://github.com/interpretml/interpret">InterpretML GitHub</a></td>
+<td>EBM 구현체 소스 코드 및 예제 노트북</td>
 </tr>
 </tbody>
 </table>
 <hr>
+<h2 id="65">6.5 요약<a class="headerlink" href="#65" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th style="text-align: center;">전통 LR</th>
+<th style="text-align: center;">1-Depth GBM</th>
+<th style="text-align: center;">EBM (GA<span class="arithmatex">\(^2\)</span>M)</th>
+<th style="text-align: center;">Full GBM</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>구조</strong></td>
+<td style="text-align: center;"><span class="arithmatex">\(\beta_0 + \sum \beta_j \cdot \text{WoE}_j\)</span></td>
+<td style="text-align: center;"><span class="arithmatex">\(F_0 + \sum f_j(x_j)\)</span></td>
+<td style="text-align: center;"><span class="arithmatex">\(F_0 + \sum f_j + \sum f_{jk}\)</span></td>
+<td style="text-align: center;"><span class="arithmatex">\(F_0 + \sum h_t(\mathbf{x})\)</span></td>
+</tr>
+<tr>
+<td><strong>해석</strong></td>
+<td style="text-align: center;">점수표</td>
+<td style="text-align: center;">효과 곡선</td>
+<td style="text-align: center;">효과 곡선 + 교호작용</td>
+<td style="text-align: center;">SHAP</td>
+</tr>
+<tr>
+<td><strong>비선형</strong></td>
+<td style="text-align: center;">구간화(수동)</td>
+<td style="text-align: center;">자동(stump 합)</td>
+<td style="text-align: center;">자동 + pairwise</td>
+<td style="text-align: center;">자동(깊은 트리)</td>
+</tr>
+<tr>
+<td><strong>교호작용</strong></td>
+<td style="text-align: center;">없음</td>
+<td style="text-align: center;">없음</td>
+<td style="text-align: center;">선택적 2-way</td>
+<td style="text-align: center;">자동</td>
+</tr>
+<tr>
+<td><strong>규제 수용성</strong></td>
+<td style="text-align: center;">매우 높음</td>
+<td style="text-align: center;">높음</td>
+<td style="text-align: center;">높음</td>
+<td style="text-align: center;">제한적</td>
+</tr>
+</tbody>
+</table>
+<p>1-Depth GBM은 전통과 ML 사이의 <strong>징검다리</strong>다. 전통의 해석 가능성과 ML의 자동 비선형 학습을 동시에 얻을 수 있다.</p>
+<p>한 걸음 더 나아가면, EBM은 round-robin 학습과 선택적 교호작용으로 1-Depth GBM의 발전형이며, Full GBM과의 성능 격차를 상당 부분 좁힌다. PiML, xBooster 같은 도구 생태계도 성숙해지고 있다.</p>
+<p>모든 상황에서 최선은 아니지만, <strong>"왜 ML을 쓰는가?"에 대한 가장 설명하기 쉬운 답</strong>이다.</p>
 <div class="admonition tip">
-<p class="admonition-title">다음 섹션</p>
-<p><a href="../part5_validation/">모델 검증</a>에서 성능 지표, OOT 검증, 규제 프레임워크를 다룬다.</p>
+<p class="admonition-title">다음 페이지</p>
+<p><a href="../shap_in_practice/">ML 해석을 고민한 기록</a> --- SHAP 실전의 벽, Counterfactual Explanation, 그리고 왜 SHAP은 교과서가 되고 fANOVA는 아닌가.</p>
 </div>
 
 
@@ -4842,16 +5297,16 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.indexes", "toc.integrate", "search.suggest", "search.highlight", "content.code.copy", "content.tabs.link"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\ud074\ub9bd\ubcf4\ub4dc\uc5d0 \ubcf5\uc0ac\ub428", "clipboard.copy": "\ud074\ub9bd\ubcf4\ub4dc\ub85c \ubcf5\uc0ac", "search.result.more.one": "\uc774 \ubb38\uc11c\uc5d0\uc11c 1\uac1c\uc758 \uac80\uc0c9 \uacb0\uacfc \ub354 \ubcf4\uae30", "search.result.more.other": "\uc774 \ubb38\uc11c\uc5d0\uc11c #\uac1c\uc758 \uac80\uc0c9 \uacb0\uacfc \ub354 \ubcf4\uae30", "search.result.none": "\uac80\uc0c9\uc5b4\uc640 \uc77c\uce58\ud558\ub294 \ubb38\uc11c\uac00 \uc5c6\uc2b5\ub2c8\ub2e4", "search.result.one": "1\uac1c\uc758 \uc77c\uce58\ud558\ub294 \ubb38\uc11c", "search.result.other": "#\uac1c\uc758 \uc77c\uce58\ud558\ub294 \ubb38\uc11c", "search.result.placeholder": "\uac80\uc0c9\uc5b4\ub97c \uc785\ub825\ud558\uc138\uc694", "search.result.term.missing": "\ud3ec\ud568\ub418\uc9c0 \uc54a\uc740 \uac80\uc0c9\uc5b4", "select.version": "\ubc84\uc804 \uc120\ud0dd"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.indexes", "toc.integrate", "search.suggest", "search.highlight", "content.code.copy", "content.tabs.link"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\ud074\ub9bd\ubcf4\ub4dc\uc5d0 \ubcf5\uc0ac\ub428", "clipboard.copy": "\ud074\ub9bd\ubcf4\ub4dc\ub85c \ubcf5\uc0ac", "search.result.more.one": "\uc774 \ubb38\uc11c\uc5d0\uc11c 1\uac1c\uc758 \uac80\uc0c9 \uacb0\uacfc \ub354 \ubcf4\uae30", "search.result.more.other": "\uc774 \ubb38\uc11c\uc5d0\uc11c #\uac1c\uc758 \uac80\uc0c9 \uacb0\uacfc \ub354 \ubcf4\uae30", "search.result.none": "\uac80\uc0c9\uc5b4\uc640 \uc77c\uce58\ud558\ub294 \ubb38\uc11c\uac00 \uc5c6\uc2b5\ub2c8\ub2e4", "search.result.one": "1\uac1c\uc758 \uc77c\uce58\ud558\ub294 \ubb38\uc11c", "search.result.other": "#\uac1c\uc758 \uc77c\uce58\ud558\ub294 \ubb38\uc11c", "search.result.placeholder": "\uac80\uc0c9\uc5b4\ub97c \uc785\ub825\ud558\uc138\uc694", "search.result.term.missing": "\ud3ec\ud568\ub418\uc9c0 \uc54a\uc740 \uac80\uc0c9\uc5b4", "select.version": "\ubc84\uc804 \uc120\ud0dd"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
-        <script src="../../javascripts/mathjax.js"></script>
+        <script src="../../../javascripts/mathjax.js"></script>
       
         <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
       
-        <script src="../../javascripts/dropdown-nav.js"></script>
+        <script src="../../../javascripts/dropdown-nav.js"></script>
       
     
   

@@ -7,13 +7,13 @@
         <meta name="author" content="정승욱">
       
       
-        <link rel="canonical" href="https://aigoldpig.github.io/credit-scoring-guidebook/ml/part4_evaluation/interpretability/">
+        <link rel="canonical" href="https://aigoldpig.github.io/credit-scoring-guidebook/ml/part4_interpretation/fanova_concepts/">
       
       
-        <link rel="prev" href="../">
+        <link rel="prev" href="../ebm/">
       
       
-        <link rel="next" href="../shap_in_practice/">
+        <link rel="next" href="../depth1_tools_impl/">
       
       
         
@@ -24,7 +24,7 @@
     
     
       
-        <title>1. 해석 가능성 - 신용평가모형(Credit Scoring System) 가이드북</title>
+        <title>5. fANOVA 개념과 Purification - 신용평가모형(Credit Scoring System) 가이드북</title>
       
     
     
@@ -87,7 +87,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#interpretability" class="md-skip">
+        <a href="#fanova-purification" class="md-skip">
           콘텐츠로 이동
         </a>
       
@@ -123,7 +123,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              1. 해석 가능성
+              5. fANOVA 개념과 Purification
             
           </span>
         </div>
@@ -493,7 +493,7 @@
   <span class="md-ellipsis">
     
   
-    1. 개요
+    ① 개요
   
 
     
@@ -515,7 +515,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    1. 개요
+    ① 개요
   
 
           </label>
@@ -768,7 +768,7 @@
   <span class="md-ellipsis">
     
   
-    2. 이론
+    ② 이론
   
 
     
@@ -790,7 +790,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    2. 이론
+    ② 이론
   
 
           </label>
@@ -933,7 +933,7 @@
   <span class="md-ellipsis">
     
   
-    3. 변수 선정
+    ③ 변수 선정
   
 
     
@@ -955,7 +955,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    3. 변수 선정
+    ③ 변수 선정
   
 
           </label>
@@ -1722,7 +1722,7 @@
   <span class="md-ellipsis">
     
   
-    4. 모델링
+    ④ 모델링
   
 
     
@@ -1744,7 +1744,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    4. 모델링
+    ④ 모델링
   
 
           </label>
@@ -1861,7 +1861,7 @@
   <span class="md-ellipsis">
     
   
-    5. 스코어카드
+    ⑤ 스코어카드
   
 
     
@@ -1883,7 +1883,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    5. 스코어카드
+    ⑤ 스코어카드
   
 
           </label>
@@ -2987,7 +2987,7 @@
   <span class="md-ellipsis">
     
   
-    1. ML 기초
+    ① ML 기초
   
 
     
@@ -3009,7 +3009,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    1. ML 기초
+    ① ML 기초
   
 
           </label>
@@ -3264,7 +3264,7 @@
   <span class="md-ellipsis">
     
   
-    2. 뉴럴넷
+    ② 뉴럴넷
   
 
     
@@ -3286,7 +3286,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    2. 뉴럴넷
+    ② 뉴럴넷
   
 
           </label>
@@ -3463,7 +3463,7 @@
   <span class="md-ellipsis">
     
   
-    3. 트리 앙상블
+    ③ 트리 앙상블
   
 
     
@@ -3485,7 +3485,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    3. 트리 앙상블
+    ③ 트리 앙상블
   
 
           </label>
@@ -3722,6 +3722,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -3744,7 +3748,7 @@
   <span class="md-ellipsis">
     
   
-    4. 해석과 설명
+    ④ 해석과 설명
   
 
     
@@ -3766,7 +3770,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    4. 해석과 설명
+    ④ 해석과 설명
   
 
           </label>
@@ -3778,147 +3782,17 @@
                 
   
   
-    
-  
-  
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    1. 해석 가능성
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    1. 해석 가능성
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="목차">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      목차
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
-      
-        <li class="md-nav__item">
-  <a href="#11-xai" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1.1 XAI란 무엇인가
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#12" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1.2 왜 해석이 필요한가
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#13-global-vs-local" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1.3 Global vs Local 해석
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#14-pdp-partial-dependence-plot" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1.4 PDP (Partial Dependence Plot)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#15-shap-shapley-additive-explanations" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1.5 SHAP (SHapley Additive exPlanations)
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
   
   
     <li class="md-nav__item">
-      <a href="../shap_in_practice/" class="md-nav__link">
+      <a href="../interpretability/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    2. SHAP — 해석의 여정
+    1. 해석 가능성
   
 
     
@@ -3939,14 +3813,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../surrogate_model/" class="md-nav__link">
+      <a href="../shap_theory/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    3. Surrogate Model
+    2. SHAP 이론
   
 
     
@@ -3974,7 +3848,7 @@
   <span class="md-ellipsis">
     
   
-    4. 해석 가능한 ML — 1-Depth GBM과 EBM
+    3. 1-Depth GBM 스코어카드
   
 
     
@@ -3995,6 +3869,164 @@
   
   
     <li class="md-nav__item">
+      <a href="../ebm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. EBM (GA²M)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. fANOVA 개념과 Purification
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. fANOVA 개념과 Purification
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="목차">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      목차
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+      
+        <li class="md-nav__item">
+  <a href="#51-anova" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 왜 "ANOVA"인가
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#52-vs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 핵심 아이디어: 분배 vs 분리
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#53-variance-decomposition" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 Variance Decomposition — "교호작용이 실제로 중요한가?"
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#54-purification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.4 Purification — 효과 누출 보정
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#55-model-complexity-interpretability-trade-off" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.5 Model Complexity ↔ Interpretability Trade-off
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../depth1_tools_impl/" class="md-nav__link">
         
   
@@ -4002,7 +4034,35 @@
   <span class="md-ellipsis">
     
   
-    5. 도구 · 구현 · 요약
+    6. 도구 · 구현 · 요약
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shap_in_practice/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7. ML 해석을 고민한 기록
   
 
     
@@ -4063,7 +4123,7 @@
   <span class="md-ellipsis">
     
   
-    5. 모델 검증
+    ⑤ 모델 검증
   
 
     
@@ -4085,7 +4145,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    5. 모델 검증
+    ⑤ 모델 검증
   
 
           </label>
@@ -4836,213 +4896,300 @@
 
 
 
-<h1 id="interpretability">해석 가능성 (Interpretability)<a class="headerlink" href="#interpretability" title="Permanent link">¶</a></h1>
-<div class="admonition quote">
-<p class="admonition-title">저자 노트</p>
-<p>해석 가능성(Interpretable ML)은 그 자체로 하나의 분야다. 이 페이지에서는 신용평가 실무에 필요한 <strong>핵심 개념과 도구</strong>만 간결하게 다룬다. 더 깊은 이해가 필요하다면 Christoph Molnar의 <strong><a href="https://christophm.github.io/interpretable-ml-book/">Interpretable Machine Learning</a></strong>을 강력히 추천한다. 저자 본인도 이 책으로 많은 공부를 했으며, ML 해석 가능성에 관한 가장 체계적이고 접근하기 쉬운 자료라고 생각한다.</p>
-</div>
+<h1 id="fanova-purification">fANOVA 개념과 Purification<a class="headerlink" href="#fanova-purification" title="Permanent link">¶</a></h1>
+<p>SHAP이 개별 예측을 변수별로 <strong>분배</strong>하는 도구라면, Functional ANOVA(fANOVA)는 모형의 예측 함수 자체를 주효과와 교호작용으로 <strong>분리</strong>하는 프레임워크다. 이 페이지에서는 fANOVA의 핵심 아이디어와 Purification을 직관 수준에서 다루고, 궁극적으로 <strong>SHAP과 fANOVA의 차이를 이해한 뒤 실무에서 둘을 어떻게 조합해 쓸 것인가</strong>를 검토하는 것이 목표다.</p>
 <hr>
-<h2 id="11-xai">1.1 XAI란 무엇인가<a class="headerlink" href="#11-xai" title="Permanent link">¶</a></h2>
-<p><strong>XAI(eXplainable Artificial Intelligence)</strong>는 AI 모형의 의사결정 과정을 사람이 이해할 수 있도록 만드는 기술과 방법론의 총칭이다. 블랙박스 모형이 "무엇을" 예측했는지뿐 아니라, <strong>"왜" 그렇게 예측했는지</strong>를 설명하는 것이 핵심이다.</p>
-<h3 id="_1">용어 정리<a class="headerlink" href="#_1" title="Permanent link">¶</a></h3>
-<p>실무에서 혼용되지만, 학술적으로는 구분되는 개념들이 있다.</p>
-<table>
-<thead>
-<tr>
-<th>용어</th>
-<th>영문</th>
-<th>의미</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>해석 가능성</strong></td>
-<td>Interpretability</td>
-<td>모형의 작동 원리를 사람이 직접 이해할 수 있는 정도. 로지스틱 회귀, 의사결정나무 등 <strong>모형 자체가 투명</strong>한 경우</td>
-</tr>
-<tr>
-<td><strong>설명 가능성</strong></td>
-<td>Explainability</td>
-<td>블랙박스 모형에 <strong>사후적으로 설명을 부여</strong>하는 것. SHAP, LIME 등 별도의 설명 도구를 사용</td>
-</tr>
-<tr>
-<td><strong>투명성</strong></td>
-<td>Transparency</td>
-<td>모형의 학습 과정, 데이터, 의사결정 로직이 공개되어 있는 정도</td>
-</tr>
-<tr>
-<td><strong>공정성</strong></td>
-<td>Fairness</td>
-<td>모형이 특정 집단(성별, 인종 등)에 대해 체계적 차별을 하지 않는 성질</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition note">
-<p class="admonition-title">Interpretability vs Explainability</p>
-<p><strong>해석 가능한(Interpretable)</strong> 모형은 별도 도구 없이 구조 자체로 이해된다 — 스코어카드가 대표적이다.
-<strong>설명 가능한(Explainable)</strong> 모형은 그 자체로는 이해하기 어렵지만, SHAP 등 외부 도구로 사후 설명이 가능하다.
-XAI는 이 두 가지를 모두 포괄하는 상위 개념이다.</p>
-</div>
-<h3 id="_2">모형 복잡도와 해석 가능성의 트레이드오프<a class="headerlink" href="#_2" title="Permanent link">¶</a></h3>
-<div class="highlight"><pre><span></span><code>해석 가능성  높음 ◀━━━━━━━━━━━━━━━━━━━━━━━━━━▶ 낮음
-                │          │            │           │
-            선형 회귀    의사결정나무    Random     Deep
-            스코어카드                  Forest     Learning
-                │          │            │           │
-예측 성능    낮음 ◀━━━━━━━━━━━━━━━━━━━━━━━━━━▶ 높음
-</code></pre></div>
-<p>전통 스코어카드(로지스틱 회귀)는 <strong>Interpretable by design</strong>이다. 반면 트리 앙상블이나 딥러닝은 성능은 높지만 자체 해석이 어려워, <strong>XAI 기법이 필수</strong>가 된다.</p>
-<hr>
-<h2 id="12">1.2 왜 해석이 필요한가<a class="headerlink" href="#12" title="Permanent link">¶</a></h2>
-<p>전통 로지스틱 회귀 스코어카드는 태생적으로 해석이 쉽다. 각 변수의 WoE × β가 곧 점수이고, 점수표 한 장으로 "왜 이 고객이 이 등급인지" 설명할 수 있다.</p>
-<p>트리 앙상블(XGBoost, LightGBM)은 수백~수천 개의 트리를 합산한 결과이므로, <strong>모형 내부를 직접 들여다보는 것이 불가능</strong>하다. 그러나 해석의 필요성은 사라지지 않는다.</p>
-<table>
-<thead>
-<tr>
-<th>이해관계자</th>
-<th>요구</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>규제 기관</strong></td>
-<td>"이 모형이 차주를 차별하지 않는다"는 근거</td>
-</tr>
-<tr>
-<td><strong>심사 담당자</strong></td>
-<td>"왜 이 고객이 거절되었는가"에 대한 사유</td>
-</tr>
-<tr>
-<td><strong>모형 개발자</strong></td>
-<td>모형이 합리적인 패턴을 학습했는지 검증</td>
-</tr>
-<tr>
-<td><strong>경영진</strong></td>
-<td>모형 도입의 근거와 리스크</td>
-</tr>
-</tbody>
-</table>
-<hr>
-<h2 id="13-global-vs-local">1.3 Global vs Local 해석<a class="headerlink" href="#13-global-vs-local" title="Permanent link">¶</a></h2>
-<p>해석 가능성은 두 가지 차원으로 나뉜다.</p>
+<h2 id="51-anova">5.1 왜 "ANOVA"인가<a class="headerlink" href="#51-anova" title="Permanent link">¶</a></h2>
+<h3 id="anova">통계학의 ANOVA<a class="headerlink" href="#anova" title="Permanent link">¶</a></h3>
+<p><strong>언제 쓰는가?</strong> — 두 집단의 평균 비교는 t-test로 충분하지만, <strong>세 집단 이상</strong>의 평균을 동시에 비교해야 할 때 ANOVA(Analysis of Variance)를 사용한다.</p>
+<p><strong>가설 구조:</strong></p>
+<ul>
+<li><span class="arithmatex">\(H_0\)</span> (귀무가설): <span class="arithmatex">\(\mu_{\text{사원}} = \mu_{\text{대리}} = \mu_{\text{과장}} = \mu_{\text{부장}}\)</span> — 모든 집단의 평균이 같다</li>
+<li><span class="arithmatex">\(H_1\)</span> (대립가설): 적어도 하나의 집단 평균이 다르다</li>
+</ul>
+<p>예를 들어 "직급이 소득에 영향을 미치는가?"를 검정한다고 하자. 사원·대리·과장·부장의 소득 데이터를 모았을 때, 소득이 사람마다 다른 이유는 크게 두 가지다:</p>
+<ul>
+<li><strong>그룹 간 차이(SSB)</strong> — 직급이 달라서 생기는 소득 차이 (사원 평균 vs 부장 평균)</li>
+<li><strong>그룹 내 차이(SSW)</strong> — 같은 직급 안에서도 사람마다 다른 소득 차이 (같은 과장끼리의 편차)</li>
+</ul>
+<div class="arithmatex">\[
+\underbrace{\text{소득의 총 변동}}_{\text{SST}} = \underbrace{\text{그룹 간 차이}}_{\text{SSB}} + \underbrace{\text{그룹 내 차이}}_{\text{SSW}}
+\]</div>
+<p><strong>검정 논리</strong> — 평균이 같은지를 직접 비교하는 게 아니라, <strong>분산의 비율</strong>로 간접 판단한다:</p>
+<div class="arithmatex">\[
+F = \frac{\text{그룹 간 분산}}{\text{그룹 내 분산}}
+\]</div>
+<p>직급이 소득에 진짜 영향이 있다면 직급별 평균이 크게 벌어지므로 그룹 간 분산이 커지고, F가 커진다. 반대로 영향이 없다면 직급별 평균이 비슷하므로 F ≈ 1에 머문다. 즉, <strong>"그룹 간 흩어짐이 그룹 내 흩어짐에 비해 유난히 큰가?"</strong>를 보고 <span class="arithmatex">\(H_0\)</span>를 기각할지 판단하는 것이다. "평균 비교"를 직접 하지 않고 <strong>분산의 비율이라는 우회 경로</strong>로 검정하기 때문에 이름이 "분산 분석"이다.</p>
+<p>2-way ANOVA에서는 "직급 효과 + 성별 효과 + 직급×성별 교호작용 + 잔차"로 분해한다. 여기서 핵심은 <strong>총 변동을 요인별로 쪼개고, main effect와 interaction을 분리하는 구조</strong>다.</p>
+<h3 id="functional">"Functional"이 붙은 이유<a class="headerlink" href="#functional" title="Permanent link">¶</a></h3>
+<p>Functional ANOVA는 같은 분산 분해 아이디어를 <strong>함수</strong>(모형의 예측 함수 <span class="arithmatex">\(\hat{f}\)</span>)에 적용한 것이다. 전통 ANOVA가 "직급이 소득 변동을 얼마나 설명하는가?"를 물었다면, fANOVA는 <strong>"소득 변수가 모형 출력의 변동을 얼마나 설명하는가?"</strong>를 묻는다. 분해 대상이 데이터에서 함수로 바뀌었을 뿐, <strong>"총 변동을 요인별로 쪼갠다"</strong>는 사상은 동일하다 — 그래서 ANOVA라는 이름이 나오지 않았을까 싶다.</p>
 <table>
 <thead>
 <tr>
 <th></th>
-<th><strong>Global</strong></th>
-<th><strong>Local</strong></th>
+<th>전통 ANOVA</th>
+<th>Functional ANOVA</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>질문</strong></td>
-<td>"이 모형은 전체적으로 어떤 변수를 중요하게 보는가?"</td>
-<td>"이 특정 고객의 예측에 어떤 변수가 영향을 미쳤는가?"</td>
+<td><strong>분해 대상</strong></td>
+<td>데이터의 분산 (관측값의 흩어짐)</td>
+<td><strong>함수</strong>의 분산 (모형 출력의 흩어짐)</td>
 </tr>
 <tr>
-<td><strong>대상</strong></td>
-<td>모형 전체</td>
-<td>개별 예측 건</td>
+<td><strong>요인</strong></td>
+<td>그룹을 나누는 범주형 변수 (직급, 성별)</td>
+<td>모형의 입력 변수 (소득, DTI, ...)</td>
 </tr>
 <tr>
-<td><strong>용도</strong></td>
-<td>모형 검증, 변수 중요도</td>
-<td>거절 사유, 심사 설명</td>
+<td><strong>묻는 질문</strong></td>
+<td>"직급별로 소득 평균이 <strong>정말 다른가?</strong>"</td>
+<td>"소득 변수가 <strong>모형 출력 변동</strong>의 몇 %를 설명하는가?"</td>
 </tr>
 <tr>
-<td><strong>도구</strong></td>
-<td>Feature Importance, PDP, SHAP Summary</td>
-<td>SHAP Waterfall, LIME</td>
+<td><strong>교호작용</strong></td>
+<td>직급×성별 interaction</td>
+<td>소득×DTI interaction</td>
+</tr>
+<tr>
+<td><strong>핵심 산출물</strong></td>
+<td>F 통계량 → 유의성 판정</td>
+<td>주효과 함수 <span class="arithmatex">\(f_j\)</span> + 교호작용 함수 <span class="arithmatex">\(f_{jk}\)</span></td>
 </tr>
 </tbody>
 </table>
+<p>한 가지 더 — 전통 ANOVA는 <strong>정규성, 등분산</strong> 등 분포 가정이 필요하다. 가정이 깨지면 F 검정의 신뢰성이 떨어진다. 반면 fANOVA는 분포 가정이 필요 없다. 트리 모형의 경우, 학습 시 이미 결정된 bin과 각 bin의 샘플 수(empirical distribution)를 그대로 가중치로 사용하기 때문에 <strong>"분포를 정의한다"는 별도 단계 자체가 없다.</strong> 이것은 fANOVA가 전통 ANOVA의 사상만 빌려왔을 뿐, 통계적 검정이 아니라 <strong>함수 분해 도구</strong>이기 때문에 가능한 일이다.</p>
+<p>이 아이디어는 Hoeffding(1948)이 확률론에서 처음 제시했고, Hooker(2004)가 ML 모형 해석에 적용하면서 현재의 맥락으로 이어진다.</p>
 <hr>
-<h2 id="14-pdp-partial-dependence-plot">1.4 PDP (Partial Dependence Plot)<a class="headerlink" href="#14-pdp-partial-dependence-plot" title="Permanent link">¶</a></h2>
-<p><strong>특정 변수가 예측에 미치는 평균적 영향</strong>을 시각화하는 Global 해석 도구다.</p>
-<p>변수 <span class="arithmatex">\(x_s\)</span>의 Partial Dependence:</p>
-<div class="arithmatex">\[
-\hat{f}_s(x_s) = \frac{1}{N} \sum_{i=1}^{N} \hat{f}(x_s, x_{C}^{(i)})
-\tag{1}
-\]</div>
-<ul>
-<li><span class="arithmatex">\(x_s\)</span>: 관심 변수 (고정할 값을 바꿔가며)</li>
-<li><span class="arithmatex">\(x_C^{(i)}\)</span>: 나머지 변수 (데이터의 실제 값 그대로)</li>
-<li>모든 샘플에 대해 관심 변수만 바꾸고, 예측값의 평균을 구함</li>
-</ul>
-<div class="admonition example">
-<p class="admonition-title">신용평가 예시</p>
-<p>"부채비율(DTI)"의 PDP를 그리면, DTI가 증가함에 따라 예측 부도 확률이 어떻게 변하는지 평균적 경향을 볼 수 있다. DTI 40%까지는 완만하게 증가하다가 60%를 넘으면 급격히 상승하는 패턴이 보인다면, 모형이 합리적인 관계를 학습했다고 판단할 수 있다.</p>
-</div>
-<figure>
-  <a class="glightbox" data-type="image" data-width="100%" data-height="auto" href="../images/pdp_dti.png" data-desc-position="bottom"><img alt="PDP — 부채비율(DTI)이 부도 확률에 미치는 평균적 영향" src="../images/pdp_dti.png" width="720"></a>
-<br>
-<figcaption>DTI 40%까지는 완만하게 증가하다가 60%를 넘으면 급격히 상승하는 전형적인 PDP 패턴. 파란 음영은 95% 신뢰 구간, 하단 rug plot은 DTI 분포를 나타낸다.</figcaption>
-</figure>
-<h3 id="pdp">PDP의 한계<a class="headerlink" href="#pdp" title="Permanent link">¶</a></h3>
-<ul>
-<li><strong>변수 간 상호작용을 무시</strong>: 다른 변수를 고정한 상태의 평균이므로, 교호작용 효과가 상쇄됨</li>
-<li><strong>상관된 변수 문제</strong>: DTI와 소득이 강하게 상관되어 있을 때, DTI를 극단값으로 설정하면서 소득은 원본 그대로 유지하는 비현실적 조합이 발생</li>
-</ul>
-<hr>
-<h2 id="15-shap-shapley-additive-explanations">1.5 SHAP (SHapley Additive exPlanations)<a class="headerlink" href="#15-shap-shapley-additive-explanations" title="Permanent link">¶</a></h2>
-<p><a href="https://arxiv.org/abs/1705.07874">Lundberg &amp; Lee (2017)</a>가 제안한 SHAP은 현재 <strong>ML 해석의 사실상 표준</strong>이다. 게임이론의 Shapley Value를 ML에 적용한 것이다.</p>
-<h3 id="shapley-value">Shapley Value의 직관<a class="headerlink" href="#shapley-value" title="Permanent link">¶</a></h3>
-<blockquote>
-<p>"각 변수가 예측에 기여한 공정한 몫은 얼마인가?"</p>
-</blockquote>
-<p>5명이 팀 프로젝트를 했는데 최종 점수가 90점이다. 각자의 기여도를 공정하게 분배하고 싶다면?</p>
-<p>Shapley Value의 방법: <strong>모든 가능한 팀 조합에서, 해당 멤버가 참여할 때와 참여하지 않을 때의 점수 차이를 평균</strong>낸다.</p>
-<p>변수 <span class="arithmatex">\(j\)</span>의 SHAP value:</p>
-<div class="arithmatex">\[
-\phi_j = \sum_{S \subseteq \{1,...,p\} \setminus \{j\}} \frac{|S|!(p-|S|-1)!}{p!} \left[\hat{f}(S \cup \{j\}) - \hat{f}(S)\right]
-\tag{2}
-\]</div>
-<h3 id="shap">SHAP의 핵심 성질<a class="headerlink" href="#shap" title="Permanent link">¶</a></h3>
+<h2 id="52-vs">5.2 핵심 아이디어: 분배 vs 분리<a class="headerlink" href="#52-vs" title="Permanent link">¶</a></h2>
+<p>SHAP과 fANOVA는 모두 "변수별 기여"를 구하지만, <strong>교호작용을 처리하는 방식</strong>이 근본적으로 다르다.</p>
 <table>
 <thead>
 <tr>
-<th>성질</th>
-<th>의미</th>
+<th></th>
+<th><strong>SHAP</strong></th>
+<th><strong>Functional ANOVA</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Efficiency</strong> (효율성)</td>
-<td>모든 변수의 SHAP 합 = 예측값 - 기대값</td>
+<td>사상(思想)</td>
+<td><strong>분배</strong>(distribute)</td>
+<td><strong>분리</strong>(decompose)</td>
 </tr>
 <tr>
-<td><strong>Symmetry</strong> (대칭성)</td>
-<td>기여가 동일한 변수는 같은 SHAP 값</td>
+<td>교호작용 처리</td>
+<td>관여한 변수들에게 <strong>균등 분배</strong></td>
+<td>별도의 <strong>교호작용 항으로 분리</strong></td>
 </tr>
 <tr>
-<td><strong>Dummy</strong> (무관 변수)</td>
-<td>예측에 영향 없는 변수의 SHAP = 0</td>
+<td>결과물</td>
+<td>변수당 하나의 숫자 <span class="arithmatex">\(\phi_j\)</span></td>
+<td>주효과 <span class="arithmatex">\(f_j\)</span> + 교호작용 <span class="arithmatex">\(f_{jk}\)</span> + ...</td>
 </tr>
 <tr>
-<td><strong>Additivity</strong> (가산성)</td>
-<td>앙상블의 SHAP = 개별 모형 SHAP의 평균</td>
+<td>해석 단위</td>
+<td><strong>개별 샘플</strong> (local)</td>
+<td><strong>함수 전체</strong> (global)</td>
 </tr>
 </tbody>
 </table>
-<p>Efficiency 성질이 특히 중요하다:</p>
+<h3 id="_1">구체적 예시<a class="headerlink" href="#_1" title="Permanent link">¶</a></h3>
+<p>소득(<span class="arithmatex">\(X_1\)</span>)과 부채(<span class="arithmatex">\(X_2\)</span>)가 교호작용을 일으킨다고 하자 — 고소득+저부채일 때 부도 확률이 비선형적으로 급감하는 시너지가 있다.</p>
+<p><strong>SHAP의 처리</strong> — 교호작용의 기여분을 관여한 변수들에게 반씩 나눠준다:</p>
 <div class="arithmatex">\[
-\hat{f}(x) = E[\hat{f}(X)] + \sum_{j=1}^{p} \phi_j(x)
-\tag{3}
+\phi_{\text{소득}} = \underbrace{f_1\text{의 기여}}_{\text{주효과}} + \underbrace{\tfrac{1}{2} f_{12}\text{의 기여}}_{\text{교호작용의 절반}}
 \]</div>
-<p>개별 예측값이 <strong>기대값 + 각 변수의 기여분</strong>으로 정확히 분해된다.</p>
-<h3 id="treeshap">TreeSHAP<a class="headerlink" href="#treeshap" title="Permanent link">¶</a></h3>
-<p>Shapley Value의 정확한 계산은 <span class="arithmatex">\(2^p\)</span>개 조합을 평가해야 하므로 변수가 많으면 불가능하다. <strong>TreeSHAP</strong> (<a href="https://www.nature.com/articles/s42256-019-0138-9">Lundberg et al., 2020</a>)은 트리 구조를 활용하여 <span class="arithmatex">\(O(TLD^2)\)</span> 시간에 정확한 SHAP을 계산한다.</p>
+<p>편리하지만, 대가가 있다. <strong>소득이 동일한 두 차주라도 소득의 SHAP 값이 다를 수 있다:</strong></p>
+<blockquote>
+<p>차주 A: 소득 5,000만 원, 부채 500만 원 → 소득의 SHAP = <strong>-0.8</strong></p>
+<p>차주 B: 소득 5,000만 원, 부채 2억 원 → 소득의 SHAP = <strong>-0.2</strong></p>
+</blockquote>
+<p>교호작용 기여분이 다른 변수의 값에 따라 달라지기 때문이다. 이것이 SHAP이 태생적으로 <strong>local 해석</strong>일 수밖에 없는 이유다.</p>
+<p><strong>fANOVA의 처리</strong> — 교호작용을 분배하지 않고, 별도의 항으로 분리한다:</p>
 <ul>
-<li><span class="arithmatex">\(T\)</span>: 트리 수, <span class="arithmatex">\(L\)</span>: 평균 Leaf 수, <span class="arithmatex">\(D\)</span>: 트리 깊이</li>
-<li>XGBoost, LightGBM에 내장되어 있어 별도 근사 없이 정확한 값 계산 가능</li>
+<li><span class="arithmatex">\(f_1(X_1)\)</span>: 순수하게 소득만의 효과 — 소득이 같으면 <strong>항상 같은 값</strong></li>
+<li><span class="arithmatex">\(f_2(X_2)\)</span>: 순수하게 부채만의 효과</li>
+<li><span class="arithmatex">\(f_{12}(X_1, X_2)\)</span>: 소득과 부채의 <strong>순수 교호작용</strong> — 주효과로는 설명할 수 없는 시너지</li>
 </ul>
+<div class="admonition warning">
+<p class="admonition-title">왜 이 차이가 중요한가 — 규제 관점</p>
+<p>심사역이 "소득 변수의 효과가 단조적인가?"라고 물었을 때:</p>
+<ul>
+<li><strong>SHAP</strong>: 교호작용 기여분이 섞여 있어 특정 구간에서 비단조 패턴이 나타날 수 있고, 그것이 소득 자체의 비단조성인지 교호작용 때문인지 <strong>구분 불가</strong></li>
+<li><strong>fANOVA</strong>: <span class="arithmatex">\(f_{\text{소득}}\)</span>이 순수 주효과이므로 단조성을 <strong>직접 확인</strong> 가능. 비단조 패턴이 있다면 그것은 교호작용이 아니라 소득 자체의 효과</li>
+</ul>
+</div>
+<hr>
+<h2 id="53-variance-decomposition">5.3 Variance Decomposition — "교호작용이 실제로 중요한가?"<a class="headerlink" href="#53-variance-decomposition" title="Permanent link">¶</a></h2>
+<p>fANOVA의 직교 분해 덕분에, <strong>총 분산을 component별로 정확히 나눌 수 있다:</strong></p>
+<div class="arithmatex">\[
+\sigma^2(\hat{f}) = \sum_{S \subseteq \{1,\ldots,p\}} \sigma^2(f_S)
+\tag{1}
+\]</div>
+<p>이것이 실무적으로 중요한 이유는, <strong>main effect와 교호작용의 상대적 비중</strong>을 정량적으로 판단할 수 있기 때문이다.</p>
 <div class="admonition example">
-<p class="admonition-title">참고 링크</p>
-<p>Lundberg의 <a href="https://github.com/shap/shap">SHAP GitHub 리포지토리</a>에 이론 설명과 시각화 예시가 잘 정리되어 있다.</p>
+<p class="admonition-title">신용평가 모형 예시</p>
+<table>
+<thead>
+<tr>
+<th>component</th>
+<th>분산 비중</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="arithmatex">\(f_{\text{소득}}\)</span> (main)</td>
+<td>22%</td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(f_{\text{DTI}}\)</span> (main)</td>
+<td>15%</td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(f_{\text{연체}}\)</span> (main)</td>
+<td>35%</td>
+</tr>
+<tr>
+<td>기타 main effects</td>
+<td>20%</td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(f_{\text{소득,DTI}}\)</span> (interaction)</td>
+<td>5%</td>
+</tr>
+<tr>
+<td>기타 interactions</td>
+<td>3%</td>
+</tr>
+<tr>
+<td><strong>합계</strong></td>
+<td><strong>100%</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>main effect가 전체 분산의 92%를 설명하고, 교호작용은 8%에 불과하다.</strong> 이 모형에서 교호작용은 미미하며, GAM(교호작용 없는 모형)으로도 거의 같은 성능을 낼 수 있었을 것이다.</p>
+</div>
+<p>SHAP의 <code>mean(|SHAP|)</code>로는 이 판단이 <strong>불가능</strong>하다. SHAP 값에는 주효과와 교호작용이 녹아들어 있어서, "우리 모형에서 교호작용이 실제로 중요한가?"라는 질문에 답할 수 없다. fANOVA의 Variance Decomposition은 이 질문에 <strong>숫자로</strong> 답한다.</p>
+<hr>
+<h2 id="54-purification">5.4 Purification — 효과 누출 보정<a class="headerlink" href="#54-purification" title="Permanent link">¶</a></h2>
+<h3 id="_2">문제: 학습 과정에서 효과가 섞인다<a class="headerlink" href="#_2" title="Permanent link">¶</a></h3>
+<p>GA<span class="arithmatex">\(^2\)</span>M이나 depth-2 XGBoost를 학습하면, main effect <span class="arithmatex">\(f_j\)</span>와 interaction <span class="arithmatex">\(f_{jk}\)</span> 사이에 <strong>효과 누출(leakage)</strong>이 발생한다. 모형의 예측값은 변하지 않지만, 각 항의 해석이 왜곡된다.</p>
+<h3 id="dti">DTI/소득 숫자 예시<a class="headerlink" href="#dti" title="Permanent link">¶</a></h3>
+<p>DTI와 소득, 두 변수가 각각 2구간(Low, High)인 depth-2 모형이 다음과 같이 학습되었다고 하자:</p>
+<p><strong>학습 결과 (purification 전):</strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>main effect</th>
+<th>교호작용 <span class="arithmatex">\(f_{12}\)</span></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td></td>
+<td><strong>소득=Low</strong></td>
+<td><strong>소득=High</strong></td>
+</tr>
+<tr>
+<td><strong>DTI</strong></td>
+<td>Low: 0, High: 0</td>
+<td>+0.1</td>
+<td>-0.7</td>
+</tr>
+<tr>
+<td><strong>소득</strong></td>
+<td>Low: 0, High: 0</td>
+<td>+0.5</td>
+<td>+0.1</td>
+</tr>
+</tbody>
+</table>
+<p>main effect가 전부 0이고, 모든 효과가 교호작용에 담겨 있다. 해석: <strong>"DTI도 소득도 개별 효과는 없고, 오직 두 변수의 조합만 중요하다."</strong> — 정말 그럴까?</p>
+<h3 id="purification">Purification 적용<a class="headerlink" href="#purification" title="Permanent link">¶</a></h3>
+<p><strong>1단계</strong> — 교호작용 테이블에서 소득의 누출을 찾는다. 각 소득 구간별로 DTI 방향의 평균을 구하면:</p>
+<ul>
+<li>소득=Low 열의 평균: <span class="arithmatex">\((0.1 + 0.5)/2 = +0.3\)</span></li>
+<li>소득=High 열의 평균: <span class="arithmatex">\((-0.7 + 0.1)/2 = -0.3\)</span></li>
+</ul>
+<p>이 값(+0.3, -0.3)은 소득 구간에만 의존 → <strong>소득의 main effect</strong>다. 교호작용에서 빼고 main effect로 옮긴다.</p>
+<p><strong>2단계</strong> — 같은 방식으로 DTI의 누출을 찾아 되돌린다. 업데이트된 교호작용의 각 DTI 구간별 평균을 구하면 -0.3, +0.3 → DTI의 main effect로 이동.</p>
+<p><strong>결과:</strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Purification 전</th>
+<th>Purification 후</th>
+<th>해석 변화</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="arithmatex">\(f_{\text{DTI}}\)</span></td>
+<td>Low=0, High=0</td>
+<td>Low=<strong>-0.3</strong>, High=<strong>+0.3</strong></td>
+<td><strong>"DTI 높으면 위험 ↑"</strong></td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(f_{\text{소득}}\)</span></td>
+<td>Low=0, High=0</td>
+<td>Low=<strong>+0.3</strong>, High=<strong>-0.3</strong></td>
+<td><strong>"소득 높으면 위험 ↓"</strong></td>
+</tr>
+<tr>
+<td>교호작용 크기</td>
+<td>전체 효과 지배</td>
+<td><strong>±0.1 수준으로 축소</strong></td>
+<td>교호작용은 미미</td>
+</tr>
+</tbody>
+</table>
+<p>예측값은 <strong>네 가지 조합 모두 동일</strong> — purification은 해석만 바꾸고 모형은 바꾸지 않는다.</p>
+<div class="admonition note">
+<p class="admonition-title">핵심 교훈</p>
+<p>학습 결과만 보면 "교호작용이 전부"였지만, purification 후에는 <strong>main effect가 핵심이고 교호작용은 미미</strong>한 것으로 드러났다. 효과 누출이 해석을 얼마나 왜곡할 수 있는지를 보여주는 사례다.</p>
+</div>
+<h3 id="_3">실무에서의 적용<a class="headerlink" href="#_3" title="Permanent link">¶</a></h3>
+<ul>
+<li><strong>InterpretML (EBM)</strong>: 학습 후 purification이 자동 적용되지 않는다. <code>interpret.utils.purify()</code>를 <strong>명시적으로 호출</strong>해야 한다</li>
+<li><strong>PiML (XGB2)</strong>: Depth-2 XGBoost + purification을 내장 지원</li>
+<li><a href="https://github.com/LengerichLab/gam_purification">GAM Purification</a> 별도 라이브러리로도 적용 가능</li>
+</ul>
+<div class="source-ref">
+출처: Lengerich, B., Tan, S., Chang, C.-H., Hooker, G., and Caruana, R. (2020). "Purifying Interaction Effects with the Functional ANOVA." <em>AISTATS 2020</em>.
+<a href="https://arxiv.org/abs/1911.04974" target="_blank">arXiv</a>
+</div>
+
+<hr>
+<h2 id="55-model-complexity-interpretability-trade-off">5.5 Model Complexity ↔ Interpretability Trade-off<a class="headerlink" href="#55-model-complexity-interpretability-trade-off" title="Permanent link">¶</a></h2>
+<p>fANOVA는 이론적으로 <strong>아무리 복잡한 트리 모형이라도</strong> 주효과와 교호작용으로 분해할 수 있다. 그러나 분해할 수 있다는 것과, 그 결과를 사람이 이해할 수 있다는 것은 <strong>별개의 문제</strong>다.</p>
+<p>Depth-8 XGBoost 500 라운드 모형을 fANOVA로 분해하면:</p>
+<ul>
+<li>main effect의 shape function이 수십 개의 bin으로 잘게 쪼개져, 곡선이 아니라 <strong>노이즈에 가까운 지그재그</strong>가 된다</li>
+<li>2-way 교호작용만 해도 <span class="arithmatex">\(\binom{30}{2} = 435\)</span>개 조합이 나오고, 각각이 복잡한 heatmap이 된다</li>
+<li>심사역이나 검증 담당자에게 "이 435개 heatmap을 보시면 모형이 이해됩니다"라고 할 수는 없다</li>
+</ul>
+<p>결국 fANOVA가 실무에서 <strong>직관적 해석 도구로 기능</strong>하려면, 모형 자체의 복잡도가 일정 수준 이내여야 한다.</p>
+<h3 id="fanova">복잡한 모형에서 fANOVA가 실제로 전달할 수 있는 것<a class="headerlink" href="#fanova" title="Permanent link">¶</a></h3>
+<p>성능 중심으로 개발된 깊은 트리 모형이라 하더라도, fANOVA를 통해 실무적으로 의미 있는 해석을 끌어낼 수 있는 영역은 두 가지다:</p>
+<p><strong>(1) Main effect의 shape function</strong> — 변수 하나의 순수 효과는 2D 곡선이므로, bin이 다소 많더라도 <strong>전체적인 방향성과 단조성</strong>은 확인할 수 있다. "소득이 올라가면 부도 확률이 내려간다"는 수준의 직관은 복잡한 모형에서도 전달 가능하다.</p>
+<p><strong>(2) 분산 기여도가 큰 상위 교호작용</strong> — Variance Decomposition(5.3절)으로 교호작용의 분산 비중을 정렬한 뒤, <strong>상위 2~3개 조합</strong>만 보고한다. 다만 이것도 각 변수의 구간이 지나치게 세분화되어 있으면 heatmap이 읽히지 않으므로, 해석 가능한 수준의 구간 수(5~10개 이내)로 요약하는 과정이 필요하다.</p>
+<div class="admonition warning">
+<p class="admonition-title">해석 가능 모형과의 차이</p>
+<p>EBM이나 depth-2 제한 모형처럼 <strong>처음부터 해석을 염두에 두고 설계한 모형</strong>은 main effect와 교호작용이 자연스럽게 적은 bin, 적은 조합으로 구성된다. 반면 깊은 트리 모형에 fANOVA를 사후 적용하는 것은 "이미 복잡해진 결과물에서 읽을 수 있는 부분만 추려내는" 작업이다. 같은 fANOVA라도 <strong>모형 설계 단계에서 복잡도를 제어했느냐</strong>에 따라 해석의 품질이 근본적으로 달라진다.</p>
+</div>
+<div class="admonition abstract">
+<p class="admonition-title">수학적 상세 → 부록</p>
+<p>fANOVA 직교 분해의 수학적 제약 조건, Non-identifiability 문제, Mass-Moving 알고리즘의 수렴 정리, SHAP과 fANOVA의 심층 비교 등은 <a href="../../appendix/shap-fanova/">부록 A: SHAP과 Functional ANOVA</a>에서 다룬다.</p>
 </div>
 <div class="admonition tip">
 <p class="admonition-title">다음 페이지</p>
-<p><a href="../shap_in_practice/">SHAP — 해석의 여정</a> --- SHAP을 실무에 적용하려 했을 때 부딪히는 현실적인 벽과, 그 벽을 넘기 위한 고민을 정리한다.</p>
+<p><a href="../depth1_tools_impl/">도구 · 구현 · 요약</a> --- 오픈소스 도구, 업계 사례, 구현 예시, 참고 자료를 다룬다.</p>
 </div>
 
 

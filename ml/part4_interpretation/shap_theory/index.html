@@ -7,10 +7,10 @@
         <meta name="author" content="정승욱">
       
       
-        <link rel="canonical" href="https://aigoldpig.github.io/credit-scoring-guidebook/ml/part4_evaluation/surrogate_model/">
+        <link rel="canonical" href="https://aigoldpig.github.io/credit-scoring-guidebook/ml/part4_interpretation/shap_theory/">
       
       
-        <link rel="prev" href="../shap_in_practice/">
+        <link rel="prev" href="../interpretability/">
       
       
         <link rel="next" href="../depth1_gbm/">
@@ -24,7 +24,7 @@
     
     
       
-        <title>3. Surrogate Model - 신용평가모형(Credit Scoring System) 가이드북</title>
+        <title>2. SHAP 이론 - 신용평가모형(Credit Scoring System) 가이드북</title>
       
     
     
@@ -87,7 +87,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#surrogate-model" class="md-skip">
+        <a href="#shap" class="md-skip">
           콘텐츠로 이동
         </a>
       
@@ -123,7 +123,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              3. Surrogate Model
+              2. SHAP 이론
             
           </span>
         </div>
@@ -493,7 +493,7 @@
   <span class="md-ellipsis">
     
   
-    1. 개요
+    ① 개요
   
 
     
@@ -515,7 +515,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    1. 개요
+    ① 개요
   
 
           </label>
@@ -768,7 +768,7 @@
   <span class="md-ellipsis">
     
   
-    2. 이론
+    ② 이론
   
 
     
@@ -790,7 +790,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    2. 이론
+    ② 이론
   
 
           </label>
@@ -933,7 +933,7 @@
   <span class="md-ellipsis">
     
   
-    3. 변수 선정
+    ③ 변수 선정
   
 
     
@@ -955,7 +955,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    3. 변수 선정
+    ③ 변수 선정
   
 
           </label>
@@ -1722,7 +1722,7 @@
   <span class="md-ellipsis">
     
   
-    4. 모델링
+    ④ 모델링
   
 
     
@@ -1744,7 +1744,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    4. 모델링
+    ④ 모델링
   
 
           </label>
@@ -1861,7 +1861,7 @@
   <span class="md-ellipsis">
     
   
-    5. 스코어카드
+    ⑤ 스코어카드
   
 
     
@@ -1883,7 +1883,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    5. 스코어카드
+    ⑤ 스코어카드
   
 
           </label>
@@ -2987,7 +2987,7 @@
   <span class="md-ellipsis">
     
   
-    1. ML 기초
+    ① ML 기초
   
 
     
@@ -3009,7 +3009,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    1. ML 기초
+    ① ML 기초
   
 
           </label>
@@ -3264,7 +3264,7 @@
   <span class="md-ellipsis">
     
   
-    2. 뉴럴넷
+    ② 뉴럴넷
   
 
     
@@ -3286,7 +3286,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    2. 뉴럴넷
+    ② 뉴럴넷
   
 
           </label>
@@ -3463,7 +3463,7 @@
   <span class="md-ellipsis">
     
   
-    3. 트리 앙상블
+    ③ 트리 앙상블
   
 
     
@@ -3485,7 +3485,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    3. 트리 앙상블
+    ③ 트리 앙상블
   
 
           </label>
@@ -3722,6 +3722,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -3744,7 +3748,7 @@
   <span class="md-ellipsis">
     
   
-    4. 해석과 설명
+    ④ 해석과 설명
   
 
     
@@ -3766,7 +3770,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    4. 해석과 설명
+    ④ 해석과 설명
   
 
           </label>
@@ -3806,34 +3810,6 @@
                 
   
   
-  
-  
-    <li class="md-nav__item">
-      <a href="../shap_in_practice/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    2. SHAP — 해석의 여정
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
     
   
   
@@ -3853,7 +3829,7 @@
   <span class="md-ellipsis">
     
   
-    3. Surrogate Model
+    2. SHAP 이론
   
 
     
@@ -3871,7 +3847,7 @@
   <span class="md-ellipsis">
     
   
-    3. Surrogate Model
+    2. SHAP 이론
   
 
     
@@ -3897,10 +3873,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
       
         <li class="md-nav__item">
-  <a href="#31" class="md-nav__link">
+  <a href="#21-shapley-value" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3.1 파이프라인
+        2.1 Shapley Value의 직관
       
     </span>
   </a>
@@ -3908,10 +3884,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#32-r2" class="md-nav__link">
+  <a href="#22-shap" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3.2 R²가 낮을 수밖에 없는 이유
+        2.2 SHAP의 핵심 성질
       
     </span>
   </a>
@@ -3919,10 +3895,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#33" class="md-nav__link">
+  <a href="#23-shap" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3.3 업계 구현 사례
+        2.3 왜 트리에서는 SHAP이 정확히 계산되는가
       
     </span>
   </a>
@@ -3930,10 +3906,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#34" class="md-nav__link">
+  <a href="#24-shap" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3.4 찬반 논쟁
+        2.4 SHAP 시각화
       
     </span>
   </a>
@@ -3941,10 +3917,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#35" class="md-nav__link">
+  <a href="#25" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3.5 참고 자료
+        2.5 참고 자료
       
     </span>
   </a>
@@ -3974,7 +3950,63 @@
   <span class="md-ellipsis">
     
   
-    4. 해석 가능한 ML — 1-Depth GBM과 EBM
+    3. 1-Depth GBM 스코어카드
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ebm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. EBM (GA²M)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../fanova_concepts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. fANOVA 개념과 Purification
   
 
     
@@ -4002,7 +4034,35 @@
   <span class="md-ellipsis">
     
   
-    5. 도구 · 구현 · 요약
+    6. 도구 · 구현 · 요약
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shap_in_practice/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7. ML 해석을 고민한 기록
   
 
     
@@ -4063,7 +4123,7 @@
   <span class="md-ellipsis">
     
   
-    5. 모델 검증
+    ⑤ 모델 검증
   
 
     
@@ -4085,7 +4145,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    5. 모델 검증
+    ⑤ 모델 검증
   
 
           </label>
@@ -4836,70 +4896,282 @@
 
 
 
-<h1 id="surrogate-model">Surrogate Model (대리 모형)<a class="headerlink" href="#surrogate-model" title="Permanent link">¶</a></h1>
-<p>규제 기관에 트리 앙상블을 직접 제출하기 어려운 경우, <strong>해석 가능한 대리 모형(Surrogate Model)</strong>을 별도로 구축하여 보고하는 전략이 사용된다. ML의 성능은 유지하면서, 설명은 전통적 스코어카드 형태로 제공하는 것이다.</p>
+<h1 id="shap">SHAP 이론<a class="headerlink" href="#shap" title="Permanent link">¶</a></h1>
+<p><a href="https://arxiv.org/abs/1705.07874">Lundberg &amp; Lee (2017)</a>가 제안한 SHAP(SHapley Additive exPlanations)은 현재 <strong>ML 해석의 사실상 표준</strong>이다. 게임이론의 Shapley Value를 ML에 적용하여, 개별 예측값을 변수별 기여분으로 정확히 분해한다.</p>
 <hr>
-<h2 id="31">3.1 파이프라인<a class="headerlink" href="#31" title="Permanent link">¶</a></h2>
-<p>대리 모형의 구축 과정은 다음과 같다.</p>
+<h2 id="21-shapley-value">2.1 Shapley Value의 직관<a class="headerlink" href="#21-shapley-value" title="Permanent link">¶</a></h2>
 <blockquote>
-<p><strong>ML 모형 학습</strong> → <strong><span class="arithmatex">\(\hat{p}\)</span> 산출</strong> → <strong>스코어 변환</strong> → <strong>스코어를 종속변수로 LR 적합</strong> → <strong>스코어카드 생성</strong></p>
+<p>"각 변수가 예측에 기여한 공정한 몫은 얼마인가?"</p>
 </blockquote>
-<p>구체적으로:</p>
-<ol>
-<li><strong>ML 모형 학습</strong>: XGBoost 등으로 부도 확률 <span class="arithmatex">\(\hat{p}\)</span>를 예측한다</li>
-<li><strong>스코어 변환</strong>: <span class="arithmatex">\(\hat{p}\)</span>를 PDO·Anchor Score 기반으로 신용 점수로 변환한다 (<a href="../../../scorecard/part5_scorecard/scorecard-and-rating/">Part 5 참조</a>)</li>
-<li><strong>타겟 교체</strong>: 원래의 이진 타겟(Good/Bad)을 <strong>ML이 산출한 스코어</strong>로 대체한다</li>
-<li><strong>해석 모형 적합</strong>: 동일한 입력 변수를 구간화(binning)하고, 이 스코어를 종속변수로 <strong>일반 회귀(OLS) 또는 로지스틱 회귀</strong>를 적합한다</li>
-<li><strong>스코어카드 제시</strong>: 회귀 계수를 스코어카드 포인트로 변환하여, 변수별 기여도를 사람이 읽을 수 있는 형태로 제공한다</li>
-</ol>
-<div class="admonition tip">
-<p class="admonition-title">핵심 아이디어</p>
-<p>실제 심사는 ML 스코어로 하되, "이 고객은 왜 이 점수인가"에 대한 설명은 스코어카드 형식으로 제공한다. SHAP이 기술자용 해석 도구라면, surrogate 스코어카드는 <strong>현업·규제기관용 설명 도구</strong>다.</p>
-</div>
-<hr>
-<h2 id="32-r2">3.2 R²가 낮을 수밖에 없는 이유<a class="headerlink" href="#32-r2" title="Permanent link">¶</a></h2>
-<p>대리 모형의 <span class="arithmatex">\(R^2\)</span>는 일반적으로 높지 않다. 이는 결함이 아니라 <strong>구조적 한계</strong>다.</p>
-<p>XGBoost가 잡아내는 것들:</p>
-<ul>
-<li>변수 간 <strong>비선형 교호작용</strong> (예: 소득이 높을 때만 DTI가 중요)</li>
-<li><strong>고차 분기 효과</strong> (3~4개 변수가 동시에 조건을 만족할 때의 패턴)</li>
-<li><strong>데이터 내 미세한 비선형성</strong></li>
-</ul>
-<p>이 모든 것을 <strong>가법 구조(additive)</strong>인 선형 회귀로 재현하는 것은 원리적으로 불가능하다. 복잡한 결정 경계를 단순한 1차 함수로 근사하는 것이므로, 설명되지 않는 분산이 반드시 남는다.</p>
+<p>5명이 팀 프로젝트를 했는데 최종 점수가 90점이다. 각자의 기여도를 공정하게 분배하고 싶다면?</p>
+<p>Shapley Value의 방법: <strong>모든 가능한 팀 조합에서, 해당 멤버가 참여할 때와 참여하지 않을 때의 점수 차이를 평균</strong>낸다.</p>
+<p>변수 <span class="arithmatex">\(j\)</span>의 SHAP value:</p>
 <div class="arithmatex">\[
-\underbrace{\text{Score}_{\text{ML}}}_{\text{비선형 + 교호작용}} \approx \underbrace{\beta_0 + \sum_j \beta_j \cdot \text{WoE}_j}_{\text{가법 선형 구조}} + \underbrace{\epsilon}_{\text{설명 불가 잔차}}
+\phi_j = \sum_{S \subseteq \{1,...,p\} \setminus \{j\}} \frac{|S|!(p-|S|-1)!}{p!} \left[\hat{f}(S \cup \{j\}) - \hat{f}(S)\right]
+\tag{1}
 \]</div>
-<hr>
-<h2 id="33">3.3 업계 구현 사례<a class="headerlink" href="#33" title="Permanent link">¶</a></h2>
-<p>이 파이프라인은 이미 <strong>상용 소프트웨어 레벨</strong>로 구현되어 있다.</p>
-<p><strong>SAS Viya Scorecard Node</strong>에는 "Use a black-box model" 옵션이 내장되어 있으며, 위에서 설명한 파이프라인을 자동으로 수행한다. Black-box 모형(GBM, RF, NN 등)을 학습한 뒤 원래 타겟을 예측값으로 교체하고, stepwise 로지스틱 회귀를 적합하여 전통적 스코어카드를 생성한다.</p>
-<p>학술적으로는 Dumitrescu et al. (2022, EJOR)의 <strong>PLTR (Penalised Logistic Tree Regression)</strong>이 유사한 철학의 모형이다. 짧은 깊이의 결정 트리에서 규칙을 추출한 뒤, 이를 이진 변수로 만들어 페널티 로지스틱 회귀(Adaptive LASSO)에 넣는 하이브리드 접근이다.</p>
-<hr>
-<h2 id="34">3.4 찬반 논쟁<a class="headerlink" href="#34" title="Permanent link">¶</a></h2>
-<p>Surrogate 접근은 업계에서 활발히 논쟁 중인 주제다.</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio"><input id="__tabbed_1_2" name="__tabbed_1" type="radio"><input id="__tabbed_1_3" name="__tabbed_1" type="radio"><div class="tabbed-labels"><label for="__tabbed_1_1">Pro: 대리 모형 옹호</label><label for="__tabbed_1_2">Con: 대리 모형 비판</label><label for="__tabbed_1_3">제3의 길: SHAP 직접 활용</label></div>
-<div class="tabbed-content">
-<div class="tabbed-block">
 <ul>
-<li>기존 <strong>규제 프레임워크에 부합</strong>하는 익숙한 포맷 (SR 11-7, EBA 가이드라인)</li>
-<li>리스크 위원회, 감사팀이 <strong>읽을 수 있는</strong> 스코어카드 산출물</li>
-<li>SAS 등 상용 소프트웨어에 이미 구현 — <strong>실무 적용 검증 완료</strong></li>
+<li><span class="arithmatex">\(S\)</span>: 변수 <span class="arithmatex">\(j\)</span>를 제외한 변수들의 부분집합</li>
+<li><span class="arithmatex">\(\hat{f}(S)\)</span>: 집합 <span class="arithmatex">\(S\)</span>에 포함된 변수만 "참여"했을 때의 모형 기대값</li>
+<li>가중치 <span class="arithmatex">\(\frac{|S|!(p-|S|-1)!}{p!}\)</span>는 해당 조합이 나타날 확률 — 모든 순열에서 균등하게 가중</li>
 </ul>
-</div>
-<div class="tabbed-block">
-<p>Sudjianto &amp; Zhang (2021, Wells Fargo)는 고위험 의사결정에는 <strong>내재적으로 해석 가능한 모형(Inherently Interpretable ML)</strong>을 사용해야 한다고 주장한다. 대리 모형에는 본질적 딜레마가 존재한다:</p>
-<ul>
-<li>대리 모형이 원래 모형을 <strong>잘 근사하면</strong> → "그냥 그 해석 모형을 쓰면 되지?"</li>
-<li><strong>못 근사하면</strong> → 설명이 실제 모형의 행동과 괴리 — <strong>misleading</strong></li>
-</ul>
-</div>
-<div class="tabbed-block">
-<p>SHAP 값 자체를 스코어카드 포맷으로 변환하는 접근도 있다. Denis Burakov의 <strong>xbooster</strong> 라이브러리는 XGBoost의 리프 노드를 스코어카드 포인트로 직접 변환한다. 별도의 surrogate 단계 없이 ML 모형 자체에서 해석 가능한 산출물을 추출하는 방식이다.</p>
-</div>
-</div>
+<div class="admonition example">
+<p class="admonition-title">신용평가 직관</p>
+<p>차주 A의 부도 확률 예측이 15%이고, 전체 평균이 5%라면, 10%p 차이를 만든 "공범"은 누구인가? SHAP은 DTI가 +4%p, 연체일수가 +3%p, 소득이 +2%p, 나머지 변수가 +1%p 기여했다는 식으로, <strong>각 변수의 몫을 공정하게 분배</strong>한다.</p>
 </div>
 <hr>
-<h2 id="35">3.5 참고 자료<a class="headerlink" href="#35" title="Permanent link">¶</a></h2>
+<h2 id="22-shap">2.2 SHAP의 핵심 성질<a class="headerlink" href="#22-shap" title="Permanent link">¶</a></h2>
+<p>Shapley Value는 다음 4가지 공리를 <strong>유일하게</strong> 만족하는 분배 방법이다.</p>
+<table>
+<thead>
+<tr>
+<th>성질</th>
+<th>의미</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Efficiency</strong> (효율성)</td>
+<td>모든 변수의 SHAP 합 = 예측값 - 기대값</td>
+</tr>
+<tr>
+<td><strong>Symmetry</strong> (대칭성)</td>
+<td>기여가 동일한 변수는 같은 SHAP 값</td>
+</tr>
+<tr>
+<td><strong>Dummy</strong> (무관 변수)</td>
+<td>예측에 영향 없는 변수의 SHAP = 0</td>
+</tr>
+<tr>
+<td><strong>Additivity</strong> (가산성)</td>
+<td>앙상블의 SHAP = 개별 모형 SHAP의 평균</td>
+</tr>
+</tbody>
+</table>
+<h3 id="efficiency">Efficiency가 특히 중요하다<a class="headerlink" href="#efficiency" title="Permanent link">¶</a></h3>
+<div class="arithmatex">\[
+\hat{f}(x) = \underbrace{E[\hat{f}(X)]}_{\text{base value}} + \sum_{j=1}^{p} \phi_j(x)
+\tag{2}
+\]</div>
+<p>개별 예측값이 <strong>기대값(base value) + 각 변수의 기여분</strong>으로 정확히 분해된다. 남거나 빠지는 것이 없다. 이것이 SHAP을 단순 변수 중요도 이상의 도구로 만드는 성질이다.</p>
+<p>여기서 <span class="arithmatex">\(E[\hat{f}(X)]\)</span>는 <strong>학습 데이터(training set) 전체에 대한 모형 예측의 평균</strong>이다<sup id="fnref:base_value"><a class="footnote-ref" href="#fn:base_value">1</a></sup>. 모든 관측치의 "출발점"이 이 평균이고, SHAP value는 <strong>각 관측치가 평균에서 얼마나, 왜 벗어나는가</strong>를 변수별로 분해한 것이다.</p>
+<h3 id="shap-value">숫자 예시 — SHAP value가 예측을 분해하는 과정<a class="headerlink" href="#shap-value" title="Permanent link">¶</a></h3>
+<p>DTI, 연체일수, 소득 3개 변수를 사용하는 부도 예측 모형을 생각하자. 학습 데이터 전체의 평균 부도확률이 5%라면, log-odds 공간에서:</p>
+<div class="arithmatex">\[
+E[\hat{f}(X)] = \ln\!\left(\frac{0.05}{0.95}\right) \approx -2.94
+\]</div>
+<p>이제 3명의 차주에 대해 SHAP value를 계산하면, 다음과 같은 <strong>SHAP value matrix</strong>가 산출된다:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">차주</th>
+<th style="text-align: right;"><span class="arithmatex">\(\phi_{\text{DTI}}\)</span></th>
+<th style="text-align: right;"><span class="arithmatex">\(\phi_{\text{연체}}\)</span></th>
+<th style="text-align: right;"><span class="arithmatex">\(\phi_{\text{소득}}\)</span></th>
+<th style="text-align: right;">SHAP 합계</th>
+<th style="text-align: right;"><span class="arithmatex">\(E[\hat{f}]+\sum\phi\)</span></th>
+<th style="text-align: right;">부도확률</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">A</td>
+<td style="text-align: right;">+0.8</td>
+<td style="text-align: right;">+1.2</td>
+<td style="text-align: right;">+0.3</td>
+<td style="text-align: right;"><strong>+2.3</strong></td>
+<td style="text-align: right;">-0.64</td>
+<td style="text-align: right;"><strong>34.5%</strong></td>
+</tr>
+<tr>
+<td style="text-align: center;">B</td>
+<td style="text-align: right;">-0.3</td>
+<td style="text-align: right;">+0.1</td>
+<td style="text-align: right;">-0.5</td>
+<td style="text-align: right;"><strong>-0.7</strong></td>
+<td style="text-align: right;">-3.64</td>
+<td style="text-align: right;"><strong>2.6%</strong></td>
+</tr>
+<tr>
+<td style="text-align: center;">C</td>
+<td style="text-align: right;">+0.2</td>
+<td style="text-align: right;">-0.1</td>
+<td style="text-align: right;">+0.0</td>
+<td style="text-align: right;"><strong>+0.1</strong></td>
+<td style="text-align: right;">-2.84</td>
+<td style="text-align: right;"><strong>5.5%</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>읽는 법:</strong></p>
+<ul>
+<li><strong>차주 A</strong>: 평균(-2.94)에서 DTI가 +0.8, 연체가 +1.2, 소득이 +0.3을 밀어올려 최종 -0.64(부도확률 34.5%)에 도달. "연체일수가 가장 큰 위험 요인"</li>
+<li><strong>차주 B</strong>: DTI가 -0.3, 소득이 -0.5로 끌어내려 -3.64(부도확률 2.6%). "소득이 높아서 안전"</li>
+<li><strong>차주 C</strong>: 평균과 거의 동일. 어떤 변수도 크게 밀어내지 않음</li>
+</ul>
+<p>시각화하면 이 과정이 더 명확해진다. 차주 A를 예시로:</p>
+<div class="highlight"><pre><span></span><code>                     평균
+  E[f̂(X)] = -2.94   │
+                     │  DTI      +0.8
+                     ├──────────→ -2.14
+                     │  연체일수  +1.2
+                     ├──────────────────→ -0.94
+                     │  소득      +0.3
+                     ├────────→ -0.64  = f̂(x_A)
+                                        ↓
+                                  부도확률 34.5%
+</code></pre></div>
+<p><strong>모든 관측치가 같은 출발점(평균)에서 시작하고, 각자의 변수값에 따라 다른 방향으로 이동하여 최종 예측에 도달한다.</strong> 이 이동량의 합이 정확히 예측값 - 평균이 되는 것이 Efficiency 성질이다.</p>
+<div class="admonition note">
+<p class="admonition-title">4가지 공리의 유일성</p>
+<p>이 4가지 공리를 동시에 만족하는 분배 방법은 Shapley Value뿐이다 (Shapley, 1953). 즉, "공정한 분배"를 이 4가지 조건으로 정의하면, SHAP은 <strong>유일한 해</strong>다.</p>
+</div>
+<hr>
+<h2 id="23-shap">2.3 왜 트리에서는 SHAP이 정확히 계산되는가<a class="headerlink" href="#23-shap" title="Permanent link">¶</a></h2>
+<h3 id="kernelshap">일반 모형의 문제 — KernelSHAP<a class="headerlink" href="#kernelshap" title="Permanent link">¶</a></h3>
+<p>Shapley Value 식 (1)을 정직하게 계산하려면, 변수 <span class="arithmatex">\(p\)</span>개에 대해 <strong><span class="arithmatex">\(2^p\)</span>개의 부분집합</strong>을 전부 평가해야 한다. 변수가 20개면 약 100만 개, 50개면 약 <span class="arithmatex">\(10^{15}\)</span>개 — 현실적으로 불가능하다.</p>
+<p>KernelSHAP(Lundberg &amp; Lee, 2017)은 이 문제를 <strong>샘플링 + 가중 선형회귀</strong>로 근사한다. 전체 <span class="arithmatex">\(2^p\)</span>개 조합 중 일부만 뽑아서, 가중치를 준 선형 모형으로 SHAP을 추정한다. 어떤 모형이든 적용할 수 있다는 장점이 있지만:</p>
+<ul>
+<li><strong>느리다</strong>: 관측치 하나당 수천~수만 회의 모형 호출이 필요</li>
+<li><strong>근사다</strong>: 샘플링에 기반하므로 매번 결과가 약간 달라진다</li>
+<li>변수가 많을수록 정확도가 떨어진다</li>
+</ul>
+<h3 id="treeshap">트리의 특수한 구조 — TreeSHAP<a class="headerlink" href="#treeshap" title="Permanent link">¶</a></h3>
+<p><strong>TreeSHAP</strong> (<a href="https://www.nature.com/articles/s42256-019-0138-9">Lundberg et al., 2020</a>)은 트리 구조를 활용하여 <span class="arithmatex">\(2^p\)</span>개 조합을 <strong>전부 평가하지 않고도 정확한 값을 계산</strong>한다. 왜 가능한가?</p>
+<p>트리 모형에서 "변수 <span class="arithmatex">\(j\)</span>가 참여하지 않는다"는 것은, 해당 변수의 분기점을 만났을 때 <strong>양쪽 자식으로 다 내려가되, 각 자식의 데이터 비율로 가중 평균</strong>을 취하는 것과 같다. 즉, 변수를 "빼는" 연산이 트리의 경로를 따라가면서 자연스럽게 정의된다.</p>
+<div class="highlight"><pre><span></span><code>         DTI &lt; 40?
+        /          \
+      소득 &lt; 300?    leaf: 0.02
+      /       \
+  leaf: 0.15  leaf: 0.08
+</code></pre></div>
+<p>이 트리에서 "DTI를 빼고 소득만 참여"시키려면:</p>
+<ul>
+<li>DTI 분기를 만나면 → 양쪽으로 다 내려감 (왼쪽 70%, 오른쪽 30%)</li>
+<li>소득 분기를 만나면 → 실제 소득값에 따라 한쪽만 감</li>
+</ul>
+<p>핵심은, 이 "양쪽으로 다 내려가면서 가중 평균" 연산이 <strong>트리의 root에서 leaf까지 한 번만 순회</strong>하면 모든 부분집합에 대해 동시에 계산된다는 것이다. <span class="arithmatex">\(2^p\)</span>개를 하나씩 계산하는 대신, 트리 경로를 재귀적으로 순회하면서 <strong>모든 조합의 기여분을 동시에 누적</strong>한다.</p>
+<p>결과적으로 복잡도는:</p>
+<div class="arithmatex">\[O(TLD^2)\]</div>
+<ul>
+<li><span class="arithmatex">\(T\)</span>: 트리 수, <span class="arithmatex">\(L\)</span>: 평균 리프 수, <span class="arithmatex">\(D\)</span>: 트리 깊이</li>
+</ul>
+<p>변수 수 <span class="arithmatex">\(p\)</span>가 아니라 <strong>트리 깊이 <span class="arithmatex">\(D\)</span></strong>에만 의존하므로, 변수가 수백 개여도 빠르게 정확한 값을 얻는다.</p>
+<h3 id="kernelshap-vs-treeshap">KernelSHAP vs TreeSHAP 비교<a class="headerlink" href="#kernelshap-vs-treeshap" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>KernelSHAP</th>
+<th>TreeSHAP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>적용 대상</strong></td>
+<td>어떤 모형이든 (model-agnostic)</td>
+<td>트리 기반 모형만</td>
+</tr>
+<tr>
+<td><strong>계산</strong></td>
+<td>샘플링 + 가중 선형회귀(WLS) (<strong>근사</strong>)</td>
+<td>트리 순회 (<strong>정확</strong>)</td>
+</tr>
+<tr>
+<td><strong>속도</strong></td>
+<td>느림 (관측치당 수천 회 호출)</td>
+<td>빠름 (<span class="arithmatex">\(O(TLD^2)\)</span>)</td>
+</tr>
+<tr>
+<td><strong>결과 재현성</strong></td>
+<td>매번 미세하게 다름</td>
+<td>항상 동일</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_1">실무적 의미<a class="headerlink" href="#_1" title="Permanent link">¶</a></h3>
+<ul>
+<li>XGBoost, LightGBM, CatBoost에 <strong>내장</strong>되어 있어 별도 근사 없이 정확한 값을 계산 가능</li>
+<li>트리 기반 모형을 사용하는 신용평가에서는 사실상 TreeSHAP이 표준</li>
+<li>DNN 등 비트리 모형에서는 KernelSHAP이나 DeepSHAP을 사용해야 한다 — 이것이 트리 모형의 해석 측면에서의 또 하나의 이점이다</li>
+</ul>
+<div class="source-ref">
+출처: Lundberg, S.M., Erion, G., Chen, H., et al. (2020). "From local explanations to global understanding with explainable AI for trees." <em>Nature Machine Intelligence</em>, 2:56-67.
+<a href="https://www.nature.com/articles/s42256-019-0138-9" target="_blank">논문 링크</a>
+</div>
+
+<hr>
+<h2 id="24-shap">2.4 SHAP 시각화<a class="headerlink" href="#24-shap" title="Permanent link">¶</a></h2>
+<p>SHAP 라이브러리는 다양한 시각화를 제공한다. 각각의 용도가 다르다.</p>
+<h3 id="bar-plot-meanshap">Bar Plot — mean(|SHAP|)<a class="headerlink" href="#bar-plot-meanshap" title="Permanent link">¶</a></h3>
+<p><strong>Global 변수 중요도</strong>를 가장 간결하게 보여주는 시각화다. 각 변수의 |SHAP value|를 전체 샘플에 대해 평균내어 내림차순으로 정렬한다.</p>
+<figure>
+  <a class="glightbox" data-type="image" data-width="100%" data-height="auto" href="../images/shap_bar_global.png" data-desc-position="bottom"><img alt="SHAP Bar Plot — mean(|SHAP|)" src="../images/shap_bar_global.png" width="560"></a>
+<br>
+<figcaption>Bar Plot — California Housing 데이터 예시. Latitude, Longitude, MedInc 순으로 모형 예측에 대한 기여가 크다.<br>
+  <span style="font-size:0.85em; color:#888;">출처: <a href="https://github.com/shap/shap" target="_blank">SHAP GitHub</a> (MIT License)</span></figcaption>
+</figure>
+<ul>
+<li>방향(양/음)은 알 수 없고, <strong>절대적 기여 크기</strong>만 보여준다</li>
+<li>빠른 개요용으로 가장 많이 사용되며, 보고서의 "변수 중요도" 시각화에 적합</li>
+</ul>
+<h3 id="summary-plot-beeswarm">Summary Plot (Beeswarm)<a class="headerlink" href="#summary-plot-beeswarm" title="Permanent link">¶</a></h3>
+<p><strong>Global 변수 중요도 + 방향</strong>을 한 장에 보여주는 가장 대표적인 시각화다. 각 점은 하나의 샘플이며, x축은 SHAP value, 색상은 변수값의 크기를 나타낸다.</p>
+<figure>
+  <a class="glightbox" data-type="image" data-width="100%" data-height="auto" href="../images/shap_beeswarm.png" data-desc-position="bottom"><img alt="SHAP Beeswarm Plot" src="../images/shap_beeswarm.png" width="600"></a>
+<br>
+<figcaption>Beeswarm Plot — California Housing 데이터 예시. 각 점이 하나의 관측치이며, x축이 SHAP value, 색상이 변수값(빨강=높음, 파랑=낮음)이다.<br>
+  <span style="font-size:0.85em; color:#888;">출처: <a href="https://github.com/shap/shap" target="_blank">SHAP GitHub</a> (MIT License)</span></figcaption>
+</figure>
+<ul>
+<li>변수 중요도 순서 (위에서 아래)</li>
+<li>각 변수가 예측을 높이는지 낮추는지 (좌우 방향)</li>
+<li>변수값과 기여도의 관계 (색상 패턴)</li>
+</ul>
+<p>예를 들어, 위 그림에서 MedInc(중위소득)은 <strong>값이 높을수록</strong>(빨간 점) SHAP value가 양수(오른쪽)에 분포한다 — "소득이 높으면 주택 가격 예측이 올라간다"는 해석이 한눈에 드러난다.</p>
+<h3 id="waterfall-plot">Waterfall Plot<a class="headerlink" href="#waterfall-plot" title="Permanent link">¶</a></h3>
+<p><strong>개별 예측 건</strong>의 분해를 보여준다. base value(<span class="arithmatex">\(E[\hat{f}(X)]\)</span>)에서 출발하여 각 변수의 기여가 순차적으로 누적되어 최종 예측값에 도달하는 과정을 시각화한다.</p>
+<figure>
+  <a class="glightbox" data-type="image" data-width="100%" data-height="auto" href="../images/shap_waterfall.png" data-desc-position="bottom"><img alt="SHAP Waterfall Plot" src="../images/shap_waterfall.png" width="500"></a>
+<br>
+<figcaption>Waterfall Plot — 동일 데이터의 한 관측치에 대한 분해. base value 2.068에서 출발하여, MedInc가 +1.83, Longitude가 +0.64를 기여하여 최종 예측 4.413에 도달한다.<br>
+  <span style="font-size:0.85em; color:#888;">출처: <a href="https://github.com/shap/shap" target="_blank">SHAP GitHub</a> (MIT License)</span></figcaption>
+</figure>
+<ul>
+<li>거절 사유 설명에 가장 직관적</li>
+<li>상위 N개 변수만 표시하고 나머지는 합산 가능</li>
+</ul>
+<h3 id="force-plot">Force Plot<a class="headerlink" href="#force-plot" title="Permanent link">¶</a></h3>
+<p>Waterfall과 <strong>같은 정보를 가로 레이아웃</strong>으로 표현한 것이다. 빨간 화살표(예측을 높이는 변수)와 파란 화살표(낮추는 변수)가 base value에서 출발하여 양쪽에서 밀어붙이는 "힘겨루기"를 시각화한다.</p>
+<figure>
+  <a class="glightbox" data-type="image" data-width="100%" data-height="auto" href="../images/shap_force.png" data-desc-position="bottom"><img alt="SHAP Force Plot" src="../images/shap_force.png" width="700"></a>
+<br>
+<figcaption>Force Plot — 위의 Waterfall과 동일한 관측치. base value 2.068에서 빨강(MedInc, Longitude 등)이 오른쪽으로 밀고, 파랑(Latitude, Population)이 왼쪽으로 밀어 최종 4.41에 도달한다.<br>
+  <span style="font-size:0.85em; color:#888;">출처: <a href="https://github.com/shap/shap" target="_blank">SHAP GitHub</a> (MIT License)</span></figcaption>
+</figure>
+<ul>
+<li>Waterfall보다 직관적이지만, 변수가 많으면 가독성이 떨어진다</li>
+<li>여러 관측치를 세로로 쌓아 <strong>전체 데이터의 패턴</strong>을 보는 것도 가능</li>
+</ul>
+<h3 id="dependence-plot">Dependence Plot<a class="headerlink" href="#dependence-plot" title="Permanent link">¶</a></h3>
+<p>특정 변수의 <strong>값(x축) vs SHAP value(y축)</strong> 산점도다.</p>
+<ul>
+<li>변수의 비선형 효과를 시각화</li>
+<li>색상으로 교호작용 변수를 표시하면, 같은 변수값에서도 SHAP이 달라지는 원인을 확인 가능</li>
+<li>1-Depth GBM에서는 이것이 곧 <strong>shape function</strong>과 동치</li>
+</ul>
+<figure>
+  <a class="glightbox" data-type="image" data-width="100%" data-height="auto" href="../images/shap_dependence.png" data-desc-position="bottom"><img alt="SHAP Dependence Plot" src="../images/shap_dependence.png" width="560"></a>
+<br>
+<figcaption>Dependence Plot — Latitude의 SHAP value(y축) vs Latitude 값(x축). 색상은 교호작용 변수(Longitude)를 나타낸다. 같은 Latitude에서도 Longitude에 따라 SHAP이 달라지는 것이 교호작용의 증거다.<br>
+  <span style="font-size:0.85em; color:#888;">출처: <a href="https://github.com/shap/shap" target="_blank">SHAP GitHub</a> (MIT License)</span></figcaption>
+</figure>
+<div class="admonition info">
+<p class="admonition-title">SHAP과 교호작용</p>
+<p>Dependence Plot에서 점들이 하나의 곡선에 모이지 않고 퍼져 있다면, 교호작용이 존재한다는 신호다. SHAP은 이 교호작용을 각 변수에 <strong>분배</strong>한다 — 이것이 "같은 변수, 같은 값인데 차주마다 SHAP이 다른" 현상의 원인이다. 교호작용을 분배하지 않고 <strong>분리</strong>하는 접근(Functional ANOVA)에 대해서는 <a href="../fanova_concepts/">fANOVA 개념과 Purification</a>에서 다룬다.</p>
+</div>
+<hr>
+<h2 id="25">2.5 참고 자료<a class="headerlink" href="#25" title="Permanent link">¶</a></h2>
 <table>
 <thead>
 <tr>
@@ -4910,25 +5182,38 @@
 </thead>
 <tbody>
 <tr>
-<td><strong><a href="https://www.sciencedirect.com/science/article/abs/pii/S0377221721005695">Dumitrescu et al. (2022)</a></strong></td>
-<td>논문 (EJOR)</td>
-<td>"Machine Learning for Credit Scoring" — PLTR, 트리 규칙 + 페널티 LR 하이브리드</td>
+<td><strong><a href="https://arxiv.org/abs/1705.07874">Lundberg &amp; Lee (2017)</a></strong></td>
+<td>논문 (NeurIPS)</td>
+<td>SHAP 최초 제안. Shapley Value + ML 해석 통합</td>
 </tr>
 <tr>
-<td><strong><a href="https://www.semanticscholar.org/paper/Designing-Inherently-Interpretable-Machine-Learning-Sudjianto-Zhang/90409ae91767248e9ea88b7d6ab44e18f0e1a9be">Sudjianto &amp; Zhang (2021)</a></strong></td>
-<td>논문</td>
-<td>"Designing Inherently Interpretable ML Models" — Wells Fargo, 내재적 해석 가능 ML 옹호</td>
+<td><strong><a href="https://www.nature.com/articles/s42256-019-0138-9">Lundberg et al. (2020)</a></strong></td>
+<td>논문 (Nature MI)</td>
+<td>TreeSHAP, SHAP interaction values</td>
 </tr>
 <tr>
-<td><strong><a href="https://github.com/deburky/boosting-scorecards">xbooster</a></strong></td>
-<td>Python 라이브러리</td>
-<td>XGBoost 리프 노드 → 스코어카드 포인트 직접 변환</td>
+<td><strong><a href="https://github.com/shap/shap">SHAP GitHub</a></strong></td>
+<td>라이브러리</td>
+<td>이론 설명과 시각화 예시가 잘 정리되어 있다</td>
+</tr>
+<tr>
+<td><strong><a href="https://christophm.github.io/interpretable-ml-book/shap.html">Molnar — Interpretable ML</a></strong></td>
+<td>온라인 서적</td>
+<td>SHAP 이론의 가장 접근하기 쉬운 설명</td>
 </tr>
 </tbody>
 </table>
 <div class="admonition tip">
 <p class="admonition-title">다음 페이지</p>
-<p><a href="../depth1_gbm/">해석 가능한 ML: 1-Depth GBM과 EBM</a> --- GAM 구조의 해석 가능한 ML 모형과 성능 비교를 다룬다.</p>
+<p><a href="../depth1_gbm/">1-Depth GBM 스코어카드</a> --- depth=1 제약으로 교호작용을 제거하여, ML의 비선형 학습과 전통 스코어카드의 해석 가능성을 동시에 달성하는 방법을 다룬다.</p>
+</div>
+<div class="footnote">
+<hr>
+<ol>
+<li id="fn:base_value">
+<p>엄밀히는, TreeSHAP의 기본 모드(<code>tree_path_dependent</code>)에서는 트리 내부의 node sample count를 기반으로 기대값을 계산하므로, bootstrap sampling 등의 영향으로 <code>model.predict(X_train).mean()</code>과 미세하게 다를 수 있다. 정확히 일치시키려면 <code>feature_perturbation="interventional"</code> 모드를 사용한다.&nbsp;<a class="footnote-backref" href="#fnref:base_value" title="Jump back to footnote 1 in the text">↩</a></p>
+</li>
+</ol>
 </div>
 
 
