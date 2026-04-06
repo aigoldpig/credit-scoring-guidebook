@@ -7,7 +7,7 @@ title: "SHAP과 Functional ANOVA"
 > ML 모형의 해석에서 핵심이 되는 두 가지 수학적 프레임워크 — Functional ANOVA 분해와 SHAP의 이론적 기초, 차이, 그리고 Purification
 
 !!! note "이 부록의 위치"
-    [해석 가능성](../../part4_evaluation/interpretability.md)과 [SHAP — 해석의 여정](../../part4_evaluation/shap_in_practice.md)에서 다룬 실무적 내용의 **수학적 기초**에 해당한다. "왜 분해가 필요한가"부터 Purification 알고리즘까지를 정리한다.
+    [해석 가능성](../../part4_interpretation/interpretability.md), [SHAP 이론](../../part4_interpretation/shap_theory.md), [fANOVA 개념과 Purification](../../part4_interpretation/fanova_concepts.md)에서 다룬 실무적 내용의 **수학적 기초**에 해당한다. "왜 분해가 필요한가"부터 Purification 알고리즘까지를 정리한다.
 
 ## 목차
 
@@ -24,6 +24,6 @@ title: "SHAP과 Functional ANOVA"
 **참고 문헌**
 
 - Lengerich, Tan, Chang, Hooker, Caruana (2020). [Purifying Interaction Effects with the Functional ANOVA](https://proceedings.mlr.press/v108/lengerich20a.html) (AISTATS)
-- Hooker (2004, 2007). Functional ANOVA를 ML 해석에 적용하는 원논문
+- Hooker (2004, 2007). Functional ANOVA를 ML 해석에 적용한 논문
 - Lundberg & Lee (2017). [A Unified Approach to Interpreting Model Predictions](https://arxiv.org/abs/1705.07874) (NeurIPS)
 </div>

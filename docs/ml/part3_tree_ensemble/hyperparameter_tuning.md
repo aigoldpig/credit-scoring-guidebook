@@ -24,18 +24,6 @@
 - 일정 라운드(`early_stopping_rounds`) 동안 개선이 없으면 학습 중단
 - 최적 라운드의 모형을 최종 모형으로 사용
 
-```python
-model = xgb.XGBClassifier(
-    n_estimators=5000,       # 넉넉하게 설정
-    learning_rate=0.05,
-    max_depth=5,
-    early_stopping_rounds=50  # 50 라운드 동안 개선 없으면 중단
-)
-model.fit(X_train, y_train,
-          eval_set=[(X_valid, y_valid)],
-          verbose=100)
-```
-
 !!! tip "실무 팁 — n_estimators는 크게, Early Stopping으로 멈춰라"
     저자가 선호하는 방식이다. `n_estimators`를 처음부터 정확히 맞출 필요 없다. 넉넉하게(3000~5000) 설정하고 Early Stopping에 맡기는 것이 효율적이다. Learning Rate를 낮추면 최적 라운드가 늘어나지만, 성능은 대체로 좋아진다. 다만 이것이 유일한 정답은 아니며, 팀이나 프로젝트에 따라 n_estimators를 직접 CV로 탐색하는 방식도 흔하다.
 
@@ -182,4 +170,4 @@ params = {
 실무에서 중요한 것은 알고리즘 선택보다 **하이퍼파라미터 튜닝과 검증 프로세스**다. 잘 튜닝된 XGBoost와 잘 튜닝된 LightGBM의 성능 차이는 대부분 미미하다. 기본값으로 못 되는 모형이 튜닝으로 된다기보다, **좋은 변수가 좋은 모형을 만든다.**
 
 !!! tip "다음 섹션"
-    모형의 성능이 확보되었다면, 다음 질문은 "이 모형이 **왜** 이렇게 예측했는가?"다. [모형 평가와 해석](../part4_evaluation/index.md) 섹션에서 Validation, SHAP, PDP 등 모형 설명 기법을 다룬다.
+    모형의 성능이 확보되었다면, 다음 질문은 "이 모형이 **왜** 이렇게 예측했는가?"다. [해석과 설명](../part4_interpretation/index.md) 섹션에서 SHAP, 1-Depth GBM, EBM 등 모형 해석 기법을 다룬다.

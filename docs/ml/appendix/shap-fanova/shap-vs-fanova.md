@@ -86,9 +86,16 @@ fANOVA(+ purification)로 답하면:
 
 SHAP과 fANOVA는 접근 방식이 다르지만, **결과가 분포에 의존한다**는 근본적 한계를 공유한다. 어떤 방법론을 쓰든, "이 변수의 효과"를 정의하려면 "다른 변수를 어떻게 처리할 것인가"를 결정해야 하고, 그 결정이 곧 분포 선택이기 때문이다.
 
-**SHAP**: background distribution(기준 분포)을 어떻게 잡느냐에 따라 SHAP 값 자체가 달라진다. 훈련 데이터 전체를 쓸 것인가, k-means 클러스터링 대표점을 쓸 것인가, 특정 하위 집단만 쓸 것인가 — 선택에 따라 변수의 기여도 숫자가 변한다.
+**SHAP — 알고리즘에 따라 분포 의존성이 다르다:**
 
-**fANOVA**: purification에서 가중 평균을 계산할 때 사용하는 분포 \(\mathbb{P}(X)\)에 따라 main effect 곡선 자체가 달라진다. Lengerich et al. (2020)은 세 가지 가중 방식을 비교했다:
+- **TreeSHAP** (트리 모형 전용, 실무에서 주로 사용): 변수가 coalition에 포함되지 않을 때, 해당 변수의 split 노드에서 **양쪽 가지를 모두 따라가면서** 훈련 시 각 가지로 흘러간 샘플 비율로 가중평균을 낸다. 별도의 background 데이터셋이 필요 없고, 분포가 **트리 구조에 이미 고정**되어 있으므로 사용자가 선택할 여지가 없다.
+- **KernelSHAP** (모형 불문 범용): 별도의 background 데이터셋을 지정해야 한다. 훈련 데이터 전체를 쓸 것인가, k-means 대표점을 쓸 것인가, 특정 하위 집단만 쓸 것인가 — **선택에 따라 SHAP 값 자체가 달라진다.**
+
+**fANOVA — 훈련 데이터에서 자연스럽게 결정되지만, 희소 구간에서 주의가 필요하다:**
+
+fANOVA의 기대값 계산과 purification의 가중평균은 모두 분포 \(\mathbb{P}(X)\)에 의존한다. 실무에서는 **훈련 데이터의 bin별 샘플 비율**(empirical distribution)을 가중치로 사용하는 것이 자연스럽다 — 별도로 "분포를 정의"하는 단계가 아니라, 트리 학습 시 이미 결정된 bin과 샘플 수를 그대로 쓰는 것이다.
+
+다만, 희소 구간(예: DTI > 300%에 샘플이 3명뿐인 경우)에서 가중치가 극도로 작아져 결과가 불안정해질 수 있다. Lengerich et al. (2020)은 이 문제에 대해 세 가지 가중 방식을 비교했다:
 
 | 가중 방식 | 정의 | 특성 |
 |-----------|------|------|
@@ -132,6 +139,16 @@ EBM이 이 전략을 쓴다. 교호작용을 **2-way까지만 허용**하고 (GA
 depth가 깊어져서 \(X_1, X_2, X_3\)가 혼재된 3-way interaction이 나타나면, 두 가지 문제가 동시에 발생한다.
 
 **시각화의 벽**: 2-way interaction \(f_{12}(x_1, x_2)\)는 heatmap(2차원 그림)으로 직관적으로 보여줄 수 있다. 하지만 3-way interaction \(f_{123}(x_1, x_2, x_3)\)는 **3차원 텐서**다. 이것을 시각화하려면 3D 등고선, 또는 \(x_3\)를 고정하고 2D slice를 여러 장 그려야 한다. 직관적 이해가 급격히 어려워진다.
+
+<figure markdown="span">
+  ![2-way interaction heatmap](images/interaction_2way.png){ width="780" }
+  <figcaption>2-way interaction은 heatmap 한 장으로 패턴이 보인다. depth가 깊어지면 셀 수가 폭발하며 비단조 구간이 발생한다.</figcaption>
+</figure>
+
+<figure markdown="span">
+  ![3-way interaction cube](images/interaction_3way_cube.png){ width="480" }
+  <figcaption>3-way interaction은 3차원 큐브가 된다. 8개 셀의 방향과 크기를 직관적으로 파악할 수 있는가?</figcaption>
+</figure>
 
 **항 수의 폭발**: 변수 20개에서 가능한 interaction 수:
 

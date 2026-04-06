@@ -79,4 +79,4 @@ ECB는 ML 챕터를 신설하여, LIME 등 surrogate를 허용 가능한 해석 
 | **[EBA ML for IRB Report (2023)](https://www.eba.europa.eu/publications-and-media/press-releases/eba-publishes-follow-report-use-machine-learning-internal)** | 규제 보고서 | 은행의 ML 활용 현황 및 해석 가능성 접근 조사 |
 
 !!! tip "이전 섹션"
-    [해석과 설명](../part4_evaluation/index.md)에서 SHAP, Surrogate Model, 1-Depth GBM 등 ML 해석 기법을 다루었다.
+    [해석과 설명](../part4_interpretation/index.md)에서 SHAP, 1-Depth GBM, EBM 등 ML 해석 기법을 다루었다.

@@ -145,7 +145,7 @@ $$
 
 ---
 
-## 3.6 Shrinkage Path: \(\lambda\)에 따른 계수 변화
+## 3.6 Shrinkage Path: λ에 따른 계수 변화
 
 \(\lambda\)를 0에서 점점 키우면 각 계수가 어떻게 변하는지를 시각화한 것이 **계수 경로(coefficient path)**다.
 

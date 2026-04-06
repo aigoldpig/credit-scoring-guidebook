@@ -48,14 +48,7 @@
 
 ### Label Encoding
 
-각 범주에 정수를 부여한다.
-
-```python
-# 직업군: 회사원=0, 자영업=1, 공무원=2, 전문직=3
-from sklearn.preprocessing import LabelEncoder
-le = LabelEncoder()
-X['job_type'] = le.fit_transform(X['job_type'])
-```
+각 범주에 정수를 부여한다. 예를 들어 직업군이 {회사원, 자영업, 공무원, 전문직}이면 {0, 1, 2, 3}으로 변환한다.
 
 | 장점 | 단점 |
 |------|------|
@@ -68,15 +61,7 @@ X['job_type'] = le.fit_transform(X['job_type'])
 
 ### Target Encoding
 
-각 범주를 **해당 범주의 타겟 평균값**으로 대체한다.
-
-```python
-# 지역별 평균 Bad Rate로 변환
-# 서울: 0.03, 경기: 0.05, 부산: 0.07, ...
-X['region_te'] = X['region'].map(
-    y.groupby(X['region']).mean()
-)
-```
+각 범주를 **해당 범주의 타겟 평균값**으로 대체한다. 예를 들어 지역별 평균 Bad Rate(서울: 0.03, 경기: 0.05, 부산: 0.07 등)로 변환한다.
 
 | 장점 | 단점 |
 |------|------|
@@ -90,23 +75,9 @@ X['region_te'] = X['region'].map(
     - **K-Fold 기반 인코딩**: 각 Fold에서 자신이 속하지 않은 데이터의 타겟 평균을 사용
     - **Smoothing**: 글로벌 평균과 범주별 평균의 가중 평균 → 소수 샘플 범주의 극단값 방지
 
-    ```python
-    # category_encoders 라이브러리 활용
-    from category_encoders import TargetEncoder
-    te = TargetEncoder(smoothing=1.0)
-    X['region_te'] = te.fit_transform(X['region'], y)
-    ```
-
 ### One-Hot Encoding
 
-각 범주를 별도의 이진(0/1) 컬럼으로 확장한다.
-
-```python
-# 직업군 4개 → 4개 컬럼
-pd.get_dummies(X['job_type'])
-# job_회사원  job_자영업  job_공무원  job_전문직
-#    1          0          0          0
-```
+각 범주를 별도의 이진(0/1) 컬럼으로 확장한다. 직업군 4개 → `job_회사원`, `job_자영업`, `job_공무원`, `job_전문직` 4개 컬럼이 생성된다.
 
 | 장점 | 단점 |
 |------|------|
@@ -121,19 +92,7 @@ pd.get_dummies(X['job_type'])
 
 ### LightGBM의 Native Categorical
 
-LightGBM은 범주형 변수를 **인코딩 없이 직접 처리**하는 기능을 제공한다.
-
-```python
-import lightgbm as lgb
-
-# 범주형 변수를 category 타입으로 지정
-X['job_type'] = X['job_type'].astype('category')
-X['region'] = X['region'].astype('category')
-
-# LightGBM이 자동으로 최적 범주 분할을 탐색
-model = lgb.LGBMClassifier()
-model.fit(X, y, categorical_feature=['job_type', 'region'])
-```
+LightGBM은 범주형 변수를 **인코딩 없이 직접 처리**하는 기능을 제공한다. 범주형 변수를 `category` 타입으로 지정하고 `categorical_feature` 파라미터로 전달하면 된다.
 
 LightGBM은 내부적으로 범주를 **최적의 두 그룹으로 분할**하는 알고리즘을 사용한다. Label Encoding의 인위적 순서 문제와 One-Hot의 비효율성을 모두 회피한다.
 

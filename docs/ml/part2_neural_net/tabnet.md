@@ -177,43 +177,17 @@ TabNet 원 논문에서는 다수의 Tabular 벤치마크에서 트리 앙상블
 
 ---
 
-## 3.6 pytorch-tabnet 실습 참고
+## 3.6 주요 하이퍼파라미터
 
 TabNet의 대표적인 오픈소스 구현은 `pytorch-tabnet` 라이브러리다.
 
-```python
-from pytorch_tabnet.tab_model import TabNetClassifier
-
-clf = TabNetClassifier(
-    n_d=64, n_a=64,          # Feature Transformer 차원
-    n_steps=5,                # Attention step 수
-    gamma=1.5,                # Prior scales 감쇠 계수
-    lambda_sparse=1e-4,       # Sparsity 정규화 강도
-    optimizer_fn=torch.optim.Adam,
-    optimizer_params=dict(lr=2e-2),
-    scheduler_params={"step_size": 50, "gamma": 0.9},
-    scheduler_fn=torch.optim.lr_scheduler.StepLR,
-    mask_type="sparsemax",    # 또는 "entmax"
-)
-
-clf.fit(
-    X_train, y_train,
-    eval_set=[(X_valid, y_valid)],
-    eval_metric=["auc"],
-    max_epochs=200,
-    patience=20,              # Early stopping
-    batch_size=1024,
-)
-```
-
-!!! note "주요 하이퍼파라미터"
-    | 파라미터 | 의미 | 일반적 범위 |
-    |---------|------|-----------|
-    | `n_steps` | Attention Step 수 | 3~10 |
-    | `n_d`, `n_a` | Feature Transformer 차원 | 8~128 |
-    | `gamma` | Prior scales 감쇠 (클수록 피처 재사용 허용) | 1.0~2.0 |
-    | `lambda_sparse` | Sparsity 정규화 강도 | 1e-4~1e-3 |
-    | `mask_type` | Sparsemax 또는 Entmax | `"sparsemax"` |
+| 파라미터 | 의미 | 일반적 범위 |
+|---------|------|-----------|
+| `n_steps` | Attention Step 수 | 3~10 |
+| `n_d`, `n_a` | Feature Transformer 차원 | 8~128 |
+| `gamma` | Prior scales 감쇠 (클수록 피처 재사용 허용) | 1.0~2.0 |
+| `lambda_sparse` | Sparsity 정규화 강도 | 1e-4~1e-3 |
+| `mask_type` | Sparsemax 또는 Entmax | `"sparsemax"` |
 
 ---
 

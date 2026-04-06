@@ -119,4 +119,4 @@ CB 변수가 불량을 예측하는 이유는 단순히 "과거 데이터에서 
 !!! tip "실무 관행"
     규제모형에서는 여전히 **Classing → WoE/IV → Logistic Regression**이라는 전통적 파이프라인이 표준이다. ML 기반 변수 선별은 전략 모형이나 변수 탐색(EDA) 단계에서 보조적으로 활용하되, 최종 모형은 해석가능성·규제 수용성을 위해 로지스틱 회귀로 적합시키는 **하이브리드 접근**이 현실적이다.
 
-    Tree 기반 Feature Importance, SHAP, Boruta/LASSO 등 ML 기반 변수 선정 기법의 상세 내용은 [머신러닝 섹션](../../ml/index.md)에서 다룬다. 특히 [트리 모형](../../ml/part3_tree_ensemble/tree_models.md)과 [해석가능성(Interpretability)](../../ml/part4_evaluation/interpretability.md)을 참고한다.
+    Tree 기반 Feature Importance, SHAP, Boruta/LASSO 등 ML 기반 변수 선정 기법의 상세 내용은 [머신러닝 섹션](../../ml/index.md)에서 다룬다. 특히 [트리 모형](../../ml/part3_tree_ensemble/tree_models.md)과 [해석가능성(Interpretability)](../../ml/part4_interpretation/interpretability.md)을 참고한다.

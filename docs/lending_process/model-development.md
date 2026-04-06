@@ -14,7 +14,7 @@ title: "① 모형 개발"
 | 데이터 준비 | 성능기간 설정, Good/Bad 정의, 관측/표본기간 | [스코어카드 Part 1](../scorecard/part1_overview/) |
 | 변수 처리 | Classing, WoE/IV 변환, 단변량 LR | [스코어카드 Part 3](../scorecard/part3_variable_selection/) |
 | 모형 학습 | Logistic Regression, GBM/RF 등 | [스코어카드 Part 4](../scorecard/part4_modeling/), [ML Part 1](../ml/part1_overview/)~[3](../ml/part3_tree_ensemble/) |
-| 해석·설명 | SHAP, Surrogate Model, EBM | [ML Part 4](../ml/part4_evaluation/) |
+| 해석·설명 | SHAP, 1-Depth GBM, EBM | [ML Part 4](../ml/part4_interpretation/) |
 | 성능 평가 | KS, AR, PSI | [스코어카드 Part 5](../scorecard/part5_scorecard/), [ML Part 5](../ml/part5_validation/) |
 | 산출물 변환 | p̂ → Score(PDO 변환) → 등급 매핑 | [스코어카드 Part 5](../scorecard/part5_scorecard/) |
 

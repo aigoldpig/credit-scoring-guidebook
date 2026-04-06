@@ -27,7 +27,7 @@ GBM에서 개별 트리의 **깊이(depth)**는 모형이 포착할 수 있는 *
 | **3** | 3개 | 3-way | 보통 |
 | **5~6** | 5~6개 | 고차 | 낮음 (SHAP 필수) |
 
-Depth = 1인 트리(stump)는 변수 하나만 사용하므로, stump의 합산은 **GAM(Generalized Additive Model)**과 동치가 된다 — 교호작용이 수학적으로 불가능하다. 반면 depth가 깊어질수록 고차 교호작용을 포착하지만 해석이 어려워진다. 이 트레이드오프와 그 실무적 의미는 [해석 가능한 ML: 1-Depth GBM과 EBM](../part4_evaluation/depth1_gbm.md)에서 상세히 다룬다.
+Depth = 1인 트리(stump)는 변수 하나만 사용하므로, stump의 합산은 **GAM(Generalized Additive Model)**과 동치가 된다 — 교호작용이 수학적으로 불가능하다. 반면 depth가 깊어질수록 고차 교호작용을 포착하지만 해석이 어려워진다. 이 트레이드오프와 그 실무적 의미는 [1-Depth GBM 스코어카드](../part4_interpretation/depth1_gbm.md)에서 상세히 다룬다.
 
 ---
 

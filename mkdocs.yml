@@ -38,7 +38,7 @@ nav:
   # ── 전통 스코어카드 ──
   - Traditional Scorecard:
     - scorecard/index.md
-    - "1. 개요":
+    - "① 개요":
       - scorecard/part1_overview/index.md
       - 1. CSS란 · 모형 분류: scorecard/part1_overview/what-is-css.md
       - 2. 분류가 아닌 서열화: scorecard/part1_overview/ranking-not-classification.md
@@ -47,12 +47,12 @@ nav:
       - 5. 모델링: scorecard/part1_overview/model-fitting.md
       - 6. 스코어와 의사결정: scorecard/part1_overview/output-and-usage.md
       - 7. 개발 파이프라인: scorecard/part1_overview/development-process.md
-    - "2. 이론":
+    - "② 이론":
       - scorecard/part2_theory/index.md
       - 1. 문제 정의: scorecard/part2_theory/binary-classification.md
       - 2. Logit 변환: scorecard/part2_theory/logit-transform.md
       - 3. MLE: scorecard/part2_theory/mle.md
-    - "3. 변수 선정":
+    - "③ 변수 선정":
       - scorecard/part3_variable_selection/index.md
       - Classing:
         - scorecard/part3_variable_selection/classing/index.md
@@ -76,11 +76,11 @@ nav:
         - scorecard/part3_variable_selection/domain_selection/index.md
         - 1. 영역 내 Partial LR: scorecard/part3_variable_selection/domain_selection/partial-lr.md
         - 2. β 부호 이상과 범주 재조정: scorecard/part3_variable_selection/domain_selection/sign-feedback.md
-    - "4. 모델링":
+    - "④ 모델링":
       - scorecard/part4_modeling/index.md
       - 1. Simple LR vs Full Model: scorecard/part4_modeling/simple-vs-full.md
       - 2. 다변량 회귀: scorecard/part4_modeling/multivariate-regression.md
-    - "5. 스코어카드":
+    - "⑤ 스코어카드":
       - scorecard/part5_scorecard/index.md
       - 1. 스코어카드 변환 & 등급화: scorecard/part5_scorecard/scorecard-and-rating.md
       - 2. 성능 평가 (KS·AR·Gini): scorecard/part5_scorecard/performance-ks-ar-gini.md
@@ -114,7 +114,7 @@ nav:
   # ── 머신러닝 ──
   - 머신러닝:
     - ml/index.md
-    - "1. ML 기초":
+    - "① ML 기초":
       - ml/part1_overview/index.md
       - 1. 왜 ML인가: ml/part1_overview/why_ml.md
       - 2. Bias-Variance Tradeoff: ml/part1_overview/bias_variance.md
@@ -123,13 +123,13 @@ nav:
       - 5. 데이터 분리 전략: ml/part1_overview/data_splitting.md
       - 6. 피처 전처리: ml/part1_overview/feature_preprocessing.md
       - 7. 피처 선택 · 파생변수: ml/part1_overview/feature_selection.md
-    - "2. 뉴럴넷":
+    - "② 뉴럴넷":
       - ml/part2_neural_net/index.md
       - 1. 신경망 기초: ml/part2_neural_net/nn_basics.md
       - 2. LR = 단일 뉴런: ml/part2_neural_net/lr_as_nn.md
       - 3. TabNet: ml/part2_neural_net/tabnet.md
       - 4. CNN · RNN: ml/part2_neural_net/rnn_tabular.md
-    - "3. 트리 앙상블":
+    - "③ 트리 앙상블":
       - ml/part3_tree_ensemble/index.md
       - 1. 트리 기반 모델: ml/part3_tree_ensemble/tree_models.md
       - 2. 앙상블 — Bagging과 RF: ml/part3_tree_ensemble/ensemble.md
@@ -138,14 +138,16 @@ nav:
       - 5. Boosting 심화: ml/part3_tree_ensemble/boosting_advanced.md
       - 6. XGBoost와 LightGBM: ml/part3_tree_ensemble/xgb_lgbm.md
       - 7. 하이퍼파라미터 튜닝: ml/part3_tree_ensemble/hyperparameter_tuning.md
-    - "4. 해석과 설명":
-      - ml/part4_evaluation/index.md
-      - 1. 해석 가능성: ml/part4_evaluation/interpretability.md
-      - 2. SHAP — 해석의 여정: ml/part4_evaluation/shap_in_practice.md
-      - 3. Surrogate Model: ml/part4_evaluation/surrogate_model.md
-      - 4. 해석 가능한 ML — 1-Depth GBM과 EBM: ml/part4_evaluation/depth1_gbm.md
-      - 5. 도구 · 구현 · 요약: ml/part4_evaluation/depth1_tools_impl.md
-    - "5. 모델 검증":
+    - "④ 해석과 설명":
+      - ml/part4_interpretation/index.md
+      - 1. 해석 가능성: ml/part4_interpretation/interpretability.md
+      - 2. SHAP 이론: ml/part4_interpretation/shap_theory.md
+      - 3. 1-Depth GBM 스코어카드: ml/part4_interpretation/depth1_gbm.md
+      - 4. EBM (GA²M): ml/part4_interpretation/ebm.md
+      - 5. fANOVA 개념과 Purification: ml/part4_interpretation/fanova_concepts.md
+      - 6. 도구 · 구현 · 요약: ml/part4_interpretation/depth1_tools_impl.md
+      - 7. ML 해석을 고민한 기록: ml/part4_interpretation/shap_in_practice.md
+    - "⑤ 모델 검증":
       - ml/part5_validation/index.md
       - 1. 모델 검증과 모니터링: ml/part5_validation/validation.md
       - 2. 규제 프레임워크: ml/part5_validation/regulatory.md

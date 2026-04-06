@@ -48,31 +48,31 @@ CB정보와 대안정보 기반의 신용평가모형 개발을 진행하고 있
 </div>
 
 <div class="card" markdown>
-<span class="card-part">1. 개요</span>
+<span class="card-part">① 개요</span>
 <div class="card-title"><a href="scorecard/part1_overview/">신용평가모형 개요</a></div>
 <div class="card-desc">CSS의 정의·목적, 분류가 아닌 서열화, 모형 분류(AS/BS/Collection), Target 정의, 성과 기간 설정, 개발 프로세스 Overview</div>
 </div>
 
 <div class="card" markdown>
-<span class="card-part">2. 이론</span>
+<span class="card-part">② 이론</span>
 <div class="card-title"><a href="scorecard/part2_theory/">로지스틱 회귀의 수학적 기반</a></div>
 <div class="card-desc">이진 분류 문제 정의, Odds와 Logit 변환, Sigmoid 함수, 최대우도추정(MLE)</div>
 </div>
 
 <div class="card" markdown>
-<span class="card-part">3. 변수 선정</span>
+<span class="card-part">③ 변수 선정</span>
 <div class="card-title"><a href="scorecard/part3_variable_selection/">Classing · WoE/IV · 단변량 LR · 정보영역별 선정</a></div>
 <div class="card-desc">연속형 변수 구간화(Classing), WoE 변환과 IV 평가, 단변량 로지스틱 회귀 유의성 검정, 정보영역별 Partial LR을 통한 대표 변수 확정</div>
 </div>
 
 <div class="card" markdown>
-<span class="card-part">4. 모델링</span>
+<span class="card-part">④ 모델링</span>
 <div class="card-title"><a href="scorecard/part4_modeling/">로지스틱 회귀 Full Model</a></div>
 <div class="card-desc">Simple LR vs Full Model, 다운샘플링, 다변량 회귀로 최종 모형 적합</div>
 </div>
 
 <div class="card" markdown>
-<span class="card-part">5. 스코어카드</span>
+<span class="card-part">⑤ 스코어카드</span>
 <div class="card-title"><a href="scorecard/part5_scorecard/">변환 · 검증 · 모니터링 · 규제</a></div>
 <div class="card-desc">스코어카드 변환·등급화, KS·AR·Gini 성능 평가, OOT 검증, PSI·CSI 모니터링과 리캘리브레이션, SR 11-7·Basel·금감원 규제 프레임워크</div>
 </div>
@@ -89,31 +89,31 @@ CB정보와 대안정보 기반의 신용평가모형 개발을 진행하고 있
 </div>
 
 <div class="card card--ml" markdown>
-<span class="card-part">1. ML 기초</span>
+<span class="card-part">① ML 기초</span>
 <div class="card-title"><a href="ml/part1_overview/">왜 ML인가 · Bias-Variance · 정규화 · 피처 엔지니어링</a></div>
 <div class="card-desc">전통 스코어카드의 한계, EPE 분해, Ridge/Lasso 정규화, 데이터 분리 전략, 범주형 인코딩, 피처 선택</div>
 </div>
 
 <div class="card card--ml" markdown>
-<span class="card-part">2. 뉴럴넷</span>
+<span class="card-part">② 뉴럴넷</span>
 <div class="card-title"><a href="ml/part2_neural_net/">신경망 기초 · TabNet · CNN/RNN</a></div>
 <div class="card-desc">퍼셉트론, LR = 단일 뉴런, TabNet, 사전 가정(Inductive Bias), CNN/RNN의 정형 데이터 한계, LSTM 실무 테스트</div>
 </div>
 
 <div class="card card--ml" markdown>
-<span class="card-part">3. 트리 앙상블</span>
+<span class="card-part">③ 트리 앙상블</span>
 <div class="card-title"><a href="ml/part3_tree_ensemble/">CART · RF · Boosting · XGB/LGBM</a></div>
 <div class="card-desc">트리 분할, Bagging, Gradient Boosting, XGBoost/LightGBM, 하이퍼파라미터 튜닝</div>
 </div>
 
 <div class="card card--ml" markdown>
-<span class="card-part">4. 해석과 설명</span>
-<div class="card-title"><a href="ml/part4_evaluation/">SHAP · Surrogate Model · 1-Depth GBM/EBM</a></div>
-<div class="card-desc">PDP/SHAP, Surrogate Model, 해석 가능한 ML(1-Depth GBM, EBM), Shape Function, 도구와 구현</div>
+<span class="card-part">④ 해석과 설명</span>
+<div class="card-title"><a href="ml/part4_interpretation/">SHAP · 1-Depth GBM · EBM · fANOVA</a></div>
+<div class="card-desc">해석 도구 총람, SHAP 이론, 1-Depth GBM 스코어카드, EBM(GA²M), fANOVA와 Purification</div>
 </div>
 
 <div class="card card--ml" markdown>
-<span class="card-part">5. 모델 검증</span>
+<span class="card-part">⑤ 모델 검증</span>
 <div class="card-title"><a href="ml/part5_validation/">성능 지표 · OOT · 규제 프레임워크</a></div>
 <div class="card-desc">AUC/KS/Gini, OOT 검증, PSI/CSI 모니터링, SR 11-7, EU AI Act, 한국 금융 AI 가이드라인</div>
 </div>

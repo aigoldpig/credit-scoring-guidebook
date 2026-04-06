@@ -18,13 +18,14 @@
       label: "스코어카드",
       sublabel: "Traditional Scorecard",
       indexPath: "scorecard/",
-      tabMatches: ["Traditional Scorecard", "1. 개요", "2. 이론", "3. 변수 선정", "4. 모델링", "5. 스코어카드", "부록"],
+      tabMatches: ["Traditional Scorecard", "① 개요", "② 이론", "③ 변수 선정", "④ 모델링", "⑤ 스코어카드", "부록"],
       items: [
-        { text: "1. 개요", path: "scorecard/part1_overview/" },
-        { text: "2. 이론", path: "scorecard/part2_theory/" },
-        { text: "3. 변수 선정", path: "scorecard/part3_variable_selection/" },
-        { text: "4. 모델링", path: "scorecard/part4_modeling/" },
-        { text: "5. 스코어카드", path: "scorecard/part5_scorecard/" },
+        { text: "목차", path: "scorecard/" },
+        { text: "① 개요", path: "scorecard/part1_overview/" },
+        { text: "② 이론", path: "scorecard/part2_theory/" },
+        { text: "③ 변수 선정", path: "scorecard/part3_variable_selection/" },
+        { text: "④ 모델링", path: "scorecard/part4_modeling/" },
+        { text: "⑤ 스코어카드", path: "scorecard/part5_scorecard/" },
         { text: "부록", path: "scorecard/appendix/" }
       ]
     },
@@ -32,13 +33,14 @@
       label: "머신러닝",
       sublabel: "Machine Learning",
       indexPath: "ml/",
-      tabMatches: ["머신러닝", "1. 개요", "2. 뉴럴넷", "3. 트리 앙상블", "4. 평가와 해석", "5. 모델 검증", "부록"],
+      tabMatches: ["머신러닝", "① ML 기초", "② 뉴럴넷", "③ 트리 앙상블", "④ 해석과 설명", "⑤ 모델 검증", "부록"],
       items: [
-        { text: "1. 개요", path: "ml/part1_overview/" },
-        { text: "2. 뉴럴넷", path: "ml/part2_neural_net/" },
-        { text: "3. 트리 앙상블", path: "ml/part3_tree_ensemble/" },
-        { text: "4. 해석과 설명", path: "ml/part4_evaluation/" },
-        { text: "5. 모델 검증", path: "ml/part5_validation/" },
+        { text: "목차", path: "ml/" },
+        { text: "① 개요", path: "ml/part1_overview/" },
+        { text: "② 뉴럴넷", path: "ml/part2_neural_net/" },
+        { text: "③ 트리 앙상블", path: "ml/part3_tree_ensemble/" },
+        { text: "④ 해석과 설명", path: "ml/part4_interpretation/" },
+        { text: "⑤ 모델 검증", path: "ml/part5_validation/" },
         { text: "부록", path: "ml/appendix/" }
       ]
     },
@@ -48,6 +50,7 @@
       indexPath: "lending_process/",
       tabMatches: ["여신 프로세스", "① 모형 개발", "② 심사·승인", "③ 사후 관리", "④ 부실·추심", "⑤ 리스크·규제", "용어 정리"],
       items: [
+        { text: "목차", path: "lending_process/" },
         { text: "① 모형 개발", path: "lending_process/model-development/" },
         { text: "② 심사·승인", path: "lending_process/underwriting/" },
         { text: "③ 사후 관리", path: "lending_process/portfolio-mgmt/" },
@@ -131,9 +134,10 @@
 
       var trigger = document.createElement("a");
       trigger.className = "md-tabs__link md-tabs__link--dropdown";
-      trigger.href = firstHref;
+      trigger.href = "#";
       trigger.textContent = group.label;
       if (group.sublabel) trigger.setAttribute("data-sublabel", group.sublabel);
+      trigger.addEventListener("click", function (e) { e.preventDefault(); });
       wrapper.appendChild(trigger);
 
       // Active check

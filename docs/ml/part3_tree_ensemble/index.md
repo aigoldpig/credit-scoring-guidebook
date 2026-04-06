@@ -21,4 +21,4 @@ title: 트리 앙상블
 | 7 | [하이퍼파라미터 튜닝](hyperparameter_tuning.md) | 핵심 파라미터, 단계적 튜닝 전략, Optuna 활용법은? |
 
 !!! tip "다음 섹션"
-    트리 앙상블의 이론과 구조를 마쳤다면, [해석과 설명](../part4_evaluation/index.md)에서 SHAP, Surrogate Model, 1-Depth GBM/EBM을 학습한다.
+    트리 앙상블의 이론과 구조를 마쳤다면, [해석과 설명](../part4_interpretation/index.md)에서 SHAP, 1-Depth GBM, EBM, fANOVA를 학습한다.
