@@ -130,31 +130,31 @@ CB정보와 대안정보 기반의 신용평가모형 개발을 진행하고 있
 </div>
 
 <div class="card card--lending" markdown>
-<span class="card-part">1. 모형 개발</span>
+<span class="card-part">① 모형 개발</span>
 <div class="card-title"><a href="lending_process/model-development/">가이드북의 핵심 영역</a></div>
 <div class="card-desc">데이터 준비, 변수 처리, 모형 학습, 성능 평가, Score 변환 — 가이드북 각 파트와의 매핑</div>
 </div>
 
 <div class="card card--lending" markdown>
-<span class="card-part">2. 심사·승인</span>
+<span class="card-part">② 심사·승인</span>
 <div class="card-title"><a href="lending_process/underwriting/">모형이 실무에 꽂히는 접점</a></div>
 <div class="card-desc">승인/거절 의사결정, 금리 산정(Risk-Based Pricing), 한도 산정</div>
 </div>
 
 <div class="card card--lending" markdown>
-<span class="card-part">3. 사후 관리</span>
+<span class="card-part">③ 사후 관리</span>
 <div class="card-title"><a href="lending_process/portfolio-mgmt/">실행 이후의 모니터링</a></div>
 <div class="card-desc">Behavioral Scoring, 한도 증감, 조기경보(EWS), Cross-sell/Up-sell</div>
 </div>
 
 <div class="card card--lending" markdown>
-<span class="card-part">4. 부실·추심</span>
+<span class="card-part">④ 부실·추심</span>
 <div class="card-title"><a href="lending_process/collection/">연체 발생 후의 세계</a></div>
 <div class="card-desc">연체 단계 관리, Collection Scoring, 채권 매각·상각</div>
 </div>
 
 <div class="card card--lending" markdown>
-<span class="card-part">5. 리스크·규제</span>
+<span class="card-part">⑤ 리스크·규제</span>
 <div class="card-title"><a href="lending_process/risk-regulation/">PD가 '금액'이 되는 영역</a></div>
 <div class="card-desc">IFRS 9 ECL, Basel 자기자본(IRB), 스트레스 테스트, 모형 정기 검증</div>
 </div>

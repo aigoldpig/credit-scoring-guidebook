@@ -209,4 +209,9 @@ extra_javascript:
 extra_css:
   - stylesheets/extra.css
 
+extra:
+  analytics:
+    provider: google
+    property: G-96X98SWYML
+
 copyright: "© 정승욱 · 본 자료의 무단 복제·전재·배포를 금합니다. 인용 시 출처를 명시해 주세요."
