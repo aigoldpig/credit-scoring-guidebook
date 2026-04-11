@@ -159,6 +159,13 @@ nav:
         - 2. Functional ANOVA: ml/appendix/shap-fanova/functional-anova.md
         - 3. Purification: ml/appendix/shap-fanova/purification.md
         - 4. SHAP vs fANOVA: ml/appendix/shap-fanova/shap-vs-fanova.md
+      - "B. 변수 상관과 모형 해석":
+        - ml/appendix/correlation-interpretation/index.md
+        - 1. 두 가지 기대값: ml/appendix/correlation-interpretation/observational-vs-interventional.md
+        - 2. fANOVA의 두 Measure: ml/appendix/correlation-interpretation/joint-vs-product.md
+        - 3. SHAP의 두 모드: ml/appendix/correlation-interpretation/shap-two-modes.md
+        - 4. 독립 가정의 한계: ml/appendix/correlation-interpretation/independence-extrapolation.md
+        - 5. 실무 권장: ml/appendix/correlation-interpretation/practical-guide.md
   # ── 여신 프로세스 ──
   - 여신 프로세스:
     - lending_process/index.md

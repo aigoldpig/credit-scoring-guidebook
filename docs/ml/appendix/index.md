@@ -11,3 +11,4 @@ title: 부록
 | 섹션 | 제목 | 내용 |
 |------|------|------|
 | A | [SHAP과 Functional ANOVA](shap-fanova/index.md) | Non-identifiability 문제, fANOVA 직교 분해, Purification, SHAP vs fANOVA 비교 |
+| B | [변수 상관과 모형 해석](correlation-interpretation/index.md) | Observational vs Interventional, Joint vs Product Measure, SHAP 두 모드, 실무 권장 |
