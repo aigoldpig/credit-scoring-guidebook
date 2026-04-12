@@ -166,6 +166,8 @@ nav:
         - 3. SHAP의 두 모드: ml/appendix/correlation-interpretation/shap-two-modes.md
         - 4. 독립 가정의 한계: ml/appendix/correlation-interpretation/independence-extrapolation.md
         - 5. 실무 권장: ml/appendix/correlation-interpretation/practical-guide.md
+      - "C. 해석 가능한 ML 실험 설계":
+        - ml/appendix/ml-experiment/index.md
   # ── 여신 프로세스 ──
   - 여신 프로세스:
     - lending_process/index.md

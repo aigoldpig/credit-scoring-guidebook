@@ -24,7 +24,7 @@ title: 머신러닝
 | 3 | [트리 앙상블](part3_tree_ensemble/index.md) | CART, RF, Boosting, XGBoost/LightGBM, 하이퍼파라미터 튜닝 |
 | 4 | [해석과 설명](part4_interpretation/index.md) | XAI 개론, SHAP 이론, 1-Depth GBM, EBM(GA²M), fANOVA·Purification, 도구·구현, 저자의 해석 고민 기록 |
 | 5 | [모델 검증](part5_validation/index.md) | 성능 지표(AUC, KS, Gini), OOT 검증, PSI 모니터링, 규제 프레임워크 |
-| 부록 | [보충 자료](appendix/index.md) | SHAP과 Functional ANOVA 심화 (Non-identifiability, 직교 분해, Purification) |
+| 부록 | [보충 자료](appendix/index.md) | A. SHAP과 fANOVA 심화, B. 변수 상관과 모형 해석, C. 해석 가능한 ML 실험 설계 |
 
 ---
 

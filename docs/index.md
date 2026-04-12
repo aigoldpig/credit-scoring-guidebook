@@ -121,7 +121,7 @@ CB정보와 대안정보 기반의 신용평가모형 개발을 진행하고 있
 <div class="card card--ml" markdown>
 <span class="card-part">부록</span>
 <div class="card-title"><a href="ml/appendix/">보충 자료</a></div>
-<div class="card-desc">SHAP과 Functional ANOVA 심화 비교, Global 해석 방법론(EBM)</div>
+<div class="card-desc">A. SHAP과 fANOVA 심화, B. 변수 상관과 모형 해석 (Joint vs Product Measure), C. 해석 가능한 ML 실험 설계</div>
 </div>
 
 <div class="card-section-header">
