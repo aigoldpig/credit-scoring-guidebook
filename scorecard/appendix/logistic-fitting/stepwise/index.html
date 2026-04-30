@@ -2566,10 +2566,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#35-python" class="md-nav__link">
+  <a href="#35-full-model-stepwise" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3.5 Python 구현 시 주의사항
+        3.5 Full Model에서의 Stepwise 적용
       
     </span>
   </a>
@@ -2577,10 +2577,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#36-full-model-stepwise" class="md-nav__link">
+  <a href="#36-stepwise" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3.6 Full Model에서의 Stepwise 적용
+        3.6 도구별 Stepwise 동작 비교
       
     </span>
   </a>
@@ -4257,8 +4257,6 @@
       
         
       
-        
-      
     
     
     
@@ -4727,74 +4725,6 @@
 
               
             
-              
-                
-  
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-    
-    
-    
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7_4">
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../../../ml/appendix/ml-experiment/" class="md-nav__link ">
-              
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    C. 해석 가능한 ML 실험 설계
-  
-
-    
-  </span>
-  
-  
-
-            </a>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_7_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3_7_4">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    C. 해석 가능한 ML 실험 설계
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix="">
-            
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
           </ul>
         </nav>
       
@@ -5219,9 +5149,9 @@
 <hr>
 <h2 id="31-woe-stepwise">3.1 WoE 방식에서의 Stepwise<a class="headerlink" href="#31-woe-stepwise" title="Permanent link">¶</a></h2>
 <p>변수당 계수가 1개(<span class="arithmatex">\(\beta_j\)</span>)이므로 진입/탈락 판단이 단순하다.</p>
-<p>:material-arrow-right-bold: <strong>Forward 진입 — Score Test,</strong> <span class="arithmatex">\(\chi^2(1)\)</span></p>
+<p><strong>→</strong> <strong>Forward 진입 — Score Test,</strong> <span class="arithmatex">\(\chi^2(1)\)</span></p>
 <p>아직 모형에 없는 후보 변수 <span class="arithmatex">\(X_j\)</span>에 대해, "현재 모형의 잔차와 <span class="arithmatex">\(X_j\)</span>의 상관관계"를 측정한다. 재적합 없이 계산 가능. 후보 변수 중 Score p-value가 가장 작고 SLENTRY(기본 0.05) 미만인 변수 1개를 추가한다.</p>
-<p>:material-arrow-left-bold: <strong>Backward 제거 — Wald Test,</strong> <span class="arithmatex">\(\chi^2(1)\)</span></p>
+<p><strong>←</strong> <strong>Backward 제거 — Wald Test,</strong> <span class="arithmatex">\(\chi^2(1)\)</span></p>
 <p>현재 모형에 포함된 각 변수의 <span class="arithmatex">\(\hat{\beta}_j\)</span>를 표준오차로 나눠 유의성을 평가한다. Wald p-value가 가장 크고 SLSTAY(0.1) 초과인 변수 1개를 제거한다.</p>
 <div class="admonition success">
 <p class="admonition-title">구현 단순성</p>
@@ -5230,9 +5160,9 @@
 <hr>
 <h2 id="32-stepwise">3.2 더미 방식에서의 Stepwise<a class="headerlink" href="#32-stepwise" title="Permanent link">¶</a></h2>
 <p>변수 X1이 구간 3개(더미 2개: <span class="arithmatex">\(\gamma_1\)</span>, <span class="arithmatex">\(\gamma_2\)</span>)라면, 진입/탈락은 <strong>변수(그룹) 단위</strong>로 이루어진다. 개별 더미 단위가 아니다.</p>
-<p>:material-arrow-right-bold: <strong>Forward 진입 — 결합 Score Test,</strong> <span class="arithmatex">\(\chi^2\)</span><strong>(구간수−1)</strong></p>
+<p><strong>→</strong> <strong>Forward 진입 — 결합 Score Test,</strong> <span class="arithmatex">\(\chi^2\)</span><strong>(구간수−1)</strong></p>
 <p>"<span class="arithmatex">\(\gamma_1 = \gamma_2 = 0\)</span>"이라는 결합 제약 하에 X1 그룹 전체의 Score Stat을 계산한다. <span class="arithmatex">\(\gamma_1\)</span>이 아무리 유의해 보여도, X1 그룹의 결합 p-value가 SLENTRY를 넘으면 X1은 진입하지 못한다.</p>
-<p>:material-arrow-left-bold: <strong>Backward 제거 — 결합 Wald Test,</strong> <span class="arithmatex">\(\chi^2\)</span><strong>(구간수−1)</strong></p>
+<p><strong>←</strong> <strong>Backward 제거 — 결합 Wald Test,</strong> <span class="arithmatex">\(\chi^2\)</span><strong>(구간수−1)</strong></p>
 <p><span class="arithmatex">\(\hat{\gamma}_1\)</span>, <span class="arithmatex">\(\hat{\gamma}_2\)</span>의 공분산을 반영한 행렬 연산으로 X1 그룹 전체의 Wald Stat을 계산한다. <span class="arithmatex">\(\gamma_2\)</span>가 개별적으로 비유의해도, 결합 Wald p-value가 SLSTAY 이하면 X1 전체가 잔류한다.</p>
 <hr>
 <h2 id="33">3.3 구간 일부만 비유의일 때의 처리<a class="headerlink" href="#33" title="Permanent link">¶</a></h2>
@@ -5334,196 +5264,7 @@ AIC = -2\log L + 2k \tag{A.7}
 <p>표본 수(<span class="arithmatex">\(n\)</span>)가 클수록 패널티가 커지므로 변수를 더 보수적으로 선택한다. 학술 논문이나 계량경제 모형에서 선호된다.</p>
 </div>
 <hr>
-<h2 id="35-python">3.5 Python 구현 시 주의사항<a class="headerlink" href="#35-python" title="Permanent link">¶</a></h2>
-<p>Python의 statsmodels, sklearn에는 Stepwise와 동일한 기능이 내장되어 있지 않다. 직접 구현할 때 두 방식의 핵심 차이:</p>
-<table>
-<thead>
-<tr>
-<th>항목</th>
-<th>WoE 방식 Python 구현</th>
-<th>더미 방식 Python 구현</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>변수 처리 단위</strong></td>
-<td>컬럼 = 변수 (1:1)</td>
-<td>더미 그룹 = 원본 변수 (수동 매핑 필요)</td>
-</tr>
-<tr>
-<td><strong>Forward 검정</strong></td>
-<td>LR Test, df=1 고정</td>
-<td>결합 LR Test, df=더미 개수 (변수마다 다름)</td>
-</tr>
-<tr>
-<td><strong>Backward 검정</strong></td>
-<td><code>model.pvalues[var]</code> 한 줄</td>
-<td><span class="arithmatex">\(\gamma^T \cdot V^{-1} \cdot \gamma\)</span> 행렬 연산 직접 구현</td>
-</tr>
-<tr>
-<td><strong>구현 난이도</strong></td>
-<td>낮음</td>
-<td>높음</td>
-</tr>
-<tr>
-<td><strong>구현 정확성</strong></td>
-<td>간단히 동일 결과</td>
-<td>그룹 정의 + df 관리 정확해야 동일</td>
-</tr>
-</tbody>
-</table>
-<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio"><input id="__tabbed_1_2" name="__tabbed_1" type="radio"><div class="tabbed-labels"><label for="__tabbed_1_1">Python — WoE 방식 Stepwise</label><label for="__tabbed_1_2">Python — 더미 방식 Stepwise</label></div>
-<div class="tabbed-content">
-<div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><span class="c1"># WoE 방식 Stepwise — Forward: LR Test / Backward: Wald Test</span>
-<span class="c1"># 변수당 β 1개 → 컬럼 = 변수 (1:1 대응), 구현 단순</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">statsmodels.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sm</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">stats</span>
-
-<span class="k">def</span><span class="w"> </span><span class="nf">stepwise_logistic_woe</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">slentry</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">slstay</span><span class="o">=</span><span class="mf">0.10</span><span class="p">):</span>
-    <span class="n">included</span> <span class="o">=</span> <span class="p">[]</span>
-
-    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-        <span class="n">changed</span> <span class="o">=</span> <span class="kc">False</span>
-
-        <span class="c1"># ── Forward: LR Test (Score Test 근사) ──────────────────</span>
-        <span class="n">excluded</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">X</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">included</span><span class="p">]</span>
-        <span class="n">best_pval</span><span class="p">,</span> <span class="n">best_var</span> <span class="o">=</span> <span class="n">slentry</span><span class="p">,</span> <span class="kc">None</span>
-        <span class="n">X_base</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">included</span><span class="p">])</span> <span class="k">if</span> <span class="n">included</span> \
-                 <span class="k">else</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">X</span><span class="p">[[]])</span>
-        <span class="n">model_base</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">Logit</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X_base</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-
-        <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">excluded</span><span class="p">:</span>
-            <span class="n">model_new</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">Logit</span><span class="p">(</span>
-                <span class="n">y</span><span class="p">,</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">included</span> <span class="o">+</span> <span class="p">[</span><span class="n">var</span><span class="p">]])</span>
-            <span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-            <span class="n">lr_stat</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">model_new</span><span class="o">.</span><span class="n">llf</span> <span class="o">-</span> <span class="n">model_base</span><span class="o">.</span><span class="n">llf</span><span class="p">)</span>
-            <span class="n">pval</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">chi2</span><span class="o">.</span><span class="n">sf</span><span class="p">(</span><span class="n">lr_stat</span><span class="p">,</span> <span class="n">df</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">pval</span> <span class="o">&lt;</span> <span class="n">best_pval</span><span class="p">:</span>
-                <span class="n">best_pval</span><span class="p">,</span> <span class="n">best_var</span> <span class="o">=</span> <span class="n">pval</span><span class="p">,</span> <span class="n">var</span>
-        <span class="k">if</span> <span class="n">best_var</span><span class="p">:</span>
-            <span class="n">included</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">best_var</span><span class="p">);</span> <span class="n">changed</span> <span class="o">=</span> <span class="kc">True</span>
-
-        <span class="c1"># ── Backward: Wald Test ──────────────────────────────────</span>
-        <span class="k">if</span> <span class="n">included</span><span class="p">:</span>
-            <span class="n">model_cur</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">Logit</span><span class="p">(</span>
-                <span class="n">y</span><span class="p">,</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">included</span><span class="p">])</span>
-            <span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-            <span class="n">pvals</span> <span class="o">=</span> <span class="n">model_cur</span><span class="o">.</span><span class="n">pvalues</span><span class="p">[</span><span class="n">included</span><span class="p">]</span>
-            <span class="n">worst</span> <span class="o">=</span> <span class="n">pvals</span><span class="o">.</span><span class="n">idxmax</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">pvals</span><span class="p">[</span><span class="n">worst</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">slstay</span><span class="p">:</span>
-                <span class="n">included</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">worst</span><span class="p">);</span> <span class="n">changed</span> <span class="o">=</span> <span class="kc">True</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">changed</span><span class="p">:</span> <span class="k">break</span>
-
-    <span class="k">return</span> <span class="n">sm</span><span class="o">.</span><span class="n">Logit</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">included</span><span class="p">]))</span><span class="o">.</span><span class="n">fit</span><span class="p">(),</span> <span class="n">included</span>
-</code></pre></div>
-</div>
-<div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><span class="c1"># 더미 방식 Stepwise — Forward: 결합 Score Test(LR 근사) / Backward: 결합 Wald Test</span>
-<span class="c1"># 핵심: 더미 그룹을 원본 변수 단위로 묶어서 검정</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">statsmodels.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sm</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">stats</span>
-
-<span class="n">dummy_groups</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">'R1_DSR'</span><span class="p">:</span>       <span class="p">[</span><span class="s1">'R1_DSR_1'</span><span class="p">,</span>       <span class="s1">'R1_DSR_2'</span><span class="p">],</span>
-    <span class="s1">'R1_CF1200901'</span><span class="p">:</span> <span class="p">[</span><span class="s1">'R1_CF1200901_1'</span><span class="p">],</span>
-    <span class="s1">'R1_업력'</span><span class="p">:</span>       <span class="p">[</span><span class="s1">'R1_업력_1'</span><span class="p">,</span>        <span class="s1">'R1_업력_2'</span><span class="p">],</span>
-<span class="p">}</span>
-
-<span class="k">def</span><span class="w"> </span><span class="nf">group_lr_pvalue</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X_base_cols</span><span class="p">,</span> <span class="n">new_dummies</span><span class="p">,</span> <span class="n">X_all</span><span class="p">,</span> <span class="n">model_base</span><span class="p">):</span>
-    <span class="n">X_new</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">X_all</span><span class="p">[</span><span class="n">X_base_cols</span> <span class="o">+</span> <span class="n">new_dummies</span><span class="p">])</span>
-    <span class="n">model_new</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">Logit</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X_new</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-    <span class="n">lr_stat</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">model_new</span><span class="o">.</span><span class="n">llf</span> <span class="o">-</span> <span class="n">model_base</span><span class="o">.</span><span class="n">llf</span><span class="p">)</span>
-    <span class="n">df</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_dummies</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">stats</span><span class="o">.</span><span class="n">chi2</span><span class="o">.</span><span class="n">sf</span><span class="p">(</span><span class="n">lr_stat</span><span class="p">,</span> <span class="n">df</span><span class="p">),</span> <span class="n">model_new</span>
-
-<span class="k">def</span><span class="w"> </span><span class="nf">group_wald_pvalue</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">dummy_cols</span><span class="p">):</span>
-    <span class="n">gamma</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">dummy_cols</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
-    <span class="n">V</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">cov_params</span><span class="p">()</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">dummy_cols</span><span class="p">,</span> <span class="n">dummy_cols</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
-    <span class="n">wald_stat</span> <span class="o">=</span> <span class="n">gamma</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">V</span><span class="p">)</span> <span class="o">@</span> <span class="n">gamma</span>
-    <span class="n">df</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dummy_cols</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">stats</span><span class="o">.</span><span class="n">chi2</span><span class="o">.</span><span class="n">sf</span><span class="p">(</span><span class="n">wald_stat</span><span class="p">,</span> <span class="n">df</span><span class="p">)</span>
-
-<span class="k">def</span><span class="w"> </span><span class="nf">stepwise_logistic_dummy</span><span class="p">(</span><span class="n">X_dummies</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">dummy_groups</span><span class="p">,</span>
-                             <span class="n">slentry</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">slstay</span><span class="o">=</span><span class="mf">0.10</span><span class="p">):</span>
-    <span class="n">included_vars</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">included_cols</span> <span class="o">=</span> <span class="p">[]</span>
-
-    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-        <span class="n">changed</span> <span class="o">=</span> <span class="kc">False</span>
-
-        <span class="n">X_base</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">X_dummies</span><span class="p">[</span><span class="n">included_cols</span><span class="p">])</span> \
-                 <span class="k">if</span> <span class="n">included_cols</span> \
-                 <span class="k">else</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">X_dummies</span><span class="p">[[]])</span>
-        <span class="n">model_base</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">Logit</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X_base</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-
-        <span class="n">excluded_vars</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">dummy_groups</span>
-                         <span class="k">if</span> <span class="n">v</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">included_vars</span><span class="p">]</span>
-        <span class="n">best_pval</span><span class="p">,</span> <span class="n">best_var</span> <span class="o">=</span> <span class="n">slentry</span><span class="p">,</span> <span class="kc">None</span>
-
-        <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">excluded_vars</span><span class="p">:</span>
-            <span class="n">dummies</span> <span class="o">=</span> <span class="n">dummy_groups</span><span class="p">[</span><span class="n">var</span><span class="p">]</span>
-            <span class="n">pval</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">group_lr_pvalue</span><span class="p">(</span>
-                <span class="n">y</span><span class="p">,</span> <span class="n">included_cols</span><span class="p">,</span> <span class="n">dummies</span><span class="p">,</span> <span class="n">X_dummies</span><span class="p">,</span> <span class="n">model_base</span>
-            <span class="p">)</span>
-            <span class="k">if</span> <span class="n">pval</span> <span class="o">&lt;</span> <span class="n">best_pval</span><span class="p">:</span>
-                <span class="n">best_pval</span><span class="p">,</span> <span class="n">best_var</span> <span class="o">=</span> <span class="n">pval</span><span class="p">,</span> <span class="n">var</span>
-
-        <span class="k">if</span> <span class="n">best_var</span><span class="p">:</span>
-            <span class="n">included_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">best_var</span><span class="p">)</span>
-            <span class="n">included_cols</span> <span class="o">+=</span> <span class="n">dummy_groups</span><span class="p">[</span><span class="n">best_var</span><span class="p">]</span>
-            <span class="n">changed</span> <span class="o">=</span> <span class="kc">True</span>
-
-        <span class="k">if</span> <span class="n">included_cols</span><span class="p">:</span>
-            <span class="n">model_cur</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">Logit</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span>
-                <span class="n">X_dummies</span><span class="p">[</span><span class="n">included_cols</span><span class="p">]))</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-            <span class="n">worst_var</span><span class="p">,</span> <span class="n">worst_pval</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">0</span>
-
-            <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">included_vars</span><span class="p">:</span>
-                <span class="n">dummies</span> <span class="o">=</span> <span class="n">dummy_groups</span><span class="p">[</span><span class="n">var</span><span class="p">]</span>
-                <span class="n">pval</span> <span class="o">=</span> <span class="n">group_wald_pvalue</span><span class="p">(</span><span class="n">model_cur</span><span class="p">,</span> <span class="n">dummies</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">pval</span> <span class="o">&gt;</span> <span class="n">worst_pval</span><span class="p">:</span>
-                    <span class="n">worst_pval</span><span class="p">,</span> <span class="n">worst_var</span> <span class="o">=</span> <span class="n">pval</span><span class="p">,</span> <span class="n">var</span>
-
-            <span class="k">if</span> <span class="n">worst_pval</span> <span class="o">&gt;</span> <span class="n">slstay</span><span class="p">:</span>
-                <span class="n">included_vars</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">worst_var</span><span class="p">)</span>
-                <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">dummy_groups</span><span class="p">[</span><span class="n">worst_var</span><span class="p">]:</span>
-                    <span class="n">included_cols</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
-                <span class="n">changed</span> <span class="o">=</span> <span class="kc">True</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">changed</span><span class="p">:</span> <span class="k">break</span>
-
-    <span class="n">final_model</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">Logit</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span>
-        <span class="n">X_dummies</span><span class="p">[</span><span class="n">included_cols</span><span class="p">]))</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
-    <span class="k">return</span> <span class="n">final_model</span><span class="p">,</span> <span class="n">included_vars</span>
-</code></pre></div>
-</div>
-</div>
-</div>
-<div class="admonition warning">
-<p class="admonition-title">더미 방식에서 WoE 코드를 그대로 쓰면 안 되는 이유</p>
-<p>더미를 단순히 컬럼으로 펼쳐놓으면 <code>R1_DSR_1</code>, <code>R1_DSR_2</code>가 각각 별개 변수로 처리된다. Forward에서 <code>R1_DSR_1</code>만 진입하고 <code>R1_DSR_2</code>는 탈락하는 등 원본 변수 단위가 아닌 더미 단위로 쪼개지는 문제가 생긴다. 변수-더미 매핑을 직접 관리하여 <strong>그룹 단위 검정</strong>이 이루어지도록 구현해야 한다.</p>
-</div>
-<h3 id="3">더미 방식 구현이 까다로운 이유 — 핵심 차이 3가지<a class="headerlink" href="#3" title="Permanent link">¶</a></h3>
-<div class="review-item">
-<p><span class="review-badge">1</span>
-  <span class="review-title">변수-더미 매핑 테이블을 수동으로 관리해야 한다</span></p>
-</div>
-<p>WoE 방식은 컬럼 = 변수가 1:1이므로 <code>X.columns</code>를 그대로 순회하면 된다. 더미 방식은 <code>R1_DSR → [R1_DSR_1, R1_DSR_2]</code>처럼 원본 변수와 더미 컬럼의 매핑을 사전에 정의하고 관리해야 한다.</p>
-<div class="review-item">
-<p><span class="review-badge">2</span>
-  <span class="review-title">Forward LR Test의 df가 변수마다 다르다</span></p>
-</div>
-<p>WoE 방식은 모든 변수가 df=1로 고정이다. 더미 방식은 구간 수에 따라 df가 다르다. 2구간 변수는 df=1, 3구간은 df=2, 5구간은 df=4. df가 다르면 같은 LR Stat이라도 p-value가 달라지므로, 각 변수의 더미 개수를 정확히 파악해야 한다.</p>
-<div class="review-item">
-<p><span class="review-badge">3</span>
-  <span class="review-title">Backward Wald Test가 행렬 연산이다</span></p>
-</div>
-<p>WoE 방식은 <code>model.pvalues[var]</code> 한 줄로 끝난다. 더미 방식은 <span class="arithmatex">\(\gamma\)</span> 벡터와 분산-공분산 행렬을 꺼내서 <span class="arithmatex">\(\gamma^T \cdot V^{-1} \cdot \gamma\)</span> 행렬 연산을 직접 수행해야 한다. 더미 간 공분산(상관관계)까지 반영해야 결합 검정이 정확하기 때문이다.</p>
-<hr>
-<h2 id="36-full-model-stepwise">3.6 Full Model에서의 Stepwise 적용<a class="headerlink" href="#36-full-model-stepwise" title="Permanent link">¶</a></h2>
+<h2 id="35-full-model-stepwise">3.5 Full Model에서의 Stepwise 적용<a class="headerlink" href="#35-full-model-stepwise" title="Permanent link">¶</a></h2>
 <p>본 부록에서 다룬 Stepwise 변수 선택은 <a href="../../../part4_modeling/multivariate-regression/">모델링 · 스코어카드</a>의 Full Model 구성 과정에서 다음과 같이 적용된다.</p>
 <table>
 <thead>
@@ -5555,6 +5296,237 @@ AIC = -2\log L + 2k \tag{A.7}
 <p class="admonition-title">실무 포인트</p>
 <p>영역 내 Stepwise에서는 Forward Selection이 주로 사용되고, 전체 통합에서는 Both(Forward + Backward)가 일반적이다. AIC 기준(본 부록 참고)을 적용하면 p-value 기반보다 예측력 중심의 변수 선택이 가능하다.</p>
 </div>
+<hr>
+<h2 id="36-stepwise">3.6 도구별 Stepwise 동작 비교<a class="headerlink" href="#36-stepwise" title="Permanent link">¶</a></h2>
+<p>Stepwise 변수 선택의 세부 동작은 도구마다 다르다. 같은 "Stepwise"라 해도 Forward/Backward에서 사용하는 검정, 기본 파라미터, 종료 조건이 모두 다르므로, 도구를 바꾸면 <strong>동일한 데이터에서도 다른 변수가 선택</strong>될 수 있다.</p>
+<h3 id="sas-proc-logistic-selectionstepwise">SAS — PROC LOGISTIC (SELECTION=STEPWISE)<a class="headerlink" href="#sas-proc-logistic-selectionstepwise" title="Permanent link">¶</a></h3>
+<p>국내 금융권 스코어카드 개발에서 가장 널리 사용되는 도구다.</p>
+<p><strong>Forward 진입:</strong></p>
+<ul>
+<li><strong>Score Test</strong>(Lagrange Multiplier)를 기본으로 사용한다. 현재 모형(reduced model)만으로 계산 가능하여 후보 변수마다 full model을 적합할 필요가 없다. 이것이 SAS가 Score Test를 채택한 핵심 이유다.</li>
+<li>Score statistic이 가장 크고, p-value가 <strong>SLENTRY</strong>(기본 0.05) 미만인 변수 1개를 투입한다.</li>
+<li>동률 시 Score statistic이 더 큰 변수를 선택한다 (순수 통계적 기준).</li>
+</ul>
+<p><strong>Backward 제거:</strong></p>
+<ul>
+<li><strong>Wald Test</strong>를 기본으로 사용한다. 이미 적합된 모형에서 각 계수의 <span class="arithmatex">\(\hat{\beta}/SE(\hat{\beta})\)</span>를 계산하므로 추가 적합이 불필요하다.</li>
+<li>Wald p-value가 가장 크고, <strong>SLSTAY</strong>(기본 0.05) 초과인 변수 1개를 제거한다.</li>
+<li>SAS 기본값은 SLENTRY = SLSTAY = 0.05로 동일하다.</li>
+</ul>
+<p><strong>Cycling 방지:</strong></p>
+<ul>
+<li>Backward에서 제거된 변수는 이후 Forward에서 <strong>재진입이 불가</strong>하다. 이 규칙이 없으면 A 진입 → B 제거 → A 재진입 → B 재제거의 무한 반복이 발생할 수 있다.</li>
+</ul>
+<p><strong>부호 제약 / VIF:</strong></p>
+<ul>
+<li>SAS의 Stepwise 자체에는 부호 제약이나 VIF 검증이 <strong>내장되어 있지 않다</strong>. 분석가가 Stepwise 실행 후 별도로 계수 부호와 다중공선성을 진단해야 한다.</li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">SAS의 Score Test 선택 배경</p>
+<p>1990년대 SAS 개발 당시 컴퓨팅 자원이 제한적이었다. Score Test는 reduced model 1개만 적합하면 모든 후보의 검정통계량을 동시에 계산할 수 있어 <strong>O(1) 적합</strong>이다. 반면 LRT는 후보 변수마다 full model을 적합해야 하므로 <strong>O(후보 수) 적합</strong>이 필요하다. 현대 하드웨어에서는 이 차이가 미미하지만, SAS의 기본 설정은 그대로 유지되고 있다.</p>
+</div>
+<h3 id="r-step-stepaic">R — step() / stepAIC()<a class="headerlink" href="#r-step-stepaic" title="Permanent link">¶</a></h3>
+<p>R은 p-value가 아닌 <strong>정보량 기준(AIC)</strong>으로 Stepwise를 수행한다.</p>
+<p><strong>Forward 진입:</strong></p>
+<ul>
+<li>후보 변수를 하나씩 추가한 모형의 AIC를 계산한다.</li>
+<li>AIC가 가장 많이 감소하는 변수를 투입한다. AIC가 감소하지 않으면 종료.</li>
+<li>가설검정(p-value)이 없으므로 SLENTRY 같은 임계값 설정이 불필요하다.</li>
+</ul>
+<p><strong>Backward 제거:</strong></p>
+<ul>
+<li>현재 모형에서 변수를 하나씩 빼본 AIC를 계산한다.</li>
+<li>제거 시 AIC가 감소하는 변수가 있으면 그 중 가장 많이 감소하는 변수를 제거한다.</li>
+</ul>
+<p><strong>과적합 방지:</strong></p>
+<ul>
+<li>AIC = <span class="arithmatex">\(-2\log L + 2k\)</span>에서 <span class="arithmatex">\(2k\)</span> 패널티가 변수 수 증가에 대한 자동 제동 역할을 한다. 변수를 추가했을 때 log-likelihood 개선이 패널티를 상쇄하지 못하면 자동으로 투입하지 않는다.</li>
+<li>BIC = <span class="arithmatex">\(-2\log L + k \cdot \ln(n)\)</span>을 사용하면 대표본에서 패널티가 더 강해져 보수적인 변수 선택이 이루어진다.</li>
+</ul>
+<p><strong>한계:</strong></p>
+<ul>
+<li>AIC 기준은 "이 변수가 통계적으로 유의한가"에 대한 답을 주지 않는다. 금융 감독기관 보고 시 변수별 유의성 근거를 제시하기 어렵다.</li>
+<li>계수 부호, VIF, 도메인 제약 등 신용평가 특화 검증이 없다.</li>
+</ul>
+<h3 id="python-statsmodels">Python (statsmodels) — 기본 기능<a class="headerlink" href="#python-statsmodels" title="Permanent link">¶</a></h3>
+<p>Python의 statsmodels, scikit-learn에는 <strong>Stepwise가 내장되어 있지 않다</strong>. 직접 구현해야 한다.</p>
+<ul>
+<li>statsmodels의 <code>Logit.fit()</code>으로 모형을 적합하면 Wald p-value, LRT, AIC 등을 모두 추출할 수 있다.</li>
+<li>Score Test는 <code>model.score_test(exog_extra=X_new)</code>로 계산 가능하다.</li>
+<li>그러나 Forward/Backward 반복, 변수 진입/제거 판단, Cycling 방지 등의 <strong>오케스트레이션은 사용자가 직접 작성</strong>해야 한다.</li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Python에서 Stepwise를 구현할 때 흔한 실수</p>
+<p>단순히 "p-value가 가장 작은 변수를 하나씩 추가"하는 Forward-only 구현이 많다. Backward 제거, Cycling 방지, 부호 검증 등이 빠지면 SAS나 R의 Stepwise와 <strong>동일한 결과를 재현할 수 없다</strong>.</p>
+</div>
+<hr>
+<h3 id="_1">통합 비교표<a class="headerlink" href="#_1" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>SAS PROC LOGISTIC</th>
+<th>R step()</th>
+<th>Python statsmodels</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Forward 검정</strong></td>
+<td>Score Test</td>
+<td>AIC 비교</td>
+<td>미내장 (LRT/Score 수동)</td>
+</tr>
+<tr>
+<td><strong>Backward 검정</strong></td>
+<td>Wald Test</td>
+<td>AIC 비교</td>
+<td>미내장 (Wald/LRT 수동)</td>
+</tr>
+<tr>
+<td><strong>진입 기준</strong></td>
+<td>SLENTRY=0.05</td>
+<td>AIC 감소</td>
+<td>사용자 정의</td>
+</tr>
+<tr>
+<td><strong>제거 기준</strong></td>
+<td>SLSTAY=0.05</td>
+<td>AIC 증가</td>
+<td>사용자 정의</td>
+</tr>
+<tr>
+<td><strong>동률 해소</strong></td>
+<td>Score stat 최대</td>
+<td>AIC 최소</td>
+<td>사용자 정의</td>
+</tr>
+<tr>
+<td><strong>Cycling 방지</strong></td>
+<td>제거 후 재진입 불가</td>
+<td>AIC 단조성</td>
+<td>사용자 구현 필요</td>
+</tr>
+<tr>
+<td><strong>부호 제약</strong></td>
+<td>없음</td>
+<td>없음</td>
+<td>사용자 구현 필요</td>
+</tr>
+<tr>
+<td><strong>VIF 검증</strong></td>
+<td>별도 진단</td>
+<td>별도 진단</td>
+<td>사용자 구현 필요</td>
+</tr>
+<tr>
+<td><strong>과적합 방지</strong></td>
+<td>SLENTRY로 간접</td>
+<td>AIC 패널티 내장</td>
+<td>사용자 구현 필요</td>
+</tr>
+<tr>
+<td><strong>감독기관 보고</strong></td>
+<td>p-value 제공 (선호)</td>
+<td>AIC만 (비선호)</td>
+<td>구현에 따라 다름</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">대표본에서의 동치</p>
+<p>관측치가 수십만 건 이상인 대표본에서는 Score Test ≈ LRT ≈ Wald 세 검정이 점근적으로 동치(asymptotically equivalent)다. 따라서 SAS의 Score Test 기반 결과와 LRT 기반 결과는 실질적으로 동일하다.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">SLENTRY vs SLSTAY 설정의 영향</p>
+<p>SAS 기본값은 SLENTRY = SLSTAY = 0.05로 동일하다. Bendel &amp; Afifi (1977)는 SLSTAY ≥ SLENTRY를 권고했다 — SLSTAY가 SLENTRY보다 타이트하면 변수가 진입/제거를 반복하는 cycling이 발생할 수 있기 때문이다. 실무에서는 SLENTRY=0.05, SLSTAY=0.10 조합이 자주 사용된다.</p>
+</div>
+<hr>
+<h3 id="woe">WoE 스코어카드에서의 확장<a class="headerlink" href="#woe" title="Permanent link">¶</a></h3>
+<p>표준 Stepwise(SAS/R)에는 없지만, WoE 기반 스코어카드에서는 다음 검증이 추가로 필요하다:</p>
+<table>
+<thead>
+<tr>
+<th>검증 항목</th>
+<th>필요성</th>
+<th>비고</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>부호 제약 (<span class="arithmatex">\(\beta &lt; 0\)</span>)</strong></td>
+<td>WoE 방향과 β 부호가 일치해야 단조성 유지</td>
+<td>β ≥ 0은 다중공선성 신호 → 해당 변수 또는 원인 변수 제거</td>
+</tr>
+<tr>
+<td><strong>VIF 실시간 검증</strong></td>
+<td>매 step 변수 투입 후 다중공선성 즉시 확인</td>
+<td>SAS에서는 Stepwise 후 별도 진단하지만, 변수가 투입된 후 VIF가 급등하면 이미 다른 변수에 영향</td>
+</tr>
+<tr>
+<td><strong>AR/KS 기반 변수 선택</strong></td>
+<td>p-value는 대표본에서 거의 모든 변수가 유의 → 실질적 변별력(AR)로 우선순위 결정</td>
+<td>"통계적 유의성은 관문, 실질적 성능이 선택 기준"</td>
+</tr>
+<tr>
+<td><strong>교차검증 로깅</strong></td>
+<td>train에서 AR이 올라도 valid에서 떨어지면 과적합 신호</td>
+<td>매 step train/valid/test 성능을 동시 기록하여 과적합 조기 감지</td>
+</tr>
+<tr>
+<td><strong>Elbow Criterion</strong></td>
+<td>AR 개선이 미미한 변수를 계속 투입하면 모형 복잡도만 증가</td>
+<td>첫 추가 변수 delta AR의 일정 비율 이하로 떨어지면 종료</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">부호 역전 처리 — Power Set 비교</p>
+<p>β ≥ 0인 변수가 발생하면 단순히 해당 변수를 제거하는 것이 아니라, 역전 변수들의 <strong>모든 부분집합(power set)</strong>을 비교하여 AR이 가장 높고 부호가 해소되는 조합을 채택한다. 역전 변수가 <span class="arithmatex">\(k\)</span>개일 때 <span class="arithmatex">\(2^k - 1\)</span>개 조합을 비교하지만, 실무에서 <span class="arithmatex">\(k \leq 3\)</span>이므로 최대 7개 비교로 계산 부담이 없다.</p>
+</div>
+<hr>
+<h3 id="_2">참고 문헌 및 공식 문서<a class="headerlink" href="#_2" title="Permanent link">¶</a></h3>
+<p><strong>학술 문헌:</strong></p>
+<div class="source-ref">
+
+- Bendel, R.B. &amp; Afifi, A.A. (1977). "Comparison of Stopping Rules in Forward Stepwise Regression." *Journal of the American Statistical Association*, 72(357), 46–53. — SLENTRY/SLSTAY 설정 근거, cycling 방지 조건
+- Hosmer, D.W., Lemeshow, S. &amp; Sturdivant, R.X. (2013). *Applied Logistic Regression*. 3rd ed. Wiley. — 로지스틱 회귀 Stepwise 변수 선택 전반, 도메인 기반 부호 제약 권고
+- Burnham, K.P. &amp; Anderson, D.R. (2002). *Model Selection and Multimodel Inference*. 2nd ed. Springer. — AIC/BIC 기반 모형 선택 이론
+- Rao, C.R. (1948). "Large Sample Tests of Statistical Hypotheses Concerning Several Parameters with Applications to Problems of Estimation." *Proceedings of the Cambridge Philosophical Society*, 44, 50–57. — Score Test(Lagrange Multiplier Test) 원논문
+
+</div>
+
+<p><strong>SAS 공식 문서:</strong></p>
+<div class="source-ref">
+
+- SAS Institute. *SAS/STAT User's Guide: The LOGISTIC Procedure* — `SELECTION=STEPWISE` 옵션, `SLENTRY`, `SLSTAY` 파라미터, Score/Wald/LRT 검정 선택
+    - [PROC LOGISTIC: Model Statement — SELECTION Option](https://documentation.sas.com/doc/en/statug/15.2/statug_logistic_details06.htm)
+    - [PROC LOGISTIC: Details — Variable Selection Methods](https://documentation.sas.com/doc/en/statug/15.2/statug_logistic_details07.htm)
+
+</div>
+
+<p><strong>R 공식 문서:</strong></p>
+<div class="source-ref">
+
+- R Core Team. `step()` — `stats::step(object, direction="both")`, AIC 기반 양방향 변수 선택
+    - [R Documentation: step](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/step.html)
+- Venables, W.N. &amp; Ripley, B.D. (2002). *Modern Applied Statistics with S*. 4th ed. Springer. — `MASS::stepAIC()` 함수, BIC 옵션(`k=log(n)`)
+    - [R Documentation: stepAIC](https://stat.ethz.ch/R-manual/R-devel/library/MASS/html/stepAIC.html)
+
+</div>
+
+<p><strong>Python 공식 문서:</strong></p>
+<div class="source-ref">
+
+- statsmodels. `discrete.discrete_model.Logit` — `fit()`, `pvalues`, `aic`, `bic` 속성
+    - [statsmodels: Logit](https://www.statsmodels.org/stable/generated/statsmodels.discrete.discrete_model.Logit.html)
+- statsmodels. `LogitResults.score_test()` — Score Test(Lagrange Multiplier) 계산
+    - [statsmodels: score_test](https://www.statsmodels.org/stable/generated/statsmodels.discrete.discrete_model.BinaryResults.score_test.html)
+- statsmodels에는 Stepwise 기능이 **미내장**. Forward/Backward 오케스트레이션은 직접 구현 필요.
+
+</div>
+
+<hr>
 
 
 

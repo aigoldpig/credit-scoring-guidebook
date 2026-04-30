@@ -4144,8 +4144,6 @@
       
         
       
-        
-      
     
     
     
@@ -4604,74 +4602,6 @@
     </li>
   
 
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-    
-    
-    
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7_4">
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../../ml/appendix/ml-experiment/" class="md-nav__link ">
-              
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    C. 해석 가능한 ML 실험 설계
-  
-
-    
-  </span>
-  
-  
-
-            </a>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_7_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3_7_4">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    C. 해석 가능한 ML 실험 설계
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix="">
-            
               
             
           </ul>
@@ -5226,6 +5156,219 @@ B(u) = (1 - u^2)^2 \quad \text{if } |u| &lt; 1 \tag{B.3}
 </tr>
 </tbody>
 </table>
+<hr>
+<h3 id="vs">입력 데이터 구조 — 관측치 단위 vs 구간 요약 테이블<a class="headerlink" href="#vs" title="Permanent link">¶</a></h3>
+<p>LOWESS를 신용평가에 적용할 때, 입력은 두 가지 형태 중 하나다.</p>
+<p><strong>(a) 관측치 단위 입력</strong> — 차주별 <span class="arithmatex">\((x_i, \text{TARGET}_i)\)</span> row를 그대로 LOWESS에 투입한다. 여기서 <span class="arithmatex">\(\text{TARGET}_i\)</span>는 0/1이다. 가장 단순한 방식이고, 각 row가 표본 1개를 대표하므로 별도의 표본 가중치는 필요 없다.</p>
+<p><strong>(b) 구간 요약 테이블 입력</strong> — 백분위 구간을 먼저 만들고, 구간별로 집계한 working table을 LOWESS에 투입한다.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">interval</th>
+<th style="text-align: center;">x_center</th>
+<th style="text-align: center;">n_obs</th>
+<th style="text-align: center;">n_bad</th>
+<th style="text-align: center;">bad_rate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0.01</td>
+<td style="text-align: center;">1,000</td>
+<td style="text-align: center;">20</td>
+<td style="text-align: center;">0.020</td>
+</tr>
+<tr>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">0.03</td>
+<td style="text-align: center;">950</td>
+<td style="text-align: center;">28</td>
+<td style="text-align: center;">0.029</td>
+</tr>
+<tr>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">0.05</td>
+<td style="text-align: center;">1,100</td>
+<td style="text-align: center;">45</td>
+<td style="text-align: center;">0.041</td>
+</tr>
+<tr>
+<td style="text-align: center;">...</td>
+<td style="text-align: center;">...</td>
+<td style="text-align: center;">...</td>
+<td style="text-align: center;">...</td>
+<td style="text-align: center;">...</td>
+</tr>
+</tbody>
+</table>
+<p>여기서 <span class="arithmatex">\(x\)</span>값은 구간 대표값이고, <span class="arithmatex">\(y\)</span>값은 구간별 실제 불량률 <span class="arithmatex">\(\text{bad rate} = n_{\text{bad}} / n_{\text{obs}}\)</span>다. 기업 여신처럼 부도 데이터가 희소한 상황에서는 (b) 방식이 계산 효율과 감사 가능성 측면에서 일반적이다.</p>
+<div class="admonition warning">
+<p class="admonition-title">구간 요약 입력에서는 가중치가 두 종류 결합된다</p>
+<p>구간 요약 테이블을 쓰는 순간, WLS 가중치는 <strong>거리 가중치 하나만으로 부족</strong>하다. 각 구간의 bad rate가 100개 관측치에서 나온 값인지 10,000개에서 나온 값인지에 따라 신뢰도가 다르기 때문이다. 따라서 두 가중치를 곱해서 최종 가중치로 쓴다:</p>
+<div class="arithmatex">\[
+w_b^{\text{final}} = \underbrace{W\!\left(\frac{x_b - x_j}{h_j}\right)}_{\text{거리 가중치 (tricube)}} \times \underbrace{n_{\text{obs}, b}}_{\text{표본 가중치}}
+\]</div>
+<p>거리 가중치는 "이 이웃이 추정 지점에 얼마나 가까운가"를, 표본 가중치는 "이 이웃의 bad rate가 얼마나 신뢰할 만한가"를 반영한다. 관측치 단위 입력 (a)에서는 각 row가 이미 표본 1을 대표하므로 표본 가중치가 자동으로 1로 흡수되며, 거리 가중치만 명시적으로 곱하면 된다.</p>
+</div>
+<hr>
+<h3 id="lowess_1">한 평가점에서 LOWESS가 굴러가는 모습 — 숫자로 따라가기<a class="headerlink" href="#lowess_1" title="Permanent link">¶</a></h3>
+<p>알고리즘이 추상적으로 느껴진다면, 평가점 한 곳에서 어떤 숫자가 들어가고 어떤 숫자가 나오는지 따라가보면 명확해진다. 외감기업 모집단의 부채비율 percentile grid에서 평가점 <span class="arithmatex">\(x_j = 30\)</span>에 대한 LOWESS 계산을 step-by-step으로 살펴보자 (가상 데이터, bandwidth <span class="arithmatex">\(h = 12\)</span> percentile, tricube 가중함수).</p>
+<p><strong>Step 1 · 이웃 bin 선택 + 거리 정규화</strong></p>
+<p>평가점 30 주변 이웃 bin들과, 각 bin의 거리를 bandwidth로 정규화한 <span class="arithmatex">\(u_b = (x_b - x_j)/h\)</span>:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">bin</th>
+<th style="text-align: center;">percentile center <span class="arithmatex">\(x_b\)</span></th>
+<th style="text-align: center;">bad_rate</th>
+<th style="text-align: center;"><span class="arithmatex">\(n_{\text{obs}}\)</span></th>
+<th style="text-align: center;">거리 <span class="arithmatex">\(\|x_b - 30\|\)</span></th>
+<th style="text-align: center;"><span class="arithmatex">\(u_b\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">20</td>
+<td style="text-align: center;">0.008</td>
+<td style="text-align: center;">420</td>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">0.83</td>
+</tr>
+<tr>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">24</td>
+<td style="text-align: center;">0.012</td>
+<td style="text-align: center;">410</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">0.50</td>
+</tr>
+<tr>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">28</td>
+<td style="text-align: center;">0.018</td>
+<td style="text-align: center;">405</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">0.17</td>
+</tr>
+<tr>
+<td style="text-align: center;">9</td>
+<td style="text-align: center;">32</td>
+<td style="text-align: center;">0.024</td>
+<td style="text-align: center;">400</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">0.17</td>
+</tr>
+<tr>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">36</td>
+<td style="text-align: center;">0.030</td>
+<td style="text-align: center;">395</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">0.50</td>
+</tr>
+<tr>
+<td style="text-align: center;">11</td>
+<td style="text-align: center;">40</td>
+<td style="text-align: center;">0.040</td>
+<td style="text-align: center;">390</td>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">0.83</td>
+</tr>
+</tbody>
+</table>
+<p>bin 5 (<span class="arithmatex">\(x_b = 16\)</span>, <span class="arithmatex">\(u = 1.17\)</span>)는 <span class="arithmatex">\(\|u\| &gt; 1\)</span>이라 tricube가 0이 되므로 자동 제외된다.</p>
+<p><strong>Step 2 · Tricube 거리 가중치 <span class="arithmatex">\(W(u_b) = (1 - \|u_b\|^3)^3\)</span></strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">bin</th>
+<th style="text-align: center;"><span class="arithmatex">\(\|u_b\|\)</span></th>
+<th style="text-align: center;"><span class="arithmatex">\(W(u_b)\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">6, 11</td>
+<td style="text-align: center;">0.83</td>
+<td style="text-align: center;"><span class="arithmatex">\((1 - 0.83^3)^3 = 0.428^3 \approx 0.078\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;">7, 10</td>
+<td style="text-align: center;">0.50</td>
+<td style="text-align: center;"><span class="arithmatex">\((1 - 0.50^3)^3 = 0.875^3 \approx 0.670\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;">8, 9</td>
+<td style="text-align: center;">0.17</td>
+<td style="text-align: center;"><span class="arithmatex">\((1 - 0.17^3)^3 \approx 0.986\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>평가점에 가까운 bin 8·9가 0.986로 거의 1, 가장 먼 bin 6·11은 0.078로 사실상 흔적만 남는다.</p>
+<p><strong>Step 3 · 표본 가중치 결합 <span class="arithmatex">\(w_b^{\text{final}} = W(u_b) \times n_{\text{obs}, b}\)</span></strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">bin</th>
+<th style="text-align: center;"><span class="arithmatex">\(W(u_b)\)</span></th>
+<th style="text-align: center;"><span class="arithmatex">\(n_{\text{obs}}\)</span></th>
+<th style="text-align: center;"><span class="arithmatex">\(w_b^{\text{final}}\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">0.078</td>
+<td style="text-align: center;">420</td>
+<td style="text-align: center;">33</td>
+</tr>
+<tr>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">0.670</td>
+<td style="text-align: center;">410</td>
+<td style="text-align: center;">275</td>
+</tr>
+<tr>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">0.986</td>
+<td style="text-align: center;">405</td>
+<td style="text-align: center;">399</td>
+</tr>
+<tr>
+<td style="text-align: center;">9</td>
+<td style="text-align: center;">0.986</td>
+<td style="text-align: center;">400</td>
+<td style="text-align: center;">394</td>
+</tr>
+<tr>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">0.670</td>
+<td style="text-align: center;">395</td>
+<td style="text-align: center;">265</td>
+</tr>
+<tr>
+<td style="text-align: center;">11</td>
+<td style="text-align: center;">0.078</td>
+<td style="text-align: center;">390</td>
+<td style="text-align: center;">30</td>
+</tr>
+</tbody>
+</table>
+<p>가까운 이웃에는 약 400, 먼 이웃에는 약 30 — <strong>두 자릿수 차이</strong>로 영향력이 차등화된다.</p>
+<p><strong>Step 4 · Local 1차 WLS 적합</strong></p>
+<p><span class="arithmatex">\(\widehat{\text{bad rate}} = a + b \cdot (x_b - x_j)\)</span> 형태로 weighted least squares를 풀면, 평가점이 이웃의 거의 중앙(왼쪽 3개 vs 오른쪽 3개 대칭 가까움)이라 fitted value는 가중 평균에 매우 가깝다:</p>
+<div class="arithmatex">\[
+T(30) \approx \frac{\sum_b w_b^{\text{final}} \cdot \text{bad\_rate}_b}{\sum_b w_b^{\text{final}}} = \frac{29.4}{1{,}396} \approx 0.021
+\]</div>
+<p><strong>Step 5 · Cap 적용 후 lookup table 한 칸 채우기</strong></p>
+<p><span class="arithmatex">\([0, 1]\)</span> 범위 안이므로 cap이 작동할 일은 없고, 그대로 <strong><span class="arithmatex">\(T(30) = 0.021\)</span></strong> 이 lookup table의 percentile 30 칸에 저장된다.</p>
+<p>이 절차를 25개 grid 평가점 모두에서 반복하면, 25개 <span class="arithmatex">\(T\)</span> 값이 채워진 lookup table이 완성된다. 차주가 부채비율 50%(percentile 30)인 외감기업 A라면, 이 표에서 0.021을 읽어 다변량 Probit으로 넘긴다.</p>
+<div class="admonition tip">
+<p class="admonition-title">이 0.021이 무엇인가</p>
+<p><span class="arithmatex">\(T(30) = 0.021\)</span> — 외감기업 모집단 percentile 30(즉 부채비율이 모집단 안에서 낮은 편) 차주의 <strong>부채비율 단변량 부도확률 추정값</strong> 2.1%다. 다른 변수(ROA, 유동비율 등)는 무시하고 부채비율 하나만 봤을 때의 추정이며, 다변량 Probit 단계에서 다른 변수들의 <span class="arithmatex">\(T\)</span> 값과 결합되어 최종 EDF가 결정된다.</p>
+</div>
 <div class="admonition tip">
 <p class="admonition-title">직관적 이해</p>
 <p>위 수식과 절차의 직관적 의미 — bandwidth는 왜 필요한지, 회귀선은 몇 번 긋는지, 산출물은 결국 무엇인지 — 는 <a href="intuition/">4. 직관적 이해</a>에서 상세히 다룬다.</p>

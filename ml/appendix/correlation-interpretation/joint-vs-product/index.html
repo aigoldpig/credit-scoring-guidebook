@@ -4142,8 +4142,6 @@
       
         
       
-        
-      
     
     
     
@@ -4672,74 +4670,6 @@
 
               
             
-              
-                
-  
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-    
-    
-    
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7_4">
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../ml-experiment/" class="md-nav__link ">
-              
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    C. 해석 가능한 ML 실험 설계
-  
-
-    
-  </span>
-  
-  
-
-            </a>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_7_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3_7_4">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    C. 해석 가능한 ML 실험 설계
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix="">
-            
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
           </ul>
         </nav>
       
@@ -5207,8 +5137,156 @@
 </tbody>
 </table>
 <ul>
-<li>A-1 = B-1, A-2 = B-2는 동일한 결과를 산출하며, 계산 경로만 다르다.</li>
+<li><strong>A-2 = B-2</strong>는 동일한 결과를 산출하며, 계산 경로만 다르다 (Product Measure에서 Möbius와 iterative centering은 동치).</li>
+<li><strong>A-1 ≠ B-1</strong>: Joint Measure에서 Möbius inversion은 centered ANOVA 분해를 주지 않는다. B-1 (iterative centering)만이 Hooker (2007)의 generalized functional ANOVA를 올바르게 산출한다. 따라서 Joint Measure 분해에는 <strong>B-1만 사용</strong>한다.</li>
 <li>Joint measure는 SHAP의 <code>tree_path_dependent</code>에, Product measure는 <code>interventional</code>에 대응된다.</li>
+</ul>
+<hr>
+<h3 id="a-2-b-2">A-2 = B-2가 성립하는 이유<a class="headerlink" href="#a-2-b-2" title="Permanent link">¶</a></h3>
+<p>Product measure에서 Möbius inversion(Hoeffding 분해)은 자동으로 직교성 조건(centering condition)을 만족한다.</p>
+<p>Möbius inversion의 핵심은 inclusion-exclusion으로 효과를 분리하는 것이다:</p>
+<div class="arithmatex">\[
+f_S(x_S) = E_S[f \mid x_S] - \sum_{T \subsetneq S} f_T(x_T)
+\]</div>
+<p>여기서 <span class="arithmatex">\(E_S\)</span>는 <span class="arithmatex">\(S\)</span> 밖의 변수에 대해 적분한 조건부 기대값이다.</p>
+<p>Product measure에서 직교성 조건 <span class="arithmatex">\(E[f_S \mid x_T] = 0\)</span>이 자동으로 만족되는 이유를 2변수 interaction <span class="arithmatex">\(f_{12}\)</span>에 대해 확인하면:</p>
+<div class="arithmatex">\[
+E_{\text{prod}}[f_{12} \mid x_1 = a] = E_{\text{prod}}[f \mid x_1 = a] - f_1(a) - E_{\text{prod}}[f_2(x_2) \mid x_1 = a] - \mu
+\]</div>
+<p>Product measure에서 <span class="arithmatex">\(P(x_2 \mid x_1) = P(x_2)\)</span> (독립)이므로:</p>
+<div class="arithmatex">\[
+E_{\text{prod}}[f_2(x_2) \mid x_1 = a] = E[f_2(x_2)] = 0 \quad (f_2 \text{는 이미 centered})
+\]</div>
+<p>따라서 <span class="arithmatex">\(E_{\text{prod}}[f_{12} \mid x_1] = 0\)</span>이 <strong>자동으로 성립</strong>한다.</p>
+<p>Tensor centering(B-2)도 같은 조건을 반복적으로 부과하므로, 둘은 같은 해에 수렴한다. Product measure의 독립성이 Möbius inversion과 iterative centering의 <strong>동치성을 보장</strong>하는 핵심이다.</p>
+<div class="admonition success">
+<p class="admonition-title">실증 검증</p>
+<p>CB 시뮬레이션 데이터(Phase 1, depth=2, lr=0.0001)에서
+A-2와 B-2의 Main Effect % 차이: <strong>8.13×10⁻²⁰</strong> — 기계 정밀도 수준에서 완전 일치.</p>
+</div>
+<h3 id="a-1-b-1-joint-measure-mobius">A-1 ≠ B-1인 이유 — Joint Measure에서 Möbius의 한계<a class="headerlink" href="#a-1-b-1-joint-measure-mobius" title="Permanent link">¶</a></h3>
+<p>Joint measure에서는 <span class="arithmatex">\(P(x_2 \mid x_1) \neq P(x_2)\)</span>이다. 이 비독립성이 Möbius inversion의 직교성을 깨뜨린다.</p>
+<p>A-1은 Joint 조건부 기대값을 Möbius 공식에 대입하여 효과를 계산한다:</p>
+<div class="arithmatex">\[
+f_1(x_1) = E_{\text{joint}}[f \mid x_1] - \mu, \quad
+f_2(x_2) = E_{\text{joint}}[f \mid x_2] - \mu
+\]</div>
+<div class="arithmatex">\[
+f_{12}(x_1, x_2) = f(x_1, x_2) - f_1(x_1) - f_2(x_2) - \mu
+\]</div>
+<p>이 분해에서 <span class="arithmatex">\(f_{12}\)</span>의 직교성을 확인하면:</p>
+<div class="arithmatex">\[
+E_{\text{joint}}[f_{12} \mid x_1 = a]
+= E_{\text{joint}}[f \mid x_1\!=\!a] - f_1(a) - E_{\text{joint}}[f_2(x_2) \mid x_1\!=\!a] - \mu
+\]</div>
+<p>여기서:</p>
+<div class="arithmatex">\[
+E_{\text{joint}}[f_2(x_2) \mid x_1 = a]
+= \sum_b f_2(b) \cdot P(x_2 = b \mid x_1 = a)
+\]</div>
+<p><strong>Product measure에서는</strong> <span class="arithmatex">\(P(x_2 \mid x_1) = P(x_2)\)</span>이므로 이 값이 <span class="arithmatex">\(E[f_2] = 0\)</span>이 되어 직교성이 자동 성립했다.</p>
+<p><strong>Joint measure에서는</strong> <span class="arithmatex">\(P(x_2 \mid x_1) \neq P(x_2)\)</span>이므로:</p>
+<div class="arithmatex">\[
+\sum_b f_2(b) \cdot P(x_2 = b \mid x_1 = a) \neq 0 \quad \text{(일반적으로)}
+\]</div>
+<p>따라서:</p>
+<div class="arithmatex">\[
+\boxed{E_{\text{joint}}[f_{12} \mid x_1] = -\sum_b f_2(b) \cdot P(x_2\!=\!b \mid x_1) \neq 0}
+\]</div>
+<p><strong>Interaction 항이 centered되지 않는다.</strong> 이것이 A-1의 근본적 결함이다.</p>
+<p>이 결함의 실질적 의미:</p>
+<ul>
+<li><strong>Main effect가 과대추정된다</strong> — interaction에 있어야 할 분산이 main effect로 누출</li>
+<li><strong>차이의 크기는 변수 간 상관에 비례</strong> — 변수가 독립이면 Joint = Product이므로 A-1 = B-1이 자명하게 성립</li>
+<li>A-1의 분해는 Hoeffding (1948)의 원래 분해와 동일하지만, 이 분해는 product measure를 전제로 설계된 것이므로 joint measure와 결합하면 직교성이 보장되지 않음</li>
+</ul>
+<p>반면 B-1(<code>purify_tensor_joint</code>)은 반복적으로 <strong>조건부 기대값을 빼는</strong> centering을 수행한다:</p>
+<div class="arithmatex">\[
+\text{각 변수 } j \text{에 대해}: \quad
+T_u \leftarrow T_u - E_{\text{joint}}[T_u \mid x_j]
+\]</div>
+<p>이 ALS(Alternating Least Squares) 반복은 수렴 시 <strong>모든 하위 집합에 대해 <span class="arithmatex">\(E_{\text{joint}}[f_S \mid x_T] = 0\)</span>을 강제</strong>한다. 이것이 Hooker (2007)의 generalized functional ANOVA 정의와 정확히 일치한다.</p>
+<div class="admonition danger">
+<p class="admonition-title">실증 검증 — A-1 ≠ B-1</p>
+<p>CB 시뮬레이션 데이터(Phase 1, depth=2, lr=0.0001)에서:</p>
+<table>
+<thead>
+<tr>
+<th>방식</th>
+<th style="text-align: center;">Main %</th>
+<th style="text-align: center;">2-way %</th>
+<th style="text-align: center;">Cross-cov %</th>
+<th style="text-align: center;">소요시간</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A-1 (Möbius+Joint)</td>
+<td style="text-align: center;"><strong>29.93</strong></td>
+<td style="text-align: center;">0.45</td>
+<td style="text-align: center;">69.62</td>
+<td style="text-align: center;">276초</td>
+</tr>
+<tr>
+<td>B-1 (Tensor+Joint)</td>
+<td style="text-align: center;"><strong>15.90</strong></td>
+<td style="text-align: center;">0.13</td>
+<td style="text-align: center;">83.97</td>
+<td style="text-align: center;">655초</td>
+</tr>
+</tbody>
+</table>
+<p>A-1의 Main%가 B-1의 약 <strong>2배</strong>로 과대추정된다.
+이 차이는 신용정보 변수 간 상관이 높기 때문에 발생한다.
+변수가 독립이면 Joint = Product이 되어 A-1 = B-1이 자명하게 성립한다.</p>
+</div>
+<h3 id="_2">결론 — 방법 선택 가이드<a class="headerlink" href="#_2" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>기준</th>
+<th style="text-align: center;">A-1 (Möbius+Joint)</th>
+<th style="text-align: center;">B-1 (Tensor+Joint)</th>
+<th style="text-align: center;">A-2/B-2 (Product)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>완전 분해 <span class="arithmatex">\(f = \sum f_S\)</span></td>
+<td style="text-align: center;">O</td>
+<td style="text-align: center;">O</td>
+<td style="text-align: center;">O</td>
+</tr>
+<tr>
+<td>직교성 <span class="arithmatex">\(E[f_S \mid x_T] = 0\)</span></td>
+<td style="text-align: center;"><strong>X</strong></td>
+<td style="text-align: center;">O</td>
+<td style="text-align: center;">O</td>
+</tr>
+<tr>
+<td>Hooker (2007) 정의 충족</td>
+<td style="text-align: center;"><strong>아님</strong></td>
+<td style="text-align: center;"><strong>맞음</strong></td>
+<td style="text-align: center;">맞음</td>
+</tr>
+<tr>
+<td>main effect 정확성</td>
+<td style="text-align: center;">과대추정</td>
+<td style="text-align: center;">정확</td>
+<td style="text-align: center;">정확</td>
+</tr>
+<tr>
+<td>속도</td>
+<td style="text-align: center;">중간</td>
+<td style="text-align: center;">느림</td>
+<td style="text-align: center;">빠름</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>Product measure 분해</strong>: A-2 또는 B-2 (동치). A-2가 더 빠르므로 A-2 권장</li>
+<li><strong>Joint measure 분해</strong>: <strong>B-1만 사용</strong>. A-1은 직교성이 깨져 사용 불가</li>
+<li>depth=1에서는 트리당 변수 1개이므로, 교호작용이 구조적으로 불가능하여 A-1 = B-1이 자명하게 성립</li>
 </ul>
 <h3 id="21-product-measure-fanova">2.1 Product Measure (전통적 fANOVA)<a class="headerlink" href="#21-product-measure-fanova" title="Permanent link">¶</a></h3>
 <ul>
@@ -5231,7 +5309,7 @@
 <thead>
 <tr>
 <th></th>
-<th>Joint (A-1/B-1)</th>
+<th>Joint (B-1)</th>
 <th>Product (A-2/B-2)</th>
 </tr>
 </thead>

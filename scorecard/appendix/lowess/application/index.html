@@ -2834,10 +2834,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#54" class="md-nav__link">
+  <a href="#54-5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        5.4 한계와 고려사항
+        5.4 변환곡선의 품질 검증 — 5축 체계
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#55" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.5 한계와 고려사항
       
     </span>
   </a>
@@ -4235,8 +4246,6 @@
       
         
       
-        
-      
     
     
     
@@ -4695,74 +4704,6 @@
     </li>
   
 
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-    
-    
-    
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7_4">
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../../../ml/appendix/ml-experiment/" class="md-nav__link ">
-              
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    C. 해석 가능한 ML 실험 설계
-  
-
-    
-  </span>
-  
-  
-
-            </a>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_7_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3_7_4">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    C. 해석 가능한 ML 실험 설계
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix="">
-            
               
             
           </ul>
@@ -5339,7 +5280,98 @@
 <li>금융위원회의 <strong><a href="https://www.fsc.go.kr/no010101/79825">AI 기반 신용평가모형 검증체계</a></strong>(2023년 마련)에서 요구하는 알고리즘 설명 가능성 기준과의 정합성도 확인해야 한다</li>
 </ul>
 <hr>
-<h2 id="54">5.4 한계와 고려사항<a class="headerlink" href="#54" title="Permanent link">¶</a></h2>
+<h2 id="54-5">5.4 변환곡선의 품질 검증 — 5축 체계<a class="headerlink" href="#54-5" title="Permanent link">¶</a></h2>
+<p>미니모델링 산출물이 잘 만들어졌는지를 <strong>단 하나의 지표로 판단해서는 안 된다</strong>. 변환곡선은 동시에 여러 역할을 수행하므로, 각 역할마다 별도의 검증 축이 필요하다. 실무에서 권장되는 5개 축은 다음과 같다.</p>
+<h3 id="1-raw">축 1 — Raw 불량률과의 적합도<a class="headerlink" href="#1-raw" title="Permanent link">¶</a></h3>
+<p>가장 직관적인 점검은 "smoothed 곡선이 구간별 실제 불량률과 얼마나 가까운가"다. 다만 LOWESS의 목적 자체가 raw 불량률을 <strong>그대로 따라가는 것이 아니라 노이즈를 누르는 것</strong>이므로, 적합도가 100%에 가깝다면 오히려 과적합 신호다. 따라서 보조 지표로만 활용한다.</p>
+<ul>
+<li><strong>가중 <span class="arithmatex">\(R^2\)</span></strong> — 구간 표본 수 <span class="arithmatex">\(n_{\text{obs}}\)</span>를 가중치로 쓴 결정계수</li>
+<li><strong>가중 RMSE</strong> — 동일하게 <span class="arithmatex">\(n_{\text{obs}}\)</span>로 가중한 잔차 제곱평균제곱근</li>
+</ul>
+<p>가중치를 <span class="arithmatex">\(n_{\text{obs}}\)</span>로 두는 이유는 <strong>표본이 많은 구간의 불량률이 더 신뢰할 만하기 때문</strong>이다. 표본 10개짜리 구간에서의 큰 잔차는 노이즈일 가능성이 높고, 10,000개짜리 구간에서의 작은 잔차는 진짜 어긋남이다.</p>
+<h3 id="2">축 2 — 확률 예측 품질<a class="headerlink" href="#2" title="Permanent link">¶</a></h3>
+<p><span class="arithmatex">\(T(x)\)</span>는 단변량 부도확률이므로, <strong>likelihood 계열 지표</strong>가 자연스러운 평가 척도다.</p>
+<ul>
+<li><strong>이항 logloss(binomial logloss)</strong> — 각 구간에서 <span class="arithmatex">\(n_{\text{bad}}\)</span>개의 부도와 <span class="arithmatex">\((n_{\text{obs}} - n_{\text{bad}})\)</span>개의 정상이 <span class="arithmatex">\(T_j\)</span> 확률로 발생할 가능도를 측정. 낮을수록 좋다.</li>
+<li><strong>가중 Brier 점수</strong> — <span class="arithmatex">\((bad\_rate_j - T_j)^2\)</span>을 <span class="arithmatex">\(n_{\text{obs}}\)</span>로 가중평균. 확률값과 실제 빈도의 거리를 직접 측정한다.</li>
+</ul>
+<p>이 두 지표는 R²/RMSE와 달리 <strong>확률값으로서의 의미</strong>를 평가한다. 같은 적합도라도 확률 해석상의 품질이 다를 수 있으므로 함께 본다.</p>
+<h3 id="3">축 3 — 단변량 변별력<a class="headerlink" href="#3" title="Permanent link">¶</a></h3>
+<p>lookup 값을 차주 단위로 매겨 부여한 뒤 <span class="arithmatex">\(T_{X_1}\)</span> 하나만으로 점수처럼 사용해 부도 여부와 비교한다. 즉 <strong>단변량 모형의 변별력</strong>을 측정하는 단계다.</p>
+<ul>
+<li><strong>KS, AR/AUC</strong> — 표준 변별력 지표 (본 가이드북 평가 섹션에서 다룬 정의 그대로)</li>
+<li><strong>IV</strong> — <span class="arithmatex">\(T_{X_1}\)</span> 또는 원래 interval 기준으로 다시 구간화하여 산출</li>
+</ul>
+<p>이 축에서 변별력이 약하다면 미니모델링 자체가 신호를 제대로 추출하지 못한 것이며, 다변량 단계로 넘어가도 큰 기여를 기대하기 어렵다.</p>
+<h3 id="4-calibration">축 4 — Calibration<a class="headerlink" href="#4-calibration" title="Permanent link">¶</a></h3>
+<p><span class="arithmatex">\(T_{X_1}\)</span>이 단변량 PD로서 <strong>실제 불량률과 수준에서도 맞는가</strong>를 확인한다. 변별력이 높아도 calibration이 무너져 있으면 절대 부도확률 해석이 부정확해진다.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">T 십분위</th>
+<th style="text-align: center;">평균 <span class="arithmatex">\(T_{X_1}\)</span></th>
+<th style="text-align: center;">실제 불량률</th>
+<th style="text-align: center;">표본 수</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">1 (저위험)</td>
+<td style="text-align: center;">0.005</td>
+<td style="text-align: center;">0.006</td>
+<td style="text-align: center;">...</td>
+</tr>
+<tr>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">0.012</td>
+<td style="text-align: center;">0.010</td>
+<td style="text-align: center;">...</td>
+</tr>
+<tr>
+<td style="text-align: center;">...</td>
+<td style="text-align: center;">...</td>
+<td style="text-align: center;">...</td>
+<td style="text-align: center;">...</td>
+</tr>
+<tr>
+<td style="text-align: center;">10 (고위험)</td>
+<td style="text-align: center;">0.180</td>
+<td style="text-align: center;">0.165</td>
+<td style="text-align: center;">...</td>
+</tr>
+</tbody>
+</table>
+<p>확인 항목:</p>
+<ul>
+<li><strong>E/O ratio (Expected/Observed)</strong> — 예측 부도 건수 대 실제 부도 건수의 비</li>
+<li><strong>Calibration intercept / slope</strong> — <span class="arithmatex">\(\Phi^{-1}(\text{actual})\)</span>을 <span class="arithmatex">\(\Phi^{-1}(T)\)</span>에 회귀한 절편·기울기 (이상적으로 0, 1)</li>
+<li><strong>Tail 구간의 과대/과소 추정</strong> — 양 극단(저위험/고위험)에서의 체계적 편향 여부</li>
+</ul>
+<h3 id="5-shape">축 5 — Shape와 안정성<a class="headerlink" href="#5-shape" title="Permanent link">¶</a></h3>
+<p>신용평가에서는 <strong>성능만으로 통과하기 어렵다</strong>. 변환곡선의 모양이 경제적으로 설명 가능해야 하고, 시간이 지나도 무너지지 않아야 한다.</p>
+<ul>
+<li><strong>Expected direction 충족 여부</strong> — 변수별 사전 정의된 방향성과 일치하는가</li>
+<li><strong>Monotonicity violation, tail jump</strong> — <a href="../effects/">비율별 변환 특성 페이지</a>의 단조성 진단 항목</li>
+<li><strong>Bandwidth 민감도</strong> — <span class="arithmatex">\(f\)</span>를 살짝 바꿨을 때 곡선 형태가 크게 흔들리지 않는가</li>
+<li><strong>Train / Valid / OOT 일관성</strong> — 시간 단면을 달리해도 KS, AR, calibration이 유지되는가</li>
+<li><strong>곡선 형태의 시간적 안정성</strong> — 재추정 시 곡선이 평행이동인지 형태 변화인지 (후자는 구조적 변화 신호)</li>
+</ul>
+<h3 id="5">종합 — 좋은 미니모델의 5조건<a class="headerlink" href="#5" title="Permanent link">¶</a></h3>
+<p>위 5개 축을 통합하면, <strong>합격 기준이 되는 5가지 조건</strong>으로 정리된다:</p>
+<ol>
+<li>단변량 변별력이 충분하다 (축 3)</li>
+<li>smoothed PD가 실제 불량률과 calibration 측면에서 크게 어긋나지 않는다 (축 1, 4)</li>
+<li>곡선 형태가 경제적으로 설명 가능하다 (축 5의 expected direction)</li>
+<li>tail 구간이 과도하게 튀지 않는다 (축 5의 monotonicity, tail jump)</li>
+<li>OOT에서 성능과 곡선 형태가 크게 무너지지 않는다 (축 5의 안정성)</li>
+</ol>
+<p>다섯 조건 중 어느 하나라도 무너지면 — 변별력이 없거나, calibration이 어긋나거나, 비합리적 모양이거나, tail이 폭발하거나, OOT에서 깨지면 — 그 변환곡선은 다변량 단계로 넘기기 전에 재추정해야 한다.</p>
+<div class="admonition tip">
+<p class="admonition-title">소매 CSS WoE 변환과의 대응</p>
+<p>위 5축 체계는 소매 CSS의 WoE 변환 검증 절차와 본질적으로 동일하다. WoE의 IV·KS 점검(축 3), 구간별 불량률 vs WoE 일치도(축 4), 단조성·경제적 합리성(축 5)이 그대로 대응된다. 차이라면 LOWESS는 곡선이 연속이라 bandwidth 민감도라는 추가 항목이 들어간다는 점뿐이다.</p>
+</div>
+<hr>
+<h2 id="55">5.5 한계와 고려사항<a class="headerlink" href="#55" title="Permanent link">¶</a></h2>
 <h3 id="_6">대역폭 선택의 민감성<a class="headerlink" href="#_6" title="Permanent link">¶</a></h3>
 <p>LOWESS의 핵심 파라미터인 대역폭(<span class="arithmatex">\(f\)</span>)은 사전에 이론적으로 결정되지 않는다. 너무 작으면 <strong>과적합(overfitting)</strong>, 너무 크면 <strong>과소적합(underfitting)</strong>이 발생한다. Moody's는 교차검증(cross-validation)을 통해 이를 조율하지만, 부도 데이터가 희소한 산업군에서는 안정적 추정이 어려울 수 있다.</p>
 <h3 id="_7">데이터 의존성<a class="headerlink" href="#_7" title="Permanent link">¶</a></h3>

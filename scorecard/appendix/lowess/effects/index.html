@@ -2738,6 +2738,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#23-vs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 단조성을 보장하지 않는다 — 의도된 비단조 vs 잡음 역전
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -4213,8 +4224,6 @@
       
         
       
-        
-      
     
     
     
@@ -4673,74 +4682,6 @@
     </li>
   
 
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-    
-    
-    
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7_4">
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../../../ml/appendix/ml-experiment/" class="md-nav__link ">
-              
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    C. 해석 가능한 ML 실험 설계
-  
-
-    
-  </span>
-  
-  
-
-            </a>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_7_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3_7_4">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    C. 해석 가능한 ML 실험 설계
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix="">
-            
               
             
           </ul>
@@ -5274,6 +5215,61 @@
 <div class="admonition note">
 <p class="admonition-title">비단조 변환의 의미</p>
 <p>활동성 비율의 비단조(non-monotonic) 패턴은 특히 주목할 만하다. 예를 들어, 재고/매출 비율이 너무 낮으면 공급 부족 위험, 너무 높으면 재고 부실 위험이 있어 <strong>U자형 관계</strong>가 나타날 수 있다. 이런 패턴은 선형 모형이나 단조 WoE로는 포착이 불가능하며, LOWESS의 비모수적 유연성이 빛을 발하는 영역이다.</p>
+</div>
+<hr>
+<h2 id="23-vs">2.3 단조성을 보장하지 않는다 — 의도된 비단조 vs 잡음 역전<a class="headerlink" href="#23-vs" title="Permanent link">¶</a></h2>
+<p>LOWESS의 <strong>비모수적 유연성</strong>은 양날의 검이다. 활동성 비율처럼 진짜 U자형 관계가 있다면 그것을 반영해주지만, <strong>데이터의 우연한 변동까지 그대로 따라가</strong> 단조였어야 할 변수에서도 작은 역전(reversal)을 만들어낼 수 있다.</p>
+<h3 id="_2">두 종류의 단조성 위반을 구별해야 한다<a class="headerlink" href="#_2" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>유형</th>
+<th>원인</th>
+<th>처리 방향</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>신호로서의 비단조</strong></td>
+<td>경제적 의미가 있는 진짜 U자/역U자 (활동성, 일부 성장률)</td>
+<td><strong>유지 + 문서화</strong></td>
+</tr>
+<tr>
+<td><strong>잡음으로서의 역전</strong></td>
+<td>tail 구간의 관측치 부족, bad 표본 희소</td>
+<td><strong>제거 또는 평탄화</strong></td>
+</tr>
+</tbody>
+</table>
+<p>차이를 구분하는 핵심은 <strong>expected direction</strong>이다. 변수마다 경제 논리상 기대되는 방향을 사전에 정의해두어야 한다 — 부채비율은 증가, 수익성은 감소, 활동성은 비단조 가능 등.</p>
+<h3 id="_3">단조성 진단 항목<a class="headerlink" href="#_3" title="Permanent link">¶</a></h3>
+<p>LOWESS 곡선을 그린 뒤 다음을 점검한다:</p>
+<ul>
+<li><strong>위반 횟수(violation count)</strong>: expected direction과 어긋나는 구간 수</li>
+<li><strong>최대 역전 폭(max reversal size)</strong>: 단일 구간에서 <span class="arithmatex">\(T(x_{j+1}) - T(x_j)\)</span>가 반대 방향으로 가장 크게 튄 크기</li>
+<li><strong>누적 역전 폭(total reversal size)</strong>: 모든 위반의 합</li>
+<li><strong>tail jump</strong>: 양 끝 구간에서의 급격한 점프 — 관측치 부족의 가장 흔한 증상</li>
+<li><strong>경제적 설명 가능성</strong>: 위반 구간이 사후적으로 산업 사이클, 회계 이슈 등으로 설명되는지</li>
+</ul>
+<h3 id="4_1">처리 정책의 4단계<a class="headerlink" href="#4_1" title="Permanent link">¶</a></h3>
+<p>위반이 잡음으로 판정되면, 가벼운 순서부터 점진적으로 적용한다:</p>
+<ol>
+<li><strong>허용 + 기록</strong> — 위반 폭이 무의미하게 작으면 그대로 두고 검증 보고서에 기록</li>
+<li><strong>bandwidth 확대</strong> — <span class="arithmatex">\(f\)</span>를 키워 smoothing을 더 강하게 → tail 잡음 흡수</li>
+<li><strong>구간 수 축소</strong> — percentile 구간을 더 굵게 잡아 표본 부족 자체를 해소</li>
+<li><strong>Isotonic regression 후처리</strong> — 위 셋으로 안 풀리면 단조 보정을 강제 적용</li>
+</ol>
+<div class="admonition tip">
+<p class="admonition-title">단조 보정이 필요한 경우의 적용 순서</p>
+<p>단조 후처리를 적용한다면 <strong>순서가 중요하다</strong>. 권장 순서는 다음과 같다:</p>
+<div class="arithmatex">\[
+\text{LOWESS } \hat{y} \;\rightarrow\; \text{clip}([0,1]) \;\rightarrow\; \text{monotonic projection} \;\rightarrow\; \text{final clip}
+\]</div>
+<p>먼저 cap으로 확률 범위를 잡고, 그 위에서 단조 투영을 수행한 뒤, 투영 결과가 다시 <span class="arithmatex">\([0, 1]\)</span>을 벗어났을 가능성에 대비해 한 번 더 clip을 거는 방식이다. 순서를 바꾸면 — 예를 들어 단조 투영을 먼저 하고 clip을 나중에 하면 — clip이 단조성을 깰 수 있어 의미가 없어진다.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">투명성 원칙과의 연결</p>
+<p><a href="../riskcalc/">RiskCalc 사상 절</a>에서 다룬 Moody's의 <strong>투명성(transparency) 원칙</strong> — <em>"레버리지가 증가했는데 부도 위험이 감소하는 것은 직관에 반한다"</em> — 이 바로 단조성 검증을 요구하는 근거다. 비모수의 유연성은 사상의 일관성과 충돌할 수 있고, 이 충돌을 다루는 방법이 위 4단계 정책이다. 결국 미니모델링은 <strong>데이터에 맡길 부분과 사상으로 통제할 부분을 명시적으로 분리</strong>하는 작업이다.</p>
 </div>
 
 

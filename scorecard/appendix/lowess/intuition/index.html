@@ -2806,10 +2806,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#44-lookup-table" class="md-nav__link">
+  <a href="#44-lookup" class="md-nav__link">
     <span class="md-ellipsis">
       
-        4.4 산출물의 본질: Lookup Table
+        4.4 산출물의 본질 — 두 단계 lookup이 합성되어 운영된다
       
     </span>
   </a>
@@ -2821,6 +2821,17 @@
     <span class="md-ellipsis">
       
         4.5 Smoothing 곡선과 실제 불량률의 괴리 — 의도된 설계
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#46-cap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.6 확률 범위 cap — 후처리 안전장치
       
     </span>
   </a>
@@ -4246,8 +4257,6 @@
       
         
       
-        
-      
     
     
     
@@ -4706,74 +4715,6 @@
     </li>
   
 
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-    
-    
-    
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7_4">
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../../../ml/appendix/ml-experiment/" class="md-nav__link ">
-              
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    C. 해석 가능한 ML 실험 설계
-  
-
-    
-  </span>
-  
-  
-
-            </a>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_7_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3_7_4">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    C. 해석 가능한 ML 실험 설계
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix="">
-            
               
             
           </ul>
@@ -5248,47 +5189,169 @@
 <p>Tricube 가중함수는 이렇게 빌려온 데이터에 <strong>차등 가중치</strong>를 부여한다. k개 범위 안에서 가까울수록 가중치가 크고, k번째 경계에 가까울수록 가중치가 0에 수렴한다. 범위 밖은 가중치 = 0이므로 자동으로 제외된다.</p>
 <hr>
 <h2 id="43">4.3 회귀선을 몇 번 긋는가<a class="headerlink" href="#43" title="Permanent link">¶</a></h2>
-<p>전체 관측치 수(N)만큼이 아니라, <strong>고유한(unique) x값의 수</strong>만큼 회귀를 수행한다.</p>
-<p>부채비율 50%인 관측치가 1,000개 있어도 x = 50% 지점에서 회귀는 <strong>한 번</strong>만 긋고, 그 <span class="arithmatex">\(\hat{y}\)</span>를 1,000개에 동일하게 적용한다. 재무비율이 소수점 첫째 자리까지 존재하고 0~200% 범위라면, 회귀 횟수는 최대 약 2,000회 수준이다.</p>
-<p>각 회귀에서 필요한 것은 해당 점에서의 <span class="arithmatex">\(\hat{y}\)</span> 값 <strong>하나</strong>뿐이다. 개별 회귀는 <strong>짧은 직선(1차 WLS)</strong>이지만, 포인트마다 이웃 구성과 기울기가 조금씩 달라지므로 이 <span class="arithmatex">\(\hat{y}\)</span>들을 이어붙이면 <strong>부드러운 곡선</strong>이 된다. 원을 아주 짧은 직선 조각으로 이어 그리는 것과 같은 원리다.</p>
+<p>LOWESS의 일반 알고리즘은 <em>모든 distinct x값마다</em> 회귀를 정의하지만, RiskCalc 운영에서는 그렇게 작동하지 않는다. <strong>percentile 축 위에 미리 정의된 평가점(grid points)에서만</strong> 회귀를 수행한다. 실무에서는 보통 25~50개의 percentile 구간으로 grid를 잡는다 (예: 0~2%, 2~4%, ..., 98~100%).</p>
+<p>각 평가점 — 구간의 percentile 중점 <span class="arithmatex">\(x_j\)</span> — 에서 회귀가 한 번 그어지고, 그 점에서의 <span class="arithmatex">\(\hat{y}_j\)</span>가 lookup table의 한 칸을 채운다. <strong>같은 percentile 구간에 속하는 차주들은 모두 동일한 <span class="arithmatex">\(T\)</span> 값을 부여받는다.</strong></p>
+<h3 id="distinct-x-percentile-grid">왜 distinct x마다가 아니라 percentile grid인가<a class="headerlink" href="#distinct-x-percentile-grid" title="Permanent link">¶</a></h3>
+<p>세 가지 이유가 있다:</p>
+<ol>
+<li><strong>분포 정규화</strong> — 산업·규모·회계기준에 따라 raw 비율의 분포가 극단적으로 다르다. percentile 변환을 거쳐야 LOWESS가 안정적으로 작동한다는 점은 <a href="../riskcalc/">§1.2</a>에서 다룬 "왜 백분위 변환을 먼저 하는가"의 직접적 귀결이다.</li>
+<li><strong>tail 안정성</strong> — raw 분포의 양 극단은 관측치가 희소해 회귀가 불안정하다. percentile bin은 정의상 각 구간에 일정 비율의 관측치를 담으므로 tail 구간에서도 표본이 확보된다.</li>
+<li><strong>운영 효율과 감사 가능성</strong> — 수많은 distinct 비율값마다 회귀를 도는 것은 비현실적이고, lookup table의 크기와 시점 간 비교 가능성도 통제 불가능해진다. 25~50개 grid로 고정하면 곡선이 1:1로 비교된다.</li>
+</ol>
+<h3 id="_2">개별 회귀의 형태<a class="headerlink" href="#_2" title="Permanent link">¶</a></h3>
+<p>각 평가점에서 그어지는 회귀는 <strong>짧은 1차 직선(local WLS)</strong>이고, 우리가 취하는 값은 그 점에서의 <span class="arithmatex">\(\hat{y}\)</span> 단 하나뿐이다. 평가점마다 이웃 구성과 기울기가 조금씩 달라지므로 이 25~50개 <span class="arithmatex">\(\hat{y}\)</span>를 이어붙이면 <strong>부드러운 곡선</strong>이 된다. 원을 아주 짧은 직선 조각으로 이어 그리는 것과 같은 원리다.</p>
+<div class="admonition warning">
+<p class="admonition-title">T(x)는 회귀계수가 아니라 fitted value 한 점</p>
+<p>구간 <span class="arithmatex">\(j\)</span>의 local 회귀가 <span class="arithmatex">\(\widehat{\text{bad rate}} = a_j + b_j \cdot x\)</span>로 적합되었다고 해서, 우리가 lookup table에 저장하는 값이 <span class="arithmatex">\(a_j\)</span>나 <span class="arithmatex">\(b_j\)</span>인 것은 <strong>아니다</strong>. 저장하는 값은 이 회귀선을 <strong>그 점 <span class="arithmatex">\(x_j\)</span>에서 평가한 단 하나의 fitted value</strong>다:</p>
+<div class="arithmatex">\[
+T(x_j) = a_j + b_j \cdot x_j
+\]</div>
+<p><span class="arithmatex">\(a_j\)</span>, <span class="arithmatex">\(b_j\)</span>는 그 지점만을 위한 임시 local beta이며, 다음 점으로 넘어가면 새로 적합된 <span class="arithmatex">\(a_{j+1}\)</span>, <span class="arithmatex">\(b_{j+1}\)</span>로 교체된다. 즉 <strong>계수는 버려지고 점만 남는다</strong>. 이 점들을 모아 lookup table을 채우는 것이 LOWESS 전체 산출물이다.</p>
+</div>
 <hr>
-<h2 id="44-lookup-table">4.4 산출물의 본질: Lookup Table<a class="headerlink" href="#44-lookup-table" title="Permanent link">¶</a></h2>
-<p>LOWESS로 smoothing 곡선을 한 번 추정하면, 그 결과는 <strong>x → T(x) 매핑 테이블</strong>이 된다:</p>
+<h2 id="44-lookup">4.4 산출물의 본질 — 두 단계 lookup이 합성되어 운영된다<a class="headerlink" href="#44-lookup" title="Permanent link">¶</a></h2>
+<p>LOWESS는 percentile 축에서 회귀를 도는 도구이지만, 운영 시스템이 다루는 것은 raw 재무비율이다. 이 둘을 잇는 것이 lookup table이며, <strong>개발 단계에서 두 매핑이 빌드되고 운영 단계에서는 합성된 단일 표 하나만</strong> 쓴다.</p>
+<h3 id="_3">개발 단계 — 두 매핑이 차례로 빌드된다<a class="headerlink" href="#_3" title="Permanent link">¶</a></h3>
+<p><strong>매핑 ① · raw 비율 → percentile</strong></p>
+<p>학습 데이터의 raw 비율 분포 <span class="arithmatex">\(F_X\)</span>로부터 결정되는 단순 분위수 매핑이다:</p>
 <table>
 <thead>
 <tr>
-<th>부채비율</th>
-<th style="text-align: center;">단변량 부도확률</th>
+<th style="text-align: center;">raw 부채비율</th>
+<th style="text-align: center;">percentile (학습 분포 기준)</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>48%</td>
+<td style="text-align: center;">30%</td>
+<td style="text-align: center;">25</td>
+</tr>
+<tr>
+<td style="text-align: center;">47%</td>
+<td style="text-align: center;">62</td>
+</tr>
+<tr>
+<td style="text-align: center;">50%</td>
+<td style="text-align: center;">70</td>
+</tr>
+<tr>
+<td style="text-align: center;">80%</td>
+<td style="text-align: center;">92</td>
+</tr>
+</tbody>
+</table>
+<p>이 매핑은 학습 시점의 모집단 분포에 의해 한 번 정해지면 다음 재추정 시점까지 고정된다.</p>
+<p><strong>매핑 ② · percentile grid → T</strong></p>
+<p>LOWESS가 percentile 축의 25~50개 grid 평가점에서 산출하는 lookup이다:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">percentile 구간</th>
+<th style="text-align: center;"><span class="arithmatex">\(x_{\text{center}}\)</span></th>
+<th style="text-align: center;"><span class="arithmatex">\(T\)</span> (smoothed PD)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">60~64</td>
+<td style="text-align: center;">62</td>
+<td style="text-align: center;">0.038</td>
+</tr>
+<tr>
+<td style="text-align: center;">64~68</td>
+<td style="text-align: center;">66</td>
+<td style="text-align: center;">0.041</td>
+</tr>
+<tr>
+<td style="text-align: center;">68~72</td>
+<td style="text-align: center;">70</td>
+<td style="text-align: center;">0.045</td>
+</tr>
+</tbody>
+</table>
+<p>이것이 <a href="#43">§4.3</a>에서 다룬 "각 grid 평가점에서의 fitted value 한 점"들을 모은 결과다.</p>
+<h3 id="lookup-table">운영 단계 — 합성된 단일 lookup table을 쓴다<a class="headerlink" href="#lookup-table" title="Permanent link">¶</a></h3>
+<p>실무 운영에서는 매핑 ①·②를 미리 합성해 <strong>raw 비율에서 곧장 <span class="arithmatex">\(T\)</span>로 가는 단일 lookup table</strong>을 빌드해 시스템에 적재한다:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">raw 부채비율</th>
+<th style="text-align: center;">단변량 부도확률 <span class="arithmatex">\(T(x)\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">48%</td>
 <td style="text-align: center;">0.028</td>
 </tr>
 <tr>
-<td>49%</td>
+<td style="text-align: center;">49%</td>
 <td style="text-align: center;">0.029</td>
 </tr>
 <tr>
-<td>50%</td>
+<td style="text-align: center;">50%</td>
 <td style="text-align: center;">0.030</td>
 </tr>
 <tr>
-<td>51%</td>
+<td style="text-align: center;">51%</td>
 <td style="text-align: center;">0.032</td>
 </tr>
 <tr>
-<td>52%</td>
+<td style="text-align: center;">52%</td>
 <td style="text-align: center;">0.035</td>
 </tr>
 <tr>
-<td>...</td>
+<td style="text-align: center;">...</td>
 <td style="text-align: center;">...</td>
 </tr>
 </tbody>
 </table>
-<p>실제 운영(scoring) 시점에서는 LOWESS를 다시 돌리지 않는다. 개발 단계에서 추정해둔 이 테이블에서 해당 비율값에 대응하는 변환값을 <strong>참조(lookup)</strong>하기만 하면 된다. 소매 CSS의 WoE 테이블과 본질적으로 같은 구조다 — 차이라면 WoE는 구간이 이산적이고, LOWESS는 연속적인 곡선이라 해상도가 더 촘촘하다는 점이다.</p>
+<p>신규 차주가 EDF 산출을 받으러 들어오면 절차는 다음과 같다:</p>
+<ol>
+<li><strong>변수 추출</strong> — 차주의 부채비율을 재무제표에서 읽어온다 (예: 50%)</li>
+<li><strong>변환값 룩업</strong> — 변수별 lookup table에서 50%에 대응하는 <span class="arithmatex">\(T = 0.030\)</span>을 조회한다</li>
+<li><strong>다른 비율도 동일</strong> — ROA, 유동비율, 이자보상배율 등 모형의 모든 변수가 각자의 lookup table을 거쳐 <span class="arithmatex">\(T(x_1), T(x_2), \ldots, T(x_k)\)</span>로 변환된다</li>
+<li><strong>다변량 결합</strong> — 변환값들이 <a href="../architecture/">Probit 모형</a>의 입력으로 들어가 latent score <span class="arithmatex">\(\eta = \beta_0 + \sum_k \beta_k T(x_k)\)</span>가 산출된다</li>
+<li><strong>EDF 매핑</strong> — <span class="arithmatex">\(\Phi(\eta)\)</span>에 최종 매핑 단계가 더해져 차주의 EDF가 결정된다</li>
+</ol>
+<h3 id="lowess_1">핵심 — LOWESS는 개발 시 한 번만 돈다<a class="headerlink" href="#lowess_1" title="Permanent link">¶</a></h3>
+<p>운영 시점의 비용은 <strong>단순 표 조회</strong> 외에는 없다. LOWESS 회귀는 개발 단계에서만 수행되며, 그 산출물인 lookup table이 운영 시스템에 박혀 차주 한 명당 미세초 단위로 변환을 처리한다.</p>
+<div class="admonition note">
+<p class="admonition-title">왜 운영 lookup을 raw → T 합성 형태로 두는가</p>
+<p>이론상으로는 운영 시점에 (raw → percentile → T) 두 단계로 룩업해도 결과는 같다. 하지만 두 매핑을 미리 합성해두면 다음 이점이 있다:</p>
+<ul>
+<li><strong>운영 비용 절감</strong> — 차주당 룩업이 한 번으로 줄어든다</li>
+<li><strong>검증 가독성</strong> — 모형 검증 보고서에서 "이 변수가 어떻게 변환되는가"를 raw 단위 한 표로 보여줄 수 있다 (감독당국·내부 심사용)</li>
+<li><strong>변환곡선 시각화</strong> — raw 축에서 곧장 <span class="arithmatex">\(T(x)\)</span>를 그릴 수 있어, "부채비율 X%에서 PD가 어떻게 움직이는가"를 직관적으로 설명 가능하다</li>
+</ul>
+<p>재추정 시점에는 분포 <span class="arithmatex">\(F_X\)</span>와 LOWESS 곡선이 모두 갱신되므로, 합성 lookup도 새로 빌드되어 시스템에 재배포된다.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">소매 CSS WoE와의 비교</p>
+<p>소매 CSS의 WoE 테이블과 본질적으로 같은 구조다. 차이는 두 가지뿐이다:</p>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>LOWESS 미니모델링 (기업)</th>
+<th>WoE 변환 (소매)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>개발 단계 회귀 횟수</td>
+<td>percentile grid 25~50회</td>
+<td>coarse classing 후 6~10개 구간</td>
+</tr>
+<tr>
+<td>운영 lookup 형태</td>
+<td>raw → <span class="arithmatex">\(T\)</span> 단일 표 (해상도 촘촘)</td>
+<td>raw → WoE 단일 표 (구간 이산)</td>
+</tr>
+</tbody>
+</table>
+<p>운영상 룩업 메커니즘 — "차주의 raw 값을 표에서 읽어 변환값을 받아온다" — 은 둘 다 동일하다.</p>
+</div>
 <hr>
 <h2 id="45-smoothing">4.5 Smoothing 곡선과 실제 불량률의 괴리 — 의도된 설계<a class="headerlink" href="#45-smoothing" title="Permanent link">¶</a></h2>
 <p>LOWESS smoothing 곡선은 구간별 실제 불량률(raw default rate)과 <strong>정확히 일치하지 않는다</strong>. 이 괴리는 결함이 아니라 <strong>의도된 것</strong>이다.</p>
@@ -5301,6 +5364,19 @@
 <div class="admonition tip">
 <p class="admonition-title">소매 CSS와의 대응</p>
 <p>소매 CSS의 WoE 변환에서도 동일한 원리가 작동한다. Fine classing 단계의 구간별 불량률은 들쭉날쭉하지만, coarse classing에서 구간을 합치면서 노이즈를 눌러준다. 합친 구간의 WoE와 원래 fine 구간 불량률 사이에 괴리가 발생하는 것은 정상이며, 이것이 곧 smoothing이다. LOWESS는 이 과정을 <strong>구간 합치기 대신 연속적인 가중 회귀로</strong> 수행하는 것뿐이다.</p>
+</div>
+<hr>
+<h2 id="46-cap">4.6 확률 범위 cap — 후처리 안전장치<a class="headerlink" href="#46-cap" title="Permanent link">¶</a></h2>
+<p>local WLS는 단순 선형회귀이므로, 산출된 <span class="arithmatex">\(\hat{y}\)</span>가 <strong>확률 범위 <span class="arithmatex">\([0, 1]\)</span>을 벗어날 수 있다</strong>. 특히 tail 구간에서 이웃이 부족하거나 bad rate가 한쪽으로 쏠려 있으면, 회귀선의 외삽으로 <span class="arithmatex">\(\hat{y} &lt; 0\)</span> 또는 <span class="arithmatex">\(\hat{y} &gt; 1\)</span>이 발생할 수 있다. 부도확률은 정의상 <span class="arithmatex">\([0, 1]\)</span> 안에 있어야 하므로 이 값을 그대로 두면 lookup table이 깨진다.</p>
+<p>해결은 단순하다 — 회귀가 끝난 뒤 산출값에 클립을 적용한다:</p>
+<div class="arithmatex">\[
+T(x_j) = \text{clip}\!\left(\hat{y}_j,\; p_{\min},\; p_{\max}\right)
+\]</div>
+<p>예를 들어 <span class="arithmatex">\(p_{\min} = 0.0001\)</span>, <span class="arithmatex">\(p_{\max} = 0.999\)</span>와 같이 운영상 의미 있는 하한·상한을 설정한다.</p>
+<div class="admonition note">
+<p class="admonition-title">cap을 어디에 적용하는가</p>
+<p>중요한 것은 cap이 <strong>WLS 입력 <span class="arithmatex">\(y\)</span>에 적용되는 것이 아니라, 산출된 <span class="arithmatex">\(\hat{y}\)</span>에만 적용되는 후처리 안전장치</strong>라는 점이다. 입력 <span class="arithmatex">\(y\)</span> (구간별 bad rate)는 정의상 이미 <span class="arithmatex">\([0, 1]\)</span> 안에 있으므로 클립할 이유가 없다. 회귀라는 도구가 만들어내는 산출물의 범위를 정의역에 맞게 잘라주는 것이 cap의 역할이다.</p>
+<p>이 안전장치는 logit 링크나 probit 링크처럼 <strong>출력이 자동으로 <span class="arithmatex">\([0, 1]\)</span>에 들어가는 모형</strong>과 본질적인 차이를 만든다. 일반 OLS/WLS는 link function이 없으므로 cap이 반드시 필요하고, 이는 LOWESS 미니모델링 구현의 표준 절차다.</p>
 </div>
 
 

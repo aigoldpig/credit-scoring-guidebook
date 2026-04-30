@@ -4235,8 +4235,6 @@
       
         
       
-        
-      
     
     
     
@@ -4705,74 +4703,6 @@
 
               
             
-              
-                
-  
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-    
-    
-    
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7_4">
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../../../ml/appendix/ml-experiment/" class="md-nav__link ">
-              
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    C. 해석 가능한 ML 실험 설계
-  
-
-    
-  </span>
-  
-  
-
-            </a>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_7_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3_7_4">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    C. 해석 가능한 ML 실험 설계
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix="">
-            
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
           </ul>
         </nav>
       
@@ -5202,6 +5132,84 @@
 <p>→ <strong>STEP 2 · Model (프로빗 추정)</strong> — 변환된 <span class="arithmatex">\(T(x_i)\)</span>들을 프로빗(Probit) 또는 로짓 모형에 투입. 다변량 가중치 추정.</p>
 <p>→ <strong>STEP 3 · Map (최종 매핑)</strong> — 프로빗 출력을 실제 부도확률(EDF)로 비모수적 매핑. 중심경향(central tendency) 조정.</p>
 </blockquote>
+<div class="admonition example">
+<p class="admonition-title">예시 — 차주 1명이 EDF까지 가는 흐름</p>
+<p>가상의 외감기업 A가 EDF 산출을 받는다고 하자. 이 차주의 5개 재무비율과 각 변수의 산업 percentile, 그리고 <a href="../intuition/">직관적 이해 페이지</a>에서 다룬 합성 lookup이 반환한 <span class="arithmatex">\(T(x)\)</span> 값은 다음과 같다 (가상 수치).</p>
+<p><strong>STEP 1 · Transform</strong> — 5개 변수 각각의 lookup table 조회</p>
+<table>
+<thead>
+<tr>
+<th>변수</th>
+<th style="text-align: center;">raw 값</th>
+<th style="text-align: center;">산업 percentile</th>
+<th style="text-align: center;"><span class="arithmatex">\(T(x_i)\)</span> (단변량 PD)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>부채비율</td>
+<td style="text-align: center;">50%</td>
+<td style="text-align: center;">30</td>
+<td style="text-align: center;">0.021</td>
+</tr>
+<tr>
+<td>ROA</td>
+<td style="text-align: center;">8%</td>
+<td style="text-align: center;">75</td>
+<td style="text-align: center;">0.012</td>
+</tr>
+<tr>
+<td>유동비율</td>
+<td style="text-align: center;">1.8</td>
+<td style="text-align: center;">60</td>
+<td style="text-align: center;">0.018</td>
+</tr>
+<tr>
+<td>이자보상배율</td>
+<td style="text-align: center;">4.5</td>
+<td style="text-align: center;">65</td>
+<td style="text-align: center;">0.015</td>
+</tr>
+<tr>
+<td>영업이익률</td>
+<td style="text-align: center;">12%</td>
+<td style="text-align: center;">80</td>
+<td style="text-align: center;">0.010</td>
+</tr>
+</tbody>
+</table>
+<p>부채비율 <span class="arithmatex">\(T = 0.021\)</span>은 <a href="../">정의 페이지</a>의 "한 평가점에서 LOWESS가 굴러가는 모습 — 숫자로 따라가기" 절에서 step-by-step으로 계산해본 그 값이다.</p>
+<p><strong>STEP 2 · Model (Probit)</strong> — 변환된 5개 <span class="arithmatex">\(T(x_i)\)</span>를 다변량 Probit에 투입</p>
+<p>가상의 추정된 계수 <span class="arithmatex">\(\beta_0 = -2.5\)</span>, <span class="arithmatex">\((\beta_1, \ldots, \beta_5) = (15, 20, 12, 18, 10)\)</span>을 적용하면:</p>
+<div class="arithmatex">\[
+\begin{aligned}
+\eta &amp;= \beta_0 + \sum_k \beta_k \, T(x_k) \\
+    &amp;= -2.5 + 15(0.021) + 20(0.012) + 12(0.018) + 18(0.015) + 10(0.010) \\
+    &amp;= -2.5 + 0.315 + 0.240 + 0.216 + 0.270 + 0.100 \\
+    &amp;\approx -1.36
+\end{aligned}
+\]</div>
+<p>Probit 출력 <span class="arithmatex">\(\Phi(\eta)\)</span>로 변환:</p>
+<div class="arithmatex">\[
+\Phi(-1.36) \approx 0.087
+\]</div>
+<p>즉 다변량 Probit이 추정한 차주의 부도확률은 약 <strong>8.7%</strong>다.</p>
+<p><strong>STEP 3 · Map (최종 매핑)</strong> — 실제 모집단 부도율과의 calibration 보정</p>
+<p>Probit 출력 0.087은 학습 표본에서 체계적 편향(예: tail 과대추정)이 있을 수 있어, LOWESS 기반 calibration 매핑으로 한 번 더 보정한다. 매핑이 0.087 → 0.082로 약간 낮춰준다고 가정하면, 차주 A의 최종 <strong>EDF = 0.082</strong> (약 8.2%)다.</p>
+<p><strong>요약 — raw 5개 변수 → EDF 한 줄로 압축하면</strong></p>
+<div class="highlight"><pre><span></span><code>raw (50%, 8%, 1.8, 4.5, 12%)
+    │  [STEP 1] 5개 lookup table 조회
+    ▼
+T = (0.021, 0.012, 0.018, 0.015, 0.010)
+    │  [STEP 2] β와 결합 → Probit
+    ▼
+η = -1.36  →  Φ(η) = 0.087
+    │  [STEP 3] LOWESS calibration 매핑
+    ▼
+EDF = 0.082  (외감기업 A의 최종 부도확률 8.2%)
+</code></pre></div>
+<p>운영 시점에 이 흐름은 <strong>단순 lookup 5회 + 행렬곱 1회 + 정규 CDF 1회 + lookup 1회</strong>로 끝난다 — LOWESS 회귀는 개발 단계에서만 돌고, 운영은 이 5단계 표 조회와 산술 연산으로 구성된다.</p>
+</div>
 <hr>
 <h2 id="32-step-1-transform">3.2 Step 1: Transform (미니모델링)<a class="headerlink" href="#32-step-1-transform" title="Permanent link">¶</a></h2>
 <p><a href="../">정의와 LOWESS 기초</a> 및 <a href="../riskcalc/">RiskCalc 프로세스와 사상</a>에서 상세히 다뤘다. 각 재무비율을 개별적으로 단변량 부도확률로 변환하는 단계다.</p>
@@ -5224,9 +5232,18 @@ f(\mathbf{x}, \boldsymbol{\beta}) = \beta_0 + \beta_1 \cdot T(x_1) + \beta_2 \cd
 <p>이 구조는 <strong>일반화 가법 모형(Generalized Additive Model)</strong>과 밀접하게 관련되어 있으며, Moody's는 이를 비선형 문제를 포착하되 투명성을 유지하는 강건한 모형 형태로 평가한다.</p>
 <div class="admonition note">
 <p class="admonition-title">왜 프로빗인가?</p>
-<p>본 가이드북에서 다룬 소매 CSS는 <strong>로짓(logit)</strong>, RiskCalc는 <strong>프로빗(probit)</strong>을 사용한다. 실무적 성능 차이는 거의 없고 링크 함수(<span class="arithmatex">\(\Phi^{-1}\)</span> vs <span class="arithmatex">\(\text{logit}\)</span>)만 다르다.</p>
+<p>본 가이드북에서 다룬 소매 CSS는 <strong>로짓(logit)</strong>, RiskCalc는 <strong>프로빗(probit)</strong>을 사용한다. 두 모형은 공통 구조 <span class="arithmatex">\(g(p_i) = \eta_i,\; \eta_i = \beta_0 + \sum_k \beta_k x_{ki}\)</span>를 공유하며, 차이는 link function <span class="arithmatex">\(g(\cdot)\)</span> 하나뿐이다.</p>
+<p><strong>로짓 link</strong> — odds의 자연로그를 <span class="arithmatex">\(\eta\)</span>에 매핑한다:</p>
+<div class="arithmatex">\[
+\text{logit}(p_i) = \log\!\frac{p_i}{1 - p_i} = \eta_i \quad\Longleftrightarrow\quad p_i = \frac{1}{1 + e^{-\eta_i}}
+\]</div>
+<p><strong>프로빗 link</strong> — 정규 CDF의 역함수를 <span class="arithmatex">\(\eta\)</span>에 매핑한다:</p>
+<div class="arithmatex">\[
+\text{probit}(p_i) = \Phi^{-1}(p_i) = \eta_i \quad\Longleftrightarrow\quad p_i = \Phi(\eta_i)
+\]</div>
+<p>두 곡선은 <span class="arithmatex">\(p\)</span>가 0 또는 1에 가까운 극단부에서만 미세한 차이를 보이며, 실무 성능은 사실상 동일하다.</p>
 <p>RiskCalc가 프로빗을 채택한 배경에는 <strong>Moody's KMV의 구조모형(Merton model) 전통</strong>이 있다. Merton 모형에서 기업 자산가치는 정규분포를 따르고, 자산가치가 부채 이하로 떨어지면 부도로 정의한다. 이 프레임워크에서 부도확률은 자연스럽게 <span class="arithmatex">\(\Phi\)</span>(정규 CDF)로 표현되며, RiskCalc도 같은 Moody's KMV 계열에서 출발했으므로 <strong>정규분포 기반 프레임워크와의 정합성</strong>을 위해 프로빗을 선택한 것으로 보인다.</p>
-<p>반면 소매 CSS는 <strong>통계적 판별/스코어링</strong> 전통에서 출발하여, odds ratio 해석이 직관적인 로짓이 표준이 되었다.</p>
+<p>반면 소매 CSS는 <strong>통계적 판별/스코어링</strong> 전통에서 출발하여, odds ratio 해석이 직관적인 로짓이 표준이 되었다 — 계수 <span class="arithmatex">\(\beta_k\)</span>가 그대로 "<span class="arithmatex">\(x_k\)</span> 한 단위 증가 시 log-odds 변화"로 읽히기 때문이다.</p>
 </div>
 <hr>
 <h2 id="34-step-3">3.4 Step 3: 최종 매핑<a class="headerlink" href="#34-step-3" title="Permanent link">¶</a></h2>

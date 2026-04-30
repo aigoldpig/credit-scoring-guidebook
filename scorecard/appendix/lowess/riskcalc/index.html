@@ -4213,8 +4213,6 @@
       
         
       
-        
-      
     
     
     
@@ -4683,74 +4681,6 @@
 
               
             
-              
-                
-  
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-    
-    
-    
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7_4">
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../../../ml/appendix/ml-experiment/" class="md-nav__link ">
-              
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    C. 해석 가능한 ML 실험 설계
-  
-
-    
-  </span>
-  
-  
-
-            </a>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_7_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3_7_4">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    C. 해석 가능한 ML 실험 설계
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix="">
-            
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
           </ul>
         </nav>
       
@@ -5191,6 +5121,71 @@ T(x) = \Pr(\text{default} \mid x) \tag{B.4}
 </div>
 <h3 id="percentile">왜 백분위(Percentile) 변환을 먼저 하는가<a class="headerlink" href="#percentile" title="Permanent link">¶</a></h3>
 <p>원시 비율값은 산업, 규모, 회계기준에 따라 분포가 극단적으로 다르다. 백분위 변환은 이질적인 비율값들을 <strong>0~100의 균일 척도로 정규화</strong>하여, 이후 LOWESS가 안정적으로 작동할 수 있는 기반을 만든다. 이것은 단순 순위변환이 아니라 <strong>모집단 대비 상대적 위치</strong>를 반영하는 방식이다.</p>
+<div class="admonition example">
+<p class="admonition-title">예시 — 같은 부채비율 50%, 산업이 다르면 의미가 다르다</p>
+<p>가상의 두 산업 모집단을 비교해보자. 두 산업 모두 부채비율의 분포가 다르고, 같은 raw 50%가 산업 안에서 차지하는 위치도 다르다.</p>
+<table>
+<thead>
+<tr>
+<th>산업</th>
+<th style="text-align: center;">부채비율 분포 (5/50/95 percentile)</th>
+<th style="text-align: center;">raw 50%의 산업 내 percentile</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>제조업</strong> (자산 회전이 빠른 업종)</td>
+<td style="text-align: center;">20% / 40% / 80%</td>
+<td style="text-align: center;">약 65 (높은 편)</td>
+</tr>
+<tr>
+<td><strong>부동산임대업</strong> (자본구조가 무거운 업종)</td>
+<td style="text-align: center;">60% / 120% / 250%</td>
+<td style="text-align: center;">약 12 (낮은 편)</td>
+</tr>
+</tbody>
+</table>
+<p>raw 부채비율 50%인 같은 차주라도, 제조업 안에서는 <strong>상위 35% 부도위험권</strong>에, 부동산업 안에서는 <strong>하위 12% 안전권</strong>에 위치한다. raw 비율을 그대로 다변량 모형에 넣으면 이 산업별 의미 차이가 사라지고, 부채비율 50%가 어느 산업이든 같은 위험으로 취급되는 왜곡이 발생한다.</p>
+<p>백분위 변환은 이 산업·규모 효과를 <strong>각 산업 분포 <span class="arithmatex">\(F_X^{\text{ind}}\)</span> 안에서 흡수</strong>한 뒤 LOWESS에 넘긴다. 그 결과 LOWESS가 학습하는 곡선은 "<strong>산업 정규화된 percentile 위치</strong>가 부도확률에 미치는 영향"이 되며, raw 비율의 산업별 편차에 휘둘리지 않는다.</p>
+<div class="highlight"><pre><span></span><code>raw 부채비율 50%
+    │
+    ├─ (제조업 분포 F_X 적용) ──→ percentile 65
+    │
+    └─ (부동산업 분포 F_X 적용) ─→ percentile 12
+
+각 percentile이 LOWESS 변환곡선에 들어가 서로 다른 T(x)를 반환
+</code></pre></div>
+<p><a href="../intuition/">직관적 이해 페이지</a>의 "운영 lookup이 raw 비율 → <span class="arithmatex">\(T\)</span> 단일 매핑으로 합성된다"는 함의가 여기서 분명해진다 — 산업·규모별로 분포 <span class="arithmatex">\(F_X\)</span>가 다르므로, <strong>합성된 lookup도 산업별로 별도</strong>로 빌드된다. RiskCalc가 25개 지역·산업별 모델을 운영하는 구조적 이유가 이것이다.</p>
+</div>
+<h3 id="x">구간의 대표값 — x좌표를 어떻게 잡을 것인가<a class="headerlink" href="#x" title="Permanent link">¶</a></h3>
+<p>백분위 변환 이후 구간을 정의하면, 각 구간은 percentile 축 위에서 <strong>하나의 폭</strong>으로 존재한다(예: 78%~80%). LOWESS는 연속적인 <span class="arithmatex">\(x\)</span> 좌표 위에서 작동하므로, 구간을 점 하나로 대표할 <span class="arithmatex">\(x\)</span>값이 필요하다. 후보는 세 가지다.</p>
+<table>
+<thead>
+<tr>
+<th>후보</th>
+<th>정의</th>
+<th>특성</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>백분위 중점</strong> <span class="arithmatex">\(p_{\text{mid}}\)</span></td>
+<td><span class="arithmatex">\((p_{\text{left}} + p_{\text{right}})/2\)</span></td>
+<td>구간 경계만으로 결정 — <strong>재현성·감사 가능성 우수</strong></td>
+</tr>
+<tr>
+<td><strong>관측치 평균</strong> <span class="arithmatex">\(p_{\text{mean}}\)</span></td>
+<td>구간 내 관측치의 percentile 평균</td>
+<td>구간 내 분포가 한쪽으로 쏠려 있을 때 그 쏠림을 반영</td>
+</tr>
+<tr>
+<td><strong>관측치 중앙값</strong> <span class="arithmatex">\(p_{\text{median}}\)</span></td>
+<td>구간 내 관측치의 percentile 중앙값</td>
+<td>평균보다 이상치에 강건</td>
+</tr>
+</tbody>
+</table>
+<p>실무 권장은 <strong><span class="arithmatex">\(p_{\text{mid}}\)</span>를 기본</strong>으로 채택하는 것이다. 이유는 두 가지다 — (1) 구간 경계만으로 결정되므로 데이터가 바뀌어도 lookup table의 <span class="arithmatex">\(x\)</span> 좌표가 흔들리지 않아 운영·감사가 용이하고, (2) 차후 walk-forward 검증에서 시간 단면 간 곡선을 비교할 때 좌표 일관성이 유지된다. 다만 진단 목적으로 <span class="arithmatex">\(p_{\text{mean}}\)</span>, <span class="arithmatex">\(p_{\text{median}}\)</span>을 함께 기록해두면, 구간 내 쏠림이 큰 경우 좌표 선택이 곡선 형태에 미치는 영향을 사후 점검할 수 있다.</p>
 <hr>
 <h2 id="12">1.2 사상(思想): 왜 비모수적 변환인가<a class="headerlink" href="#12" title="Permanent link">¶</a></h2>
 <p>미니모델링이라는 접근법의 기저에는 세 가지 핵심 사상이 있다.</p>
