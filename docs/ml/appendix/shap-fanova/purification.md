@@ -485,3 +485,54 @@ EBM은 2-stage 학습(round-robin → FAST)으로 main effect와 interaction을 
 | 문헌 | 내용 |
 |------|------|
 | Lengerich, Tan, Chang, Hooker, Caruana (2020) | [Purification 알고리즘](https://proceedings.mlr.press/v108/lengerich20a.html) (AISTATS) |
+
+---
+
+## 실무 주의사항 — XGBoost float32 정밀도
+
+Purification의 전제는 **F(x_i) = μ + Σ effects(x_i)**, 즉 분해된 효과의 합이 원래 모형의 예측값과 정확히 일치해야 한다는 것이다. 이 전제가 깨지면 분해 자체가 무의미하다.
+
+XGBoost에서 이 전제가 깨지는 실무적 원인이 하나 있다: **float32 정밀도 불일치**.
+
+### 문제의 원인
+
+XGBoost의 DMatrix는 데이터를 내부적으로 **float32**로 저장한다. 트리의 split threshold도 float32 정밀도로 결정된다. 그런데 모형 해석 코드에서 데이터를 float64로 로드하면, **같은 관측치가 학습 시와 해석 시에 다른 leaf로 배정**될 수 있다.
+
+예를 들어, WoE 값이 float64에서 `-0.4567890123456789`이고 float32로 변환하면 `-0.45678901`이 된다. 트리의 split threshold가 `-0.45678901` 근처에 있으면, float64 데이터는 왼쪽 자식으로, float32 데이터는 오른쪽 자식으로 배정된다. WoE 변수는 고유값이 3~10개뿐이므로, **threshold의 92%가 WoE 값과 정확히 일치**하며, 이 경계에서 대량의 관측치가 잘못 배정된다.
+
+### 증상
+
+- `eval_tree()`(해석 코드의 트리 순회)와 `model.predict()`(XGBoost 내부 트리 순회)의 결과가 일치하지 않음
+- 불일치가 **상수 차이가 아닌 관측치별로 다른 차이** — 특정 관측치만 다른 leaf에 배정되기 때문
+- Purification 후 `μ + Σ effects ≠ F(x_i)` — 분해의 완전성이 깨짐
+
+### 해결 방법: 이중 방어
+
+**1차 방어 — 데이터 소스에서 float32로 저장**
+
+WoE 변환 시점에서 값을 float32 정밀도로 저장한다. XGBoost DMatrix가 float32로 변환할 때 **추가 정밀도 손실이 발생하지 않으므로**, 학습 시와 해석 시의 leaf 배정이 동일하게 보장된다.
+
+**2차 방어 — 해석 코드에서 float32 변환 적용**
+
+Purification 코드에서 데이터를 로드한 후, XGBoost에 투입되기 전에 `float32` → `float64` 변환을 거친다:
+
+$$
+\text{da}[v] = \texttt{float64}(\texttt{float32}(\text{da}[v]))
+$$
+
+이렇게 하면 float64 컨테이너를 유지하면서도 float32 정밀도와 일치하는 값을 사용하게 된다.
+
+또한 트리의 split threshold도 동일하게 `float32` 정밀도로 변환하여 사용한다:
+
+$$
+\text{threshold} = \texttt{float64}(\texttt{float32}(\text{JSON dump threshold}))
+$$
+
+XGBoost의 JSON model dump는 threshold를 float64 표현으로 출력하지만, 실제 내부 값은 float32이다. 이 변환을 누락하면 경계값에서의 `<` vs `≥` 판정이 달라진다.
+
+!!! danger "이 방어가 없으면"
+    depth=3, 2000 trees, 65변수, 447K 관측치 환경에서 float32 방어 없이 purification을 실행하면,
+    관측치별 분해 오차의 최대값이 **10⁻¹ 수준**까지 발생한다.
+    float32 방어를 적용하면 최대 오차가 **2×10⁻⁵ 수준**(누적 부동소수점 오차)으로 억제된다.
+
+---
