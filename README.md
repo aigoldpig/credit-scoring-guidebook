@@ -17,11 +17,11 @@
 
 | Part | 주제 | 핵심 내용 |
 |:----:|------|-----------|
-| **1** | 개요 | CSS 정의·목적, 서열화 vs 분류, 모형 분류(AS/BS/Collection), Target·성과 기간 정의, 개발 파이프라인 |
+| **1** | 개요 | CSS 정의·목적, 서열화 vs 분류, 모형 분류(AS/BS/Collection), 요건 정의(Target·성과 기간·표본), 스코어 활용과 의사결정, 개발 파이프라인 |
 | **2** | 이론 | 이진 분류 정의, Odds·Logit·Sigmoid, 최대우도추정(MLE) |
-| **3** | 변수 선정 | Classing(Fine/Coarse) → WoE 변환·IV 평가 → 단변량 LR(β ≈ −WoE 증명, 유의성 검정) → 정보영역별 선정 |
+| **3** | 변수 선정 | Classing(Fine/Coarse) → WoE 변환·IV 평가 → 단변량 LR(β ≈ −WoE 증명, 유의성 검정) → 정보영역별 선정(Partial LR, β 부호 점검) |
 | **4** | 모델링 | Simple LR vs Full Model, 다운샘플링, 다변량 회귀 적합 |
-| **5** | 스코어카드 | PDO 변환·등급화, KS·AR·Gini 성능 평가, OOT 검증, 모니터링·운영, 규제 프레임워크 |
+| **5** | 스코어카드 | PDO 변환·등급화, 등급 상한·Override, KS·AR·Gini 성능 평가, OOT 검증, 모니터링·운영, 규제 프레임워크(SR 26-2·Basel·금감원) |
 | **부록** | 보충 | A. optbinning 실무 가이드 · B. 로지스틱 적합 비교 · C. LOWESS 미니모델링 · D. 기호 용어집 |
 
 ### 🤖 머신러닝
@@ -33,9 +33,9 @@
 | **1** | ML 기초 | 왜 ML인가, Bias-Variance Tradeoff, 정규화(Ridge/Lasso), Baseline 워크플로우, 데이터 분리, 피처 전처리·선택 |
 | **2** | 뉴럴넷 | 신경망 기초, LR = 단일 뉴런, TabNet, CNN·RNN |
 | **3** | 트리 앙상블 | CART → Bagging/RF → Bias-Variance → Boosting 기초·심화 → XGBoost/LightGBM → 하이퍼파라미터 튜닝 |
-| **4** | 해석과 설명 | 해석 가능성, SHAP 실무, Surrogate Model, 1-Depth GBM·EBM, 도구·구현 |
-| **5** | 모델 검증 | 모델 검증·모니터링, 규제 프레임워크 |
-| **부록** | 보충 | A. SHAP과 Functional ANOVA — Non-identifiability, fANOVA 분해, Purification, SHAP vs fANOVA |
+| **4** | 해석과 설명 | 해석 가능성(2-way·단조·점수표 환산), SHAP 이론, 1-Depth GBM 스코어카드, EBM(GA²M), fANOVA와 Purification, 도구·구현, ML 해석을 고민한 기록 |
+| **5** | 모델 검증 | 모델 검증·모니터링, 규제 프레임워크(SR 26-2·EU AI Act·국내 금융 AI 가이드라인) |
+| **부록** | 보충 | A. SHAP과 Functional ANOVA — Non-identifiability, fANOVA 분해, Purification, SHAP vs fANOVA · B. 변수 상관과 모형 해석 — Observational vs Interventional, Joint vs Product Measure, SHAP의 두 모드, 독립 가정의 한계 |
 
 ### 🏦 여신 프로세스
 
@@ -58,7 +58,7 @@
 |------|------|
 | [MkDocs Material](https://squidfunk.github.io/mkdocs-material/) | 정적 사이트 생성 |
 | MathJax 3 | 수식 렌더링 |
-| matplotlib | Chart.js → 정적 차트 변환 |
+| matplotlib | 정적 차트 생성 (가상 데이터 기반) |
 | GitHub Pages | 배포 |
 | Claude Code | 문서 작성 보조 |
 

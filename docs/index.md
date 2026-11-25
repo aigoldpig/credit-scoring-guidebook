@@ -50,7 +50,7 @@ CB정보와 대안정보 기반의 신용평가모형 개발을 진행하고 있
 <div class="card" markdown>
 <span class="card-part">① 개요</span>
 <div class="card-title"><a href="scorecard/part1_overview/">신용평가모형 개요</a></div>
-<div class="card-desc">CSS의 정의·목적, 분류가 아닌 서열화, 모형 분류(AS/BS/Collection), Target 정의, 성과 기간 설정, 개발 프로세스 Overview</div>
+<div class="card-desc">CSS의 정의·목적, 분류가 아닌 서열화, 모형 분류(AS/BS/Collection), Target 정의, 성과 기간 설정, 스코어 활용과 의사결정, 개발 프로세스 Overview</div>
 </div>
 
 <div class="card" markdown>
@@ -74,7 +74,7 @@ CB정보와 대안정보 기반의 신용평가모형 개발을 진행하고 있
 <div class="card" markdown>
 <span class="card-part">⑤ 스코어카드</span>
 <div class="card-title"><a href="scorecard/part5_scorecard/">변환 · 검증 · 모니터링 · 규제</a></div>
-<div class="card-desc">스코어카드 변환·등급화, KS·AR·Gini 성능 평가, OOT 검증, PSI·CSI 모니터링과 리캘리브레이션, SR 26-2·Basel·금감원 규제 프레임워크</div>
+<div class="card-desc">스코어카드 변환·등급화, 등급 상한·Override, KS·AR·Gini 성능 평가, OOT 검증, PSI·CSI 모니터링과 리캘리브레이션, SR 26-2·Basel·금감원 규제 프레임워크</div>
 </div>
 
 <div class="card" markdown>

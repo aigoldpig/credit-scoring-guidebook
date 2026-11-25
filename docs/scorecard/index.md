@@ -17,11 +17,11 @@ title: 전통 스코어카드
 
 | 순서 | 주제 | 핵심 내용 |
 |:---:|------|----------|
-| 1 | [개요](part1_overview/index.md) | CSS의 정의·분류, 서열화 vs 분류, 요건 정의, 개발 파이프라인 |
+| 1 | [개요](part1_overview/index.md) | CSS의 정의·분류, 서열화 vs 분류, 요건 정의, 스코어 활용과 의사결정, 개발 파이프라인 |
 | 2 | [이론](part2_theory/index.md) | 이진 분류, Logit 변환, 최대우도추정(MLE) |
 | 3 | [변수 선정](part3_variable_selection/index.md) | Fine/Coarse Classing, WoE/IV, 단변량 LR, 정보영역별 선정 |
 | 4 | [모델링](part4_modeling/index.md) | Simple LR vs Full Model, 다변량 회귀 |
-| 5 | [스코어카드](part5_scorecard/index.md) | 스코어카드 변환·등급화, 성능 평가, OOT 검증, 모니터링, 규제 |
+| 5 | [스코어카드](part5_scorecard/index.md) | 스코어카드 변환·등급화, 등급 상한·Override, 성능 평가, OOT 검증, 모니터링, 규제 |
 | 부록 | [부록](appendix/index.md) | optbinning 가이드, 로지스틱 적합 비교, LOWESS 미니모델링, 기호 용어집 |
 
 ---
@@ -46,7 +46,7 @@ title: 전통 스코어카드
 | **모형** | 로지스틱 회귀 | 트리 앙상블 (RF, GBM, XGB, LGBM) |
 | **변수 선정** | WoE + IV | Feature Importance + SHAP |
 | **구간화** | 수작업 Classing | 트리 split이 자동 수행 |
-| **해석** | 점수표 = 해석 | SHAP = 사후 해석 |
+| **해석** | 점수표 = 해석 | SHAP 사후 해석, 또는 구조 제약 모형(1-Depth GBM·EBM)을 점수표로 환산 |
 | **규제** | 규제모형 표준 | 챌린저 모형 / 하이브리드 |
 
 !!! tip "다음 섹션"
