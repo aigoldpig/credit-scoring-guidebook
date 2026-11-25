@@ -5122,37 +5122,39 @@
 </tr>
 </tbody>
 </table>
-<p>모형의 목표는 차주의 특성 벡터 <span class="arithmatex">\(\mathbf{x} = (x_1, x_2, \ldots, x_k)\)</span>가 주어졌을 때, 불량 발생 확률 <span class="arithmatex">\(P(y=1 \mid \mathbf{x})\)</span>를 추정하는 것이다. <strong>불량률(Bad Rate)</strong>은 전체 관찰 대상 중 Bad로 분류된 비율이다.</p>
+<p>모형의 목표는 차주의 특성 벡터 <span class="arithmatex">\(\mathbf{x} = (x_1, x_2, \ldots, x_k)\)</span>가 주어졌을 때, 불량 발생 확률 <span class="arithmatex">\(P(y=1 \mid \mathbf{x})\)</span>를 추정하는 것이다. 변수를 고려하지 않은 모집단 전체의 불량 확률 <span class="arithmatex">\(p = P(y=1)\)</span>은 표본의 <strong>불량률(Bad Rate)</strong>, 즉 관찰 대상 중 Bad로 분류된 비율로 추정한다.</p>
 <div class="arithmatex">\[
-p = P(y=1) = \frac{N_{\text{Bad}}}{N_{\text{Total}}}, \quad 0 \leq p \leq 1
+\hat{p} = \frac{N_{\text{Bad}}}{N_{\text{Total}}}, \quad 0 \leq \hat{p} \leq 1
 \]</div>
 <div class="admonition note">
 <p class="admonition-title">개요 참조</p>
-<p>Bad/Good/Indeterminate 정의, 성과 기간 설정(Vintage·Roll Rate 분석) 등 모형 개발의 요건 정의에 관한 내용은 <a href="../../part1_overview/">개요</a>에서 상세히 다루고 있다.</p>
+<p>Bad/Good/Indeterminate 정의, 성과 기간 설정(Vintage·Roll Rate 분석) 등 모형 개발의 요건 정의에 관한 내용은 <a href="../../part1_overview/requirements/">개요 — 요건 정의</a>에서 상세히 다루고 있다.</p>
 </div>
 <h2 id="12">1.2 왜 선형회귀를 직접 쓸 수 없는가<a class="headerlink" href="#12" title="Permanent link">¶</a></h2>
-<p>선형회귀 모형 <span class="arithmatex">\(\hat{y} = \beta_0 + \beta_1 x_1 + \cdots + \beta_k x_k\)</span>를 직접 이진 결과(0/1)에 적용하면 세 가지 구조적 문제가 발생한다.</p>
+<p>선형회귀 모형 <span class="arithmatex">\(\hat{y} = \beta_0 + \beta_1 x_1 + \cdots + \beta_k x_k\)</span>를 직접 이진 결과(0/1)에 적용하면(선형확률모형, Linear Probability Model) 세 가지 구조적 문제가 발생한다.</p>
 <p><a class="glightbox" data-type="image" data-width="100%" data-height="auto" href="../images/linear_vs_logistic.png" data-desc-position="bottom"><img alt="선형회귀 vs 로지스틱 회귀: 이진 분류에서의 비교" src="../images/linear_vs_logistic.png"></a></p>
 <hr>
 <p><strong>① 예측값이 확률 범위를 벗어난다</strong></p>
 <p>선형회귀 예측값은 <span class="arithmatex">\((-\infty, +\infty)\)</span> 범위를 가지지만, 확률은 반드시 <span class="arithmatex">\([0, 1]\)</span> 안에 있어야 한다. 예측값이 음수이거나 1을 초과하면 확률로 해석할 수 없다.</p>
 <hr>
 <p><strong>② 오차의 통계적 가정이 깨진다</strong></p>
-<p>선형회귀(OLS)는 "모든 관측치의 오차 분산이 동일하고(등분산), 오차가 정규 분포를 따른다"는 가정 위에 성립한다. 그런데 결과값이 0 아니면 1뿐인 이진 변수에서는 이 가정이 <strong>구조적으로 성립할 수 없다.</strong></p>
+<p>OLS 추정과 그 위에서 이루어지는 통계적 추론(<span class="arithmatex">\(t\)</span>-검정, <span class="arithmatex">\(F\)</span>-검정)은 "모든 관측치의 오차 분산이 동일하다(등분산)"는 가정에 기대고, 소표본에서 정확한 추론을 하려면 "오차가 정규 분포를 따른다"는 가정까지 필요하다. 그런데 결과값이 0 아니면 1뿐인 이진 변수에서는 이 가정들이 <strong>구조적으로 성립할 수 없다.</strong></p>
 <ul>
 <li><strong>이분산성</strong>: 불량 확률이 50%인 차주는 예측 불확실성이 최대이고, 거의 확실한 Good/Bad 차주는 불확실성이 작다. 즉 차주마다 오차 분산이 다르다.</li>
-<li><strong>비정규 잔차</strong>: 실제값이 0 또는 1 두 가지뿐이므로, 잔차도 두 덩어리로만 나뉘어 정규 분포가 될 수 없다.</li>
+<li><strong>비정규 잔차</strong>: 실제값이 0 또는 1 두 가지뿐이므로, 주어진 <span class="arithmatex">\(\mathbf{x}\)</span>에서 잔차도 두 값으로만 나뉘어 정규 분포가 될 수 없다.</li>
 </ul>
-<p>이 때문에 OLS 계수 추정이 비효율적이 되고, <span class="arithmatex">\(t\)</span>-검정·<span class="arithmatex">\(F\)</span>-검정 등 통계적 추론도 신뢰할 수 없게 된다.</p>
+<p>이분산성 때문에 OLS는 더 이상 최소분산 추정량이 아니게 되고, 보통의 표준오차 공식이 틀려져 <span class="arithmatex">\(t\)</span>-검정·<span class="arithmatex">\(F\)</span>-검정 결과를 그대로 믿을 수 없다.</p>
 <details class="note">
 <summary>수학적 도출 — 왜 분산이 관측치마다 다른가</summary>
-<p>선형회귀(OLS)가 최적의 추정량(BLUE)이 되려면 <strong>Gauss-Markov 정리</strong>의 조건을 만족해야 한다:</p>
+<p>OLS가 선형 불편 추정량 중 분산이 가장 작은 추정량(BLUE)이 된다는 <strong>Gauss-Markov 정리</strong>의 조건은 다음과 같다.</p>
 <ol>
-<li><strong>등분산</strong> — 모든 관측치의 오차 분산이 동일: <span class="arithmatex">\(\text{Var}(\epsilon_i) = \sigma^2\)</span></li>
-<li><strong>정규 잔차</strong> — 오차가 정규 분포를 따름: <span class="arithmatex">\(\epsilon_i \sim N(0, \sigma^2)\)</span></li>
-<li><strong>선형성</strong> — 종속변수가 독립변수의 선형 결합으로 표현됨</li>
+<li><strong>선형성</strong> — 종속변수가 계수에 대해 선형인 모형으로 표현됨</li>
+<li><strong>외생성</strong> — 오차의 조건부 기댓값이 0: <span class="arithmatex">\(E[\epsilon_i \mid \mathbf{X}] = 0\)</span></li>
+<li><strong>등분산·무상관</strong> — 모든 관측치의 오차 분산이 같고 서로 상관이 없음: <span class="arithmatex">\(\text{Var}(\epsilon_i \mid \mathbf{X}) = \sigma^2\)</span></li>
+<li><strong>완전 계수</strong> — 설명변수 사이에 완전한 선형 종속이 없음</li>
 </ol>
-<p><span class="arithmatex">\(y_i \in \{0,1\}\)</span>은 베르누이 분포를 따르므로:</p>
+<p>오차의 <strong>정규성은 Gauss-Markov 정리의 조건이 아니다.</strong> 정규성은 소표본에서 <span class="arithmatex">\(t\)</span>·<span class="arithmatex">\(F\)</span> 분포를 이용한 정확한 추론을 할 때 추가로 필요한 가정이다.</p>
+<p>이진 결과에서 깨지는 것은 3번(등분산)이다. <span class="arithmatex">\(y_i \in \{0,1\}\)</span>은 베르누이 분포를 따르므로:</p>
 <div class="arithmatex">\[
 E[y_i] = p_i, \quad \text{Var}(y_i) = p_i(1-p_i)
 \]</div>
@@ -5194,8 +5196,11 @@ E[y_i] = p_i, \quad \text{Var}(y_i) = p_i(1-p_i)
 </tr>
 </tbody>
 </table>
-<p><span class="arithmatex">\(p=0.5\)</span>에서 분산이 최대이고, 0이나 1에 가까울수록 분산이 줄어든다. 이것이 등분산 가정 위반(이분산성)의 수학적 근거다.</p>
+<p><span class="arithmatex">\(p=0.5\)</span>에서 분산이 최대이고, 0이나 1에 가까울수록 분산이 줄어든다. 이것이 등분산 가정 위반(이분산성)의 수학적 근거다. 게다가 확률을 직선으로 놓는 선형성 자체도, 확률이 0과 1 근처에서 포화되는 현실과 맞지 않는다(①).</p>
 </details>
+<hr>
+<p><strong>③ 확률과 설명변수의 관계가 직선이 아니다</strong></p>
+<p>변수 값이 한 단위 바뀔 때 불량 확률이 늘 같은 폭으로 움직인다는 선형확률모형의 가정은 비현실적이다. 확률이 이미 1%인 우량 차주와 50%인 차주에게 같은 변화가 같은 폭(예: +5%p)의 확률 변화를 준다고 보기 어렵다. 실제로는 확률이 0이나 1에 가까워질수록 변화 폭이 줄어드는 S자형 관계가 자연스럽다.</p>
 <hr>
 <div class="admonition warning">
 <p class="admonition-title">결론 — Logit 변환이 왜 이 문제를 해결하는가</p>
@@ -5206,29 +5211,30 @@ E[y_i] = p_i, \quad \text{Var}(y_i) = p_i(1-p_i)
 \]</div>
 <p>이 변환을 거치면:</p>
 <ul>
-<li><strong>범위 문제 해소</strong> — 변환된 값이 <span class="arithmatex">\((-\infty, +\infty)\)</span>이므로, 선형회귀의 예측값 범위와 일치한다.</li>
+<li><strong>범위 문제 해소</strong> — 변환된 값이 <span class="arithmatex">\((-\infty, +\infty)\)</span>이므로, 선형 결합의 범위와 일치한다.</li>
+<li><strong>S자형 관계</strong> — log-odds 공간에서의 직선이 확률 공간에서는 S자 곡선이 되어, 0과 1 근처의 포화를 자연스럽게 표현한다.</li>
 <li><strong>회귀 프레임워크 적용 가능</strong> — "Log Odds = <span class="arithmatex">\(\beta_0 + \beta_1 x_1 + \cdots\)</span>" 형태로, 익숙한 선형 결합 구조를 그대로 쓸 수 있다.</li>
-<li><strong>추정 방식 전환</strong> — OLS 대신 <strong>MLE(최대우도추정)</strong>를 사용하므로, 등분산·정규 잔차 가정이 애초에 필요하지 않다.</li>
+<li><strong>추정 방식 전환</strong> — OLS 대신 <strong>MLE(최대우도추정)</strong>를 사용하며, 베르누이 분포를 직접 모형화하므로 등분산·정규 잔차 가정이 애초에 필요하지 않다.</li>
 </ul>
 <p>즉 Logit 변환은 "확률을 직접 예측"하는 대신 "Log Odds를 예측"하는 문제로 바꿔서, 선형회귀의 구조적 한계를 우회한다. 이것이 <strong>로지스틱 회귀</strong>의 출발점이다.</p>
 </div>
 <div class="admonition success">
 <p class="admonition-title">로지스틱 회귀의 주요 가정 — OLS와 비교</p>
-<p>위에서 선형회귀(OLS)가 등분산·정규 잔차·선형성이라는 엄격한 가정을 요구함을 보았다. 로지스틱 회귀는 MLE를 사용하므로 <strong>등분산과 정규 잔차 가정이 필요 없다.</strong> 대신 아래 조건을 충족해야 한다.</p>
+<p>위에서 OLS가 등분산(그리고 소표본 추론을 위한 정규 잔차)을 전제함을 보았다. 로지스틱 회귀는 베르누이 분포를 직접 모형화하고 MLE를 사용하므로 <strong>등분산과 정규 잔차 가정이 필요 없다.</strong> 대신 아래 조건을 충족해야 한다.</p>
 <table>
 <thead>
 <tr>
-<th>OLS 가정</th>
+<th>OLS의 가정</th>
 <th>로지스틱 회귀에서는?</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>등분산 (<span class="arithmatex">\(\text{Var}(\epsilon_i) = \sigma^2\)</span>)</td>
-<td><strong>불필요</strong> — MLE가 이분산성을 자체 처리</td>
+<td><strong>불필요</strong> — 분산 <span class="arithmatex">\(p_i(1-p_i)\)</span>가 모형에 내장되어 있고, MLE가 이를 반영</td>
 </tr>
 <tr>
-<td>정규 잔차 (<span class="arithmatex">\(\epsilon_i \sim N\)</span>)</td>
+<td>정규 잔차 (추론용)</td>
 <td><strong>불필요</strong> — 베르누이 분포를 직접 모형화</td>
 </tr>
 <tr>
@@ -5240,10 +5246,10 @@ E[y_i] = p_i, \quad \text{Var}(y_i) = p_i(1-p_i)
 <p>추가로 필요한 가정:</p>
 <ul>
 <li><strong>반응변수의 이진성:</strong> <span class="arithmatex">\(y \in \{0, 1\}\)</span>로 이진 분류여야 한다.</li>
-<li><strong>관측치 간 독립성:</strong> 각 관측치 <span class="arithmatex">\((y_i, \mathbf{x}_i)\)</span>는 서로 독립이어야 한다.</li>
-<li><strong>Log-odds와 독립변수 간 선형 관계:</strong> <span class="arithmatex">\(\text{logit}(p) = \beta_0 + \boldsymbol{\beta}^\top\mathbf{x}\)</span>가 성립해야 한다. 이 가정이 WoE(Weight of Evidence) 변환의 이론적 근거이며, <a href="../../part3_variable_selection/classing/">Classing</a>에서 상세히 다룬다.</li>
+<li><strong>관측치 간 독립성:</strong> 각 관측치 <span class="arithmatex">\((y_i, \mathbf{x}_i)\)</span>는 서로 독립이어야 한다. 같은 차주가 여러 기준월에 반복 등장하는 BS 표본처럼 이 가정이 약해지는 경우에는 표준오차 해석에 주의한다.</li>
+<li><strong>Log-odds와 독립변수 간 선형 관계:</strong> <span class="arithmatex">\(\text{logit}(p) = \beta_0 + \boldsymbol{\beta}^\top\mathbf{x}\)</span>가 성립해야 한다. 원시 변수와 log-odds의 관계가 곡선이면 이 가정이 깨지는데, 변수를 구간화해 구간별 WoE(구간의 log-odds 차이)로 바꾸어 투입하면 구간 단위에서 선형성이 성립한다. 이것이 WoE 변환을 쓰는 이론적 근거이며, <a href="../../part3_variable_selection/classing/">Classing</a>에서 상세히 다룬다.</li>
 <li><strong>다중공선성이 심하지 않을 것:</strong> 독립변수 간 높은 상관관계는 계수 추정을 불안정하게 만든다.</li>
-<li><strong>완전분리(Complete Separation) 부재:</strong> 특정 변수 조합이 Good/Bad를 완벽히 분리하면 MLE가 수렴하지 않는다.</li>
+<li><strong>완전분리(Complete Separation) 부재:</strong> 특정 변수 조합이 Good/Bad를 완벽히 분리하면 우도가 계수를 무한히 키울수록 계속 커져 <strong>유한한 MLE가 존재하지 않는다.</strong> 일부 구간에서만 완벽히 분리되는 준완전분리(Quasi-complete Separation)도 같은 문제를 일으킨다. Bad가 0건인 구간이 있는 변수에서 흔히 발생한다.</li>
 </ul>
 </div>
 

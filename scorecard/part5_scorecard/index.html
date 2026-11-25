@@ -5037,7 +5037,7 @@
 <blockquote>
 <p><strong>① 스코어카드 변환 (Anchor Score + PDO)</strong> →
 <strong>② 등급 설계 (Rating Grade)</strong> →
-<strong>③ 성능 평가 (KS · AR · Gini · PSI)</strong> →
+<strong>③ 성능 평가 (KS · AR · PSI)</strong> →
 <strong>④ OOT 검증</strong> →
 <strong>⑤ 모니터링과 운영 (CSI · Back-testing · 리캘리브레이션)</strong> →
 <strong>⑥ 규제 프레임워크</strong></p>
@@ -5059,13 +5059,13 @@
 </tr>
 <tr>
 <td>2</td>
-<td><a href="performance-ks-ar-gini/">성능 평가 (KS·AR·Gini)</a></td>
-<td>KS, AR, Gini, PSI로 모형을 어떻게 검증하는가?</td>
+<td><a href="performance-ks-ar-gini/">성능 평가 (KS·AR)</a></td>
+<td>KS, AR(= Gini), PSI로 모형을 어떻게 검증하는가? 벤치마크는?</td>
 </tr>
 <tr>
 <td>3</td>
 <td><a href="oot-validation/">OOT 검증</a></td>
-<td>미래 데이터에서도 모형이 유효한지 어떻게 확인하는가?</td>
+<td>미래 데이터에서도 모형이 유효한지 어떻게 확인하는가? 허용폭은?</td>
 </tr>
 <tr>
 <td>4</td>
@@ -5075,13 +5075,13 @@
 <tr>
 <td>5</td>
 <td><a href="regulatory-framework/">규제 프레임워크</a></td>
-<td>SR 11-7, Basel IRB, 국내 규제의 요구사항은?</td>
+<td>미국 모형리스크 지침, Basel IRB, 국내 규제의 요구사항은?</td>
 </tr>
 </tbody>
 </table>
 <div class="admonition info">
 <p class="admonition-title">Odds 방향: Good Odds</p>
-<p>스코어카드 변환부터는 <strong>Good Odds</strong> <span class="arithmatex">\((1-p)/p\)</span>를 사용한다. 점수가 높을수록 우량 고객임을 의미하도록 설계하기 위함이다.</p>
+<p>스코어카드 변환부터는 <strong>Good Odds</strong> <span class="arithmatex">\((1-p)/p\)</span>를 사용한다. 점수가 높을수록 우량 고객임을 의미하도록 설계하기 위함이다. 계수는 다시 적합하지 않는다 — Part 4의 Bad logit 계수(음수)를 그대로 쓰고 <span class="arithmatex">\(\ln(\text{Good Odds}) = -\text{logit}_{\text{Bad}}\)</span>로 부호만 뒤집는다.</p>
 </div>
 
 

@@ -3989,10 +3989,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#53-variance-decomposition" class="md-nav__link">
+  <a href="#53" class="md-nav__link">
     <span class="md-ellipsis">
       
-        5.3 Variance Decomposition — "교호작용이 실제로 중요한가?"
+        5.3 분해의 기준 — 어떤 분포(측도)로 나누는가
       
     </span>
   </a>
@@ -4000,10 +4000,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#54-purification" class="md-nav__link">
+  <a href="#54-variance-decomposition" class="md-nav__link">
     <span class="md-ellipsis">
       
-        5.4 Purification — 효과 누출 보정
+        5.4 Variance Decomposition — "교호작용이 실제로 중요한가?"
       
     </span>
   </a>
@@ -4011,10 +4011,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#55-model-complexity-interpretability-trade-off" class="md-nav__link">
+  <a href="#55-purification" class="md-nav__link">
     <span class="md-ellipsis">
       
-        5.5 Model Complexity ↔ Interpretability Trade-off
+        5.5 Purification — 효과 누출 보정
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#56-model-complexity-interpretability-trade-off" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.6 Model Complexity ↔ Interpretability Trade-off
       
     </span>
   </a>
@@ -5132,70 +5143,16 @@
 
 
 <h1 id="fanova-purification">fANOVA 개념과 Purification<a class="headerlink" href="#fanova-purification" title="Permanent link">¶</a></h1>
-<p>SHAP이 개별 예측을 변수별로 <strong>분배</strong>하는 도구라면, Functional ANOVA(fANOVA)는 모형의 예측 함수 자체를 주효과와 교호작용으로 <strong>분리</strong>하는 프레임워크다. 이 페이지에서는 fANOVA의 핵심 아이디어와 Purification을 직관 수준에서 다루고, 궁극적으로 <strong>SHAP과 fANOVA의 차이를 이해한 뒤 실무에서 둘을 어떻게 조합해 쓸 것인가</strong>를 검토하는 것이 목표다.</p>
+<p>SHAP이 개별 예측을 변수별로 <strong>분배</strong>하는 도구라면, Functional ANOVA(fANOVA)는 모형의 예측 함수 자체를 주효과와 교호작용으로 <strong>분리</strong>하는 프레임워크다. 이 페이지는 fANOVA와 Purification을 <strong>직관 수준</strong>에서 다루고, SHAP과의 차이와 실무에서 쓸 때의 주의점을 정리한다. 수학적 정의와 알고리즘은 <a href="../../appendix/shap-fanova/">부록 A: SHAP과 Functional ANOVA</a>에, 변수가 상관되어 있을 때의 문제는 <a href="../../appendix/correlation-interpretation/">부록 B: 변수 상관과 모형 해석</a>에 있다.</p>
 <hr>
 <h2 id="51-anova">5.1 왜 "ANOVA"인가<a class="headerlink" href="#51-anova" title="Permanent link">¶</a></h2>
-<h3 id="anova">통계학의 ANOVA<a class="headerlink" href="#anova" title="Permanent link">¶</a></h3>
-<p><strong>언제 쓰는가?</strong> — 두 집단의 평균 비교는 t-test로 충분하지만, <strong>세 집단 이상</strong>의 평균을 동시에 비교해야 할 때 ANOVA(Analysis of Variance)를 사용한다.</p>
-<p><strong>가설 구조:</strong></p>
-<ul>
-<li><span class="arithmatex">\(H_0\)</span> (귀무가설): <span class="arithmatex">\(\mu_{\text{사원}} = \mu_{\text{대리}} = \mu_{\text{과장}} = \mu_{\text{부장}}\)</span> — 모든 집단의 평균이 같다</li>
-<li><span class="arithmatex">\(H_1\)</span> (대립가설): 적어도 하나의 집단 평균이 다르다</li>
-</ul>
-<p>예를 들어 "직급이 소득에 영향을 미치는가?"를 검정한다고 하자. 사원·대리·과장·부장의 소득 데이터를 모았을 때, 소득이 사람마다 다른 이유는 크게 두 가지다:</p>
-<ul>
-<li><strong>그룹 간 차이(SSB)</strong> — 직급이 달라서 생기는 소득 차이 (사원 평균 vs 부장 평균)</li>
-<li><strong>그룹 내 차이(SSW)</strong> — 같은 직급 안에서도 사람마다 다른 소득 차이 (같은 과장끼리의 편차)</li>
-</ul>
+<p>통계학의 분산분석(ANOVA)은 "직급이 소득에 영향을 주는가?" 같은 질문에 답하기 위해, 소득의 총 변동을 <strong>요인별 변동</strong>(직급 간 차이)과 <strong>나머지</strong>(직급 내 차이)로 쪼갠다. 요인이 둘이면 "직급 효과 + 성별 효과 + 직급×성별 교호작용 + 잔차"로 나눈다. 핵심은 <strong>총 변동을 요인별로 쪼개고, 주효과와 교호작용을 분리하는 구조</strong>다.</p>
+<p>Functional ANOVA는 같은 아이디어를 데이터가 아니라 <strong>모형의 예측 함수</strong> <span class="arithmatex">\(\hat{f}\)</span>에 적용한다.</p>
 <div class="arithmatex">\[
-\underbrace{\text{소득의 총 변동}}_{\text{SST}} = \underbrace{\text{그룹 간 차이}}_{\text{SSB}} + \underbrace{\text{그룹 내 차이}}_{\text{SSW}}
+\hat{f}(\mathbf{x}) = f_0 + \sum_j f_j(x_j) + \sum_{j&lt;k} f_{jk}(x_j, x_k) + \cdots
+\tag{1}
 \]</div>
-<p><strong>검정 논리</strong> — 평균이 같은지를 직접 비교하는 게 아니라, <strong>분산의 비율</strong>로 간접 판단한다:</p>
-<div class="arithmatex">\[
-F = \frac{\text{그룹 간 분산}}{\text{그룹 내 분산}}
-\]</div>
-<p>직급이 소득에 진짜 영향이 있다면 직급별 평균이 크게 벌어지므로 그룹 간 분산이 커지고, F가 커진다. 반대로 영향이 없다면 직급별 평균이 비슷하므로 F ≈ 1에 머문다. 즉, <strong>"그룹 간 흩어짐이 그룹 내 흩어짐에 비해 유난히 큰가?"</strong>를 보고 <span class="arithmatex">\(H_0\)</span>를 기각할지 판단하는 것이다. "평균 비교"를 직접 하지 않고 <strong>분산의 비율이라는 우회 경로</strong>로 검정하기 때문에 이름이 "분산 분석"이다.</p>
-<p>2-way ANOVA에서는 "직급 효과 + 성별 효과 + 직급×성별 교호작용 + 잔차"로 분해한다. 여기서 핵심은 <strong>총 변동을 요인별로 쪼개고, main effect와 interaction을 분리하는 구조</strong>다.</p>
-<h3 id="functional">"Functional"이 붙은 이유<a class="headerlink" href="#functional" title="Permanent link">¶</a></h3>
-<p>Functional ANOVA는 같은 분산 분해 아이디어를 <strong>함수</strong>(모형의 예측 함수 <span class="arithmatex">\(\hat{f}\)</span>)에 적용한 것이다. 전통 ANOVA가 "직급이 소득 변동을 얼마나 설명하는가?"를 물었다면, fANOVA는 <strong>"소득 변수가 모형 출력의 변동을 얼마나 설명하는가?"</strong>를 묻는다. 분해 대상이 데이터에서 함수로 바뀌었을 뿐, <strong>"총 변동을 요인별로 쪼갠다"</strong>는 사상은 동일하다 — 그래서 ANOVA라는 이름이 나오지 않았을까 싶다.</p>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>전통 ANOVA</th>
-<th>Functional ANOVA</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>분해 대상</strong></td>
-<td>데이터의 분산 (관측값의 흩어짐)</td>
-<td><strong>함수</strong>의 분산 (모형 출력의 흩어짐)</td>
-</tr>
-<tr>
-<td><strong>요인</strong></td>
-<td>그룹을 나누는 범주형 변수 (직급, 성별)</td>
-<td>모형의 입력 변수 (소득, DTI, ...)</td>
-</tr>
-<tr>
-<td><strong>묻는 질문</strong></td>
-<td>"직급별로 소득 평균이 <strong>정말 다른가?</strong>"</td>
-<td>"소득 변수가 <strong>모형 출력 변동</strong>의 몇 %를 설명하는가?"</td>
-</tr>
-<tr>
-<td><strong>교호작용</strong></td>
-<td>직급×성별 interaction</td>
-<td>소득×DTI interaction</td>
-</tr>
-<tr>
-<td><strong>핵심 산출물</strong></td>
-<td>F 통계량 → 유의성 판정</td>
-<td>주효과 함수 <span class="arithmatex">\(f_j\)</span> + 교호작용 함수 <span class="arithmatex">\(f_{jk}\)</span></td>
-</tr>
-</tbody>
-</table>
-<p>한 가지 더 — 전통 ANOVA는 <strong>정규성, 등분산</strong> 등 분포 가정이 필요하다. 가정이 깨지면 F 검정의 신뢰성이 떨어진다. 반면 fANOVA는 분포 가정이 필요 없다. 트리 모형의 경우, 학습 시 이미 결정된 bin과 각 bin의 샘플 수(empirical distribution)를 그대로 가중치로 사용하기 때문에 <strong>"분포를 정의한다"는 별도 단계 자체가 없다.</strong> 이것은 fANOVA가 전통 ANOVA의 사상만 빌려왔을 뿐, 통계적 검정이 아니라 <strong>함수 분해 도구</strong>이기 때문에 가능한 일이다.</p>
-<p>이 아이디어는 Hoeffding(1948)이 확률론에서 처음 제시했고, Hooker(2004)가 ML 모형 해석에 적용하면서 현재의 맥락으로 이어진다.</p>
+<p>"직급이 소득 변동을 얼마나 설명하는가?" 대신 <strong>"소득 변수가 모형 출력의 변동을 얼마나 설명하는가?"</strong>를 묻는 것이다. 통계적 검정이 아니라 <strong>함수 분해 도구</strong>라는 점이 전통 ANOVA와 다르다. 이 분해는 Hoeffding(1948)이 확률론에서 처음 제시했고, Sobol(1969)이 독립적으로 재발견했으며, Hooker(2004, 2007)가 ML 모형 해석에 적용했다. 상세한 배경은 <a href="../../appendix/shap-fanova/functional-anova/">부록 A — Functional ANOVA</a>에서 다룬다.</p>
 <hr>
 <h2 id="52-vs">5.2 핵심 아이디어: 분배 vs 분리<a class="headerlink" href="#52-vs" title="Permanent link">¶</a></h2>
 <p>SHAP과 fANOVA는 모두 "변수별 기여"를 구하지만, <strong>교호작용을 처리하는 방식</strong>이 근본적으로 다르다.</p>
@@ -5215,7 +5172,7 @@ F = \frac{\text{그룹 간 분산}}{\text{그룹 내 분산}}
 </tr>
 <tr>
 <td>교호작용 처리</td>
-<td>관여한 변수들에게 <strong>균등 분배</strong></td>
+<td>관여한 변수들에게 <strong>나눠 줌</strong></td>
 <td>별도의 <strong>교호작용 항으로 분리</strong></td>
 </tr>
 <tr>
@@ -5232,7 +5189,7 @@ F = \frac{\text{그룹 간 분산}}{\text{그룹 내 분산}}
 </table>
 <h3 id="_1">구체적 예시<a class="headerlink" href="#_1" title="Permanent link">¶</a></h3>
 <p>소득(<span class="arithmatex">\(X_1\)</span>)과 부채(<span class="arithmatex">\(X_2\)</span>)가 교호작용을 일으킨다고 하자 — 고소득+저부채일 때 부도 확률이 비선형적으로 급감하는 시너지가 있다.</p>
-<p><strong>SHAP의 처리</strong> — 교호작용의 기여분을 관여한 변수들에게 반씩 나눠준다:</p>
+<p><strong>SHAP의 처리</strong> — 교호작용의 기여분을 관여한 변수들에게 나눠준다. 변수들이 독립이고 interventional 방식으로 계산하는 이상적인 경우, 2-way 교호작용은 정확히 반씩 나뉜다:</p>
 <div class="arithmatex">\[
 \phi_{\text{소득}} = \underbrace{f_1\text{의 기여}}_{\text{주효과}} + \underbrace{\tfrac{1}{2} f_{12}\text{의 기여}}_{\text{교호작용의 절반}}
 \]</div>
@@ -5244,28 +5201,69 @@ F = \frac{\text{그룹 간 분산}}{\text{그룹 내 분산}}
 <p>교호작용 기여분이 다른 변수의 값에 따라 달라지기 때문이다. 이것이 SHAP이 태생적으로 <strong>local 해석</strong>일 수밖에 없는 이유다.</p>
 <p><strong>fANOVA의 처리</strong> — 교호작용을 분배하지 않고, 별도의 항으로 분리한다:</p>
 <ul>
-<li><span class="arithmatex">\(f_1(X_1)\)</span>: 순수하게 소득만의 효과 — 소득이 같으면 <strong>항상 같은 값</strong></li>
-<li><span class="arithmatex">\(f_2(X_2)\)</span>: 순수하게 부채만의 효과</li>
-<li><span class="arithmatex">\(f_{12}(X_1, X_2)\)</span>: 소득과 부채의 <strong>순수 교호작용</strong> — 주효과로는 설명할 수 없는 시너지</li>
+<li><span class="arithmatex">\(f_1(X_1)\)</span>: 소득만의 효과 — 소득이 같으면 <strong>항상 같은 값</strong></li>
+<li><span class="arithmatex">\(f_2(X_2)\)</span>: 부채만의 효과</li>
+<li><span class="arithmatex">\(f_{12}(X_1, X_2)\)</span>: 소득과 부채의 <strong>교호작용</strong> — 주효과로는 설명할 수 없는 시너지</li>
 </ul>
 <div class="admonition warning">
 <p class="admonition-title">왜 이 차이가 중요한가 — 규제 관점</p>
 <p>심사역이 "소득 변수의 효과가 단조적인가?"라고 물었을 때:</p>
 <ul>
-<li><strong>SHAP</strong>: 교호작용 기여분이 섞여 있어 특정 구간에서 비단조 패턴이 나타날 수 있고, 그것이 소득 자체의 비단조성인지 교호작용 때문인지 <strong>구분 불가</strong></li>
-<li><strong>fANOVA</strong>: <span class="arithmatex">\(f_{\text{소득}}\)</span>이 순수 주효과이므로 단조성을 <strong>직접 확인</strong> 가능. 비단조 패턴이 있다면 그것은 교호작용이 아니라 소득 자체의 효과</li>
+<li><strong>SHAP</strong>: 교호작용 기여분이 섞여 있어 특정 구간에서 비단조 패턴이 나타날 수 있고, 그것이 소득 자체의 비단조성인지 교호작용 때문인지 <strong>구분하기 어렵다</strong></li>
+<li><strong>fANOVA</strong>: <span class="arithmatex">\(f_{\text{소득}}\)</span>이 주효과만 담으므로 단조성을 <strong>직접 확인</strong>할 수 있다. 다만 소득과 강하게 상관된 변수가 있으면, 그 변수의 효과 일부가 소득의 주효과에 섞여 들어올 수 있다(5.3절)</li>
 </ul>
 </div>
 <hr>
-<h2 id="53-variance-decomposition">5.3 Variance Decomposition — "교호작용이 실제로 중요한가?"<a class="headerlink" href="#53-variance-decomposition" title="Permanent link">¶</a></h2>
-<p>fANOVA의 직교 분해 덕분에, <strong>총 분산을 component별로 정확히 나눌 수 있다:</strong></p>
+<h2 id="53">5.3 분해의 기준 — 어떤 분포(측도)로 나누는가<a class="headerlink" href="#53" title="Permanent link">¶</a></h2>
+<p>식 (1)의 분해는 그대로는 하나로 정해지지 않는다. 같은 예측 함수를 주효과와 교호작용으로 나누는 방법은 무수히 많기 때문이다(<a href="../../appendix/shap-fanova/non-identifiability/">부록 A — Non-identifiability</a>). fANOVA는 "각 항은 <strong>어떤 분포 아래에서</strong> 평균이 0이 되어야 한다"는 조건을 걸어 분해를 하나로 정한다. 따라서 <strong>분해 결과는 이 기준 분포(측도, measure)를 무엇으로 고르느냐에 따라 달라진다.</strong> fANOVA에 분포 가정은 필요 없지만, 측도 선택은 반드시 필요하다.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th><strong>Product measure</strong> (독립 가정)</th>
+<th><strong>Joint measure</strong> (실제 분포)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>기준 분포</td>
+<td>변수별 주변분포의 곱 — 변수들이 독립이라고 보고 평균</td>
+<td>데이터에 실제로 함께 나타나는 분포 (Hooker, 2007)</td>
+</tr>
+<tr>
+<td>각 항의 직교성</td>
+<td>성립</td>
+<td>변수들이 상관되어 있으면 깨짐</td>
+</tr>
+<tr>
+<td>분산 분해</td>
+<td>정확히 성립 (5.4절)</td>
+<td>항들 사이에 <strong>공분산 항</strong>이 남음</td>
+</tr>
+<tr>
+<td>약점</td>
+<td>현실에 없는 변수 조합까지 평균에 포함(외삽)</td>
+<td>상관된 변수끼리 효과의 경계가 흐려짐</td>
+</tr>
+</tbody>
+</table>
+<p>트리 모형을 분해할 때 "각 구간의 학습 샘플 수를 가중치로 쓴다"는 것도 측도를 고르는 행위다. 두 변수 구간의 <strong>결합</strong> 샘플 수를 쓰면 joint measure에 가깝고, 변수별 <strong>주변</strong> 샘플 수의 곱을 쓰면 product measure다. 변수들이 서로 독립이면 두 결과가 같지만, 소득·부채·한도처럼 상관된 신용 변수에서는 shape function과 분산 비중이 달라질 수 있다. 두 측도의 비교와 실무 권장은 <a href="../../appendix/correlation-interpretation/joint-vs-product/">부록 B — Joint vs Product</a>에서 다룬다.</p>
+<hr>
+<h2 id="54-variance-decomposition">5.4 Variance Decomposition — "교호작용이 실제로 중요한가?"<a class="headerlink" href="#54-variance-decomposition" title="Permanent link">¶</a></h2>
+<p>Product measure에서는 각 항이 서로 직교하므로, <strong>모형 출력의 총 분산을 항별 분산의 합으로 정확히 나눌 수 있다:</strong></p>
 <div class="arithmatex">\[
-\sigma^2(\hat{f}) = \sum_{S \subseteq \{1,\ldots,p\}} \sigma^2(f_S)
-\tag{1}
+\sigma^2(\hat{f}) = \sum_{S \subseteq \{1,\ldots,p\},\ S \neq \varnothing} \sigma^2(f_S)
+\tag{2}
 \]</div>
-<p>이것이 실무적으로 중요한 이유는, <strong>main effect와 교호작용의 상대적 비중</strong>을 정량적으로 판단할 수 있기 때문이다.</p>
+<p>변수들이 상관되어 있고 joint measure로 분해했다면, 식 (2)에 항들 사이의 공분산이 더해진다.</p>
+<div class="arithmatex">\[
+\sigma^2(\hat{f}) = \sum_{S} \sigma^2(f_S) + \sum_{S \neq T} \text{Cov}(f_S, f_T)
+\tag{3}
+\]</div>
+<p>이때는 각 항의 분산 비중을 더해도 100%가 되지 않으며, 공분산 몫이 클수록 "이 변수가 몇 %를 설명한다"는 해석이 흐려진다. 공분산 몫의 크기 자체가 <strong>변수 상관이 해석을 얼마나 흐리는지</strong> 알려주는 진단 지표가 된다.</p>
+<p>그럼에도 이 분해가 실무적으로 중요한 이유는, <strong>main effect와 교호작용의 상대적 비중</strong>을 정량적으로 가늠할 수 있기 때문이다.</p>
 <div class="admonition example">
-<p class="admonition-title">신용평가 모형 예시</p>
+<p class="admonition-title">신용평가 모형 예시 (product measure 기준 가상 예시)</p>
 <table>
 <thead>
 <tr>
@@ -5304,55 +5302,105 @@ F = \frac{\text{그룹 간 분산}}{\text{그룹 내 분산}}
 </tr>
 </tbody>
 </table>
-<p><strong>main effect가 전체 분산의 92%를 설명하고, 교호작용은 8%에 불과하다.</strong> 이 모형에서 교호작용은 미미하며, GAM(교호작용 없는 모형)으로도 거의 같은 성능을 낼 수 있었을 것이다.</p>
+<p><strong>main effect가 전체 분산의 92%를 설명하고, 교호작용은 8%다.</strong> 이 모형에서는 교호작용의 비중이 작으므로, 교호작용 없는 가법 모형으로도 비슷한 성능을 낼 가능성이 있다. 다만 출력 분산의 비중은 변별력(KS, AR) 기여와 같은 것이 아니므로, 실제로 가법 모형을 적합해 OOT 성능을 비교해서 확인한다.</p>
 </div>
-<p>SHAP의 <code>mean(|SHAP|)</code>로는 이 판단이 <strong>불가능</strong>하다. SHAP 값에는 주효과와 교호작용이 녹아들어 있어서, "우리 모형에서 교호작용이 실제로 중요한가?"라는 질문에 답할 수 없다. fANOVA의 Variance Decomposition은 이 질문에 <strong>숫자로</strong> 답한다.</p>
+<p>SHAP의 <code>mean(|SHAP|)</code>로는 이 판단을 하기 어렵다. SHAP 값에는 주효과와 교호작용이 녹아들어 있어서, "우리 모형에서 교호작용이 실제로 중요한가?"라는 질문에 직접 답하지 못한다(개별 쌍의 교호작용 몫을 보려면 SHAP interaction value를 따로 계산해야 한다). fANOVA의 Variance Decomposition은 이 질문에 <strong>숫자로</strong> 답한다.</p>
 <hr>
-<h2 id="54-purification">5.4 Purification — 효과 누출 보정<a class="headerlink" href="#54-purification" title="Permanent link">¶</a></h2>
+<h2 id="55-purification">5.5 Purification — 효과 누출 보정<a class="headerlink" href="#55-purification" title="Permanent link">¶</a></h2>
 <h3 id="_2">문제: 학습 과정에서 효과가 섞인다<a class="headerlink" href="#_2" title="Permanent link">¶</a></h3>
-<p>GA<span class="arithmatex">\(^2\)</span>M이나 depth-2 XGBoost를 학습하면, main effect <span class="arithmatex">\(f_j\)</span>와 interaction <span class="arithmatex">\(f_{jk}\)</span> 사이에 <strong>효과 누출(leakage)</strong>이 발생한다. 모형의 예측값은 변하지 않지만, 각 항의 해석이 왜곡된다.</p>
+<p>GA<span class="arithmatex">\(^2\)</span>M이나 depth-2 XGBoost를 학습하면, main effect <span class="arithmatex">\(f_j\)</span>와 interaction <span class="arithmatex">\(f_{jk}\)</span> 사이에 <strong>효과 누출(leakage)</strong>이 발생한다. 모형의 예측값은 변하지 않지만, 각 항의 해석이 왜곡된다. Purification(Lengerich et al., 2020)은 교호작용 항에 섞여 들어간 주효과를 찾아 주효과 항으로 되돌리는 사후 처리다.</p>
 <h3 id="dti">DTI/소득 숫자 예시<a class="headerlink" href="#dti" title="Permanent link">¶</a></h3>
-<p>DTI와 소득, 두 변수가 각각 2구간(Low, High)인 depth-2 모형이 다음과 같이 학습되었다고 하자:</p>
-<p><strong>학습 결과 (purification 전):</strong></p>
+<p>DTI와 소득, 두 변수가 각각 2구간(Low, High)인 depth-2 모형이 다음과 같이 학습되었다고 하자. 계산을 단순하게 하기 위해 <strong>네 칸의 샘플 수가 모두 같다(균등 가중)</strong>고 가정한다. 샘플 수가 다르면 아래의 평균이 가중평균이 된다.</p>
+<p><strong>학습 결과 (purification 전)</strong> — main effect는 전부 0이다.</p>
 <table>
 <thead>
 <tr>
-<th></th>
-<th>main effect</th>
-<th>교호작용 <span class="arithmatex">\(f_{12}\)</span></th>
-<th></th>
+<th>component</th>
+<th>값</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td></td>
-<td></td>
-<td><strong>소득=Low</strong></td>
-<td><strong>소득=High</strong></td>
+<td><span class="arithmatex">\(f_{\text{DTI}}\)</span>(Low), <span class="arithmatex">\(f_{\text{DTI}}\)</span>(High)</td>
+<td>0, 0</td>
 </tr>
 <tr>
-<td><strong>DTI</strong></td>
-<td>Low: 0, High: 0</td>
-<td>+0.1</td>
-<td>-0.7</td>
-</tr>
-<tr>
-<td><strong>소득</strong></td>
-<td>Low: 0, High: 0</td>
-<td>+0.5</td>
-<td>+0.1</td>
+<td><span class="arithmatex">\(f_{\text{소득}}\)</span>(Low), <span class="arithmatex">\(f_{\text{소득}}\)</span>(High)</td>
+<td>0, 0</td>
 </tr>
 </tbody>
 </table>
-<p>main effect가 전부 0이고, 모든 효과가 교호작용에 담겨 있다. 해석: <strong>"DTI도 소득도 개별 효과는 없고, 오직 두 변수의 조합만 중요하다."</strong> — 정말 그럴까?</p>
-<h3 id="purification">Purification 적용<a class="headerlink" href="#purification" title="Permanent link">¶</a></h3>
-<p><strong>1단계</strong> — 교호작용 테이블에서 소득의 누출을 찾는다. 각 소득 구간별로 DTI 방향의 평균을 구하면:</p>
+<table>
+<thead>
+<tr>
+<th>교호작용 <span class="arithmatex">\(f_{12}\)</span></th>
+<th style="text-align: right;">소득=Low</th>
+<th style="text-align: right;">소득=High</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>DTI=Low</strong></td>
+<td style="text-align: right;">+0.1</td>
+<td style="text-align: right;">−0.7</td>
+</tr>
+<tr>
+<td><strong>DTI=High</strong></td>
+<td style="text-align: right;">+0.5</td>
+<td style="text-align: right;">+0.1</td>
+</tr>
+</tbody>
+</table>
+<p>해석하면 <strong>"DTI도 소득도 개별 효과는 없고, 오직 두 변수의 조합만 중요하다."</strong> — 정말 그럴까?</p>
+<p><strong>1단계 — 소득의 누출 찾기</strong>: 소득 구간별로 교호작용 열의 평균을 구한다.</p>
 <ul>
-<li>소득=Low 열의 평균: <span class="arithmatex">\((0.1 + 0.5)/2 = +0.3\)</span></li>
-<li>소득=High 열의 평균: <span class="arithmatex">\((-0.7 + 0.1)/2 = -0.3\)</span></li>
+<li>소득=Low 열: <span class="arithmatex">\((0.1 + 0.5)/2 = +0.3\)</span></li>
+<li>소득=High 열: <span class="arithmatex">\((-0.7 + 0.1)/2 = -0.3\)</span></li>
 </ul>
-<p>이 값(+0.3, -0.3)은 소득 구간에만 의존 → <strong>소득의 main effect</strong>다. 교호작용에서 빼고 main effect로 옮긴다.</p>
-<p><strong>2단계</strong> — 같은 방식으로 DTI의 누출을 찾아 되돌린다. 업데이트된 교호작용의 각 DTI 구간별 평균을 구하면 -0.3, +0.3 → DTI의 main effect로 이동.</p>
+<p>이 값은 소득에만 의존하므로 <strong>소득의 주효과</strong>다. 교호작용에서 빼고 <span class="arithmatex">\(f_{\text{소득}}\)</span>으로 옮긴다.</p>
+<table>
+<thead>
+<tr>
+<th>1단계 후 <span class="arithmatex">\(f_{12}\)</span></th>
+<th style="text-align: right;">소득=Low</th>
+<th style="text-align: right;">소득=High</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>DTI=Low</strong></td>
+<td style="text-align: right;">−0.2</td>
+<td style="text-align: right;">−0.4</td>
+</tr>
+<tr>
+<td><strong>DTI=High</strong></td>
+<td style="text-align: right;">+0.2</td>
+<td style="text-align: right;">+0.4</td>
+</tr>
+</tbody>
+</table>
+<p><strong>2단계 — DTI의 누출 찾기</strong>: 이번에는 DTI 구간별 행 평균을 구한다. DTI=Low 행은 <span class="arithmatex">\(-0.3\)</span>, DTI=High 행은 <span class="arithmatex">\(+0.3\)</span>이다. 이를 <span class="arithmatex">\(f_{\text{DTI}}\)</span>로 옮기면 교호작용에는 다음만 남는다.</p>
+<table>
+<thead>
+<tr>
+<th>2단계 후 <span class="arithmatex">\(f_{12}\)</span></th>
+<th style="text-align: right;">소득=Low</th>
+<th style="text-align: right;">소득=High</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>DTI=Low</strong></td>
+<td style="text-align: right;">+0.1</td>
+<td style="text-align: right;">−0.1</td>
+</tr>
+<tr>
+<td><strong>DTI=High</strong></td>
+<td style="text-align: right;">−0.1</td>
+<td style="text-align: right;">+0.1</td>
+</tr>
+</tbody>
+</table>
 <p><strong>결과:</strong></p>
 <table>
 <thead>
@@ -5367,64 +5415,66 @@ F = \frac{\text{그룹 간 분산}}{\text{그룹 내 분산}}
 <tr>
 <td><span class="arithmatex">\(f_{\text{DTI}}\)</span></td>
 <td>Low=0, High=0</td>
-<td>Low=<strong>-0.3</strong>, High=<strong>+0.3</strong></td>
+<td>Low=<strong>−0.3</strong>, High=<strong>+0.3</strong></td>
 <td><strong>"DTI 높으면 위험 ↑"</strong></td>
 </tr>
 <tr>
 <td><span class="arithmatex">\(f_{\text{소득}}\)</span></td>
 <td>Low=0, High=0</td>
-<td>Low=<strong>+0.3</strong>, High=<strong>-0.3</strong></td>
+<td>Low=<strong>+0.3</strong>, High=<strong>−0.3</strong></td>
 <td><strong>"소득 높으면 위험 ↓"</strong></td>
 </tr>
 <tr>
 <td>교호작용 크기</td>
 <td>전체 효과 지배</td>
-<td><strong>±0.1 수준으로 축소</strong></td>
-<td>교호작용은 미미</td>
+<td><strong>±0.1</strong>로 축소</td>
+<td>교호작용은 작음</td>
 </tr>
 </tbody>
 </table>
-<p>예측값은 <strong>네 가지 조합 모두 동일</strong> — purification은 해석만 바꾸고 모형은 바꾸지 않는다.</p>
+<p>네 칸 모두 예측값이 그대로다. 예를 들어 DTI=Low·소득=High 칸은 전에는 <span class="arithmatex">\(0 + 0 - 0.7 = -0.7\)</span>, 후에는 <span class="arithmatex">\(-0.3 - 0.3 - 0.1 = -0.7\)</span>이다. <strong>Purification은 해석만 바꾸고 모형은 바꾸지 않는다.</strong></p>
 <div class="admonition note">
 <p class="admonition-title">핵심 교훈</p>
-<p>학습 결과만 보면 "교호작용이 전부"였지만, purification 후에는 <strong>main effect가 핵심이고 교호작용은 미미</strong>한 것으로 드러났다. 효과 누출이 해석을 얼마나 왜곡할 수 있는지를 보여주는 사례다.</p>
+<p>학습 결과만 보면 "교호작용이 전부"였지만, purification 후에는 <strong>main effect가 핵심이고 교호작용은 작은</strong> 것으로 드러났다. 효과 누출이 해석을 얼마나 왜곡할 수 있는지를 보여주는 사례다. 같은 예시를 3단계 이상 반복하는 일반 알고리즘(Mass-Moving), 비균등 가중, 수렴 조건은 <a href="../../appendix/shap-fanova/purification/">부록 A — Purification</a>에서 다룬다.</p>
 </div>
 <h3 id="_3">실무에서의 적용<a class="headerlink" href="#_3" title="Permanent link">¶</a></h3>
 <ul>
-<li><strong>InterpretML (EBM)</strong>: 학습 후 purification이 자동 적용되지 않는다. <code>interpret.utils.purify()</code>를 <strong>명시적으로 호출</strong>해야 한다</li>
-<li><strong>PiML (XGB2)</strong>: Depth-2 XGBoost + purification을 내장 지원</li>
-<li><a href="https://github.com/LengerichLab/gam_purification">GAM Purification</a> 별도 라이브러리로도 적용 가능</li>
+<li><strong>InterpretML (EBM)</strong>: purification이 기본으로 적용되지 않으므로 별도로 적용해야 한다(<a href="../ebm/">EBM</a> 4.6절)</li>
+<li><strong>PiML (XGB2)</strong>: depth-2 XGBoost에 purification을 결합한 모형을 내장 지원</li>
+<li>논문 저자들이 공개한 <a href="https://github.com/AdaptInfer/gam_purification">GAM Purification</a> 라이브러리로도 적용 가능</li>
 </ul>
+<p>어느 도구든 위 예시의 "평균"을 <strong>어떤 가중치로 구하느냐</strong>(5.3절의 측도)를 확인해야 한다. 같은 모형이라도 가중치에 따라 purification 결과가 달라진다.</p>
 <div class="source-ref">
 출처: Lengerich, B., Tan, S., Chang, C.-H., Hooker, G., and Caruana, R. (2020). "Purifying Interaction Effects with the Functional ANOVA." <em>AISTATS 2020</em>.
-<a href="https://arxiv.org/abs/1911.04974" target="_blank">arXiv</a>
+<a href="https://arxiv.org/abs/1911.04974" target="_blank">arXiv</a> ·
+Hooker, G. (2007). "Generalized Functional ANOVA Diagnostics for High-Dimensional Functions of Dependent Variables." <em>Journal of Computational and Graphical Statistics</em>, 16(3).
 </div>
 
 <hr>
-<h2 id="55-model-complexity-interpretability-trade-off">5.5 Model Complexity ↔ Interpretability Trade-off<a class="headerlink" href="#55-model-complexity-interpretability-trade-off" title="Permanent link">¶</a></h2>
+<h2 id="56-model-complexity-interpretability-trade-off">5.6 Model Complexity ↔ Interpretability Trade-off<a class="headerlink" href="#56-model-complexity-interpretability-trade-off" title="Permanent link">¶</a></h2>
 <p>fANOVA는 이론적으로 <strong>아무리 복잡한 트리 모형이라도</strong> 주효과와 교호작용으로 분해할 수 있다. 그러나 분해할 수 있다는 것과, 그 결과를 사람이 이해할 수 있다는 것은 <strong>별개의 문제</strong>다.</p>
-<p>Depth-8 XGBoost 500 라운드 모형을 fANOVA로 분해하면:</p>
+<p>예를 들어 변수 30개로 학습한 depth-8 XGBoost 500 라운드 모형을 fANOVA로 분해하면:</p>
 <ul>
 <li>main effect의 shape function이 수십 개의 bin으로 잘게 쪼개져, 곡선이 아니라 <strong>노이즈에 가까운 지그재그</strong>가 된다</li>
-<li>2-way 교호작용만 해도 <span class="arithmatex">\(\binom{30}{2} = 435\)</span>개 조합이 나오고, 각각이 복잡한 heatmap이 된다</li>
+<li>2-way 교호작용만 해도 <span class="arithmatex">\(\binom{30}{2} = 435\)</span>개 조합이 나오고, 각각이 복잡한 heatmap이 된다. 여기에 3-way부터 8-way까지의 항이 더 있다</li>
 <li>심사역이나 검증 담당자에게 "이 435개 heatmap을 보시면 모형이 이해됩니다"라고 할 수는 없다</li>
 </ul>
 <p>결국 fANOVA가 실무에서 <strong>직관적 해석 도구로 기능</strong>하려면, 모형 자체의 복잡도가 일정 수준 이내여야 한다.</p>
 <h3 id="fanova">복잡한 모형에서 fANOVA가 실제로 전달할 수 있는 것<a class="headerlink" href="#fanova" title="Permanent link">¶</a></h3>
 <p>성능 중심으로 개발된 깊은 트리 모형이라 하더라도, fANOVA를 통해 실무적으로 의미 있는 해석을 끌어낼 수 있는 영역은 두 가지다:</p>
-<p><strong>(1) Main effect의 shape function</strong> — 변수 하나의 순수 효과는 2D 곡선이므로, bin이 다소 많더라도 <strong>전체적인 방향성과 단조성</strong>은 확인할 수 있다. "소득이 올라가면 부도 확률이 내려간다"는 수준의 직관은 복잡한 모형에서도 전달 가능하다.</p>
-<p><strong>(2) 분산 기여도가 큰 상위 교호작용</strong> — Variance Decomposition(5.3절)으로 교호작용의 분산 비중을 정렬한 뒤, <strong>상위 2~3개 조합</strong>만 보고한다. 다만 이것도 각 변수의 구간이 지나치게 세분화되어 있으면 heatmap이 읽히지 않으므로, 해석 가능한 수준의 구간 수(5~10개 이내)로 요약하는 과정이 필요하다.</p>
+<p><strong>(1) Main effect의 shape function</strong> — 변수 하나의 효과는 2D 곡선이므로, bin이 다소 많더라도 <strong>전체적인 방향성과 단조성</strong>은 확인할 수 있다. "소득이 올라가면 부도 확률이 내려간다"는 수준의 직관은 복잡한 모형에서도 전달 가능하다.</p>
+<p><strong>(2) 분산 기여도가 큰 상위 교호작용</strong> — Variance Decomposition(5.4절)으로 교호작용의 분산 비중을 정렬한 뒤, <strong>상위 2~3개 조합</strong>만 보고한다. 다만 각 변수의 구간이 지나치게 세분화되어 있으면 heatmap이 읽히지 않으므로, 운영 평점표로 옮길 때는 관행(<a href="../interpretability/">해석 가능성</a> 참고)에 맞춰 변수당 5개 안팎 구간으로 묶어 요약할 수 있다.</p>
 <div class="admonition warning">
 <p class="admonition-title">해석 가능 모형과의 차이</p>
-<p>EBM이나 depth-2 제한 모형처럼 <strong>처음부터 해석을 염두에 두고 설계한 모형</strong>은 main effect와 교호작용이 자연스럽게 적은 bin, 적은 조합으로 구성된다. 반면 깊은 트리 모형에 fANOVA를 사후 적용하는 것은 "이미 복잡해진 결과물에서 읽을 수 있는 부분만 추려내는" 작업이다. 같은 fANOVA라도 <strong>모형 설계 단계에서 복잡도를 제어했느냐</strong>에 따라 해석의 품질이 근본적으로 달라진다.</p>
+<p>처음부터 해석을 염두에 두고 <strong>구간 수·교호작용 차수·방향을 제약해 설계한 모형</strong>은 main effect와 교호작용이 적은 bin, 적은 조합으로 구성된다. 깊이만 얕게 했거나 EBM을 기본 설정으로 쓴 것만으로는 bin 수가 저절로 적어지지 않는다는 점에 주의한다(<a href="../ebm/">EBM</a> 4.5절). 반면 깊은 트리 모형에 fANOVA를 사후 적용하는 것은 "이미 복잡해진 결과물에서 읽을 수 있는 부분만 추려내는" 작업이다. 같은 fANOVA라도 <strong>모형 설계 단계에서 복잡도를 제어했느냐</strong>에 따라 해석의 품질이 근본적으로 달라진다.</p>
 </div>
 <div class="admonition abstract">
 <p class="admonition-title">수학적 상세 → 부록</p>
-<p>fANOVA 직교 분해의 수학적 제약 조건, Non-identifiability 문제, Mass-Moving 알고리즘의 수렴 정리, SHAP과 fANOVA의 심층 비교 등은 <a href="../../appendix/shap-fanova/">부록 A: SHAP과 Functional ANOVA</a>에서 다룬다.</p>
+<p>fANOVA 직교 분해의 수학적 제약 조건, Non-identifiability 문제, Mass-Moving 알고리즘의 수렴 정리, SHAP과 fANOVA의 심층 비교 등은 <a href="../../appendix/shap-fanova/">부록 A: SHAP과 Functional ANOVA</a>에서, 상관 변수에서의 측도 선택은 <a href="../../appendix/correlation-interpretation/">부록 B: 변수 상관과 모형 해석</a>에서 다룬다.</p>
 </div>
 <div class="admonition tip">
 <p class="admonition-title">다음 페이지</p>
-<p><a href="../depth1_tools_impl/">도구 · 구현 · 요약</a> --- 오픈소스 도구, 업계 사례, 구현 예시, 참고 자료를 다룬다.</p>
+<p><a href="../depth1_tools_impl/">도구 · 구현 · 요약</a> --- 오픈소스 도구, 실무 파라미터, 적용 시나리오, 참고 자료를 다룬다.</p>
 </div>
 
 

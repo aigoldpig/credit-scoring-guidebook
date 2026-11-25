@@ -5035,9 +5035,9 @@
 <blockquote>
 <p>변수 선정의 첫 단계 — 연속형 변수를 의미 있는 구간으로 나누는 전 과정</p>
 </blockquote>
-<p><strong>변수 선정</strong>은 Classing → <a href="../woe_iv/">WoE/IV</a> → <a href="../univariate_lr/">단변량 로지스틱 회귀</a>의 세 단계로 구성되며, 이 섹션에서는 그 첫 단계인 <strong>Classing</strong>(구간화)을 다룬다. 연속형 변수를 구간화하여 각 구간에 독립적인 WoE를 부여하는 전처리 단계로, Classing이 필요한 이유와 방법론은 <a href="why-classing/">왜 Classing인가</a>에서 상세히 다룬다.</p>
+<p><strong>변수 선정</strong>은 Classing → <a href="../woe_iv/">WoE/IV</a> → <a href="../univariate_lr/">단변량 로지스틱 회귀</a> → <a href="../domain_selection/">정보영역별 변수 선정</a>의 네 단계로 구성되며, 이 섹션에서는 그 첫 단계인 <strong>Classing</strong>(구간화)을 다룬다. Classing은 연속형 변수를 구간으로 나눠 각 구간에 WoE를 부여하기 위한 전처리 단계다. Classing이 필요한 이유는 <a href="why-classing/">왜 Classing인가</a>에서 상세히 다룬다.</p>
 <blockquote>
-<p><strong>Fine Classing</strong> (20~50개 초기 구간) → <strong>WoE 패턴 확인</strong> (단조성·변별력) → <strong>Coarse Classing</strong> (5~10개 최종 구간) → <strong>단변량 로지스틱 회귀</strong> (유의성 검정) → <strong>확정 or 재시도</strong> (피드백 루프)</p>
+<p><strong>Fine Classing</strong> (20~50개 초기 구간) → <strong>WoE 패턴 확인</strong> (단조성·변별력) → <strong>Coarse Classing</strong> (최종 구간, 통상 5개 안팎) → <strong>단변량 로지스틱 회귀</strong> (유의성 검정) → <strong>확정 or 재시도</strong> (피드백 루프)</p>
 </blockquote>
 <h2 id="_1">이 섹션에서 다루는 내용<a class="headerlink" href="#_1" title="Permanent link">¶</a></h2>
 <table>
@@ -5052,7 +5052,7 @@
 <tr>
 <td>1</td>
 <td><a href="why-classing/">왜 Classing인가</a></td>
-<td>연속형 변수를 그대로 쓸 수 없는 이유는? 어떤 문제를 해결하는가?</td>
+<td>연속형 변수를 그대로 쓰기 어려운 이유는? 어떤 문제를 해결하는가?</td>
 </tr>
 <tr>
 <td>2</td>
@@ -5062,12 +5062,12 @@
 <tr>
 <td>3</td>
 <td><a href="coarse-classing/">Coarse Classing</a></td>
-<td>합병 알고리즘(단조성·ChiMerge·optbinning)과 기준 5가지는?</td>
+<td>합병 알고리즘(단조성 기반·ChiMerge·최적화 기반)은 어떻게 작동하는가?</td>
 </tr>
 <tr>
 <td>4</td>
 <td><a href="decision-criteria/">의사결정 기준 종합</a></td>
-<td>Fine → Coarse 전 과정의 체크리스트와 피드백 루프는?</td>
+<td>Fine → Coarse 전 과정의 기준값(Bin 크기 등)과 충돌 시 판단은?</td>
 </tr>
 </tbody>
 </table>

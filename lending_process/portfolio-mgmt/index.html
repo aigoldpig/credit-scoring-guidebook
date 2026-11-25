@@ -5119,32 +5119,138 @@
 
 
 <h1 id="3">③ 사후 관리 — 실행 이후의 모니터링과 재평가<a class="headerlink" href="#3" title="Permanent link">¶</a></h1>
-<p>대출이 실행되면 만기까지 지속적으로 관리한다.</p>
+<p>대출이 실행되면 만기까지 차주의 상태가 계속 변한다. 사후 관리의 목적은 두 가지이다.</p>
+<ul>
+<li><strong>리스크 조기 포착</strong> — 상태가 나빠지는 차주를 연체 전에 찾아 노출을 줄인다.</li>
+<li><strong>관계 수익 관리</strong> — 상태가 좋은 차주에게는 한도·상품을 늘려 수익 기회를 키운다.</li>
+</ul>
+<p>두 목적 모두 "지금 이 차주가 얼마나 위험한가"를 주기적으로 다시 평가해야 하며, 그 도구가 행동평점(BS)이다.</p>
 <h2 id="behavioral-scoring">Behavioral Scoring (행동평점)<a class="headerlink" href="#behavioral-scoring" title="Permanent link">¶</a></h2>
-<p>Application Score가 <strong>신청 시점</strong>의 정보로 평가한다면,
-Behavioral Score는 <strong>기존 거래 행동</strong>을 기반으로 리스크를 재평가한다.</p>
-<ul>
-<li>입력 변수: 계좌 이용 패턴, 연체 이력, 결제 행동, 잔액 추이 등</li>
-<li>Application Score보다 예측력이 높은 경향 (정보량이 많으므로)</li>
-<li>주기적으로 재산출 (월 1회 등)</li>
-</ul>
-<p>모형 구조 자체는 가이드북에서 다룬 것과 크게 다르지 않다.
-타겟 정의(Bad 정의)도 AS와 유사할 것으로 보이며,
-핵심 차이는 <strong>입력 변수</strong>(신청 정보 vs 거래 행동)와 <strong>대상 모집단</strong>(AS: 신규 신청자, BS: 당행 여신 보유자)이다.</p>
+<p>AS모형과 BS모형의 정의·차이는 <a href="../../scorecard/part1_overview/what-is-css/">CSS란 — 목적 기준 분류</a>에서 다룬다.
+여기서는 사후 관리 관점에서 BS모형이 AS모형과 <strong>어떻게 다르게 만들어지는지</strong>만 짚는다.</p>
+<table>
+<thead>
+<tr>
+<th>구분</th>
+<th>AS모형</th>
+<th>BS모형</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>대상 모집단</td>
+<td>신규 신청자 (승인·거절 모두)</td>
+<td>기준월 현재 여신 보유 차주</td>
+</tr>
+<tr>
+<td>관찰 시점</td>
+<td>신청일</td>
+<td>매월 기준월말 (반복 산출)</td>
+</tr>
+<tr>
+<td>주요 변수</td>
+<td>신청서, CB 정보</td>
+<td>내부 거래 행동(이용·상환·잔액 추이, 한도 사용 패턴, 내부 연체 이력) + CB 정보</td>
+</tr>
+<tr>
+<td>Bad 정의</td>
+<td><a href="../../scorecard/part1_overview/requirements/">요건 정의</a>의 원칙(예: 성과 기간 내 90일 이상 연체)</td>
+<td>같은 원칙을 기준월 이후 성과 기간에 적용</td>
+</tr>
+<tr>
+<td>표본 설계 이슈</td>
+<td>거절 건의 성과 미관측(거절추론)</td>
+<td>같은 차주가 여러 기준월에 반복 등장 → 기준월 샘플링·차주 중복 처리 필요</td>
+</tr>
+</tbody>
+</table>
+<p>BS모형은 내부 거래 이력이라는 강력한 정보를 쓰므로 일반적으로 AS모형보다 변별력이 높다.
+반면 기존 차주에게만 적용할 수 있고, <strong>이미 연체가 진행되어 회수 단계로 넘어간 차주</strong>는 BS 대상이 아니라 Collection 모형이 맡는다는 경계를 명확히 해야 한다. 단기 연체자를 어디까지 BS에 남길지는 <a href="../../scorecard/part1_overview/requirements/">기불량</a> 기준과 맞춘다.</p>
+<p>BS 점수는 매월 다시 산출되므로, 점수 자체의 변화가 사후 관리의 신호가 된다.</p>
+<table>
+<thead>
+<tr>
+<th>활용</th>
+<th>방식</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>한도 재심사</td>
+<td>등급 하락 폭·지속 기간을 트리거로 사용</td>
+</tr>
+<tr>
+<td>조기경보</td>
+<td>등급 급락 차주를 경보 대상에 포함</td>
+</tr>
+<tr>
+<td>금리·조건 재산정</td>
+<td>갱신·연장 시점에 현재 등급을 반영</td>
+</tr>
+<tr>
+<td>포트폴리오 모니터링</td>
+<td>등급 분포 이동을 리스크 보고에 사용 (<a href="../../scorecard/part5_scorecard/monitoring-and-operations/">모니터링</a>)</td>
+</tr>
+</tbody>
+</table>
 <h2 id="_1">한도 관리 (증액·감액)<a class="headerlink" href="#_1" title="Permanent link">¶</a></h2>
-<p>Behavioral Score 기반으로 주기적 재심사를 수행한다.
-카드사의 경우 한도 증액은 매출(이자수익)과 직결되므로 적극적으로 운영한다.</p>
-<h2 id="early-warning-system-ews">조기경보 시스템 (Early Warning System, EWS)<a class="headerlink" href="#early-warning-system-ews" title="Permanent link">¶</a></h2>
-<p>연체가 실제로 발생하기 전에, 위험 징후를 사전 탐지하는 시스템이다.</p>
+<p>BS 등급과 이용 행태를 기준으로 주기적으로 한도를 재심사한다.</p>
 <ul>
-<li>시그널 예시: 급격한 카드 사용 증가, 현금서비스 비중 상승, 타 기관 연체</li>
-<li>경보 발생 시: 선제적 접촉, 한도 축소, 모니터링 강화 등의 조치</li>
-<li>모형 기반 EWS와 규칙 기반 EWS를 병행하는 것이 일반적</li>
+<li><strong>증액</strong> — 등급이 안정적으로 우량하고, 한도 소진이 높지만 상환이 정상인 차주가 대상이다.
+  카드사처럼 이용액이 곧 수익(가맹점 수수료·이자)으로 이어지는 업권에서는 증액을 적극적으로 운영하는 경향이 있다.</li>
+<li><strong>감액·사용 중지</strong> — 등급 급락, 타 기관 연체 발생, 소득 감소 확인 등이 트리거가 된다.
+  감액은 고객에게 직접 불이익이 되므로 약관과 관련 법규가 정한 통지 절차를 따라야 한다.</li>
 </ul>
+<div class="admonition note">
+<p class="admonition-title">한도와 EAD의 관계</p>
+<p>미사용 한도는 부도 직전에 끌어다 쓸 수 있는 잠재 익스포저이다(<a href="../terms/ead/">EAD — CCF</a>).
+따라서 위험이 오르는 차주의 한도를 그대로 두면 부도 시 EAD가 커지고,
+우량 차주의 한도를 늘리는 것도 그만큼 미사용 한도 익스포저를 키운다.
+한도 정책은 수익과 EAD를 함께 보는 결정이다.</p>
+</div>
+<h2 id="early-warning-system-ews">조기경보 시스템 (Early Warning System, EWS)<a class="headerlink" href="#early-warning-system-ews" title="Permanent link">¶</a></h2>
+<p>연체가 실제로 발생하기 전에 위험 징후를 사전 탐지하는 시스템이다.</p>
+<ul>
+<li><strong>시그널 예시</strong>: 타 기관 연체 발생, 단기간 다중 대출 조회·신규 대출, 현금서비스·카드론 이용 급증, 급여 이체 중단, BS 등급 급락</li>
+<li><strong>규칙 기반 EWS</strong> — "타 기관 연체 발생" 같은 명확한 사건을 즉시 잡는다. 설명이 쉽고 반영이 빠르다.</li>
+<li><strong>모형 기반 EWS</strong> — 여러 약한 신호를 결합해 위험 점수를 만든다. 사건 하나로는 드러나지 않는 악화를 포착한다.
+  두 방식을 병행하는 것이 일반적이다.</li>
+<li><strong>경보 후 조치</strong>: 모니터링 강화 → 선제적 상담·채무조정 안내 → 한도 축소·사용 중지 순으로 단계화한다.</li>
+</ul>
+<p>EWS는 서열 모형과 달리 "경보를 몇 명에게 낼 것인가"라는 <strong>단일 임계값</strong>이 있는 운영 문제이다.
+임계값을 낮추면 실제 부실 차주를 더 많이 잡지만(포착률↑) 오경보도 늘어 대응 인력이 부족해진다.
+그래서 EWS 운영에서는 <a href="../../scorecard/part1_overview/ranking-not-classification/">분류가 아닌 서열화</a>에서 "특정 운영 시점의 의사결정 보조"로 언급한
+포착률·적중률 같은 임계값 기반 지표를 함께 관리한다.</p>
 <h2 id="cross-sell-up-sell">Cross-sell / Up-sell<a class="headerlink" href="#cross-sell-up-sell" title="Permanent link">¶</a></h2>
 <p>우량 고객에게 추가 상품(신용대출, 카드, 보험 등)을 제안한다.
-리스크 평가 + 반응 예측(Response Model)이 결합되는 영역으로,
-여신 관리보다는 마케팅/CRM에 가깝다.</p>
+여기서는 두 가지 모형이 결합된다.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>리스크 낮음 (BS 우량)</th>
+<th>리스크 높음</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>반응 확률 높음</strong></td>
+<td>1순위 제안 대상</td>
+<td>제안 제외 또는 조건 강화</td>
+</tr>
+<tr>
+<td><strong>반응 확률 낮음</strong></td>
+<td>비용 대비 효과 검토</td>
+<td>제외</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>리스크 모형(BS)</strong> — 제안해도 되는 고객인가</li>
+<li><strong>반응 모형(Response Model)</strong> — 제안하면 받아들일 고객인가</li>
+</ul>
+<p>반응 모형은 규제모형이 아니므로 ML이 쓰이는 경우가 많고, 여신 관리보다는 마케팅·CRM에 가깝다.
+다만 사전 승인(pre-approved) 형태로 대출을 제안한다면 리스크 기준(최소 등급 등)을 반드시 먼저 적용해야 한다.</p>
 
 
 

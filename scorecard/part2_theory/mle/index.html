@@ -981,6 +981,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#35-hessian" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.5 Hessian과 표준오차 — 검정의 출발점
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -5124,20 +5135,20 @@
 <h2 id="31">3.1 개념<a class="headerlink" href="#31" title="Permanent link">¶</a></h2>
 <p>선형회귀는 잔차제곱합(RSS)을 최소화하는 OLS(최소자승법)를 사용하지만, 로지스틱 회귀는 <strong>최대우도추정(MLE, Maximum Likelihood Estimation)</strong>으로 계수를 추정한다.</p>
 <blockquote>
-<p>OLS는 <span class="arithmatex">\(\hat{\beta} = (X'X)^{-1}X'y\)</span>라는 <strong>해석적 해(closed-form solution)</strong>가 존재하지만, 로지스틱 회귀의 목적함수는 비선형이라 닫힌 해가 없다. 따라서 반복적 수치 최적화가 <strong>필수</strong>다.</p>
+<p>OLS는 <span class="arithmatex">\(\hat{\boldsymbol{\beta}} = (\mathbf{X}^\top\mathbf{X})^{-1}\mathbf{X}^\top\mathbf{y}\)</span>라는 <strong>해석적 해(closed-form solution)</strong>가 존재하지만, 로지스틱 회귀의 우도 방정식은 계수에 대해 비선형이라 닫힌 해가 없다. 따라서 반복적 수치 최적화가 <strong>필수</strong>다.</p>
 </blockquote>
 <div class="admonition tip">
 <p class="admonition-title">직관적 이해</p>
-<p>MLE는 "실제로 관찰된 데이터가 나타날 확률을 최대로 만드는 파라미터는 무엇인가?"를 찾는 방법이다. 실제 Bad인 차주에게는 높은 <span class="arithmatex">\(\hat{p}\)</span>를, 실제 Good인 차주에게는 낮은 <span class="arithmatex">\(\hat{p}\)</span>를 부여하는 <span class="arithmatex">\(\beta\)</span>를 찾는다.</p>
+<p>MLE는 "실제로 관찰된 데이터가 나타날 확률을 최대로 만드는 파라미터는 무엇인가?"를 찾는 방법이다. 실제 Bad인 차주에게는 높은 <span class="arithmatex">\(\hat{p}\)</span>를, 실제 Good인 차주에게는 낮은 <span class="arithmatex">\(\hat{p}\)</span>를 부여하는 <span class="arithmatex">\(\boldsymbol{\beta}\)</span>를 찾는다.</p>
 </div>
 <h2 id="32-likelihood">3.2 Likelihood 정의<a class="headerlink" href="#32-likelihood" title="Permanent link">¶</a></h2>
 <p><span class="arithmatex">\(n\)</span>개의 독립 관측치 <span class="arithmatex">\((y_i, \mathbf{x}_i)\)</span>에 대해, 모형의 예측 확률 <span class="arithmatex">\(p_i = P(y_i = 1 \mid \mathbf{x}_i)\)</span>를 이용하면 개별 관측치의 확률은 다음과 같다.</p>
 <div class="arithmatex">\[
-P(y_i \mid \mathbf{x}_i) = p_i^{y_i}(1-p_i)^{1-y_i} \tag{6}
+P(y_i \mid \mathbf{x}_i) = p_i^{y_i}(1-p_i)^{1-y_i} \tag{1}
 \]</div>
-<p>식 (6)으로부터, 전체 데이터의 결합 우도(Likelihood)는:</p>
+<p>식 (1)로부터, 전체 데이터의 결합 우도(Likelihood)는:</p>
 <div class="arithmatex">\[
-L(\boldsymbol{\beta}) = \prod_{i=1}^{n} p_i^{y_i}(1-p_i)^{1-y_i} \tag{7}
+L(\boldsymbol{\beta}) = \prod_{i=1}^{n} p_i^{y_i}(1-p_i)^{1-y_i} \tag{2}
 \]</div>
 <table>
 <thead>
@@ -5154,36 +5165,37 @@ L(\boldsymbol{\beta}) = \prod_{i=1}^{n} p_i^{y_i}(1-p_i)^{1-y_i} \tag{7}
 <td>고객 A</td>
 <td>Bad (<span class="arithmatex">\(y=1\)</span>)</td>
 <td>0.90</td>
-<td>✅ 높은 <span class="arithmatex">\(\hat{p}\)</span> → 올바름</td>
+<td>높은 <span class="arithmatex">\(\hat{p}\)</span> → 올바름</td>
 <td><span class="arithmatex">\(0.90^1 \cdot 0.10^0 = 0.90\)</span></td>
 </tr>
 <tr>
 <td>고객 B</td>
 <td>Bad (<span class="arithmatex">\(y=1\)</span>)</td>
 <td>0.05</td>
-<td>❌ 낮은 <span class="arithmatex">\(\hat{p}\)</span> → 틀림</td>
+<td>낮은 <span class="arithmatex">\(\hat{p}\)</span> → 틀림</td>
 <td><span class="arithmatex">\(0.05^1 \cdot 0.95^0 = 0.05\)</span></td>
 </tr>
 <tr>
 <td>고객 C</td>
 <td>Good (<span class="arithmatex">\(y=0\)</span>)</td>
 <td>0.08</td>
-<td>✅ 낮은 <span class="arithmatex">\(\hat{p}\)</span> → 올바름</td>
+<td>낮은 <span class="arithmatex">\(\hat{p}\)</span> → 올바름</td>
 <td><span class="arithmatex">\(0.08^0 \cdot 0.92^1 = 0.92\)</span></td>
 </tr>
 <tr>
 <td>고객 D</td>
 <td>Good (<span class="arithmatex">\(y=0\)</span>)</td>
 <td>0.85</td>
-<td>❌ 높은 <span class="arithmatex">\(\hat{p}\)</span> → 틀림</td>
+<td>높은 <span class="arithmatex">\(\hat{p}\)</span> → 틀림</td>
 <td><span class="arithmatex">\(0.85^0 \cdot 0.15^1 = 0.15\)</span></td>
 </tr>
 </tbody>
 </table>
+<p>틀린 예측을 한 관측치(B, D)는 기여도가 작아 결합 우도를 크게 끌어내린다. MLE는 이런 관측치가 줄어들도록 <span class="arithmatex">\(\boldsymbol{\beta}\)</span>를 조정한다.</p>
 <h2 id="33-log-likelihood">3.3 Log-Likelihood와 최적화<a class="headerlink" href="#33-log-likelihood" title="Permanent link">¶</a></h2>
-<p>식 (7)의 곱셈 형태 <span class="arithmatex">\(L(\boldsymbol{\beta})\)</span>는 직접 최대화하기 어렵다. 로그를 취하면 합산 형태로 변환된다.</p>
+<p>식 (2)의 곱셈 형태 <span class="arithmatex">\(L(\boldsymbol{\beta})\)</span>는 직접 최대화하기 어렵고, 작은 확률을 수천 번 곱하면 컴퓨터에서 0이 되어 버린다(Underflow). 로그를 취하면 합산 형태로 변환된다. 로그는 단조증가 함수이므로 최대점의 위치는 바뀌지 않는다.</p>
 <div class="arithmatex">\[
-\ell(\boldsymbol{\beta}) = \ln L(\boldsymbol{\beta}) = \sum_{i=1}^{n} \left[ y_i \ln p_i + (1-y_i)\ln(1-p_i) \right] \tag{8}
+\ell(\boldsymbol{\beta}) = \ln L(\boldsymbol{\beta}) = \sum_{i=1}^{n} \left[ y_i \ln p_i + (1-y_i)\ln(1-p_i) \right] \tag{3}
 \]</div>
 <div class="admonition note">
 <p class="admonition-title">리마인드 — 여기서 <span class="arithmatex">\(p_i\)</span>는:</p>
@@ -5204,28 +5216,29 @@ L(\boldsymbol{\beta}) = \prod_{i=1}^{n} p_i^{y_i}(1-p_i)^{1-y_i} \tag{7}
 <p><strong>Step 3 — 정리:</strong></p>
 <p>괄호 안을 통분하면 <span class="arithmatex">\(\frac{y_i(1-p_i) - (1-y_i)p_i}{p_i(1-p_i)} = \frac{y_i - p_i}{p_i(1-p_i)}\)</span>이므로:</p>
 <div class="arithmatex">\[
-\boxed{\frac{\partial \ell}{\partial \beta_j} = \sum_{i=1}^{n}(y_i - p_i)\, x_{ij}} \tag{9}
+\boxed{\frac{\partial \ell}{\partial \beta_j} = \sum_{i=1}^{n}(y_i - p_i)\, x_{ij}} \tag{4}
 \]</div>
-<p>벡터 형태로 쓰면 <span class="arithmatex">\(\nabla_{\boldsymbol{\beta}}\ell = \mathbf{X}^\top(\mathbf{y} - \mathbf{p})\)</span>. 이 결과의 직관적 의미: <strong>실제값과 예측값의 차이(<span class="arithmatex">\(y_i - p_i\)</span>)를 입력 변수(<span class="arithmatex">\(x_{ij}\)</span>)로 가중 합산</strong>한 것이다. 차이가 클수록 <span class="arithmatex">\(\beta\)</span>를 더 크게 갱신한다.</p>
+<p>벡터 형태로 쓰면 <span class="arithmatex">\(\nabla_{\boldsymbol{\beta}}\ell = \mathbf{X}^\top(\mathbf{y} - \mathbf{p})\)</span>. 이 결과의 직관적 의미: <strong>실제값과 예측값의 차이(<span class="arithmatex">\(y_i - p_i\)</span>)를 입력 변수(<span class="arithmatex">\(x_{ij}\)</span>)로 가중 합산</strong>한 것이다. 최적점에서는 이 값이 0이 되므로, 절편이 있는 모형에서는 <span class="arithmatex">\(\sum_i y_i = \sum_i \hat{p}_i\)</span> — <strong>예측 불량 건수의 합이 실제 불량 건수와 정확히 같아진다</strong>(표본 평균 수준의 캘리브레이션).</p>
 <h3 id="binary-cross-entropy">Binary Cross-Entropy와의 관계<a class="headerlink" href="#binary-cross-entropy" title="Permanent link">¶</a></h3>
-<p>식 (8)을 최대화하는 것은 <strong>이진 교차 엔트로피(Binary Cross-Entropy, BCE) 손실을 최소화</strong>하는 것과 동치이다.</p>
+<p>식 (3)을 최대화하는 것은 <strong>이진 교차 엔트로피(Binary Cross-Entropy, BCE) 손실을 최소화</strong>하는 것과 동치이다.</p>
 <div class="arithmatex">\[
 \text{BCE Loss} = -\frac{1}{n}\ell(\boldsymbol{\beta}) = -\frac{1}{n}\sum_{i=1}^{n}\left[y_i \ln \hat{p}_i + (1-y_i)\ln(1-\hat{p}_i)\right]
 \]</div>
 <p>즉 머신러닝에서 "BCE Loss를 최소화한다"와 통계학에서 "Log-Likelihood를 최대화한다"는 <strong>동일한 최적화 문제의 서로 다른 표현</strong>이다. 부호와 스케일링(<span class="arithmatex">\(1/n\)</span>)만 다를 뿐 최적해 <span class="arithmatex">\(\hat{\boldsymbol{\beta}}\)</span>는 동일하다.</p>
 <div class="admonition success">
-<p class="admonition-title">볼록성(Convexity) 보장 — 전역 최적해의 존재</p>
-<p><span class="arithmatex">\(\ell(\boldsymbol{\beta})\)</span>는 <span class="arithmatex">\(\boldsymbol{\beta}\)</span>에 대해 <strong>오목(concave)</strong> 함수이므로, 음수를 취한 <span class="arithmatex">\(-\ell(\boldsymbol{\beta})\)</span>는 <strong>볼록(convex)</strong> 함수다.</p>
+<p class="admonition-title">오목성(Concavity) — 전역 최적해의 조건</p>
+<p><span class="arithmatex">\(\ell(\boldsymbol{\beta})\)</span>는 <span class="arithmatex">\(\boldsymbol{\beta}\)</span>에 대해 <strong>오목(concave)</strong> 함수이므로, 음수를 취한 <span class="arithmatex">\(-\ell(\boldsymbol{\beta})\)</span>는 <strong>볼록(convex)</strong> 함수다. 따라서 지역 최적해가 곧 전역 최적해이며, 함정이 되는 지역 최솟값이 없다. 다만 다음 두 조건이 함께 성립해야 <strong>유한하고 유일한</strong> 최적해가 존재한다.</p>
 <ul>
-<li><strong>전역 최적해가 유일하게 존재:</strong> 로컬 최솟값(Local Minimum) 없이 전역 최솟값(Global Minimum)으로 반드시 수렴한다.</li>
-<li><strong>수렴 보장:</strong> 어떤 초기값 <span class="arithmatex">\(\boldsymbol{\beta}^{(0)}\)</span>에서 시작해도 알고리즘이 동일한 해에 도달한다.</li>
-<li><strong>OLS와의 차이:</strong> 선형회귀 OLS는 해석적 해 <span class="arithmatex">\(\hat{\boldsymbol{\beta}} = (\mathbf{X}^\top\mathbf{X})^{-1}\mathbf{X}^\top\mathbf{y}\)</span>가 존재하지만, 로지스틱 회귀는 볼록 함수이면서도 <strong>닫힌 해가 없어 반드시 수치 최적화</strong>가 필요하다.</li>
+<li><strong>설계행렬이 완전 계수(full column rank)일 것</strong> — 어떤 변수가 다른 변수들의 선형 결합이면(예: 같은 정보를 담은 더미를 모두 넣은 경우) 우도가 평평한 방향이 생겨 해가 유일하지 않다.</li>
+<li><strong>완전분리·준완전분리가 없을 것</strong> — Good/Bad가 어떤 변수 조합으로 완벽히 나뉘면, 계수를 키울수록 우도가 계속 증가해 유한한 최대점이 없다. 알고리즘은 "수렴"하지 않고 계수가 발산한다(<a href="../binary-classification/">문제 정의 — 로지스틱 회귀의 주요 가정</a>).</li>
 </ul>
+<p>두 조건이 성립하면 <span class="arithmatex">\(-\ell\)</span>은 엄격히 볼록이 되어, 합리적인 초기값에서 시작한 Newton-Raphson 계열 알고리즘이 같은 해에 도달한다.</p>
 </div>
-<p><a class="glightbox" data-type="image" data-width="100%" data-height="auto" href="../images/log_likelihood_concavity.png" data-desc-position="bottom"><img alt="Log-Likelihood 함수의 오목성" src="../images/log_likelihood_concavity.png"></a></p>
+<p><a class="glightbox" data-type="image" data-width="100%" data-height="auto" href="../images/log_likelihood_concavity.png" data-desc-position="bottom"><img alt="Log-Likelihood의 오목성 — 분리되지 않은 가상 데이터에서의 profile log-likelihood" src="../images/log_likelihood_concavity.png"></a></p>
+<p>위 그림은 Good/Bad가 겹쳐 있는(분리되지 않은) 가상 데이터에서 기울기 <span class="arithmatex">\(\beta\)</span>에 따른 Log-Likelihood다(절편은 각 <span class="arithmatex">\(\beta\)</span>마다 최적화). 곡선이 한 점에서 최대가 되고 양쪽으로 내려가므로 유일한 <span class="arithmatex">\(\hat\beta\)</span>가 존재한다. 만약 데이터가 완전분리되어 있다면 곡선은 <span class="arithmatex">\(\beta\)</span>가 커질수록 계속 올라가며 0에 다가갈 뿐 최대점이 생기지 않는다.</p>
 <div class="admonition note">
 <p class="admonition-title">OLS vs MLE 비교</p>
-<p>선형회귀의 OLS는 잔차제곱합(RSS)을 최소화하며, RSS가 <span class="arithmatex">\(\boldsymbol{\beta}\)</span>에 대해 볼록(convex)하므로 전역 최적값이 보장된다. 로지스틱 회귀의 MLE는 음의 로그-우도 <span class="arithmatex">\(-\ell(\boldsymbol{\beta})\)</span>를 최소화하며, 이 역시 볼록 함수이므로 전역 최적값이 보장된다. 두 방법 모두 볼록 최적화 문제이나, OLS는 닫힌 해가 존재하는 반면 MLE는 수치 최적화가 필요하다는 차이가 있다.</p>
+<p>선형회귀의 OLS는 잔차제곱합(RSS)을 최소화하며, RSS가 <span class="arithmatex">\(\boldsymbol{\beta}\)</span>에 대해 볼록(convex)하므로 전역 최적값이 보장된다. 로지스틱 회귀의 MLE는 음의 로그-우도 <span class="arithmatex">\(-\ell(\boldsymbol{\beta})\)</span>를 최소화하며, 이 역시 볼록 함수이다. 두 방법 모두 볼록 최적화 문제이나, OLS는 닫힌 해가 존재하는 반면 MLE는 수치 최적화가 필요하다는 차이가 있다.</p>
 </div>
 <h2 id="34">3.4 최적화 알고리즘<a class="headerlink" href="#34" title="Permanent link">¶</a></h2>
 <p>로그-우도 함수는 <span class="arithmatex">\(\boldsymbol{\beta}\)</span>에 대한 해석적 해(Closed-form Solution)가 없으므로 수치 최적화를 사용한다.</p>
@@ -5239,31 +5252,54 @@ L(\boldsymbol{\beta}) = \prod_{i=1}^{n} p_i^{y_i}(1-p_i)^{1-y_i} \tag{7}
 </thead>
 <tbody>
 <tr>
-<td><strong>경사 하강법</strong> (Gradient Descent)</td>
+<td><strong>경사 상승법</strong> (Gradient Ascent)</td>
 <td><span class="arithmatex">\(\boldsymbol{\beta}^{(t+1)} = \boldsymbol{\beta}^{(t)} + \alpha \nabla\ell\)</span></td>
-<td>단순, 대용량 데이터에 적합. 학습률 <span class="arithmatex">\(\alpha\)</span> 조정 필요</td>
+<td><span class="arithmatex">\(\ell\)</span>을 최대화하므로 Gradient 방향으로 이동한다(<span class="arithmatex">\(-\ell\)</span>에 대한 경사 하강법과 같다). 단순하고 대용량 데이터에 적합. 학습률 <span class="arithmatex">\(\alpha\)</span> 조정 필요</td>
 </tr>
 <tr>
 <td><strong>Newton-Raphson</strong></td>
-<td>헤시안(Hessian) 행렬 활용, 2차 수렴</td>
-<td>빠른 수렴, 소용량에 효과적. 헤시안 계산 비용이 높음</td>
+<td>헤시안(Hessian) 행렬로 곡률을 반영, 2차 수렴</td>
+<td>빠른 수렴. 변수가 많으면 헤시안 계산·역행렬 비용이 높음</td>
 </tr>
 <tr>
 <td><strong>IRLS</strong> (반복 가중 최소자승)</td>
-<td>가중 선형회귀를 반복. Newton-Raphson과 동치</td>
-<td>R의 <code>glm()</code> 등 통계 소프트웨어 기본 구현. 수치적으로 안정</td>
+<td>가중 선형회귀를 반복. 로지스틱 회귀에서는 Newton-Raphson과 동치</td>
+<td>전통적 통계 소프트웨어의 GLM 적합에 널리 쓰이는 방식. 표준오차가 함께 계산됨</td>
 </tr>
 <tr>
 <td><strong>L-BFGS</strong> (Limited-memory BFGS)</td>
-<td>헤시안을 직접 계산하지 않고 근사하여 메모리 절약</td>
-<td>sklearn <code>LogisticRegression</code>의 기본 solver. 대용량에서도 효율적, 실무에서 가장 빈번</td>
+<td>헤시안을 직접 계산하지 않고 Gradient 이력으로 근사하여 메모리 절약</td>
+<td>변수가 많고 표본이 큰 경우에 효율적. 머신러닝 라이브러리에서 흔히 쓰임</td>
 </tr>
 </tbody>
 </table>
 <div class="admonition success">
 <p class="admonition-title">수렴 판단</p>
-<p>반복 과정에서 <span class="arithmatex">\(\lvert\ell^{(t+1)} - \ell^{(t)}\rvert &lt; \varepsilon\)</span> (예: <span class="arithmatex">\(10^{-6}\)</span>) 이면 수렴으로 판단한다. sklearn <code>LogisticRegression</code>의 기본 solver는 <code>lbfgs</code>이며, 기본 최대 반복 횟수는 100회이다.</p>
+<p>반복 과정에서 로그-우도의 변화량 <span class="arithmatex">\(\lvert\ell^{(t+1)} - \ell^{(t)}\rvert\)</span>나 Gradient의 크기가 충분히 작아지면(예: <span class="arithmatex">\(10^{-6}\)</span> 미만) 수렴으로 판단한다. 최대 반복 횟수 안에 수렴하지 못했다는 경고가 나오면, 반복 횟수를 늘리기 전에 <strong>분리 문제나 변수 스케일 문제</strong>가 없는지부터 확인한다.</p>
 </div>
+<div class="admonition warning">
+<p class="admonition-title">라이브러리 기본값 주의 — 순수 MLE가 아닐 수 있다</p>
+<p>일부 머신러닝 라이브러리의 로지스틱 회귀는 <strong>기본값으로 L2 규제(Ridge)</strong>가 걸려 있다. 예를 들어 scikit-learn의 로지스틱 회귀는 공식 문서에 "정규화가 기본으로 적용된다"고 명시하고 있으며, 기본 규제 강도가 <span class="arithmatex">\(C = 1.0\)</span>이다. 이 상태로 적합한 계수는 MLE가 아니라 <strong>0 쪽으로 축소된 추정치</strong>이므로, 스코어카드의 계수 부호·크기 해석이나 Wald 검정에 그대로 쓰면 안 된다. 순수 MLE가 필요하면 규제를 끄거나 통계 패키지의 GLM 적합을 사용한다.</p>
+<p></p><div class="source-ref">
+출처: <a href="https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html" target="_blank">scikit-learn 공식 문서 · 로지스틱 회귀 API 문서</a>
+</div><p></p>
+</div>
+<h2 id="35-hessian">3.5 Hessian과 표준오차 — 검정의 출발점<a class="headerlink" href="#35-hessian" title="Permanent link">¶</a></h2>
+<p>Newton-Raphson은 Gradient에 더해 <strong>2차 미분(Hessian)</strong>을 쓴다. 식 (4)를 한 번 더 미분하면</p>
+<div class="arithmatex">\[
+\mathbf{H}(\boldsymbol{\beta}) = \frac{\partial^2 \ell}{\partial \boldsymbol{\beta}\,\partial \boldsymbol{\beta}^\top} = -\,\mathbf{X}^\top \mathbf{W} \mathbf{X}, \qquad \mathbf{W} = \text{diag}\big(p_i(1-p_i)\big) \tag{5}
+\]</div>
+<p>이다. <span class="arithmatex">\(\mathbf{W}\)</span>의 대각 원소가 모두 양수이므로 <span class="arithmatex">\(\mathbf{H}\)</span>는 음의 준정부호이고, 이것이 위에서 말한 오목성의 근거다. 설계행렬이 완전 계수이면 음의 정부호가 되어 최적해가 유일해진다.</p>
+<p>Newton-Raphson의 갱신식은 <span class="arithmatex">\(\boldsymbol{\beta}^{(t+1)} = \boldsymbol{\beta}^{(t)} - \mathbf{H}^{-1}\nabla\ell\)</span>이며, 이를 정리하면 가중치 <span class="arithmatex">\(\mathbf{W}\)</span>로 가중 최소자승을 반복하는 IRLS가 된다.</p>
+<p><span class="arithmatex">\(-\mathbf{H} = \mathbf{X}^\top\mathbf{W}\mathbf{X}\)</span>는 <strong>Fisher 정보량(Information Matrix)</strong>이다. 정보량이 클수록 계수가 정밀하게 추정되며, MLE의 분산은 그 역행렬로 근사된다.</p>
+<div class="arithmatex">\[
+\widehat{\text{Var}}(\hat{\boldsymbol{\beta}}) = (\mathbf{X}^\top \hat{\mathbf{W}} \mathbf{X})^{-1}, \qquad \text{SE}(\hat\beta_j) = \sqrt{\big[(\mathbf{X}^\top \hat{\mathbf{W}} \mathbf{X})^{-1}\big]_{jj}}
+\]</div>
+<ul>
+<li><span class="arithmatex">\(p_i(1-p_i)\)</span>가 가중치이므로, <span class="arithmatex">\(p \approx 0.5\)</span> 부근의 관측치가 정보를 가장 많이 주고, 불량률이 극히 낮은 표본에서는 같은 건수라도 표준오차가 커진다(<a href="../logit-transform/">Logit 변환 — 두 함수의 기울기</a>).</li>
+<li>변수 사이에 상관이 높으면 <span class="arithmatex">\(\mathbf{X}^\top\mathbf{W}\mathbf{X}\)</span>가 역행렬을 구하기 어려운 상태에 가까워져 표준오차가 부풀려진다. 다중공선성이 계수를 불안정하게 만드는 이유가 여기에 있다.</li>
+</ul>
+<p>이 표준오차로 <span class="arithmatex">\(z = \hat\beta_j / \text{SE}(\hat\beta_j)\)</span>를 계산한 것이 <strong>Wald 검정</strong>이며, 변수 선택에서 쓰는 Score 검정·LR 검정과 함께 <a href="../../appendix/logistic-fitting/score-wald-lr-test/">Score·Wald·LR 검정</a>에서 자세히 다룬다.</p>
 
 
 

@@ -5169,19 +5169,19 @@
 <tr>
 <th>아키텍처</th>
 <th>사전 가정</th>
-<th>가정</th>
+<th>의미</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><strong>MLP</strong></td>
-<td>없음 (범용)</td>
-<td>입력 간 관계에 대한 사전 가정 없음</td>
+<td>구조적 가정은 약함. 다만 <strong>매끄러운 함수 선호</strong>, <strong>회전 불변성</strong></td>
+<td>입력 간 관계는 정해 두지 않지만, 경사하강으로 학습한 해가 매끄러운 쪽으로 치우치고, 입력 축을 회전해도 같은 방식으로 학습</td>
 </tr>
 <tr>
 <td><strong>CNN</strong></td>
-<td><strong>공간적 지역성</strong> + <strong>이동 불변성</strong></td>
-<td>가까운 픽셀이 먼 픽셀보다 관련이 깊고, 패턴은 위치에 무관</td>
+<td><strong>공간적 지역성</strong> + <strong>이동 등변성</strong></td>
+<td>가까운 픽셀이 먼 픽셀보다 관련이 깊고, 같은 패턴은 위치가 달라도 같은 필터로 탐지</td>
 </tr>
 <tr>
 <td><strong>RNN</strong></td>
@@ -5190,20 +5190,21 @@
 </tr>
 <tr>
 <td><strong>Transformer</strong></td>
-<td><strong>Attention</strong></td>
-<td>모든 위치 간 관계를 학습, 순서는 Position Encoding으로 주입</td>
+<td><strong>순서 무관(순열 등변성)</strong> + 모든 원소 간 관계 학습</td>
+<td>입력 원소의 순서를 가정하지 않고 Attention으로 관계를 학습. 순서가 필요한 데이터에는 Position Encoding으로 순서를 주입</td>
 </tr>
 </tbody>
 </table>
 <p>정형(Tabular) 데이터의 특성:</p>
 <ul>
-<li><strong>컬럼 간 순서가 없다</strong> — "부채비율"이 "연체횟수" 옆에 있든 멀리 있든 의미가 같다</li>
+<li><strong>컬럼 간 순서가 없다</strong> — "DSR"이 "연체횟수" 옆에 있든 멀리 있든 의미가 같다</li>
 <li><strong>공간적 지역성이 없다</strong> — 인접 컬럼끼리 특별히 관련이 깊지 않다</li>
-<li><strong>시계열 구조가 아니다</strong> — 각 행(고객)은 독립적인 스냅샷</li>
+<li><strong>시계열 구조가 아니다</strong> — 각 행(고객)은 관측 시점 기준의 스냅샷이다(과거 이력은 집계 변수로 들어온다)</li>
 </ul>
 <div class="admonition info">
 <p class="admonition-title">왜 MLP도 Tabular에서 트리에 밀리나?</p>
-<p>MLP는 사전 가정이 없으므로 Tabular에 "맞지 않는" 것은 아니다. 문제는 <strong>사전 가정이 부족한 것</strong>이다. 트리는 "축 정렬 분할(axis-aligned split)"이라는 Tabular에 딱 맞는 사전 가정을 가지고 있어, 더 적은 데이터로 효율적으로 학습한다. 이 내용은 <a href="../../part3_tree_ensemble/">트리 앙상블</a> 장에서 본격적으로 다룬다.</p>
+<p>MLP는 CNN·RNN처럼 강한 구조적 가정이 없으므로, Tabular에 "맞지 않는 가정을 강요하는" 문제는 없다. 문제는 MLP가 가진 약한 가정들이 Tabular와 어긋난다는 점이다. Grinsztajn et al.(2022)은 MLP 계열이 <strong>지나치게 매끄러운 해를 선호</strong>하고, <strong>무의미한 변수에 약하며</strong>, 입력 축의 의미를 활용하지 못하는 <strong>회전 불변성</strong>을 가진다는 점을 트리에 밀리는 이유로 꼽았다(<a href="../../part1_overview/why_ml/">왜 ML인가</a> 참조). 반대로 트리는 "변수 하나의 기준점으로 자르는 축 정렬 분할(axis-aligned split)"이라는, Tabular에 잘 맞는 사전 가정을 가지고 있다. 트리 자체는 <a href="../../part3_tree_ensemble/">트리 앙상블</a> 장에서 본격적으로 다룬다.</p>
+<p>Transformer의 "순서 무관" 가정은 컬럼 순서가 의미 없는 Tabular와 오히려 잘 맞는다. FT-Transformer 같은 Tabular용 Transformer가 시도되는 이유다.</p>
 </div>
 <hr>
 <h2 id="42-cnn">4.2 CNN — 왜 정형 데이터에 안 맞는가<a class="headerlink" href="#42-cnn" title="Permanent link">¶</a></h2>
@@ -5211,32 +5212,32 @@
 <h3 id="cnn">CNN의 핵심 가정<a class="headerlink" href="#cnn" title="Permanent link">¶</a></h3>
 <ol>
 <li><strong>지역성(Locality):</strong> 의미 있는 패턴은 인접한 요소들의 조합에서 나타남</li>
-<li><strong>이동 불변성(Translation Invariance):</strong> 같은 패턴은 어디에 나타나든 동일하게 탐지되어야 함</li>
+<li><strong>이동 등변성(Translation Equivariance):</strong> 같은 패턴은 어디에 나타나든 같은 필터로 탐지됨. 입력이 이동하면 탐지 결과도 그만큼 이동한다(pooling을 거치면 위치에 덜 민감한 근사적 불변성이 된다)</li>
 </ol>
-<p>이미지에서 이 가정은 완벽하게 들어맞는다. 고양이 귀의 패턴은 이미지 왼쪽 상단이든 오른쪽 하단이든 동일하게 탐지되어야 한다.</p>
+<p>이미지에서 이 가정은 잘 들어맞는다. 고양이 귀의 패턴은 이미지 왼쪽 상단이든 오른쪽 하단이든 같은 방식으로 탐지되어야 한다.</p>
 <h3 id="_1">정형 데이터에 적용하면?<a class="headerlink" href="#_1" title="Permanent link">¶</a></h3>
 <p>정형 데이터를 CNN에 넣으려면, 피처 벡터 <span class="arithmatex">\([x_1, x_2, \ldots, x_n]\)</span>를 1D 시퀀스처럼 취급해야 한다.</p>
 <p>문제는:</p>
 <ul>
 <li><strong>컬럼 순서가 의미 없다</strong> — <span class="arithmatex">\(x_3\)</span>과 <span class="arithmatex">\(x_4\)</span>가 인접해 있다는 것에 의미가 없음</li>
-<li><strong>필터 공유가 부적절</strong> — "부채비율과 연체횟수의 조합"을 탐지하는 필터가, "소득과 근속연수"에도 동일하게 적용되는 것이 합리적이지 않음</li>
-<li><strong>컬럼을 재배열하면 결과가 달라짐</strong> — 이미지에서는 픽셀 순서를 바꾸면 안 되지만, 테이블에서는 컬럼 순서가 임의적</li>
+<li><strong>필터 공유가 부적절</strong> — "DSR과 연체횟수의 조합"을 탐지하는 필터가, "소득과 근속연수"에도 동일하게 적용되는 것이 합리적이지 않음</li>
+<li><strong>컬럼을 재배열하면 결과가 달라짐</strong> — 이미지에서는 픽셀 순서 자체가 정보지만, 테이블에서는 컬럼 순서가 임의적이다. 의미 없는 순서에 따라 모형이 달라진다</li>
 </ul>
 <div class="admonition warning">
 <p class="admonition-title">요약</p>
-<p>CNN의 지역성과 이동 불변성은 정형 데이터에서 <strong>해가 되는 사전 가정</strong>이다. Weight sharing이 오히려 다른 변수 조합마다 다른 패턴을 학습하는 것을 방해한다.</p>
+<p>CNN의 지역성과 이동 등변성은 정형 데이터에서 <strong>해가 되는 사전 가정</strong>이다. Weight sharing이 오히려 다른 변수 조합마다 다른 패턴을 학습하는 것을 방해한다.</p>
 </div>
 <hr>
 <h2 id="43-rnnlstm">4.3 RNN/LSTM — 시계열 접근의 시도와 한계<a class="headerlink" href="#43-rnnlstm" title="Permanent link">¶</a></h2>
 <h3 id="rnn">RNN의 핵심 구조<a class="headerlink" href="#rnn" title="Permanent link">¶</a></h3>
 <p>RNN(Recurrent Neural Network)은 <strong>순차적 입력</strong>을 처리하기 위한 아키텍처다. 이전 시점의 은닉 상태(hidden state)를 다음 시점에 전달하여, 과거 정보를 누적한다.</p>
 <div class="arithmatex">\[
-\mathbf{h}_t = \sigma\!\left(\mathbf{W}_{xh} \mathbf{x}_t + \mathbf{W}_{hh} \mathbf{h}_{t-1} + \mathbf{b}\right)
+\mathbf{h}_t = \tanh\!\left(\mathbf{W}_{xh} \mathbf{x}_t + \mathbf{W}_{hh} \mathbf{h}_{t-1} + \mathbf{b}\right)
 \tag{1}
 \]</div>
-<p>여기서 <span class="arithmatex">\(\mathbf{x}_t\)</span>는 시점 <span class="arithmatex">\(t\)</span>의 입력, <span class="arithmatex">\(\mathbf{h}_t\)</span>는 시점 <span class="arithmatex">\(t\)</span>의 은닉 상태, <span class="arithmatex">\(\mathbf{W}_{hh}\)</span>가 <strong>순환 가중치</strong> — 과거 정보를 현재에 전달하는 핵심 장치다.</p>
+<p>여기서 <span class="arithmatex">\(\mathbf{x}_t\)</span>는 시점 <span class="arithmatex">\(t\)</span>의 입력, <span class="arithmatex">\(\mathbf{h}_t\)</span>는 시점 <span class="arithmatex">\(t\)</span>의 은닉 상태, <span class="arithmatex">\(\mathbf{W}_{hh}\)</span>가 <strong>순환 가중치</strong>로, 과거 정보를 현재에 전달하는 핵심 장치다. 활성함수는 보통 tanh를 쓴다.</p>
 <h3 id="lstm-vanishing-gradient">LSTM — Vanishing Gradient의 해법<a class="headerlink" href="#lstm-vanishing-gradient" title="Permanent link">¶</a></h3>
-<p>기본 RNN은 시퀀스가 길어지면 <a href="../nn_basics/">Vanishing Gradient</a> 문제로 장기 의존성을 학습하기 어렵다. LSTM(Long Short-Term Memory, Hochreiter &amp; Schmidhuber, 1997)<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>은 <strong>셀 상태(Cell State)</strong>와 <strong>게이트(Gate)</strong> 메커니즘으로 이를 해결한다.</p>
+<p>기본 RNN은 시퀀스가 길어지면 <a href="../nn_basics/">Vanishing Gradient</a> 문제로 장기 의존성을 학습하기 어렵다. LSTM(Long Short-Term Memory)은 <strong>셀 상태(Cell State)</strong>와 <strong>게이트(Gate)</strong> 메커니즘으로 이를 완화한다. LSTM은 Hochreiter &amp; Schmidhuber(1997)<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>가 입력·출력 게이트와 셀 상태로 처음 제안했고, 지금 표준이 된 <strong>Forget Gate</strong>는 Gers, Schmidhuber &amp; Cummins(2000)<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">2</a></sup>가 추가했다. Forget Gate가 없으면 셀 상태가 계속 누적되어 커질 수 있는데, 이를 스스로 비우는(reset) 장치가 Forget Gate다. 아래 식은 Forget Gate가 포함된 현재의 표준형이다.</p>
 <table>
 <thead>
 <tr>
@@ -5286,7 +5287,7 @@
 </div>
 <div class="admonition note">
 <p class="admonition-title">colah's blog</p>
-<p>원문으로는 Christopher Olah의 <a href="https://colah.github.io/posts/2015-08-Understanding-LSTMs/">"Understanding LSTM Networks"</a><sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>가 가장 좋은 자료다. 게이트의 흐름을 시각적으로 설명하며, 이후 GRU 등 변형 구조까지 다룬다.</p>
+<p>원문으로는 Christopher Olah의 <a href="https://colah.github.io/posts/2015-08-Understanding-LSTMs/">"Understanding LSTM Networks"</a><sup id="fnref:2"><a class="footnote-ref" href="#fn:2">3</a></sup>가 가장 좋은 자료다. 게이트의 흐름을 시각적으로 설명하며, 이후 GRU 등 변형 구조까지 다룬다.</p>
 </div>
 <hr>
 <h2 id="44-rnnlstm">4.4 신용평가에서 RNN/LSTM 시도 — 실무 경험<a class="headerlink" href="#44-rnnlstm" title="Permanent link">¶</a></h2>
@@ -5304,17 +5305,27 @@
 <p>시점별 변수 구성으로 LSTM 네트워크를 테스트했으나, <strong>트리 기반 모형(XGBoost/LightGBM) 대비 유의미한 성능 이득은 없었다.</strong></p>
 <p>이 결과는 Tabular 데이터에서 DL이 트리에 밀리는 일반적 현상의 연장선이다. 시계열 구조를 부여하더라도, 12개월 정도의 집계 변수 시퀀스에서 LSTM이 포착할 만큼 복잡한 시간 의존성이 충분하지 않았던 것으로 보인다.</p>
 </div>
+<div class="admonition note">
+<p class="admonition-title">비슷한 비교를 직접 해 본다면</p>
+<p>LSTM과 트리를 공정하게 비교하려면 다음을 맞춰야 한다.</p>
+<ul>
+<li><strong>같은 정보</strong>: 트리에도 같은 시점별 변수(12개 시점 원값)와, 실무에서 쓰는 요약 항목(평균·추세·변동성)을 함께 넣는다. 트리에 요약 항목만 주고 LSTM에 원 시퀀스를 주면 정보량이 달라 비교가 되지 않는다.</li>
+<li><strong>정적 변수 결합</strong>: 소득·보유 상품 같은 시점 없는 변수는 LSTM의 마지막 은닉 상태와 이어 붙여(concatenate) 출력층에 넣는 방식이 일반적이다. 트리에는 그냥 함께 넣는다.</li>
+<li><strong>같은 분할과 지표</strong>: 같은 학습·검증 분할(고객 단위)에서 같은 지표(KS, AR)로, 최종적으로는 OOT에서 비교한다.</li>
+<li><strong>튜닝 노력의 균형</strong>: 한쪽만 공들여 튜닝하면 비교가 기운다. LSTM은 학습률·은닉 차원·드롭아웃·시퀀스 정규화에 민감하다.</li>
+</ul>
+</div>
 <h3 id="_3">왜 이득이 없는가 — 구조적 이유<a class="headerlink" href="#_3" title="Permanent link">¶</a></h3>
 <p><strong>1. 시퀀스가 짧다</strong></p>
 <p>LSTM이 강점을 발휘하려면 긴 시퀀스에서의 장기 의존성(long-range dependency)이 필요하다. 자연어 처리에서는 수백~수천 토큰의 시퀀스를 다루지만, 신용평가의 시점별 변수는 기껏해야 <strong>12~24개 시점</strong>이다. 이 정도 길이에서는 단순한 통계 요약(평균, 추세, 변동성)으로 대부분의 정보를 포착할 수 있다.</p>
-<p><strong>2. 시점별 변수의 해석 모호함</strong></p>
-<p>"최근 3개월 전 카드 사용금액"이라는 변수는 해석이 모호하다.</p>
+<p><strong>2. 시점별 변수 하나하나는 의미가 약하고 불안정하다</strong></p>
+<p>"3개월 전 카드 사용금액"이라는 변수는 단독으로는 해석과 운영이 까다롭다.</p>
 <ul>
-<li>3개월 전이 <strong>절대적으로</strong> 의미 있는 시점인가? (예: 특정 경제 이벤트?)</li>
-<li>아니면 <strong>상대적으로</strong> 최근 추세를 반영하는 것인가?</li>
-<li>고객마다 신청 시점이 다르므로, "3개월 전"의 의미도 달라진다</li>
+<li>특정 월 하나의 값은 계절성(명절, 연말)이나 일시적 지출에 크게 흔들린다. 관측 시점이 고객마다 다르므로, 같은 "3개월 전"이라도 어떤 고객에게는 명절 달이고 어떤 고객에게는 평범한 달이다</li>
+<li>리스크와 관련된 것은 특정 월의 값보다 <strong>수준(평균)</strong>, <strong>방향(추세)</strong>, <strong>흔들림(변동성)</strong>인 경우가 많다</li>
+<li>시점별 변수 12개를 모두 모형에 넣으면 변수 수가 늘고, 개별 월 변수의 PSI 모니터링·설명도 번거로워진다</li>
 </ul>
-<p>이 모호함 때문에 실무에서는 시점별 변수 대신 <strong>집계 기간 요약 항목</strong>을 사용하는 경우가 많다.</p>
+<p>그래서 실무에서는 시점별 변수 대신 <strong>집계 기간 요약 항목</strong>을 사용하는 경우가 많다.</p>
 <table>
 <thead>
 <tr>
@@ -5369,7 +5380,7 @@
 <tr>
 <td><strong>Transformer</strong></td>
 <td>NLP, 음성, 최근에는 범용</td>
-<td>연구 단계 — FT-Transformer 등 Tabular 시도 존재</td>
+<td>연구 단계 — FT-Transformer 같은 Tabular용 구조, 소규모 데이터(약 1만 건 이하)에서 GBDT를 앞섰다고 보고된 사전학습형 TabPFN(Hollmann et al., <em>Nature</em>, 2025) 등이 있으나 신용평가 규모·운영 환경 검증은 제한적</td>
 </tr>
 </tbody>
 </table>
@@ -5390,7 +5401,7 @@
 이미지/공간 구조     →  CNN             →  ✗
 긴 시퀀스/순서       →  RNN/LSTM        →  △ (이득 제한적)
 정형/테이블          →  트리 앙상블      →  ◎
-정형 + DL 시도       →  TabNet/MLP      →  ○ (트리에 준하는 수준)
+정형 + DL 시도       →  TabNet/MLP      →  △ (튜닝 부담 대비 이득 제한적)
 </code></pre></div>
 <p>모형 선택의 첫 번째 질문은 "어떤 알고리즘이 최신인가?"가 아니라, <strong>"내 데이터의 구조에 어떤 사전 가정이 맞는가?"</strong>이다.</p>
 <hr>
@@ -5399,6 +5410,8 @@
 <li>Stanford CS231n: Convolutional Neural Networks for Visual Recognition — CNN의 표준 교재</li>
 <li>Stanford CS224n: Natural Language Processing with Deep Learning — RNN/LSTM/Transformer의 NLP 적용</li>
 <li>Andrew Ng, <em>Sequence Models</em> (Course 5 of Deep Learning Specialization), Coursera, 2017. — RNN, LSTM, GRU, Attention의 기초</li>
+<li>Grinsztajn, Oyallon &amp; Varoquaux, "Why do tree-based models still outperform deep learning on tabular data?", <em>NeurIPS Datasets and Benchmarks</em>, 2022.</li>
+<li>Hollmann et al., "Accurate predictions on small data with a tabular foundation model", <em>Nature</em>, 637, 2025. — TabPFN</li>
 </ul>
 <div class="admonition tip">
 <p class="admonition-title">다음 섹션</p>
@@ -5408,10 +5421,13 @@
 <hr>
 <ol>
 <li id="fn:1">
-<p>Sepp Hochreiter &amp; Jürgen Schmidhuber, "Long Short-Term Memory", <em>Neural Computation</em>, 1997. LSTM 원 논문. Vanishing Gradient 문제를 게이트 메커니즘으로 해결.&nbsp;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">↩</a></p>
+<p>Sepp Hochreiter &amp; Jürgen Schmidhuber, "Long Short-Term Memory", <em>Neural Computation</em>, 1997. LSTM 원 논문. 셀 상태와 입력·출력 게이트로 장기 의존성 학습 문제를 다룸.&nbsp;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">↩</a></p>
+</li>
+<li id="fn:3">
+<p>Felix A. Gers, Jürgen Schmidhuber &amp; Fred Cummins, "Learning to Forget: Continual Prediction with LSTM", <em>Neural Computation</em>, 12(10), 2000. Forget Gate를 도입한 논문.&nbsp;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 2 in the text">↩</a></p>
 </li>
 <li id="fn:2">
-<p>Christopher Olah, "Understanding LSTM Networks", <em>colah's blog</em>, 2015. <a href="https://colah.github.io/posts/2015-08-Understanding-LSTMs/">colah.github.io/posts/2015-08-Understanding-LSTMs</a>. LSTM 구조를 가장 직관적으로 설명한 블로그 포스트.&nbsp;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">↩</a></p>
+<p>Christopher Olah, "Understanding LSTM Networks", <em>colah's blog</em>, 2015. <a href="https://colah.github.io/posts/2015-08-Understanding-LSTMs/">colah.github.io/posts/2015-08-Understanding-LSTMs</a>. LSTM 구조를 가장 직관적으로 설명한 블로그 포스트.&nbsp;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 3 in the text">↩</a></p>
 </li>
 </ol>
 </div>

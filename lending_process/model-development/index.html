@@ -4781,7 +4781,29 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        이 단계의 핵심
+        이 단계가 다음 단계로 넘기는 것
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        서열과 수준의 역할 분담
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        용도별로 다른 모형
       
     </span>
   </a>
@@ -5097,8 +5119,9 @@
 
 
 <h1 id="1">① 모형 개발 — 가이드북의 핵심 영역<a class="headerlink" href="#1" title="Permanent link">¶</a></h1>
-<p>본 가이드북의 전통 스코어카드(Part 1~5)와 머신러닝(Part 1~5)에서
-모형 개발의 전 과정을 다루고 있다.</p>
+<p>본 가이드북의 전통 스코어카드(Part 1~5)와 머신러닝(Part 1~5)은
+모형 개발의 전 과정을 다룬다. 이 페이지는 그 내용을 여신 프로세스의 관점에서 다시 묶어,
+<strong>모형 개발 단계가 무엇을 만들어 다음 단계로 넘기는지</strong>를 정리한다.</p>
 <h2 id="_1">가이드북 매핑<a class="headerlink" href="#_1" title="Permanent link">¶</a></h2>
 <table>
 <thead>
@@ -5110,41 +5133,136 @@
 </thead>
 <tbody>
 <tr>
-<td>데이터 준비</td>
-<td>성능기간 설정, Good/Bad 정의, 관측/표본기간</td>
-<td><a href="../scorecard/part1_overview/">스코어카드 Part 1</a></td>
+<td>요건 정의</td>
+<td>모집단·세그먼트, Good/Bad 정의, 관찰 시점·성과 기간·표본 기간, 거절추론</td>
+<td><a href="../../scorecard/part1_overview/requirements/">스코어카드 Part 1 — 요건 정의</a></td>
 </tr>
 <tr>
 <td>변수 처리</td>
-<td>Classing, WoE/IV 변환, 단변량 LR</td>
-<td><a href="../scorecard/part3_variable_selection/">스코어카드 Part 3</a></td>
+<td>Classing, WoE/IV 변환, 단변량 LR, 정보영역별 대표 변수 선정</td>
+<td><a href="../../scorecard/part3_variable_selection/">스코어카드 Part 3</a></td>
 </tr>
 <tr>
 <td>모형 학습</td>
-<td>Logistic Regression, GBM/RF 등</td>
-<td><a href="../scorecard/part4_modeling/">스코어카드 Part 4</a>, <a href="../ml/part1_overview/">ML Part 1</a>~<a href="../ml/part3_tree_ensemble/">3</a></td>
+<td>로지스틱 회귀(Full Model), GBM/RF 등</td>
+<td><a href="../../scorecard/part4_modeling/">스코어카드 Part 4</a>, <a href="../../ml/part1_overview/">ML Part 1</a>~<a href="../../ml/part3_tree_ensemble/">3</a></td>
 </tr>
 <tr>
 <td>해석·설명</td>
-<td>SHAP, 1-Depth GBM, EBM</td>
-<td><a href="../ml/part4_interpretation/">ML Part 4</a></td>
-</tr>
-<tr>
-<td>성능 평가</td>
-<td>KS, AR, PSI</td>
-<td><a href="../scorecard/part5_scorecard/">스코어카드 Part 5</a>, <a href="../ml/part5_validation/">ML Part 5</a></td>
+<td>SHAP, EBM, fANOVA 등</td>
+<td><a href="../../ml/part4_interpretation/">ML Part 4</a></td>
 </tr>
 <tr>
 <td>산출물 변환</td>
 <td>p̂ → Score(PDO 변환) → 등급 매핑</td>
-<td><a href="../scorecard/part5_scorecard/">스코어카드 Part 5</a></td>
+<td><a href="../../scorecard/part5_scorecard/scorecard-and-rating/">스코어카드 Part 5 — 스코어카드 변환 &amp; 등급화</a></td>
+</tr>
+<tr>
+<td>변별력 평가</td>
+<td>KS, AR</td>
+<td><a href="../../scorecard/part5_scorecard/performance-ks-ar-gini/">스코어카드 Part 5 — 성능 평가</a>, <a href="../../ml/part5_validation/">ML Part 5</a></td>
+</tr>
+<tr>
+<td>안정성 평가</td>
+<td>PSI, CSI, OOT 검증</td>
+<td><a href="../../scorecard/part5_scorecard/oot-validation/">OOT 검증</a>, <a href="../../scorecard/part5_scorecard/monitoring-and-operations/">모니터링</a></td>
+</tr>
+<tr>
+<td>캘리브레이션</td>
+<td>등급별 PD 산정, 예측 PD vs 실현 부도율(Back-testing)</td>
+<td><a href="../../scorecard/part5_scorecard/monitoring-and-operations/">모니터링 — Back-testing</a>, <a href="../terms/pd/">PD 용어 정리</a></td>
 </tr>
 </tbody>
 </table>
-<h2 id="_2">이 단계의 핵심<a class="headerlink" href="#_2" title="Permanent link">¶</a></h2>
-<p>모형의 목적은 <strong>서열화(ordering)</strong> — 누가 더 위험한지를 올바르게 줄 세우는 것이다.
-p̂의 절대값 정확도보다 <strong>변별력(KS, AR)</strong>이 핵심 지표이며,
-이 산출물(Score, 등급)이 이후 단계의 입력값이 된다.</p>
+<h2 id="_2">이 단계가 다음 단계로 넘기는 것<a class="headerlink" href="#_2" title="Permanent link">¶</a></h2>
+<p>모형 개발의 산출물은 "모형 파일" 하나가 아니다. 심사·사후관리·리스크관리 부서가 실제로 쓰는 것은 다음 묶음이다.</p>
+<table>
+<thead>
+<tr>
+<th>산출물</th>
+<th>내용</th>
+<th>주로 쓰는 단계</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>평점표(스코어카드)</strong> 또는 모형식</td>
+<td>변수·구간별 배점, 또는 p̂ 산출식</td>
+<td>심사 시스템 탑재(②)</td>
+</tr>
+<tr>
+<td><strong>등급 체계</strong></td>
+<td>등급별 점수 구간, 구성비, 등급별 불량률</td>
+<td>승인 cross-matrix, 한도 밴드(②③)</td>
+</tr>
+<tr>
+<td><strong>등급별 PD</strong></td>
+<td>등급마다 붙이는 PD 숫자(관측 부도율 → 필요 시 CT 기준 레벨링)</td>
+<td>금리 EL, 충당금, 자본(②⑤)</td>
+</tr>
+<tr>
+<td><strong>검증 결과</strong></td>
+<td>개발·OOT 표본의 KS·AR, PSI, 등급별 단조성</td>
+<td>모형 승인, 정기 검증(⑤)</td>
+</tr>
+<tr>
+<td><strong>모니터링 기준</strong></td>
+<td>지표별 관리 임계값, 재개발·리캘리브레이션 판단 기준</td>
+<td>운영 중 모니터링(⑤)</td>
+</tr>
+<tr>
+<td><strong>개발 문서</strong></td>
+<td>데이터·Bad 정의·변수 선정 근거·한계</td>
+<td>내부 검증, 감독 대응(⑤)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_3">서열과 수준의 역할 분담<a class="headerlink" href="#_3" title="Permanent link">¶</a></h2>
+<p>모형의 1차 목적은 <strong>서열화(ordering)</strong> — 누가 더 위험한지를 올바르게 줄 세우는 것이다.
+그래서 모형 자체의 품질은 p̂의 절대값보다 <strong>변별력(KS, AR)</strong>으로 먼저 판단한다
+(<a href="../../scorecard/part1_overview/ranking-not-classification/">분류가 아닌 서열화</a> 참고).</p>
+<p>그러나 금리·충당금·자본처럼 PD가 <strong>금액</strong>으로 바뀌는 단계(<a href="../">p̂ / PD 활용 방식 종합</a>)에서는
+PD의 <strong>수준</strong>이 맞아야 한다. 이 역할은 보통 모형이 아니라 <strong>캘리브레이션</strong> 단계가 맡는다.</p>
+<ul>
+<li><strong>서열</strong> — 모형(로지스틱 회귀 또는 ML)이 만든 점수의 순서</li>
+<li><strong>수준</strong> — 등급별로 붙이는 PD 숫자. 개발 표본의 관측 부도율에서 출발해, 목적에 따라 장기 평균(CT) 기준으로 레벨링하거나 경기 상황을 반영해 조정한다</li>
+</ul>
+<p>따라서 개발 단계에서는 변별력 검증과 별도로, <strong>등급별 예측 PD와 실현 부도율이 맞는지</strong>를 확인하는 캘리브레이션 검증까지 마쳐야 산출물이 완성된다. 다운샘플링으로 개발한 모형이라면 표본 불량률이 모집단과 다르므로 이 단계가 특히 중요하다.</p>
+<h2 id="_4">용도별로 다른 모형<a class="headerlink" href="#_4" title="Permanent link">¶</a></h2>
+<p>같은 방법론이라도 쓰임새에 따라 모집단·타겟·변수가 달라진다.</p>
+<table>
+<thead>
+<tr>
+<th>모형</th>
+<th>적용 시점</th>
+<th>쓰이는 단계</th>
+<th>정의</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AS (Application Scoring)</td>
+<td>신청 시점</td>
+<td>② 심사·승인</td>
+<td><a href="../../scorecard/part1_overview/what-is-css/">CSS란 — 목적 기준 분류</a></td>
+</tr>
+<tr>
+<td>BS (Behavior Scoring)</td>
+<td>대출 실행 후 주기적</td>
+<td>③ 사후 관리</td>
+<td>위와 같음</td>
+</tr>
+<tr>
+<td>Collection Scoring</td>
+<td>연체 발생 후</td>
+<td>④ 부실·추심</td>
+<td>위와 같음</td>
+</tr>
+</tbody>
+</table>
+<p>하나의 기관이 상품·용도별로 여러 모형을 동시에 운용하는 것이 일반적이므로,
+개발 착수 시 <strong>이 모형이 어느 단계의 어떤 의사결정에 쓰이는지</strong>를 먼저 확정해야
+타겟 정의와 성과 기간, 검증 기준이 함께 정해진다.</p>
 
 
 

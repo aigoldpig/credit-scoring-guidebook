@@ -2098,10 +2098,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#52-sr-11-7" class="md-nav__link">
+  <a href="#52-sr-11-7-sr-26-2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        5.2 SR 11-7 — 모형 리스크 관리의 근간 (미국)
+        5.2 미국 모형리스크 관리 지침 — SR 11-7에서 SR 26-2로
       
     </span>
   </a>
@@ -2112,7 +2112,7 @@
   <a href="#53-basel-irb" class="md-nav__link">
     <span class="md-ellipsis">
       
-        5.3 Basel IRB — 내부등급법 모형 검증 요건
+        5.3 Basel IRB — 내부등급법 모형 요건
       
     </span>
   </a>
@@ -5145,138 +5145,186 @@
 <h1 id="_1">규제 프레임워크<a class="headerlink" href="#_1" title="Permanent link">¶</a></h1>
 <hr>
 <h2 id="51">5.1 모형 리스크 관리의 필요성<a class="headerlink" href="#51" title="Permanent link">¶</a></h2>
-<p>신용평가모형은 여신 심사, 충당금 적립, 규제자본 산출 등 <strong>금융 의사결정의 핵심 인프라</strong>다. 모형이 잘못되면 부실 여신이 늘어나고, 충당금이 과소 적립되며, 규제자본이 부족해진다. 이 때문에 주요국 감독당국은 모형의 개발·검증·운영 전 과정에 걸친 <strong>체계적인 리스크 관리</strong>를 요구한다.</p>
+<p>신용평가모형은 여신 심사, 충당금 적립, 규제자본 산출 등 <strong>금융 의사결정의 핵심 인프라</strong>다. 모형이 잘못되면 부실 여신이 늘어나고, 충당금이 과소 적립되며, 규제자본이 부족해진다. 그래서 주요국 감독당국은 모형의 개발·검증·운영 전 과정에 걸친 <strong>체계적인 리스크 관리</strong>를 요구한다.</p>
 <hr>
-<h2 id="52-sr-11-7">5.2 SR 11-7 — 모형 리스크 관리의 근간 (미국)<a class="headerlink" href="#52-sr-11-7" title="Permanent link">¶</a></h2>
-<p>미국 연방준비제도(Fed)와 OCC가 2011년 발표한 <strong>SR 11-7 "Guidance on Model Risk Management"</strong>은 금융 모형 리스크 관리의 글로벌 표준 프레임워크다. 미국 금융기관을 대상으로 하지만, 국내 금융회사도 이를 <strong>벤치마크</strong>로 삼는 경우가 많다.</p>
-<h3 id="_2">핵심 원칙<a class="headerlink" href="#_2" title="Permanent link">¶</a></h3>
+<h2 id="52-sr-11-7-sr-26-2">5.2 미국 모형리스크 관리 지침 — SR 11-7에서 SR 26-2로<a class="headerlink" href="#52-sr-11-7-sr-26-2" title="Permanent link">¶</a></h2>
+<p>미국 연방준비제도(Fed)와 통화감독청(OCC)이 2011년 4월 공동으로 낸 <strong>SR 11-7 "Guidance on Model Risk Management"</strong> 는 오랫동안 금융 모형리스크 관리의 대표적 참고 문서였고, 국내 금융회사도 벤치마크로 많이 참고했다. 이 지침은 <strong>2026년 4월 17일 SR 26-2로 대체</strong>되었다. SR 26-2는 Fed·FDIC·OCC가 공동으로 낸 개정 지침이다.</p>
 <table>
 <thead>
 <tr>
-<th>원칙</th>
+<th>구분</th>
+<th>SR 11-7 (2011)</th>
+<th>SR 26-2 (2026)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>발행</strong></td>
+<td>Fed, OCC</td>
+<td>Fed, FDIC, OCC</td>
+</tr>
+<tr>
+<td><strong>접근 방식</strong></td>
+<td>모든 모형에 폭넓게 적용</td>
+<td><strong>리스크 기반(risk-based)</strong> — 모형의 중요도(materiality: 노출 규모 + 용도)와 내재 리스크에 비례해 관리 강도 조절</td>
+</tr>
+<tr>
+<td><strong>주 적용 대상</strong></td>
+<td>은행 조직 전반</td>
+<td>총자산 300억 달러 초과 은행 조직에 가장 관련 (작은 조직도 모형 리스크가 크면 해당)</td>
+</tr>
+<tr>
+<td><strong>성격</strong></td>
+<td>감독 지침</td>
+<td>집행 가능한 기준이나 규범적 요구사항이 아니라고 명시</td>
+</tr>
+<tr>
+<td><strong>AI 모형</strong></td>
+<td>별도 언급 없음</td>
+<td>전통 통계·정량 모형과 <strong>비생성형 AI 모형</strong>에 적용, 생성형·에이전트형 AI는 범위 밖</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_2">핵심 요소 (두 지침에 공통)<a class="headerlink" href="#_2" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>요소</th>
 <th>내용</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><strong>개념적 건전성 (Conceptual Soundness)</strong></td>
-<td>모형의 이론적 기반이 타당하고, 가정이 합리적인가</td>
+<td>모형 설계(주요 선택, 가정, 정성 판단, 데이터 선택), 구축, 개발 단계 검증(developmental evidence)의 타당성. SR 26-2는 해석 가능성 지표나 다른 모형과의 비교(benchmarking)도 평가 수단으로 든다</td>
 </tr>
 <tr>
-<td><strong>개발 검증 (Developmental Evidence)</strong></td>
-<td>데이터 품질, 변수 선정 과정, 통계적 유의성이 문서화되었는가</td>
+<td><strong>지속 모니터링 (Ongoing Monitoring)</strong></td>
+<td>상품·고객·데이터·시장 여건 변화 속에서 모형이 기대대로 작동하는지 계속 평가</td>
 </tr>
 <tr>
 <td><strong>결과 분석 (Outcomes Analysis)</strong></td>
-<td>Back-testing, OOT 검증 등 실제 성과와의 비교가 수행되었는가</td>
+<td>모형 출력과 실제 결과의 비교 — Back-testing, 이상치 분석 등</td>
 </tr>
 <tr>
-<td><strong>독립적 검증 (Independent Validation)</strong></td>
-<td>개발자가 아닌 <strong>독립 부서</strong>가 모형을 검증하는가</td>
+<td><strong>효과적 도전 (Effective Challenge)</strong></td>
+<td>적절한 전문성·독립성·조직 내 영향력을 갖춘 사람이 모형을 비판적으로 검토하고 필요한 변경을 이끌어 내는 것</td>
 </tr>
 <tr>
 <td><strong>거버넌스 (Governance)</strong></td>
-<td>모형 목록(Inventory) 관리, 변경 이력 추적, 경영진 보고 체계가 갖춰졌는가</td>
+<td>정책·통제, 역할과 책임, 모형 목록·변경 관리, 내부감사의 역할</td>
 </tr>
 </tbody>
 </table>
+<p>SR 26-2는 모형 테스트의 예로 <strong>out-of-sample·out-of-time 테스트</strong>를 명시한다(<a href="../oot-validation/">OOT 검증</a>).</p>
 <h3 id="_3">전통 스코어카드에서의 적용<a class="headerlink" href="#_3" title="Permanent link">¶</a></h3>
-<p>전통 스코어카드는 SR 11-7 관점에서 <strong>상대적으로 검증이 용이한</strong> 모형이다:</p>
+<p>전통 스코어카드는 이 지침의 관점에서 <strong>상대적으로 검증이 쉬운</strong> 모형이다.</p>
 <ul>
 <li><strong>변수 효과가 투명:</strong> WoE 변환 → 로지스틱 회귀 → 점수표로, 각 변수의 기여가 점수로 직접 표현됨</li>
 <li><strong>개념적 건전성 설명이 직관적:</strong> "연체 횟수가 많으면 점수가 낮아진다"를 점수표로 보여줄 수 있음</li>
-<li><strong>Back-testing 용이:</strong> 등급별 예측 PD와 실현 PD 비교가 명확</li>
-<li><strong>Adverse Action (거절 사유):</strong> 점수 기여가 가장 큰 변수를 거절 사유로 제시 가능</li>
+<li><strong>결과 분석 용이:</strong> 등급별 예측 PD와 실현 부도율 비교가 명확</li>
+<li><strong>거절 사유 설명:</strong> 항목별 최고 배점 대비 잃은 점수가 큰 항목을 거절·불리한 결정의 사유로 제시할 수 있다(감점의 기준점과 동점 처리 규칙은 미리 정해 둔다). 국내에서도 개인은 자동화평가 결과에 대해 설명과 정보 정정·재산출을 요구할 수 있다(신용정보법 제36조의2).</li>
 </ul>
 <div class="admonition info">
 <p class="admonition-title">ML 모형과의 대비</p>
-<p>ML 모형(XGBoost, Random Forest 등)은 SR 11-7의 "개념적 건전성"과 "독립적 검증"에서 추가적인 노력이 필요하다. 변수 간 비선형 상호작용이 존재하고, SHAP 등 사후 해석(post-hoc explanation)에 의존해야 하기 때문이다. ML 모형의 규제 대응에 대해서는 <a href="../../../ml/part5_validation/regulatory/">ML 섹션 — 규제 프레임워크</a>에서 다룬다.</p>
+<p>ML 모형(XGBoost, Random Forest 등)은 "개념적 건전성"과 "효과적 도전"에서 추가적인 노력이 필요하다. 변수 간 비선형 상호작용이 있고, SHAP 등 사후 해석에 의존하는 경우가 많기 때문이다. ML 모형의 규제 대응은 <a href="../../../ml/part5_validation/regulatory/">ML 섹션 — 규제 프레임워크</a>에서 다룬다.</p>
 </div>
 <div class="source-ref">
-출처: Federal Reserve. "Supervisory Letter SR 11-7: Guidance on Model Risk Management." April 4, 2011.
-<a href="https://www.federalreserve.gov/supervisionreg/srletters/sr1107.htm" target="_blank">원문 링크</a>
+출처: Federal Reserve, <a href="https://www.federalreserve.gov/supervisionreg/srletters/SR2602.htm" target="_blank">SR 26-2: Revised Guidance on Model Risk Management (2026.4.17)</a> 및 <a href="https://www.federalreserve.gov/supervisionreg/srletters/SR2602a1.pdf" target="_blank">첨부 지침</a>; <a href="https://www.federalreserve.gov/boarddocs/srletters/2011/sr1107a1.pdf" target="_blank">SR 11-7 첨부 지침 (2011.4.4)</a>
 </div>
 
 <hr>
-<h2 id="53-basel-irb">5.3 Basel IRB — 내부등급법 모형 검증 요건<a class="headerlink" href="#53-basel-irb" title="Permanent link">¶</a></h2>
-<p>Basel II/III 내부등급법(Internal Ratings-Based Approach, IRB)을 적용하는 은행은 자체 신용등급 모형으로 <strong>규제자본</strong>을 산출한다. 이에 따라 모형의 품질이 은행의 자본 적정성에 직접 영향을 미치며, 감독당국은 엄격한 검증 요건을 부과한다.</p>
-<h3 id="irb">IRB 모형 검증의 핵심 요건<a class="headerlink" href="#irb" title="Permanent link">¶</a></h3>
+<h2 id="53-basel-irb">5.3 Basel IRB — 내부등급법 모형 요건<a class="headerlink" href="#53-basel-irb" title="Permanent link">¶</a></h2>
+<p>Basel II/III 내부등급법(Internal Ratings-Based Approach, IRB)을 적용하는 은행은 자체 신용등급 모형으로 <strong>규제자본</strong>을 산출한다. 그래서 모형 품질이 은행의 자본 적정성에 직접 영향을 미치고, 감독당국은 엄격한 요건을 둔다. 아래는 이 가이드북에서 다룬 내용과 직접 관련된 Basel II(BCBS 128) 요건이다.</p>
 <table>
 <thead>
 <tr>
 <th>요건</th>
 <th>내용</th>
+<th>BCBS 128 문단</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>최소 연 1회 검증</strong></td>
-<td>변별력, Calibration, 안정성 지표를 종합 검증하고 결과를 문서화</td>
+<td><strong>등급 구조</strong></td>
+<td>기업·국가·은행 익스포저는 부도 전 차주 등급 최소 7개 + 부도 등급 1개</td>
+<td>404</td>
 </tr>
 <tr>
-<td><strong>Back-testing 의무</strong></td>
-<td>등급별 예측 PD와 실현 PD의 괴리를 통계적으로 검정</td>
+<td><strong>모형 사용</strong></td>
+<td>평점 모형을 등급 부여의 기초로 쓸 수 있으나, 모형 밖의 중요 정보도 인적 판단으로 반영</td>
+<td>417</td>
 </tr>
 <tr>
-<td><strong>등급별 부도율 단조성</strong></td>
-<td>등급이 나쁠수록 부도율이 높아야 함 — 역전 시 원인 분석 및 조치</td>
-</tr>
-<tr>
-<td><strong>OOT 검증</strong></td>
-<td>개발 기간 이외 데이터에서의 성능 확인 필수</td>
-</tr>
-<tr>
-<td><strong>모형 변경 보고</strong></td>
-<td>중대 변경(변수·구조 변경) 시 감독당국 <strong>사전 보고 또는 승인</strong></td>
-</tr>
-<tr>
-<td><strong>재개발 시 문서 제출</strong></td>
-<td>개발 데이터, 검증 결과, 기존 모형 대비 성능 비교 포함</td>
+<td><strong>통계적 검증</strong></td>
+<td>통계 모형은 <strong>out-of-time·out-of-sample 성능 검정을 포함한</strong> 엄격한 통계적 검증 절차를 갖출 것</td>
+<td>420</td>
 </tr>
 <tr>
 <td><strong>Override 관리</strong></td>
-<td>모형 점수를 무시한 심사 건의 비율·사유 추적, 과도한 Override 시 모형 재보정 검토</td>
+<td>Override를 식별하고 그 성과를 별도로 추적</td>
+<td>428</td>
+</tr>
+<tr>
+<td><strong>연간 검토</strong></td>
+<td>내부감사 등 독립 기능이 등급 체계를 적어도 연 1회 검토</td>
+<td>443</td>
+</tr>
+<tr>
+<td><strong>관측 기간</strong></td>
+<td>PD 추정 데이터는 기업(적어도 한 원천)·소매 모두 최소 5년</td>
+<td>463, 466</td>
+</tr>
+<tr>
+<td><strong>결과 분석</strong></td>
+<td>등급별 실현 부도율과 추정 PD를 정기 비교하고, 분석을 적어도 연 1회 갱신</td>
+<td>501</td>
 </tr>
 </tbody>
 </table>
-<h3 id="capital-add-on-calibration">Capital Add-on — Calibration 실패의 대가<a class="headerlink" href="#capital-add-on-calibration" title="Permanent link">¶</a></h3>
-<p>Back-testing에서 예측 PD가 실현 PD를 체계적으로 <strong>과소 추정</strong>하는 것이 확인되면, 감독당국은 <strong>자본 추가 적립(Capital Add-on)</strong>을 요구할 수 있다. 이는 은행의 수익성에 직접 타격을 주므로, Calibration 모니터링은 단순한 통계 검증이 아니라 <strong>경영 이슈</strong>다.</p>
+<div class="source-ref">출처: <a href="https://www.bis.org/publications/200606-standards-basel-ii-international-convergence-capital-measurement-and-capital-standards-revised-framework.pdf" target="_blank">BCBS, International Convergence of Capital Measurement and Capital Standards — Comprehensive Version (2006.6)</a></div>
+
+<h3 id="calibration">Calibration 실패의 대가<a class="headerlink" href="#calibration" title="Permanent link">¶</a></h3>
+<p>Back-testing에서 예측 PD가 실현 부도율을 체계적으로 <strong>과소 추정</strong>하는 것이 확인되면, 감독당국은 보수적 조정이나 추가 자본을 요구할 수 있다. 이는 은행의 수익성에 직접 영향을 주므로, Calibration 모니터링은 통계 검증을 넘어 <strong>경영 이슈</strong>다(<a href="../monitoring-and-operations/">모니터링과 운영</a>).</p>
 <hr>
 <h2 id="54">5.4 국내 규제 환경<a class="headerlink" href="#54" title="Permanent link">¶</a></h2>
-<h3 id="_4">신용평가모형 검증 요건<a class="headerlink" href="#_4" title="Permanent link">¶</a></h3>
-<p>금융감독원은 은행업감독규정 및 관련 시행세칙을 통해 신용평가모형의 개발·검증·운영에 대한 요건을 제시하고 있다. Basel IRB 프레임워크에 기반한 주요 요건은 다음과 같다.</p>
+<h3 id="_4">개인신용평가체계 검증<a class="headerlink" href="#_4" title="Permanent link">¶</a></h3>
+<p>국내 CB사의 개인·개인사업자 신용평가 모형은 신용정보법 제26조의3에 따른 <strong>개인신용평가체계 검증위원회</strong>의 정기 검증을 받고, 공개용 결과 보고서가 나온다. 보고서에는 회사별 개발 시점 대비 검증 시점의 AR·KS·PSI가 담긴다(<a href="../performance-ks-ar-gini/">성능 벤치마크</a>, <a href="../monitoring-and-operations/">모니터링 참고자료</a>).</p>
+<h3 id="_5">금융회사 내부 모형 운영에서 흔히 요구되는 사항<a class="headerlink" href="#_5" title="Permanent link">¶</a></h3>
+<p>은행 등 금융회사는 감독당국의 검사·지도와 내부 규정에 따라 신용평가모형을 관리한다. 구체적인 요건은 업권과 모형 용도(내부등급법 적용 여부 등)에 따라 다르지만, 실무에서 공통적으로 갖추는 항목은 다음과 같다.</p>
 <table>
 <thead>
 <tr>
-<th>요건</th>
+<th>항목</th>
 <th>내용</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>적정성 검증</strong></td>
-<td>최소 <strong>연 1회</strong> 모형 성능 검증 실시</td>
+<td><strong>정기 검증</strong></td>
+<td>적어도 연 1회 모형 성능 검증 (내부등급법 은행은 Basel 요건)</td>
 </tr>
 <tr>
 <td><strong>안정성 모니터링</strong></td>
-<td>PSI 등 안정성 지표를 <strong>정기적</strong> 모니터링</td>
+<td>PSI 등 안정성 지표의 정기 모니터링</td>
 </tr>
 <tr>
-<td><strong>모형 변경·폐기</strong></td>
-<td><strong>사전 보고</strong> 의무</td>
+<td><strong>모형 변경 관리</strong></td>
+<td>중요한 변경·폐기 시 내부 승인, 필요 시 감독당국 보고</td>
 </tr>
 <tr>
-<td><strong>문서 보존</strong></td>
-<td>모형 검증 결과 및 조치 이력을 <strong>최소 5년간</strong> 보존</td>
+<td><strong>기록 보존</strong></td>
+<td>개발·검증 결과와 조치 이력을 내부 규정에 따라 보존</td>
 </tr>
 <tr>
 <td><strong>개발 기록</strong></td>
-<td>변수 선정 근거, 모형 구조, 검증 결과를 포함한 개발 보고서 보관</td>
+<td>변수 선정 근거, 모형 구조, 검증 결과를 포함한 개발 보고서</td>
 </tr>
 </tbody>
 </table>
-<h3 id="ai">금융 분야 AI 가이드라인<a class="headerlink" href="#ai" title="Permanent link">¶</a></h3>
-<p>금융위원회(FSC)는 2021년 <strong>금융분야 인공지능(AI) 가이드라인</strong>을 발표하고, 2025년 12월에 개정했다. 개정안에서 7대 원칙을 제시한다:</p>
+<p>구체적인 보존 기간이나 보고 절차는 해당 금융회사의 업권별 감독규정과 내부 규정을 확인한다.</p>
+<h3 id="ai">금융분야 AI 가이드라인<a class="headerlink" href="#ai" title="Permanent link">¶</a></h3>
+<p>금융위원회는 2021년 7월 <strong>금융분야 AI 가이드라인</strong>을 발표했다(4대 핵심가치: 책임성, 데이터 정확성·안전성, 투명성·공정성, 소비자 권리 보장). 이후 기존 가이드라인을 통합·개정해 2025년 12월 개정안을 내고, 2026년 6월 최종안을 발표했다(2026년 6월 22일 시행). 개정 가이드라인은 7대 원칙을 제시한다.</p>
 <ol>
 <li><strong>거버넌스</strong> — AI 시스템의 책임 소재를 명확히</li>
 <li><strong>합법성</strong> — 관련 법규 준수</li>
@@ -5286,33 +5334,30 @@
 <li><strong>신의성실</strong> — 소비자 이익 보호</li>
 <li><strong>보안성</strong> — 데이터 보호, 사이버 보안</li>
 </ol>
-<p>금융감독원(FSS)은 2026년 1월 <strong>금융분야 AI 위험관리 프레임워크(AI RMF)</strong>를 발표하여, AI 수명주기 전반의 체계적 리스크 관리를 요구하고 있다.</p>
+<p>최종안 발표 때 금융감독원의 <strong>금융분야 AI 위험관리 프레임워크</strong>도 함께 배포되었다.</p>
 <div class="admonition tip">
 <p class="admonition-title">전통 스코어카드와 AI 가이드라인</p>
-<p>전통 로지스틱 회귀 스코어카드는 AI/ML 범주에 해당하지 않으므로 AI 가이드라인의 직접 적용 대상은 아니다. 다만 <strong>ML 챌린저 모형</strong>을 병행 운용하거나, 향후 ML 기반 모형으로 전환할 경우 이 가이드라인이 적용된다. ML 모형의 규제 대응에 대해서는 <a href="../../../ml/part5_validation/regulatory/">ML 섹션 — 규제 프레임워크</a>에서 상세히 다룬다.</p>
+<p>전통 로지스틱 회귀 스코어카드가 이 가이드라인의 "AI"에 해당하는지는 가이드라인의 정의와 각 금융회사의 판단에 따라 달라질 수 있다. 다만 <strong>ML 챌린저 모형</strong>을 병행 운용하거나 ML 기반 모형으로 전환하면 적용 대상이 된다고 보고 준비하는 것이 안전하다. 어느 쪽이든 위 7대 원칙(설명 가능성, 재현성, 책임 소재 등)은 전통 스코어카드 운영 원칙과 크게 다르지 않다. ML 모형의 규제 대응은 <a href="../../../ml/part5_validation/regulatory/">ML 섹션 — 규제 프레임워크</a>에서 상세히 다룬다.</p>
 </div>
-<div class="source-ref">출처: <a href="https://www.fsc.go.kr/no010101/85908" target="_blank">금융위원회 '금융분야 AI 가이드라인 개정안'(2025.12)</a>, <a href="https://www.lawtimes.co.kr/news/articleView.html?idxno=215222" target="_blank">금융감독원 'AI 위험관리 프레임워크'(2026.1)</a></div>
+<div class="source-ref">출처: 금융위원회 <a href="https://www.fsc.go.kr/no010101/76206" target="_blank">금융분야 AI 가이드라인 발표 (2021.7.8)</a>, <a href="https://www.fsc.go.kr/no010101/85908" target="_blank">금융분야 AI 가이드라인 개정안 (2025.12.22)</a>, <a href="https://www.fsc.go.kr/no010101/87142" target="_blank">개정 가이드라인 최종 발표 (2026.6.18)</a></div>
 
 <hr>
 <h2 id="55">5.5 해외 규제 동향<a class="headerlink" href="#55" title="Permanent link">¶</a></h2>
 <h3 id="eu-ai-act-ai">EU AI Act — 신용평가 AI는 "고위험"<a class="headerlink" href="#eu-ai-act-ai" title="Permanent link">¶</a></h3>
-<p>EU AI Act는 신용평가 AI를 <strong>고위험(High-risk)</strong> 시스템으로 분류한다. 투명성, 설명 가능성, 데이터 거버넌스, 인적 감독, 문서화가 요구된다.</p>
-<h3 id="eba-ml-for-irb-report-2023">EBA ML for IRB Report (2023)<a class="headerlink" href="#eba-ml-for-irb-report-2023" title="Permanent link">¶</a></h3>
-<p>유럽은행감독청(EBA)은 IRB에 ML을 사용하는 은행을 대상으로 실태 조사를 수행했다. 주요 결과:</p>
-<ul>
-<li>은행의 <strong>40%가 Shapley values</strong> 활용</li>
-<li>20%가 시각적 도구</li>
-<li>28%가 문서화 강화</li>
-</ul>
-<h3 id="ecb-internal-models-guide-2025">ECB Internal Models Guide (2025)<a class="headerlink" href="#ecb-internal-models-guide-2025" title="Permanent link">¶</a></h3>
-<p>ECB는 ML 챕터를 신설하여, LIME 등 surrogate를 허용 가능한 해석 접근으로 명시했다.</p>
+<p>EU AI Act는 자연인의 신용도 평가·신용점수 산출에 쓰이는 AI 시스템을 <strong>고위험(High-risk)</strong> 으로 분류한다(사기 탐지 목적은 제외). 고위험 시스템에는 위험관리, 데이터 거버넌스, 문서화, 투명성, 인적 감독 등이 요구된다.</p>
+<h3 id="eba-irb-2023">EBA — IRB 모형의 머신러닝 활용 후속 보고서 (2023)<a class="headerlink" href="#eba-irb-2023" title="Permanent link">¶</a></h3>
+<p>유럽은행감독청(EBA)은 IRB 모형에 ML을 쓰는 은행의 실태를 조사했다. 설명 가능성 확보 수단으로는 <strong>Shapley 값(응답 기관의 40%)</strong>, 그래프 도구(20%), 보고·문서화 강화(28%), 민감도 분석(8%)이 쓰였다.</p>
+<h3 id="ecb-2025">ECB — 내부모형 가이드 (2025 개정)<a class="headerlink" href="#ecb-2025" title="Permanent link">¶</a></h3>
+<p>ECB의 내부모형 가이드는 내부모형에서의 <strong>머신러닝 기법 활용</strong>을 별도 절로 다루며, 은행이 모형 결과에 대한 전체·개별 수준의 기여를 평가할 수 있는 <strong>설명 가능성 기법과 도구들</strong>을 갖출 것을 기대한다. 특정 기법을 지정하지는 않는다.</p>
+<div class="source-ref">출처: <a href="https://www.eba.europa.eu/sites/default/files/document_library/Publications/Reports/2023/1061483/Follow-up%20report%20on%20machine%20learning%20for%20IRB%20models.pdf" target="_blank">EBA, Follow-up report on machine learning for IRB models (EBA/REP/2023/28)</a>, <a href="https://www.bankingsupervision.europa.eu/ecb/pub/pdf/ssm.supervisory_guide202507.en.pdf" target="_blank">ECB Guide to internal models (2025.7)</a></div>
+
 <div class="admonition info">
 <p class="admonition-title">해외 규제의 시사점</p>
-<p>미국(SR 11-7)과 유럽(EU AI Act, EBA, ECB)의 방향은 명확하다: <strong>설명 가능하지 않은 모형은 점점 더 운영하기 어려워진다.</strong> 전통 스코어카드는 이 요건을 본질적으로 충족하며, 이것이 규제 환경에서 전통 스코어카드가 여전히 "규제모형의 표준"인 이유 중 하나다.</p>
+<p>미국(SR 26-2)과 유럽(EU AI Act, EBA, ECB)의 방향은 같다: <strong>설명할 수 없는 모형은 점점 운영하기 어려워진다.</strong> 전통 스코어카드는 이 요건을 구조적으로 충족하며, 규제 환경에서 여전히 표준적인 모형으로 쓰이는 이유 중 하나다.</p>
 </div>
 <hr>
 <h2 id="56">5.6 모형 문서화 — 무엇을 남겨야 하는가<a class="headerlink" href="#56" title="Permanent link">¶</a></h2>
-<p>규제 검증에서 가장 빈번한 지적 사항 중 하나가 <strong>문서화 미비</strong>다. 모형 개발 보고서에 최소한 다음 항목이 포함되어야 한다.</p>
+<p>규제 검증에서 자주 지적되는 사항 중 하나가 <strong>문서화 미비</strong>다. 모형 개발 보고서에는 최소한 다음 항목이 들어가야 한다.</p>
 <table>
 <thead>
 <tr>
@@ -5323,7 +5368,7 @@
 <tbody>
 <tr>
 <td><strong>모집단 설계</strong></td>
-<td>Target 정의(Good/Bad), 성과 기간, 제외 기준, 샘플 설계 근거</td>
+<td>Target 정의(Good/Bad), 성과 기간, 제외 기준, 표본 설계 근거</td>
 </tr>
 <tr>
 <td><strong>변수 선정</strong></td>
@@ -5331,11 +5376,11 @@
 </tr>
 <tr>
 <td><strong>모형 구조</strong></td>
-<td>최종 변수, 회귀계수, 스코어카드 변환 파라미터 (Anchor, PDO)</td>
+<td>최종 변수, 회귀계수, 스코어카드 변환 파라미터 (Anchor, 기준 Odds, PDO)</td>
 </tr>
 <tr>
 <td><strong>성능 평가</strong></td>
-<td>KS, AR, AUC — 개발/OOS/OOT 대비표</td>
+<td>KS, AR — 개발/OOS/OOT 대비표</td>
 </tr>
 <tr>
 <td><strong>안정성 검증</strong></td>
@@ -5353,12 +5398,12 @@
 </table>
 <div class="admonition warning">
 <p class="admonition-title">실무 팁 — 문서화는 개발과 동시에</p>
-<p>모형 개발이 끝난 후 문서를 작성하면, 변수 선정 과정의 세부 의사결정 근거가 유실되기 쉽다. <strong>개발 단계마다 의사결정 기록을 남기고</strong>, 최종 보고서는 이를 정리하는 방식이 효율적이다.</p>
+<p>모형 개발이 끝난 뒤 문서를 쓰면 변수 선정 과정의 세부 의사결정 근거가 사라지기 쉽다. <strong>개발 단계마다 의사결정 기록을 남기고</strong>, 최종 보고서는 이를 정리하는 방식이 효율적이다.</p>
 </div>
 <hr>
 <div class="admonition success">
 <p class="admonition-title">시리즈 완료</p>
-<p>개요 → 이론 → 변수 선정(Classing · WoE/IV · 단변량 LR) → 모델링(Full Model) → 스코어카드(변환 · 성능 평가 · OOT 검증 · 모니터링과 운영 · <strong>규제 프레임워크</strong>)까지, 스코어카드 모형의 <strong>개발에서 운영·규제까지 전 과정</strong>을 다루었다.</p>
+<p>개요 → 이론 → 변수 선정(Classing · WoE/IV · 단변량 LR · 정보영역별 선정) → 모델링(Full Model) → 스코어카드(변환 · 성능 평가 · OOT 검증 · 모니터링과 운영 · <strong>규제 프레임워크</strong>)까지, 스코어카드 모형의 <strong>개발에서 운영·규제까지 전 과정</strong>을 다루었다. 심화 주제는 <a href="../../appendix/">부록</a>에서 이어진다.</p>
 </div>
 
 

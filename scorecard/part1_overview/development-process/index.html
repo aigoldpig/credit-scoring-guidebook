@@ -5113,54 +5113,59 @@
 <h2 id="71">7.1 전체 흐름<a class="headerlink" href="#71" title="Permanent link">¶</a></h2>
 <p>CSS 모형 개발은 크게 <strong>요건 정의 → 데이터 준비 → 변수 선정 → 모델링 → 스코어링 → 검증</strong>의 흐름으로 진행된다.</p>
 <blockquote>
-<p><strong>요건 정의</strong> (모집단·Target·Segment) → <strong>데이터 준비</strong> (수집·추출·가공) → <strong>변수 선정</strong> (Classing·WoE/IV) → <strong>모델링</strong> (Logistic Regression) → <strong>스코어링</strong> (PDO·Scaling·Grading) → <strong>검증</strong> (PSI·AR·K-S)</p>
+<p><strong>① 요건 정의</strong> (모집단·Target·Segment·기간) → <strong>② 데이터 준비</strong> (수집·추출·가공·표본 분할) → <strong>③ Classing</strong> → <strong>④ WoE/IV</strong> → <strong>⑤ 모형 적합</strong> (Logistic Regression) → <strong>⑥ 평점화·등급화</strong> (PDO·Scaling·Grading) → <strong>⑦ 모형 검증</strong> (KS·AR·PSI·캘리브레이션)</p>
 </blockquote>
 <p>아래에서 각 단계가 <strong>무엇을 하는 것인지, 왜 필요한지, 어떤 산출물이 나오는지</strong>를 살펴본다. 각 단계의 상세 방법론은 해당 Part에서 다룬다.</p>
 <h2 id="72-overview">7.2 각 단계 Overview<a class="headerlink" href="#72-overview" title="Permanent link">¶</a></h2>
-<p><strong>① 요건 정의</strong> — <a href="../">개요 (본 섹션)</a></p>
-<p>모형 개발의 출발점이다. <strong>누구를 대상으로(모집단)</strong>, <strong>무엇을 예측할 것인지(Target)</strong>, <strong>어떤 기간을 볼 것인지(성과 기간)</strong>를 확정한다. 필요 시 상품·고객군별로 세부 모형(Segment)을 분리한다.</p>
+<p><strong>① 요건 정의</strong> — <a href="../requirements/">요건 정의</a></p>
+<p>모형 개발의 출발점이다. <strong>누구를 대상으로(모집단)</strong>, <strong>무엇을 예측할 것인지(Target)</strong>, <strong>어떤 기간을 볼 것인지(관찰 시점·성과 기간·표본 기간)</strong>를 확정한다. 필요 시 상품·고객군별로 세부 모형(Segment)을 분리하고, AS모형이라면 거절 건을 어떻게 다룰지(거절추론)도 이 단계에서 정한다.</p>
 <blockquote>
-<p>산출물: Bad/Good/Indeterminate 정의서, 성과 기간 기준, 모형 Segment 설계</p>
+<p>산출물: Bad/Good/Indeterminate 정의서, 기간 설정 기준, 모형 Segment 설계, 사전 제외 기준</p>
 </blockquote>
 <hr>
-<p><strong>② 데이터 준비</strong></p>
-<p>정보 영역별(고객 인적사항, 여신·수신 실적, 카드 이용, CB 외부 정보 등)로 데이터를 수집·추출한다. 원천 데이터를 검증·정제한 뒤, 모형에 투입할 수 있는 형태의 <strong>후보 변수(Feature)</strong>를 생성한다. 이 단계에서 변수의 가감승제, 기간별 집계, 합성 변수 생성 등의 가공이 이루어진다.</p>
+<p><strong>② 데이터 준비</strong> — <a href="../x-variables/">변수 선정</a></p>
+<p>정보 영역별(고객 인적사항, 여신·수신 실적, 카드 이용, CB 외부 정보 등)로 데이터를 수집·추출한다. 원천 데이터를 검증·정제한 뒤, 모형에 투입할 수 있는 형태의 <strong>후보 변수(Feature)</strong>를 생성한다. 이 단계에서 변수의 가감승제, 기간별 집계, 합성 변수 생성 등의 가공이 이루어진다. 관찰 시점 이후의 정보가 변수에 섞이지 않았는지(정보 누수) 반드시 확인한다.</p>
+<div class="admonition tip">
+<p class="admonition-title">개발 데이터는 끝까지 돌아도 틀릴 수 있다</p>
+<p>데이터 결합·정제 코드는 결함이 있어도 끝까지 돌고 숫자가 나온다. 결합 전후 행수와 고유 키 수, 중복 제거의 정렬 기준이 라벨을 한쪽으로 치우치게 하지 않는지 확인한다. 최신 상태로 덮어쓰는 마스터 정보(현재 대표자, 현재 업종 등)를 과거 관찰 시점에 그대로 붙이지 않도록 주의한다.</p>
+</div>
+<p>개발 표본과 검증 표본도 이 단계에서 나눈다. 같은 기간 안에서 무작위로 떼어 둔 <strong>검증 표본</strong>과, 표본 기간 이후 시점의 <strong>OOT(Out-of-Time) 표본</strong>을 따로 확보해야 이후 단계에서 과적합과 시점 안정성을 평가할 수 있다(<a href="../../part5_scorecard/oot-validation/">OOT 검증</a>).</p>
 <blockquote>
-<p>산출물: 분석 항목 리스트 (수십~수백 개의 후보 변수)</p>
+<p>산출물: 분석 항목 리스트 (수십~수백 개의 후보 변수), 개발·검증·OOT 표본</p>
 </blockquote>
 <hr>
 <p><strong>③ 변수 범주화(Classing)</strong> — <a href="../../part3_variable_selection/classing/">Classing</a></p>
 <p>연속형 변수를 구간으로 나누고(Fine Classing), 유사한 불량률 패턴의 구간을 합치며(Coarse Classing), 최종적으로 정수 값을 부여(Recoding)하는 과정이다. 이 단계를 통해 각 변수의 <strong>불량률 패턴과 단변량 예측력</strong>을 1차적으로 파악한다.</p>
 <blockquote>
-<p>산출물: 변수별 Classing 테이블 (구간, 건수, 불량률, IV, K-S 등)</p>
+<p>산출물: 변수별 Classing 테이블 (구간, 건수, 불량률, IV, KS 등)</p>
 </blockquote>
 <hr>
 <p><strong>④ 변수 변별력 평가(WoE / IV)</strong> — <a href="../../part3_variable_selection/woe_iv/">WoE/IV</a></p>
-<p>Classing된 각 구간에 <strong>WoE(Weight of Evidence)</strong> 값을 부여하여 변수를 변환한다. WoE는 각 구간이 Good과 Bad를 얼마나 잘 구분하는지를 나타내는 지표이며, 이를 구간별로 합산한 <strong>IV(Information Value)</strong>로 변수 전체의 예측력을 정량 평가한다. IV가 기준치 이하인 변수는 이 단계에서 탈락시킨다.</p>
+<p>Classing된 각 구간에 <strong>WoE(Weight of Evidence)</strong> 값을 부여하여 변수를 변환한다. 가이드북의 WoE는 <span class="arithmatex">\(\ln(\%\text{Good}/\%\text{Bad})\)</span>로, 우량 구간일수록 크다. 이를 구간별로 합산한 <strong>IV(Information Value)</strong>로 변수 전체의 예측력을 정량 평가하며, IV가 기준치 이하인 변수는 이 단계에서 탈락시킨다.</p>
 <blockquote>
 <p>산출물: 변수별 WoE 테이블, IV 기반 변수 스크리닝 결과</p>
 </blockquote>
 <hr>
-<p><strong>⑤ 모형 적합(Logistic Regression)</strong> — <a href="../../part2_theory/">이론</a> · <a href="../../part3_variable_selection/univariate_lr/">단변량 로지스틱 회귀</a></p>
-<p>선별된 후보 변수들을 <strong>로지스틱 회귀(Logistic Regression)</strong>에 투입하여 최종 변수를 선택하고 계수(β)를 추정한다. 정보 영역별로 부분 회귀(Partial Logistic Regression)를 먼저 수행한 뒤, 전체 영역을 통합하여 최종 모형을 적합시킨다. 이 과정에서 <strong>다중공선성 제거, 계수 부호 검정, 업무적 타당성 검토</strong>가 병행된다.</p>
+<p><strong>⑤ 모형 적합(Logistic Regression)</strong> — <a href="../../part2_theory/">이론</a> · <a href="../../part3_variable_selection/univariate_lr/">단변량 로지스틱 회귀</a> · <a href="../../part3_variable_selection/domain_selection/">정보영역별 선정</a> · <a href="../../part4_modeling/multivariate-regression/">다변량 회귀</a></p>
+<p>선별된 후보 변수들을 <strong>로지스틱 회귀(Logistic Regression)</strong>에 투입하여 최종 변수를 선택하고 계수(β)를 추정한다. 정보 영역별로 부분 회귀(Partial Logistic Regression)를 먼저 수행해 영역별 대표 변수를 정한 뒤, 전체 영역을 통합하여 최종 모형(Full Model)을 적합시킨다. 이 과정에서 <strong>다중공선성 점검, 계수 부호 점검, 업무적 타당성 검토</strong>가 병행된다. WoE로 투입한 변수의 정상 부호는 <strong>β &lt; 0</strong>(우량 구간일수록 Bad 로그 오즈 감소)이며, 양(+)으로 바뀌면 공선성 등을 의심한다.</p>
 <blockquote>
 <p>산출물: 최종 변수 목록, 회귀계수(Estimate), 모형 적합 결과(Wald 검정, p-value 등)</p>
 </blockquote>
 <hr>
-<p><strong>⑥ 평점화·등급화</strong> — <a href="../../part4_modeling/">모델링 · 스코어카드</a></p>
-<p>추정된 회귀계수를 <strong>PDO(Point to Double Odds)</strong> 체계를 이용해 점수(Score)로 변환하여 평점표(Scorecard)를 구성한다. 세부 모형이 여러 개인 경우 평점 통합(Scaling)을 수행하고, 최종적으로 점수를 <strong>등급(Grade)</strong>으로 구간화한다. 점수가 높을수록 우량하도록 설계하는 것이 일반적이다.</p>
+<p><strong>⑥ 평점화·등급화</strong> — <a href="../../part5_scorecard/scorecard-and-rating/">스코어카드 변환 &amp; 등급화</a></p>
+<p>추정된 회귀계수를 <strong>PDO(Points to Double the Odds)</strong> 체계를 이용해 점수(Score)로 변환하여 평점표(Scorecard)를 구성한다. 이때 계수를 다시 적합하지 않고 같은 β로 <span class="arithmatex">\(\ln(\text{Good Odds}) = -\,\text{logit}_{\text{Bad}}\)</span>를 계산해, 점수가 높을수록 우량하도록 만든다. 세부 모형이 여러 개인 경우 평점 통합(Scaling)을 수행하고, 최종적으로 점수를 <strong>등급(Grade)</strong>으로 구간화한 뒤 등급별 PD를 산정한다.</p>
 <blockquote>
-<p>산출물: 평점표(항목별 배점), 등급 체계(등급별 평점 구간, 불량률, 구성비)</p>
+<p>산출물: 평점표(항목별 배점), 등급 체계(등급별 평점 구간, 불량률, 구성비), 등급별 PD</p>
 </blockquote>
 <hr>
-<p><strong>⑦ 모형 검증</strong> — <a href="../../part4_modeling/">모델링 · 스코어카드</a></p>
-<p>개발된 모형이 실무에서 안정적으로 작동하는지를 검증한다. 크게 두 가지 관점에서 평가한다.</p>
+<p><strong>⑦ 모형 검증</strong> — <a href="../../part5_scorecard/performance-ks-ar-gini/">성능 평가</a> · <a href="../../part5_scorecard/oot-validation/">OOT 검증</a> · <a href="../../part5_scorecard/monitoring-and-operations/">모니터링</a></p>
+<p>개발된 모형이 실무에서 안정적으로 작동하는지를 검증한다. 검증 보고서는 흔히 성과(y)가 필요 없는 <strong>Front-end</strong> 분석과, 성과가 관측된 뒤에야 가능한 <strong>Back-end</strong> 분석으로 나누어 구성한다.</p>
 <ul>
-<li><strong>안정성 검증:</strong> 개발 시점과 검증 시점 간 점수 분포 변화가 작은지 확인한다 (PSI, CAR 등).</li>
-<li><strong>변별력 검증:</strong> 모형이 Good과 Bad를 얼마나 잘 구분하는지 평가한다 (AUROC, AR, K-S, IV 등). 등급별 불량률 서열화(SDR)가 유지되는지도 확인한다.</li>
+<li><strong>Front-end (분포 안정성):</strong> 개발 시점과 검증 시점 사이에 점수 분포와 변수별 분포가 얼마나 달라졌는지 확인한다. 점수 분포는 PSI, 변수별 분포는 CSI(Characteristic Stability Index)로 본다. 성과를 기다리지 않고 바로 계산할 수 있어 운영 초기부터 쓸 수 있다.</li>
+<li><strong>Back-end (성과 기반):</strong> 성과 기간이 지난 표본으로 변별력(KS, AR), <strong>등급별 불량률의 단조성</strong>(등급이 내려갈수록 불량률이 높아지는지), 등급별 예측 PD와 실현 부도율의 일치(캘리브레이션)를 확인한다.</li>
 </ul>
 <blockquote>
-<p>산출물: 모형 검증 보고서 (Front-end / Back-end Report)</p>
+<p>산출물: 모형 검증 보고서 (Front-end / Back-end 분석)</p>
 </blockquote>
 <div class="admonition note">
 <p class="admonition-title">반복적 프로세스</p>
@@ -5178,38 +5183,48 @@
 <tbody>
 <tr>
 <td>① 요건 정의</td>
-<td><strong><a href="../">개요</a></strong></td>
-<td>CSS 정의, 모형 분류, Target, Segment, Vintage, Roll Rate</td>
+<td><strong><a href="../requirements/">개요 — 요건 정의</a></strong></td>
+<td>모집단, Target, Segment, 기간 설정, Vintage, Roll Rate, 거절추론</td>
 </tr>
 <tr>
-<td>② 이론</td>
-<td><strong><a href="../../part2_theory/">이론</a></strong></td>
-<td>Logit, Sigmoid, MLE, Odds</td>
+<td>② 데이터 준비</td>
+<td><strong><a href="../x-variables/">개요 — 변수 선정</a></strong></td>
+<td>변수풀, 대안정보, 사용 제한 변수, 표본 분할</td>
 </tr>
 <tr>
-<td>③ 변수 선정 — Classing</td>
-<td><strong><a href="../../part3_variable_selection/classing/">Classing</a></strong></td>
+<td>③ Classing</td>
+<td><strong><a href="../../part3_variable_selection/classing/">Part 3 — Classing</a></strong></td>
 <td>Fine/Coarse Classing, Recoding</td>
 </tr>
 <tr>
-<td>④ 변수 선정 — WoE/IV</td>
-<td><strong><a href="../../part3_variable_selection/woe_iv/">WoE/IV</a></strong></td>
+<td>④ WoE/IV</td>
+<td><strong><a href="../../part3_variable_selection/woe_iv/">Part 3 — WoE/IV</a></strong></td>
 <td>Weight of Evidence, Information Value</td>
 </tr>
 <tr>
-<td>⑤ 변수 선정 — 단변량 로지스틱 회귀</td>
-<td><strong><a href="../../part3_variable_selection/univariate_lr/">단변량 로지스틱 회귀</a></strong></td>
-<td>Partial LR, 다중공선성, 유의성 검정</td>
+<td>⑤ 모형 적합</td>
+<td><strong><a href="../../part3_variable_selection/univariate_lr/">Part 3 — 단변량 LR</a></strong>, <strong><a href="../../part3_variable_selection/domain_selection/">정보영역별 선정</a></strong>, <strong><a href="../../part4_modeling/">Part 4 — 모델링</a></strong></td>
+<td>단변량 검토, Partial LR, 다변량 회귀, 다중공선성, 부호 점검</td>
 </tr>
 <tr>
-<td>⑥ 모델링 · 스코어카드</td>
-<td><strong><a href="../../part4_modeling/">Full Model</a></strong></td>
-<td>다변량 회귀, PDO, Scaling, Grading, PSI, AUROC</td>
+<td>⑥ 평점화·등급화</td>
+<td><strong><a href="../../part5_scorecard/scorecard-and-rating/">Part 5 — 스코어카드 변환 &amp; 등급화</a></strong></td>
+<td>PDO, Scaling, Grading, 등급별 PD</td>
+</tr>
+<tr>
+<td>⑦ 모형 검증</td>
+<td><strong><a href="../../part5_scorecard/performance-ks-ar-gini/">Part 5 — 성능 평가</a></strong>, <strong><a href="../../part5_scorecard/oot-validation/">OOT 검증</a></strong>, <strong><a href="../../part5_scorecard/monitoring-and-operations/">모니터링</a></strong>, <strong><a href="../../part5_scorecard/regulatory-framework/">규제 프레임워크</a></strong></td>
+<td>KS, AR, PSI, CSI, 캘리브레이션, 리캘리브레이션</td>
+</tr>
+<tr>
+<td>(사전 지식) 이론</td>
+<td><strong><a href="../../part2_theory/">Part 2 — 이론</a></strong></td>
+<td>Odds, Logit, Sigmoid, MLE</td>
 </tr>
 <tr>
 <td>부록</td>
 <td><strong><a href="../../appendix/">부록</a></strong></td>
-<td>WoE vs Dummy, Stepwise, 통계 검정</td>
+<td>optbinning 실무, WoE vs Dummy, Stepwise, Score·Wald·LR 검정, LOWESS, 기호 용어집</td>
 </tr>
 </tbody>
 </table>

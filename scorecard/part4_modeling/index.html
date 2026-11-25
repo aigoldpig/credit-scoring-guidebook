@@ -24,7 +24,7 @@
     
     
       
-        <title>모델링 · 스코어카드 - 신용평가모형(Credit Scoring System) 가이드북</title>
+        <title>모델링: 다변량 로지스틱 회귀 - 신용평가모형(Credit Scoring System) 가이드북</title>
       
     
     
@@ -133,7 +133,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              모델링 · 스코어카드
+              모델링: 다변량 로지스틱 회귀
             
           </span>
         </div>
@@ -5029,17 +5029,20 @@
 
 
 
-<h1 id="_1">모델링 · 스코어카드<a class="headerlink" href="#_1" title="Permanent link">¶</a></h1>
+<h1 id="_1">모델링: 다변량 로지스틱 회귀<a class="headerlink" href="#_1" title="Permanent link">¶</a></h1>
 <blockquote>
-<p>다변량 모형 구축부터 스코어카드 변환, 등급화, 성능 평가까지</p>
+<p>정보영역별 대표 변수를 통합해 최종 다변량 모형(Full Model)을 구축한다</p>
 </blockquote>
-<p><a href="../part3_variable_selection/univariate_lr/concept/">단변량 로지스틱 회귀(Simple LR)</a>은 변수 하나하나의 단독 설명력을 확인하는 단계였다. Full Model은 선별된 변수들을 <strong>함께</strong> 투입하여 최종 예측 모형을 완성하고, 스코어카드로 변환한 후 성능을 검증하는 단계다.</p>
+<p><a href="../part3_variable_selection/univariate_lr/concept/">단변량 로지스틱 회귀(Simple LR)</a>는 변수 하나하나가 위험을 구분하는지 확인하는 단계였다. Full Model은 선별된 변수들을 <strong>함께</strong> 투입하여 최종 예측 모형을 완성하는 단계다.</p>
 <blockquote>
 <p><strong>① 전체 영역 통합 Full Model</strong> →
-<strong>② 회귀계수 검토 (부호·유의성·VIF)</strong> →
-<strong>③ 스코어카드 변환 (Anchor Score + PDO)</strong> →
-<strong>④ 성능 평가 (KS · AR · Gini)</strong></p>
+<strong>② 회귀계수 검토 (부호·크기·유의성·VIF)</strong> →
+<strong>③ 최종 모형 확정</strong> → <a href="../part5_scorecard/">Part 5: 스코어카드 변환·성능 평가</a></p>
 </blockquote>
+<div class="admonition info">
+<p class="admonition-title">Odds 방향과 부호: Bad Odds</p>
+<p>Part 4도 Part 3과 같이 y=1=Bad인 <strong>Bad logit</strong>으로 적합한다. WoE = ln(%Good/%Bad)는 우량할수록 크므로 정상 계수는 <strong>음수</strong>이고, 양수가 나오면 부호 역전이다. Good Odds로의 전환은 <a href="../part5_scorecard/scorecard-and-rating/">Part 5</a>에서 계수를 다시 적합하지 않고 부호만 뒤집어 이루어진다.</p>
+</div>
 <div class="admonition note">
 <p class="admonition-title">정보영역별 변수 선정은 이전 단계에서 완료</p>
 <p>동일 정보영역 내 Partial LR을 통한 대표 변수 확정은 <a href="../part3_variable_selection/domain_selection/">변수 선정</a> 단계에서 이미 수행되었다. 여기서는 영역별 대표 변수를 통합하여 Full Model을 구성하는 것부터 시작한다.</p>
@@ -5064,21 +5067,11 @@
 <td><a href="multivariate-regression/">다변량 회귀</a></td>
 <td>Full Model을 어떻게 구성하고 계수를 검토하는가?</td>
 </tr>
-<tr>
-<td>3</td>
-<td><a href="../part5_scorecard/scorecard-and-rating/">스코어카드 변환 &amp; 등급화</a></td>
-<td>회귀계수를 점수로 변환하고 등급을 설계하는 방법은?</td>
-</tr>
-<tr>
-<td>4</td>
-<td><a href="../part5_scorecard/performance-ks-ar-gini/">성능 평가 (KS·AR·Gini)</a></td>
-<td>KS, AR, Gini, PSI로 모형을 어떻게 검증하는가?</td>
-</tr>
 </tbody>
 </table>
 <div class="admonition tip">
-<p class="admonition-title">심화 학습</p>
-<p>스코어카드 개발 전 과정을 마쳤다면, <a href="../appendix/">부록</a>에서 WoE vs Dummy 투입 방식 비교, Stepwise 검정 이론, LOWESS 기반 기업 모형 등 심화 주제를 학습할 수 있다.</p>
+<p class="admonition-title">다음 단계와 심화 학습</p>
+<p>최종 모형이 확정되면 <a href="../part5_scorecard/">Part 5</a>에서 회귀계수를 점수로 변환하고(Anchor Score + PDO), 등급을 설계하고, KS·AR로 성능을 검증한다. WoE vs Dummy 투입 방식 비교, Stepwise 검정 이론, LOWESS 기반 기업 모형 등 심화 주제는 <a href="../appendix/">부록</a>에서 다룬다.</p>
 </div>
 
 

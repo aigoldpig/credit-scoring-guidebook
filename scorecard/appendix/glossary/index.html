@@ -2946,6 +2946,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#lowess-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LOWESS 관련 (부록 C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5167,7 +5178,7 @@
 
 
 <h1 id="_1">기호 용어집<a class="headerlink" href="#_1" title="Permanent link">¶</a></h1>
-<p>본 가이드북 전체에서 사용하는 주요 기호와 약어를 정리한다.</p>
+<p>본 가이드북 전체에서 사용하는 주요 기호와 약어를 정리한다. 부호 규약은 <a href="../">부록 첫 페이지</a>의 규약 박스를 따른다.</p>
 <h2 id="_2">확률·오즈 관련<a class="headerlink" href="#_2" title="Permanent link">¶</a></h2>
 <table>
 <thead>
@@ -5180,23 +5191,23 @@
 <tbody>
 <tr>
 <td><span class="arithmatex">\(p\)</span> 또는 <span class="arithmatex">\(P(y=1 \mid \mathbf{x})\)</span></td>
-<td>불량(Bad) 확률</td>
+<td>불량(Bad) 확률, y=1=Bad</td>
 <td>전체</td>
 </tr>
 <tr>
 <td><span class="arithmatex">\(\text{Odds} = p/(1-p)\)</span></td>
-<td>Bad Odds — 불량 대비 정상의 비율</td>
-<td>개요~단변량 LR</td>
+<td>Bad Odds — 정상 대비 불량의 비율(불량/정상)</td>
+<td>Part 1~4</td>
 </tr>
 <tr>
 <td><span class="arithmatex">\(\text{Good Odds} = (1-p)/p\)</span></td>
-<td>Good Odds — 정상 대비 불량의 비율</td>
-<td>스코어카드 변환</td>
+<td>Good Odds — 불량 대비 정상의 비율(정상/불량)</td>
+<td>Part 5 스코어카드 변환</td>
 </tr>
 <tr>
 <td><span class="arithmatex">\(\text{Logit}(p) = \ln(p/(1-p))\)</span></td>
-<td>로그 오즈 (Log-Odds)</td>
-<td>이론</td>
+<td>로그 오즈(Log-Odds). 모형 적합은 항상 이 Bad logit 기준</td>
+<td>이론, 모델링</td>
 </tr>
 <tr>
 <td><span class="arithmatex">\(\eta = \beta_0 + \boldsymbol{\beta}^\top \mathbf{x}\)</span></td>
@@ -5210,8 +5221,8 @@
 </tr>
 <tr>
 <td><span class="arithmatex">\(\ell(\boldsymbol{\beta}) = \ln \mathcal{L}\)</span></td>
-<td>로그우도함수 (Log-Likelihood)</td>
-<td>이론, MLE</td>
+<td>로그우도함수 (Log-Likelihood). 부록 B에서는 <span class="arithmatex">\(\log L\)</span>로도 표기</td>
+<td>이론, MLE, 부록 B</td>
 </tr>
 </tbody>
 </table>
@@ -5232,13 +5243,18 @@
 </tr>
 <tr>
 <td><span class="arithmatex">\(\beta_j\)</span></td>
-<td>변수 <span class="arithmatex">\(j\)</span>의 회귀계수</td>
+<td>변수 <span class="arithmatex">\(j\)</span>의 회귀계수. WoE 투입 시 정상 부호는 음수(<span class="arithmatex">\(\beta_j&lt;0\)</span>)</td>
 <td>전체</td>
 </tr>
 <tr>
 <td><span class="arithmatex">\(\hat{\beta}\)</span></td>
 <td>MLE로 추정된 계수</td>
 <td>이론, 단변량 LR</td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(\gamma_{jb}\)</span></td>
+<td>더미 방식에서 변수 <span class="arithmatex">\(j\)</span> 구간 <span class="arithmatex">\(b\)</span>의 계수(기준 구간 대비 로짓 차이)</td>
+<td>부록 B</td>
 </tr>
 <tr>
 <td><span class="arithmatex">\(\text{SE}(\hat{\beta}_j)\)</span></td>
@@ -5249,6 +5265,11 @@
 <td><span class="arithmatex">\(e^{\beta_j}\)</span></td>
 <td>오즈비 (Odds Ratio)</td>
 <td>이론</td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(I(\boldsymbol{\beta}) = \mathbf{X}^\top\mathbf{W}\mathbf{X}\)</span></td>
+<td>Fisher 정보행렬</td>
+<td>부록 B</td>
 </tr>
 </tbody>
 </table>
@@ -5268,6 +5289,11 @@
 <td>단변량 LR, 유의성 검정</td>
 </tr>
 <tr>
+<td><span class="arithmatex">\(U_j\)</span></td>
+<td>Score(점수) — 로그우도의 <span class="arithmatex">\(\beta_j\)</span>에 대한 1차 미분</td>
+<td>부록 B</td>
+</tr>
+<tr>
 <td><span class="arithmatex">\(\chi^2\)</span></td>
 <td>카이제곱 통계량</td>
 <td>유의성 검정</td>
@@ -5276,6 +5302,16 @@
 <td><span class="arithmatex">\(p\text{-value}\)</span></td>
 <td>유의확률 — 귀무가설 하에서 관측값 이상의 극단적 결과가 나올 확률</td>
 <td>유의성 검정</td>
+</tr>
+<tr>
+<td>SLENTRY / SLSTAY</td>
+<td>Stepwise 진입·잔류 유의수준</td>
+<td>부록 B</td>
+</tr>
+<tr>
+<td>AIC / BIC</td>
+<td>정보량 기준 <span class="arithmatex">\(-2\log L + 2k\)</span> / <span class="arithmatex">\(-2\log L + k\ln n\)</span> (<span class="arithmatex">\(k\)</span>=절편 포함 모수 수)</td>
+<td>부록 B</td>
 </tr>
 </tbody>
 </table>
@@ -5311,7 +5347,7 @@
 </tr>
 <tr>
 <td><span class="arithmatex">\(\text{WoE}_i = \ln(\%\text{Good}_i / \%\text{Bad}_i)\)</span></td>
-<td>Weight of Evidence</td>
+<td>Weight of Evidence (우량 구간 &gt; 0)</td>
 <td>WoE/IV</td>
 </tr>
 <tr>
@@ -5332,18 +5368,18 @@
 </thead>
 <tbody>
 <tr>
-<td><span class="arithmatex">\(A_{\text{target}}\)</span></td>
-<td>Anchor Score — 기준 Odds에서의 목표 점수</td>
+<td>Anchor</td>
+<td>Anchor Score — 기준 Odds <span class="arithmatex">\(\theta_0\)</span>에서의 목표 점수</td>
 <td>스코어카드 변환</td>
 </tr>
 <tr>
-<td><span class="arithmatex">\(A_{\text{const}}\)</span></td>
-<td>Score 수식의 상수항</td>
+<td>Offset</td>
+<td>Score 수식의 상수항. <span class="arithmatex">\(\text{Offset} = \text{Anchor} - \text{Factor}\cdot\ln\theta_0\)</span></td>
 <td>스코어카드 변환</td>
 </tr>
 <tr>
-<td><span class="arithmatex">\(B = \text{PDO}/\ln 2\)</span></td>
-<td>스케일링 상수</td>
+<td>Factor <span class="arithmatex">\(= \text{PDO}/\ln 2\)</span></td>
+<td>스케일링 상수. 부록 일부에서는 <span class="arithmatex">\(B\)</span>로 표기</td>
 <td>스코어카드 변환</td>
 </tr>
 <tr>
@@ -5355,6 +5391,48 @@
 <td>PDO</td>
 <td>Points to Double the Odds</td>
 <td>스코어카드 변환</td>
+</tr>
+</tbody>
+</table>
+<h2 id="lowess-c">LOWESS 관련 (부록 C)<a class="headerlink" href="#lowess-c" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>기호</th>
+<th>정의</th>
+<th>사용 위치</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="arithmatex">\(T(x)\)</span></td>
+<td>재무비율 <span class="arithmatex">\(x\)</span>의 단변량 부도확률(변환값)</td>
+<td>부록 C</td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(f\)</span></td>
+<td>LOWESS 대역폭(span) — 국소 회귀에 쓰는 이웃의 비율</td>
+<td>부록 C</td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(q = \text{round}(f \cdot n)\)</span></td>
+<td>국소 회귀에 쓰는 이웃 수</td>
+<td>부록 C</td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(h_i\)</span></td>
+<td>평가점 <span class="arithmatex">\(x_i\)</span>에서 <span class="arithmatex">\(q\)</span>번째로 가까운 이웃까지의 거리</td>
+<td>부록 C</td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(W(u) = (1-\lvert u\rvert^3)^3\)</span></td>
+<td>Tricube 거리 가중함수 (<span class="arithmatex">\(\lvert u\rvert&lt;1\)</span>)</td>
+<td>부록 C</td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(\Phi\)</span></td>
+<td>표준정규 누적분포함수(프로빗)</td>
+<td>부록 C</td>
 </tr>
 </tbody>
 </table>
@@ -5375,22 +5453,17 @@
 </tr>
 <tr>
 <td>AR (Gini)</td>
-<td>Accuracy Ratio — CAP 곡선 기반 누적 변별력</td>
+<td>Accuracy Ratio — CAP 곡선 기반 누적 변별력, <span class="arithmatex">\(\text{AR} = 2 \times \text{AUC} - 1\)</span></td>
 <td>성능 평가</td>
 </tr>
 <tr>
-<td>AUC</td>
-<td>Area Under ROC Curve — <span class="arithmatex">\(\text{AR} = 2 \times \text{AUC} - 1\)</span></td>
+<td>AUC (AUROC)</td>
+<td>Area Under ROC Curve — AR 환산용 보조 지표</td>
 <td>성능 평가</td>
 </tr>
 <tr>
 <td>PSI</td>
 <td>Population Stability Index — 점수 분포 안정성</td>
-<td>성능 평가</td>
-</tr>
-<tr>
-<td>AUROC</td>
-<td>Area Under ROC Curve — AUC와 동의어</td>
 <td>성능 평가</td>
 </tr>
 <tr>
@@ -5453,7 +5526,7 @@
 <tr>
 <td>CB</td>
 <td>Credit Bureau</td>
-<td>신용정보원 (NICE, KCB 등)</td>
+<td>개인신용평가회사(CB사, NICE평가정보·KCB 등). 한국신용정보원(종합신용정보집중기관)과 다르다</td>
 </tr>
 <tr>
 <td>IRB</td>
@@ -5559,13 +5632,23 @@
 </tr>
 <tr>
 <td>Target Leakage</td>
-<td>미래 정보가 모델 학습 시점에 유입되어 과적합을 유발하는 오류</td>
+<td>예측 시점에 알 수 없는 미래 정보가 학습 데이터에 섞여 성능이 낙관적으로 부풀려지는 오류</td>
 <td>개요</td>
 </tr>
 <tr>
 <td>미니모델링</td>
-<td>LOWESS 기반으로 단변량 부도확률을 추정·변환하는 기법</td>
+<td>현업 용어. LOWESS 기반으로 재무비율별 단변량 부도확률을 추정·변환하는 기법</td>
 <td>부록 C</td>
+</tr>
+<tr>
+<td>기불량</td>
+<td>관찰 시점에 이미 Bad 정의 수준의 상태(예: 90일 이상 미해제 연체)인 차주. 개발 표본에서 제외한다</td>
+<td>개요(요건 정의)</td>
+</tr>
+<tr>
+<td>등급 상한 (Grade Cap)</td>
+<td>정해진 사유가 있으면 모형 점수와 무관하게 받을 수 있는 최고 등급을 제한하는 자동 규칙. 항목별로 상한을 정하고 여러 항목에 걸리면 가장 낮은 상한을 적용한다</td>
+<td>스코어카드 변환 &amp; 등급화</td>
 </tr>
 </tbody>
 </table>

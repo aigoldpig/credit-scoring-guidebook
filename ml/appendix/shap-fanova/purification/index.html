@@ -4425,10 +4425,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         수렴 보장
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        어떤 가중(측도)을 쓸 것인가
       
     </span>
   </a>
@@ -4469,10 +4480,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
-        참고문헌
+        실무 주의사항 — 분해의 완전성 검증
       
     </span>
   </a>
@@ -4480,10 +4491,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#xgboost-float32" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
-        실무 주의사항 — XGBoost float32 정밀도
+        참고문헌
       
     </span>
   </a>
@@ -5178,21 +5189,17 @@
 
 
 <h1 id="3-purification">3. Purification — 트리 모형의 사후 정제<a class="headerlink" href="#3-purification" title="Permanent link">¶</a></h1>
-<div class="admonition warning">
-<p class="admonition-title">작성 중</p>
-<p>이 페이지는 현재 작성 중입니다.</p>
-</div>
 <hr>
 <h2 id="purification">왜 Purification이 필요한가<a class="headerlink" href="#purification" title="Permanent link">¶</a></h2>
-<p><a href="../functional-anova/">2절</a>에서 fANOVA의 직교 제약(Zero Means, Orthogonality, Integrate-to-Zero)이 분해를 유일하게 결정한다는 것을 확인했다. 문제는, XGBoost 같은 트리 기반 모형이 학습 과정에서 이 제약을 <strong>전혀 고려하지 않는다</strong>는 것이다. 트리는 단지 예측 오차를 줄이는 방향으로 분할할 뿐이고, "이 효과가 main에 담겨야 하는가, interaction에 담겨야 하는가"를 구분하지 않는다. (EBM은 학습 파이프라인에서 분리를 시도하지만, 그것만으로는 완전하지 않다 — 뒤에서 자세히 다룬다.)</p>
+<p><a href="../functional-anova/">2절</a>에서 Integrate-to-Zero 조건이 (주어진 측도 위에서) fANOVA 분해를 유일하게 결정하고, Zero Means·Orthogonality·Variance Decomposition이 그 결과로 따라온다는 것을 확인했다. 문제는, XGBoost 같은 트리 기반 모형이 학습 과정에서 이 제약을 <strong>전혀 고려하지 않는다</strong>는 것이다. 트리는 단지 예측 오차를 줄이는 방향으로 분할할 뿐이고, "이 효과가 main에 담겨야 하는가, interaction에 담겨야 하는가"를 구분하지 않는다. (EBM은 학습 파이프라인에서 분리를 시도하지만, 그것만으로는 완전하지 않다 — 뒤에서 자세히 다룬다.)</p>
 <p>그 결과, 학습된 shape function에서 <strong>main effect와 교호작용이 뒤섞인다.</strong> 본래 <span class="arithmatex">\(f_1(X_1)\)</span>에 있어야 할 효과가 <span class="arithmatex">\(f_{12}(X_1, X_2)\)</span>에 누출되거나, 반대로 교호작용의 일부가 main effect에 흡수된다.</p>
-<p><a href="../non-identifiability/">1절</a>에서 확인한 것처럼, 이 누출은 <strong>예측값을 전혀 바꾸지 않는다.</strong> 예측 성능은 동일하지만 해석이 완전히 달라진다. 이것을 사후적으로(post-hoc) 바로잡아서 fANOVA의 직교 제약을 만족시키는 것이 <strong>purification</strong>(정제)이다.</p>
+<p><a href="../non-identifiability/">1절</a>에서 확인한 것처럼, 이 누출은 <strong>예측값을 전혀 바꾸지 않는다.</strong> 예측 성능은 동일하지만 해석이 완전히 달라진다. 이것을 사후적으로(post-hoc) 바로잡아서 fANOVA의 Integrate-to-Zero 조건을 만족시키는 것이 <strong>purification</strong>(정제)이다.</p>
 <p>이 절에서는 purification이 <strong>구체적으로 무엇을 하는지</strong> 숫자 예시로 먼저 확인한 뒤, 그것을 일반화한 Mass-Moving 알고리즘을 소개한다.</p>
 <hr>
 <h2 id="_1">핵심 아이디어 — 숫자로 먼저 이해하기<a class="headerlink" href="#_1" title="Permanent link">¶</a></h2>
-<p>알고리즘을 보기 전에, 신용평가에서 가져온 숫자 예시로 직관을 잡자. 결론부터 말하면, <strong>main effect가 전부 0이고 교호작용이 지배적인 것처럼 보이는 모형이, purification 후에는 main effect가 핵심이고 교호작용은 미미한 것으로 바뀐다.</strong></p>
+<p>알고리즘을 보기 전에, 신용평가 맥락의 가상 숫자 예시로 직관을 잡자. 결론부터 말하면, <strong>main effect가 전부 0이고 교호작용이 지배적인 것처럼 보이는 모형이, purification 후에는 main effect가 핵심이고 교호작용은 미미한 것으로 바뀐다.</strong></p>
 <h3 id="_2">설정<a class="headerlink" href="#_2" title="Permanent link">¶</a></h3>
-<p>DTI(부채비율)와 소득, 두 변수가 각각 2구간(Low, High)인 XGBoost depth-2 모형이다. 학습된 결과가 다음과 같다고 하자:</p>
+<p>DTI(총부채상환비율)와 소득, 두 변수가 각각 2구간(Low, High)인 depth-2 XGBoost 모형이다. 모형 출력은 불량(Bad) 로짓에 더해지는 값이므로 <strong>값이 클수록 위험</strong>하다. 네 구간 조합의 데이터 비중은 모두 같다고(각 25%) 가정한다. 학습된 결과가 다음과 같다고 하자 (설명을 위한 가상 수치):</p>
 <table>
 <thead>
 <tr>
@@ -5469,6 +5476,15 @@
 <hr>
 <h2 id="mass-moving-lengerich-et-al-2020">Mass-Moving 알고리즘 (Lengerich et al., 2020)<a class="headerlink" href="#mass-moving-lengerich-et-al-2020" title="Permanent link">¶</a></h2>
 <p>위 예시에서 한 것을 일반화한 것이 <strong>Mass-Moving 알고리즘</strong>이다. piecewise-constant 함수(트리 모형의 출력)에 대해 적용 가능하다.</p>
+<h3 id="_5">사전 단계 — 트리 앙상블을 효과 텐서로 바꾸기<a class="headerlink" href="#_5" title="Permanent link">¶</a></h3>
+<p>purification은 "교호작용 테이블"을 입력으로 받는다. 트리 앙상블에서 이 테이블을 만드는 절차는 다음과 같다 (Lengerich et al., 2020, 6절).</p>
+<ol>
+<li><strong>각 변수의 구간 정하기</strong> — 앙상블 전체에서 그 변수에 쓰인 분할 경계(threshold)를 모두 모으면, 변수마다 구간(bin)이 정해진다. 모든 트리의 출력은 이 구간들의 조합 위에서 상수다.</li>
+<li><strong>leaf를 변수 집합별로 모으기</strong> — 각 leaf에 이르는 경로에 등장한 변수 집합 <span class="arithmatex">\(u\)</span>를 확인한다. depth-2 트리라면 <span class="arithmatex">\(u\)</span>는 변수 1개 또는 2개다.</li>
+<li><strong>텐서에 더하기</strong> — leaf 값을 해당 변수 집합의 텐서 <span class="arithmatex">\(T_u\)</span>(변수 <span class="arithmatex">\(u\)</span>의 구간 조합마다 칸이 하나씩 있는 표)의 해당 칸들에 더한다. 모든 트리에 대해 반복하면, 모형 전체가 <span class="arithmatex">\(\sum_u T_u\)</span>로 표현된다.</li>
+<li><strong>가중치 준비</strong> — 각 칸에 데이터 비중(또는 다른 선택한 분포의 확률)을 가중치로 붙인다. 어떤 가중치를 쓸지는 아래 "어떤 가중(측도)을 쓸 것인가"에서 다룬다.</li>
+</ol>
+<p>이렇게 만든 <span class="arithmatex">\(T_u\)</span>는 <a href="../non-identifiability/">1절</a>에서 본 대로 트리의 분할 순서에 따라 정해진 "임의의 분해" 중 하나다. purification은 이것을 fANOVA 정준형으로 옮긴다.</p>
 <h3 id="purify-matrix">단일 텐서 정제 (Purify-Matrix)<a class="headerlink" href="#purify-matrix" title="Permanent link">¶</a></h3>
 <p>위 예시의 1단계와 2단계를 다시 보면, 패턴이 보인다: <strong>(1)</strong> 한 방향으로 가중평균을 구하고, <strong>(2)</strong> 그 평균을 교호작용에서 빼고, <strong>(3)</strong> main effect에 더한다. 이것을 모든 변수에 대해 반복하면 된다. 하나의 교호작용 텐서 <span class="arithmatex">\(T_u\)</span>를 정제하는 절차를 일반화하면:</p>
 <div class="highlight"><pre><span></span><code>입력: 교호작용 텐서 T_u, 가중치 w
@@ -5510,35 +5526,63 @@
 </tbody>
 </table>
 <h3 id="purify">전체 모형 정제 (Purify)<a class="headerlink" href="#purify" title="Permanent link">¶</a></h3>
-<p>실제 모형에는 2차뿐 아니라 3차 이상의 교호작용도 있을 수 있다(depth-3 이상의 트리). 이때는 <strong>가장 고차부터</strong> 내려온다:</p>
+<p>실제 모형에는 2차뿐 아니라 3차 이상의 교호작용도 있을 수 있다(depth-3 이상의 트리). 이때는 <strong>가장 고차부터</strong> 한 단계씩 내려온다. Purify-Matrix는 <span class="arithmatex">\(T_u\)</span>의 질량을 바로 아래 차수인 <span class="arithmatex">\(T_{u \setminus i}\)</span>로만 옮기므로, 3차의 질량은 2차를 거쳐 main effect로, 다시 intercept로 흘러간다:</p>
 <div class="highlight"><pre><span></span><code>Purify (전체 모형):
-    3차 interaction → 2차 interaction + main effect로 mass 이동
+    3차 interaction → 2차 interaction으로 mass 이동
     2차 interaction → main effect로 mass 이동
     main effect → intercept(f₀)로 mass 이동
 </code></pre></div>
-<p>각 단계에서 "이 텐서에 담긴 효과 중, 더 적은 수의 변수로 설명 가능한 부분"을 아래로 내려보낸다. 최종적으로 각 component에는 <strong>해당 변수 조합에서만 나타나는 순수한 효과</strong>만 남는다.</p>
+<p>각 단계에서 "이 텐서에 담긴 효과 중, 한 변수 적은 집합으로 설명 가능한 부분"을 아래로 내려보낸다. 최종적으로 각 component에는 <strong>해당 변수 조합에서만 나타나는 순수한 효과</strong>만 남는다.</p>
 <hr>
-<h2 id="_5">수렴 보장<a class="headerlink" href="#_5" title="Permanent link">¶</a></h2>
+<h2 id="_6">수렴 보장<a class="headerlink" href="#_6" title="Permanent link">¶</a></h2>
 <p>위 예시에서는 2단계(소득 → DTI 순으로 한 번씩)만에 모든 행/열 평균이 0이 되었다. 항상 이렇게 빨리 끝나는 것인가?</p>
-<h3 id="theorem-1-1">Theorem 1: 균등 가중이면 1회 반복<a class="headerlink" href="#theorem-1-1" title="Permanent link">¶</a></h3>
-<p>모든 bin의 가중치(샘플 비율)가 균등하면, 각 변수를 <strong>한 번씩만</strong> 순회하면 수렴한다.</p>
-<p>위 예시가 정확히 이 경우다. DTI의 Low/High가 각각 50%, 소득의 Low/High도 각각 50%의 균등 가중 → 변수 2개를 한 바퀴 돌면 끝이었다.</p>
-<h3 id="theorem-2-olog1varepsilon">Theorem 2: 일반 가중이면 <span class="arithmatex">\(O(\log(1/\varepsilon))\)</span> 반복<a class="headerlink" href="#theorem-2-olog1varepsilon" title="Permanent link">¶</a></h3>
-<p>실제 데이터에서는 구간별 샘플 수가 다르다. 예를 들어 DTI=Low에 80%, DTI=High에 20%의 샘플이 몰려 있을 수 있다. 이 경우 한 번의 순회로는 행/열 평균이 정확히 0이 되지 않는다 — 한 방향을 정리하면 다른 방향이 살짝 틀어지기 때문이다.</p>
-<p>그러나 매 반복마다 정제되지 않은 잔여 mass가 <strong>최소 절반으로</strong> 줄어든다:</p>
-<div class="arithmatex">\[
-\|r^{(t+1)}\| \leq \frac{1}{2} \|r^{(t)}\|
-\]</div>
-<p>따라서:</p>
-<ul>
-<li>5회 반복 → 잔여 mass가 원래의 <span class="arithmatex">\(1/2^5 \approx 3\%\)</span> 이하</li>
-<li>10회 반복 → 잔여 mass가 원래의 <span class="arithmatex">\(1/2^{10} \approx 0.1\%\)</span> 이하</li>
-</ul>
-<p><strong>실무적으로 5~10회 반복이면 충분하다.</strong></p>
+<h3 id="theorem-1">한 번에 끝나는 경우 — 원논문 Theorem 1과 독립 가중<a class="headerlink" href="#theorem-1" title="Permanent link">¶</a></h3>
+<p>Lengerich et al. (2020, 5.1절)의 Theorem 1은 2차원 텐서 <span class="arithmatex">\(T_{a,b}\)</span>에서 가중치가 한 축 방향으로 같으면(<span class="arithmatex">\(w_{i,j} = w_{i,j'}\)</span>) 행·열을 한 번씩 정리하는 것으로 수렴한다고 말한다. 모든 칸의 가중치가 같은 균등 가중이 대표적인 경우다.</p>
+<p>같은 결론은 가중치가 <strong>두 변수의 주변 비중의 곱</strong>(<span class="arithmatex">\(w_{i,j} = p_i\, q_j\)</span>, 즉 두 변수가 독립인 product measure)일 때도 성립한다. 행을 정리한 뒤 열을 정리해도 각 행의 가중평균이 다시 깨지지 않기 때문이다. 위 DTI/소득 예시는 네 칸이 모두 25%인 균등 가중이므로, 변수 2개를 한 바퀴 돌면 끝났다.</p>
+<h3 id="theorem-2">상관이 있으면 반복이 필요하다 — 원논문 Theorem 2와 수렴 속도<a class="headerlink" href="#theorem-2" title="Permanent link">¶</a></h3>
+<p>실제 데이터에서는 두 변수가 상관되어 있어, 칸별 비중이 주변 비중의 곱과 다르다. 예를 들어 DTI가 높은 차주가 소득도 낮은 쪽에 몰려 있을 수 있다. 이 경우 한 번의 순회로는 행/열 평균이 정확히 0이 되지 않는다 — 한 방향을 정리하면 다른 방향이 살짝 틀어지기 때문이다. 그래도 정리할 때마다 남은 질량은 기하급수적으로 줄어든다.</p>
+<p>원논문의 Theorem 2는 잔여 질량 <span class="arithmatex">\(M^t\)</span>가 <span class="arithmatex">\(\varepsilon\)</span> 이하가 되는 반복 횟수를 <span class="arithmatex">\(\log_2(M^0/\varepsilon)\)</span>로 제시하는데, 이는 매 단계 질량이 절반 이하로 준다는 뜻이다. 그러나 이 속도는 <strong>두 변수의 상관 강도에 따라 달라지며</strong>, 상관이 강하면 그보다 느릴 수 있다. 아래 펼침 예시처럼 두 이진 변수가 대칭으로 상관된 2×2 가중에서는, 행 또는 열을 한 번 정리할 때마다 잔여 평균이 정확히 <strong>상관계수 <span class="arithmatex">\(\rho\)</span>배</strong>로 줄어든다. 직접 계산한 결과는 다음과 같다:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">두 변수의 상관 <span class="arithmatex">\(\rho\)</span></th>
+<th style="text-align: center;">한 단계(행 또는 열 정리)당 축소율</th>
+<th style="text-align: center;">잔여를 처음의 <span class="arithmatex">\(10^{-6}\)</span>로 줄이는 데 필요한 단계 수</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">0.2</td>
+<td style="text-align: center;">×0.2</td>
+<td style="text-align: center;">약 9</td>
+</tr>
+<tr>
+<td style="text-align: center;">0.4</td>
+<td style="text-align: center;">×0.4</td>
+<td style="text-align: center;">약 15</td>
+</tr>
+<tr>
+<td style="text-align: center;">0.6</td>
+<td style="text-align: center;">×0.6</td>
+<td style="text-align: center;">약 27</td>
+</tr>
+<tr>
+<td style="text-align: center;">0.8</td>
+<td style="text-align: center;">×0.8</td>
+<td style="text-align: center;">약 62</td>
+</tr>
+<tr>
+<td style="text-align: center;">0.96</td>
+<td style="text-align: center;">×0.96</td>
+<td style="text-align: center;">약 338</td>
+</tr>
+</tbody>
+</table>
+<p>따라서 "몇 번 반복하면 충분하다"는 고정된 숫자 대신, <strong>잔여 slice 평균이 허용오차 이하가 될 때까지 반복</strong>하는 종료 조건을 쓰는 것이 안전하다. 원논문의 실험(5.3절)에서도 대부분의 질량은 첫 반복에서 이동했지만, 신용정보 변수처럼 강하게 상관된 변수 쌍(예: 업권별 대출 건수와 전체 대출 건수)에서는 수렴이 눈에 띄게 느려질 수 있다.</p>
 <details class="example">
 <summary>비균등 가중에서의 수렴 과정 — 2×2 예시 (클릭하여 펼치기)</summary>
 <p>본문의 DTI/소득 예시는 균등 가중이라 2단계만에 수렴했다. 비균등 가중(데이터가 특정 조합에 몰린 경우)에서는 어떻게 반복 수렴하는지, 스텝별로 추적하자.</p>
-<h3 id="_6">설정<a class="headerlink" href="#_6" title="Permanent link">¶</a></h3>
+<h3 id="_7">설정<a class="headerlink" href="#_7" title="Permanent link">¶</a></h3>
 <p><strong>Interaction tensor</strong> (purify 대상 — 효과 크기):</p>
 <div class="arithmatex">\[
 T_{12} = \begin{pmatrix} 6 &amp; 0 \\ 0 &amp; 4 \end{pmatrix}
@@ -5547,9 +5591,9 @@ T_{12} = \begin{pmatrix} 6 &amp; 0 \\ 0 &amp; 4 \end{pmatrix}
 <div class="arithmatex">\[
 w = \begin{pmatrix} 0.3 &amp; 0.2 \\ 0.2 &amp; 0.3 \end{pmatrix}
 \]</div>
-<p>100명 기준이면: <span class="arithmatex">\((x_1\!=\!0, x_2\!=\!0)\)</span>에 30명, <span class="arithmatex">\((0,1)\)</span>에 20명, <span class="arithmatex">\((1,0)\)</span>에 20명, <span class="arithmatex">\((1,1)\)</span>에 30명. 두 변수가 양의 상관관계다.</p>
+<p>100명 기준이면: <span class="arithmatex">\((x_1\!=\!0, x_2\!=\!0)\)</span>에 30명, <span class="arithmatex">\((0,1)\)</span>에 20명, <span class="arithmatex">\((1,0)\)</span>에 20명, <span class="arithmatex">\((1,1)\)</span>에 30명. 두 변수의 주변 비중은 모두 50:50이지만, 같은 값끼리 더 자주 나타나므로 양의 상관관계다. 상관계수는 <span class="arithmatex">\(\rho = (0.3 - 0.5 \times 0.5)/(0.5 \times 0.5) = 0.2\)</span>이다.</p>
 <p><strong>Main effects</strong> (초기): <span class="arithmatex">\(f_1 = [0,\; 0]\)</span>, <span class="arithmatex">\(f_2 = [0,\; 0]\)</span></p>
-<p>균등 가중이면 행 centering 후 열 centering을 해도 행의 zero-mean이 깨지지 않아 <strong>1회에 수렴</strong>한다 (Theorem 1). 비균등 가중에서는 한 축을 centering하면 다른 축의 zero-mean이 <strong>살짝 깨진다.</strong> 다시 고치면 또 깨지지만, 깨지는 양이 매번 급격히 줄어들어 수렴한다 (Theorem 2).</p>
+<p>가중이 균등하거나 두 변수가 독립이면 행 centering 후 열 centering을 해도 행의 zero-mean이 깨지지 않아 <strong>1회에 수렴</strong>한다. 상관이 있는 가중에서는 한 축을 centering하면 다른 축의 zero-mean이 <strong>살짝 깨진다.</strong> 다시 고치면 또 깨지지만, 깨지는 양이 매번 일정 비율로 줄어들어 수렴한다.</p>
 <hr>
 <h3 id="iteration-1">Iteration 1<a class="headerlink" href="#iteration-1" title="Permanent link">¶</a></h3>
 <p><strong>Step 1A — 행(Row) centering</strong></p>
@@ -5631,7 +5675,7 @@ f_2 \approx [0.5,\; -0.5]
 \]</div>
 <p>행/열 가중평균 ≈ 0. <strong>수렴 완료.</strong></p>
 <hr>
-<h3 id="_7">잔차 수렴 추적<a class="headerlink" href="#_7" title="Permanent link">¶</a></h3>
+<h3 id="_8">잔차 수렴 추적<a class="headerlink" href="#_8" title="Permanent link">¶</a></h3>
 <table>
 <thead>
 <tr>
@@ -5687,9 +5731,9 @@ f_2 \approx [0.5,\; -0.5]
 </tr>
 </tbody>
 </table>
-<p>매 half-step마다 잔차가 <strong>×0.2</strong>로 줄어든다. 3회 반복(6 half-steps) 후 잔차 &lt; 0.001. 이 축소율은 가중치의 "비균등 정도"에 따라 달라지지만, Theorem 2에 의해 <strong>최악의 경우에도 매 반복 최소 절반</strong>으로 줄어든다.</p>
+<p>매 half-step마다 잔차가 <strong>×0.2</strong>로 줄어든다 — 두 변수의 상관계수 <span class="arithmatex">\(\rho = 0.2\)</span>와 정확히 같은 값이다. 3회 반복(6 half-steps) 후 잔차 &lt; 0.001. 같은 구조에서 상관이 0.8이면 축소율도 ×0.8이 되어, 같은 정밀도에 도달하는 데 훨씬 많은 반복이 필요하다(본문 표 참조).</p>
 <hr>
-<h3 id="_8">예측값 보존 검증<a class="headerlink" href="#_8" title="Permanent link">¶</a></h3>
+<h3 id="_9">예측값 보존 검증<a class="headerlink" href="#_9" title="Permanent link">¶</a></h3>
 <table>
 <thead>
 <tr>
@@ -5726,8 +5770,10 @@ f_2 \approx [0.5,\; -0.5]
 </tr>
 </tbody>
 </table>
+<h3 id="main-effect-intercept">마지막 단계 — main effect의 평균을 intercept로<a class="headerlink" href="#main-effect-intercept" title="Permanent link">¶</a></h3>
+<p>Purify의 마지막 단계는 main effect의 가중평균을 intercept로 옮기는 것이다. <span class="arithmatex">\(X_1\)</span>의 주변 비중은 50:50이므로 <span class="arithmatex">\(f_1 = [3.5,\; 2.5]\)</span>의 평균 3.0을 <span class="arithmatex">\(f_0\)</span>로 옮기면 <span class="arithmatex">\(f_0 = 3.0\)</span>, <span class="arithmatex">\(f_1 = [+0.5,\; -0.5]\)</span>가 된다. <span class="arithmatex">\(f_2 = [+0.5,\; -0.5]\)</span>는 이미 평균이 0이다. 최종 분해는 <span class="arithmatex">\(f_0 = 3.0\)</span>, <span class="arithmatex">\(f_1 = [+0.5, -0.5]\)</span>, <span class="arithmatex">\(f_2 = [+0.5, -0.5]\)</span>, <span class="arithmatex">\(f_{12} = [2.0, -3.0;\; -3.0, 2.0]\)</span>이며, (0, 0)에서 <span class="arithmatex">\(3.0 + 0.5 + 0.5 + 2.0 = 6.0\)</span>으로 예측이 그대로 보존된다.</p>
 <hr>
-<h3 id="_9">균등 가중과의 비교<a class="headerlink" href="#_9" title="Permanent link">¶</a></h3>
+<h3 id="_10">균등 가중과의 비교<a class="headerlink" href="#_10" title="Permanent link">¶</a></h3>
 <p>같은 tensor에 균등 가중 <span class="arithmatex">\(w_{i,j} = 0.25\)</span>를 적용하면:</p>
 <ul>
 <li>Step 1A (행 centering): <span class="arithmatex">\(\bar{r}_0 = 3,\; \bar{r}_1 = 2\)</span></li>
@@ -5736,73 +5782,93 @@ f_2 \approx [0.5,\; -0.5]
 <div class="arithmatex">\[
 T_{12} = \begin{pmatrix} 2.5 &amp; -2.5 \\ -2.5 &amp; 2.5 \end{pmatrix}
 \]</div>
-<p>행/열 가중평균 모두 0 → <strong>1회 반복만에 수렴.</strong> 이것이 Theorem 1이다.</p>
+<p>행/열 가중평균 모두 0 → <strong>1회 반복만에 수렴.</strong> 이것이 Theorem 1의 상황이다.</p>
+<p>두 가중의 결과가 다르다는 점도 눈여겨볼 만하다. 같은 텐서인데 균등 가중에서는 <span class="arithmatex">\(f_{12} = [2.5, -2.5;\; -2.5, 2.5]\)</span>, 상관된 가중에서는 <span class="arithmatex">\(f_{12} = [2.0, -3.0;\; -3.0, 2.0]\)</span>이 나왔다. <strong>어떤 가중(측도)을 쓰느냐에 따라 "순수 교호작용"의 값 자체가 달라진다.</strong></p>
 <table>
 <thead>
 <tr>
 <th></th>
-<th>균등 가중 (Theorem 1)</th>
-<th>비균등 가중 (Theorem 2)</th>
+<th>균등·독립 가중</th>
+<th>상관된 가중</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><strong>수렴</strong></td>
 <td>1회 반복</td>
-<td><span class="arithmatex">\(O(\log(1/\varepsilon))\)</span> 반복</td>
+<td>반복 필요 (축소율은 상관 강도에 좌우)</td>
 </tr>
 <tr>
 <td><strong>원리</strong></td>
 <td>한 축 centering이 다른 축을 안 깨뜨림</td>
-<td>한 축 centering이 다른 축을 깨뜨리지만, 깨지는 양이 급감</td>
+<td>한 축 centering이 다른 축을 깨뜨리지만, 깨지는 양이 매번 일정 비율로 감소</td>
 </tr>
 <tr>
 <td><strong>실무</strong></td>
-<td>Uniform 분포 가정 시</td>
-<td>실제 데이터 분포 사용 시 (일반적)</td>
+<td>Uniform 가중, 또는 변수 독립(product measure) 가정 시</td>
+<td>데이터의 결합 분포(empirical)를 가중으로 쓸 때</td>
 </tr>
 </tbody>
 </table>
 </details>
 <div class="admonition info">
 <p class="admonition-title">구현</p>
-<p>이 알고리즘은 Python 100줄 이내로 구현 가능하며, <a href="https://github.com/interpretml/interpret">InterpretML</a>에 내장되어 있다. <a href="https://github.com/LengerichLab/gam_purification">GAM Purification</a> 별도 라이브러리도 있다.</p>
+<p>원논문은 이 알고리즘이 Python 100줄 이내로 구현 가능하다고 밝히고 있다. 공개 라이브러리로는 <a href="https://github.com/interpretml/interpret">InterpretML</a>의 purification 유틸리티(<code>interpret.utils.purify</code>, <a href="https://interpret.ml/docs/python/api/purify.html">API 문서</a>)와 원저자 그룹의 <a href="https://github.com/AdaptInfer/gam_purification">gam_purification</a> 저장소가 있다.</p>
 </div>
 <hr>
+<h2 id="_11">어떤 가중(측도)을 쓸 것인가<a class="headerlink" href="#_11" title="Permanent link">¶</a></h2>
+<p>purification의 결과는 가중치 <span class="arithmatex">\(w\)</span>에 의존한다. Lengerich et al. (2020, 5.2절)은 세 가지 추정 방식을 비교했다.</p>
+<table>
+<thead>
+<tr>
+<th>가중 방식</th>
+<th>정의</th>
+<th>대응하는 측도</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Uniform</strong></td>
+<td>모든 칸에 같은 가중</td>
+<td>각 변수의 구간을 균등하게 보는 product measure</td>
+</tr>
+<tr>
+<td><strong>Empirical</strong></td>
+<td>학습 데이터에서 각 칸이 차지하는 비중</td>
+<td>데이터의 <strong>결합 분포</strong>(joint measure)</td>
+</tr>
+<tr>
+<td><strong>Laplace</strong></td>
+<td>Uniform + Empirical (데이터 비중에 균등 가중을 더함)</td>
+<td>둘의 절충</td>
+</tr>
+</tbody>
+</table>
+<p>원논문의 순수 교호작용 정의(Definition 1)는 데이터의 실제 분포 <span class="arithmatex">\(p(x)\)</span>를 가중으로 쓰는 것이며, 이는 상관된 변수에 대한 일반화 fANOVA(Hooker, 2007)에 해당한다. 반대로 <a href="../functional-anova/">2절</a>의 깔끔한 성질들 — 모든 component 간 직교, 분산 분해 — 은 product measure에서만 그대로 성립한다. 결국 empirical 가중으로 purification하면, 그 결과를 데이터 분포 위에서 분산 분해할 때 component 간 교차공분산이 남는다. 측도 선택에 따라 무엇이 달라지는지는 <a href="../../correlation-interpretation/joint-vs-product/">부록 B 2절</a>에서 수치 예시로 정리한다.</p>
+<hr>
 <h2 id="purification_2">Purification이 실제로 무엇을 바꾸는가 — 실증 사례<a class="headerlink" href="#purification_2" title="Permanent link">¶</a></h2>
-<p>위의 숫자 예시는 원리를 보여주기 위한 것이었다. 실제 데이터에서도 이 정도의 차이가 발생할까? Lengerich et al. (2020)은 두 가지 사례에서 purification 전후로 <strong>main effect의 부호가 뒤바뀌거나, 존재하지 않는 패턴이 나타나는</strong> 현상을 보고했다. 핵심은, <strong>같은 모형을 purification 없이 해석하면 정반대의 결론에 도달할 수 있다</strong>는 것이다.</p>
+<p>위의 숫자 예시는 원리를 보여주기 위한 것이었다. 실제 데이터에서도 이 정도의 차이가 발생할까? Lengerich et al. (2020, 6절)은 여러 공개 데이터셋에서 purification 전후로 <strong>해석이 크게 달라지는</strong> 사례를 보고했다. 여기서는 그중 두 가지를 원논문의 서술에 맞춰 소개한다.</p>
 <details class="example">
 <summary>사례 1: California Housing — 바다 위가 가장 비싼 지역? (클릭하여 펼치기)</summary>
-<p>캘리포니아 주택 가격 데이터셋(scikit-learn 내장)으로 XGBoost depth-2 모형을 학습한다. 변수 중에 <strong>위도(<span class="arithmatex">\(X_1\)</span>)와 경도(<span class="arithmatex">\(X_2\)</span>)</strong>가 있다. depth-2 트리는 두 변수의 교호작용을 자동으로 학습한다.</p>
-<p><strong>Purification 전 — 무엇이 잘못되었나:</strong></p>
-<p>캘리포니아에는 "해안에 가까울수록 비싸다"는 강한 패턴이 있다. 이것은 위도와 경도 <strong>각각의 main effect</strong>에 해당하는 효과다:</p>
-<ul>
-<li>경도가 서쪽(해안 쪽)일수록 비싸다 → <span class="arithmatex">\(f_{\text{경도}}\)</span>에 담겨야 함</li>
-<li>위도가 SF·LA 위치일수록 비싸다 → <span class="arithmatex">\(f_{\text{위도}}\)</span>에 담겨야 함</li>
-</ul>
-<p>그런데 XGBoost는 학습 과정에서 이 구분을 신경 쓰지 않는다. depth-2 트리가 "경도가 서쪽 AND 위도가 SF 근처"를 하나의 leaf에서 같이 학습하면, <strong>해안가 효과가 interaction 항 <span class="arithmatex">\(f_{12}\)</span>에 누출</strong>된다.</p>
-<p>결과: interaction heatmap에서 가장 높은 값이 <strong>태평양 바다 위 좌표</strong>에 나타난다. 실제 주택이 없는 바다 한가운데가 "가장 비싼 지역"으로 표시되는 것이다 — main effect(해안 = 비쌈)가 interaction에 섞여 들어간 전형적 증상이다.</p>
-<p><strong>Purification 후 — 무엇이 바뀌는가:</strong></p>
-<p>Purification은 <span class="arithmatex">\(f_{12}\)</span>의 각 행/열 가중평균을 계산해서 main effect로 되돌려보낸다. 위 숫자 예시에서 한 것과 정확히 같은 절차다:</p>
-<ul>
-<li>"경도를 고정하고 위도에 대해 평균"을 내면 → 그 평균값은 경도의 main effect → <span class="arithmatex">\(f_{\text{경도}}\)</span>로 이동</li>
-<li>"위도를 고정하고 경도에 대해 평균"을 내면 → 그 평균값은 위도의 main effect → <span class="arithmatex">\(f_{\text{위도}}\)</span>로 이동</li>
-</ul>
-<p>이 과정을 반복하면 <span class="arithmatex">\(f_{12}\)</span>에는 <strong>두 변수가 동시에 특정 조합일 때만 나타나는 순수한 지역 효과</strong>(예: "SF 도심의 특정 블록")만 남고, 해안가 효과는 main effect로 돌아간다. 바다 위의 비정상적 패턴이 사라진다.</p>
-<p></p><div class="source-ref">세부 내용은 Lengerich et al. (2020), Section 5.1 참조.</div><p></p>
+<p>1990년 미국 인구조사 기반의 캘리포니아 주택 가격 데이터셋으로 depth-2 XGBoost 모형(원논문의 XGB2)을 학습하고, <strong>위도와 경도의 교호작용</strong>을 들여다본 사례다.</p>
+<p><strong>Purification 전:</strong> 학습된 그대로의 위도×경도 교호작용 표를 보면, 가장 비싼 부동산이 <strong>태평양 바다 위</strong>에 있는 것처럼 나타난다 (원논문 Fig.5 왼쪽).</p>
+<p><strong>Purification 후:</strong> 같은 표를 정제하면 이 이상한 패턴이 사라지고, 남은 순수 교호작용은 <strong>로스앤젤레스와 샌프란시스코 대도시권</strong>의 영향으로 정리된다 (Fig.5 가운데).</p>
+<p><strong>왜 이런 일이 생기는가 (해석):</strong> 원논문은 현상만 보고하지만, 이 절의 원리로 다음과 같이 설명할 수 있다. 학습된 그대로의 교호작용 표에는 위도나 경도 하나만으로 설명되는 효과(예: 서쪽 해안일수록 비싸다)가 섞여 있다. 또 데이터가 전혀 없는 바다 위 칸에는 트리 경계를 연장한 값이 그대로 채워져 있어, 그 값이 무엇이든 예측 성능에는 영향이 없다. purification이 행·열 방향의 몫을 main effect로 돌려보내면, 교호작용 표에는 두 변수의 특정 조합에서만 나타나는 효과만 남는다.</p>
+<p></p><div class="source-ref">출처: Lengerich et al. (2020), 6.2절 California Housing 및 Fig.5. "해석" 문단은 본 가이드북의 설명이다.</div><p></p>
 </details>
 <details class="example">
-<summary>사례 2: COMPAS — main effect 부호가 뒤집힌다 (클릭하여 펼치기)</summary>
-<p>COMPAS는 미국 법원에서 사용하는 <strong>재범 위험 예측 시스템</strong>이다. Lengerich et al. (2020)은 이 데이터로 XGBoost depth-2를 학습한 뒤 shape function을 확인했다.</p>
-<p><strong>무슨 일이 벌어졌나:</strong></p>
-<p>특정 변수의 main effect가 purification 전후로 <strong>부호가 뒤바뀌었다:</strong></p>
+<summary>사례 2: COMPAS — 모형과 분해 방식에 따라 main effect의 부호가 갈린다 (클릭하여 펼치기)</summary>
+<p>COMPAS는 미국 법원에서 보석 결정 등에 참고하는 <strong>재범 위험 예측 시스템</strong>이다. Lengerich et al. (2020)은 ProPublica가 공개한 데이터로 교호작용이 있는 가법 모형을 학습하고, 나이·인종·성별·경범죄 여부 등의 main effect를 모형 종류와 purification 가중(Uniform, Empirical, Laplace)별로 비교했다 (원논문 Fig.4).</p>
+<p><strong>원논문이 보고한 것:</strong></p>
 <ul>
-<li><strong>Purification 전</strong>: main effect가 <strong>양(+)</strong> → "이 특성이 높을수록 재범 위험 증가"</li>
-<li><strong>Purification 후</strong>: main effect가 <strong>음(-)</strong> → "이 특성이 높을수록 재범 위험 감소"</li>
+<li>purification 여부와 purification에 쓰는 분포에 따라 main effect의 <strong>크기가 크게 달라지고, 때로는 부호도 달라진다.</strong></li>
+<li>특히 교호작용 없이 학습한 XGBoost(depth-1 트리)의 main effect 다수가, GAM이나 purification을 거친 GA2M·depth-2 XGBoost의 main effect와 <strong>반대 부호</strong>였다. purification한 XGB2의 main effect는 다른 모형들과 훨씬 일관되었다.</li>
+<li>purification에 쓰는 분포(Uniform·Empirical·Laplace) 사이에서는 주로 main effect의 <strong>크기</strong>가 상당히 달라졌다.</li>
 </ul>
+<p>원논문은 이 결과로부터, COMPAS 같은 모형을 공정성 관점에서 감사하려면 <strong>학습 알고리즘과 purification 분포를 모두</strong> 명시해야 한다고 결론짓는다.</p>
 <p><strong>왜 이런 일이 가능한가:</strong></p>
-<p>위의 숫자 예시에서 본 것과 같은 원리다. DTI의 main effect가 0이었는데 purification 후 -0.3/+0.3이 된 것처럼, <strong>교호작용에 누출된 main effect의 크기가 원래 main effect보다 클 수 있다.</strong> 극단적으로는, 누출된 양이 원래 main effect의 부호를 뒤집을 만큼 커서 최종적으로 <strong>반대 부호</strong>가 되는 것이다.</p>
-<p></p><div class="source-ref">세부 내용은 Lengerich et al. (2020), Section 5.2 참조.</div><p></p>
+<p>위의 숫자 예시에서 본 것과 같은 원리다. 소득의 main effect가 0이었는데 purification 후 +0.3/-0.3이 된 것처럼, <strong>교호작용에 누출되어 있던 몫이 원래 main effect보다 클 수 있다.</strong> 누출된 양이 원래 main effect와 반대 방향이고 충분히 크면, 정제 후 main effect의 부호가 뒤집힌다.</p>
+<p></p><div class="source-ref">출처: Lengerich et al. (2020), 6.1절 COMPAS 및 Fig.4.</div><p></p>
 </details>
 <div class="admonition danger">
 <p class="admonition-title">왜 위험한가</p>
@@ -5822,7 +5888,7 @@ T_{12} = \begin{pmatrix} 2.5 &amp; -2.5 \\ -2.5 &amp; 2.5 \end{pmatrix}
 <tr>
 <td>XGB depth-1 (= GAM)</td>
 <td>없음</td>
-<td>없음 — 교호작용 자체가 구조적으로 불가능</td>
+<td>교호작용이 구조적으로 없으므로, main effect의 평균을 intercept로 옮기는 중심화만 일어난다</td>
 </tr>
 <tr>
 <td>XGB depth-2 이상</td>
@@ -5831,16 +5897,25 @@ T_{12} = \begin{pmatrix} 2.5 &amp; -2.5 \\ -2.5 &amp; 2.5 \end{pmatrix}
 </tr>
 <tr>
 <td>GA<span class="arithmatex">\(^2\)</span>M (EBM)</td>
-<td>2-stage 분리</td>
-<td>2-stage로 대부분 분리, 잔여 누출은 purification으로 보정 가능 (아래 참조)</td>
+<td>2단계 학습으로 분리 시도</td>
+<td>대부분 분리되지만 잔여 누출이 남을 수 있어 purification으로 보정 (아래 참조)</td>
 </tr>
 </tbody>
 </table>
 <hr>
 <h2 id="ebmga2m-purification">EBM(GA²M)에서의 Purification<a class="headerlink" href="#ebmga2m-purification" title="Permanent link">¶</a></h2>
-<p>EBM은 2-stage 학습(round-robin → FAST)으로 main effect와 interaction을 분리하지만, 잔여 누출이 발생할 수 있다. EBM의 학습 구조, 효과 누출 메커니즘, 그리고 <code>interpret.utils.purify()</code>를 통한 보정에 대해서는 <a href="../../../part4_interpretation/ebm/">EBM (GA²M)</a>에서 상세히 다룬다.</p>
+<p>EBM은 main effect를 먼저 학습한 뒤, 교호작용 탐지 알고리즘(FAST)으로 고른 변수 쌍의 교호작용을 잔차에 학습하는 2단계 방식으로 main effect와 interaction을 분리한다. 원논문(6절, 6.3절)은 이 방식이 purification으로 옮겨야 할 질량을 줄여주지만, 교호작용 항이 여전히 일부 main effect를 담고 있어 purification이 main effect를 바꾸는 경우가 있다고 보고했다. EBM의 학습 구조와 보정 방법은 <a href="../../../part4_interpretation/ebm/">EBM (GA²M)</a>에서 상세히 다룬다.</p>
 <hr>
-<h2 id="_10">참고문헌<a class="headerlink" href="#_10" title="Permanent link">¶</a></h2>
+<h2 id="_12">실무 주의사항 — 분해의 완전성 검증<a class="headerlink" href="#_12" title="Permanent link">¶</a></h2>
+<p>Purification의 전제는 분해된 효과의 합이 원래 모형의 예측값과 <strong>관측치마다 정확히</strong> 일치한다는 것이다:</p>
+<div class="arithmatex">\[
+\hat{f}(\mathbf{x}_i) = f_0 + \sum_{S} f_S(\mathbf{x}_{i,S}) \quad \text{(모든 관측치 } i \text{에 대해)}
+\]</div>
+<p>이 전제가 깨지면 분해 자체가 무의미하므로, purification 전후로 <strong>재구성 오차</strong>(모형 예측값과 component 합의 차이)를 전 관측치에서 확인해야 한다. 오차가 부동소수점 누적오차 수준을 넘으면 텐서를 만드는 단계에 문제가 있다는 신호다.</p>
+<p>트리를 직접 순회해 텐서를 만드는 경우, 흔한 원인은 <strong>수치 정밀도 불일치</strong>다. XGBoost는 입력값과 분할 경계를 내부적으로 단정밀도(float32)로 다루는데, 해석 단계에서 같은 값을 배정밀도(float64)로 비교하면 경계값과 거의 같은 관측치가 학습 때와 다른 leaf로 배정될 수 있다. WoE처럼 고유값이 몇 개뿐인 변수는 분할 경계가 고유값 근처에 놓이는 일이 잦아, 이 문제가 특히 두드러진다. 증상은 "모형 예측값과 재구성 값의 차이가 상수가 아니라 관측치마다 다르다"는 것이다.</p>
+<p>대응은 간단하다. 해석 단계에서 <strong>입력값과 분할 경계를 모두 모형과 같은 정밀도(float32)로 반올림한 뒤</strong> 비교하면, 학습 때와 같은 leaf 배정을 재현할 수 있다. 모형이 내보내는 분할 경계가 배정밀도 표기로 출력되더라도 내부 값은 단정밀도라는 점에 유의한다.</p>
+<hr>
+<h2 id="_13">참고문헌<a class="headerlink" href="#_13" title="Permanent link">¶</a></h2>
 <table>
 <thead>
 <tr>
@@ -5850,45 +5925,19 @@ T_{12} = \begin{pmatrix} 2.5 &amp; -2.5 \\ -2.5 &amp; 2.5 \end{pmatrix}
 </thead>
 <tbody>
 <tr>
-<td>Lengerich, Tan, Chang, Hooker, Caruana (2020)</td>
-<td><a href="https://proceedings.mlr.press/v108/lengerich20a.html">Purification 알고리즘</a> (AISTATS)</td>
+<td>Lengerich, Tan, Chang, Hooker, Caruana (2020). <a href="https://proceedings.mlr.press/v108/lengerich20a.html">Purifying Interaction Effects with the Functional ANOVA</a>. AISTATS</td>
+<td>Mass-Moving 알고리즘(5절), 수렴 정리(5.1절), 가중 추정(5.2절), COMPAS(6.1절)·California Housing(6.2절) 사례</td>
+</tr>
+<tr>
+<td>Hooker (2007). <a href="https://doi.org/10.1198/106186007X237892">Generalized Functional ANOVA Diagnostics for High-Dimensional Functions of Dependent Variables</a>. <em>JCGS</em> 16(3)</td>
+<td>상관된 변수에 대한 일반화 fANOVA</td>
+</tr>
+<tr>
+<td><a href="https://interpret.ml/docs/python/api/purify.html">InterpretML purify API</a></td>
+<td>공개 구현</td>
 </tr>
 </tbody>
 </table>
-<hr>
-<h2 id="xgboost-float32">실무 주의사항 — XGBoost float32 정밀도<a class="headerlink" href="#xgboost-float32" title="Permanent link">¶</a></h2>
-<p>Purification의 전제는 <strong>F(x_i) = μ + Σ effects(x_i)</strong>, 즉 분해된 효과의 합이 원래 모형의 예측값과 정확히 일치해야 한다는 것이다. 이 전제가 깨지면 분해 자체가 무의미하다.</p>
-<p>XGBoost에서 이 전제가 깨지는 실무적 원인이 하나 있다: <strong>float32 정밀도 불일치</strong>.</p>
-<h3 id="_11">문제의 원인<a class="headerlink" href="#_11" title="Permanent link">¶</a></h3>
-<p>XGBoost의 DMatrix는 데이터를 내부적으로 <strong>float32</strong>로 저장한다. 트리의 split threshold도 float32 정밀도로 결정된다. 그런데 모형 해석 코드에서 데이터를 float64로 로드하면, <strong>같은 관측치가 학습 시와 해석 시에 다른 leaf로 배정</strong>될 수 있다.</p>
-<p>예를 들어, WoE 값이 float64에서 <code>-0.4567890123456789</code>이고 float32로 변환하면 <code>-0.45678901</code>이 된다. 트리의 split threshold가 <code>-0.45678901</code> 근처에 있으면, float64 데이터는 왼쪽 자식으로, float32 데이터는 오른쪽 자식으로 배정된다. WoE 변수는 고유값이 3~10개뿐이므로, <strong>threshold의 92%가 WoE 값과 정확히 일치</strong>하며, 이 경계에서 대량의 관측치가 잘못 배정된다.</p>
-<h3 id="_12">증상<a class="headerlink" href="#_12" title="Permanent link">¶</a></h3>
-<ul>
-<li><code>eval_tree()</code>(해석 코드의 트리 순회)와 <code>model.predict()</code>(XGBoost 내부 트리 순회)의 결과가 일치하지 않음</li>
-<li>불일치가 <strong>상수 차이가 아닌 관측치별로 다른 차이</strong> — 특정 관측치만 다른 leaf에 배정되기 때문</li>
-<li>Purification 후 <code>μ + Σ effects ≠ F(x_i)</code> — 분해의 완전성이 깨짐</li>
-</ul>
-<h3 id="_13">해결 방법: 이중 방어<a class="headerlink" href="#_13" title="Permanent link">¶</a></h3>
-<p><strong>1차 방어 — 데이터 소스에서 float32로 저장</strong></p>
-<p>WoE 변환 시점에서 값을 float32 정밀도로 저장한다. XGBoost DMatrix가 float32로 변환할 때 <strong>추가 정밀도 손실이 발생하지 않으므로</strong>, 학습 시와 해석 시의 leaf 배정이 동일하게 보장된다.</p>
-<p><strong>2차 방어 — 해석 코드에서 float32 변환 적용</strong></p>
-<p>Purification 코드에서 데이터를 로드한 후, XGBoost에 투입되기 전에 <code>float32</code> → <code>float64</code> 변환을 거친다:</p>
-<div class="arithmatex">\[
-\text{da}[v] = \texttt{float64}(\texttt{float32}(\text{da}[v]))
-\]</div>
-<p>이렇게 하면 float64 컨테이너를 유지하면서도 float32 정밀도와 일치하는 값을 사용하게 된다.</p>
-<p>또한 트리의 split threshold도 동일하게 <code>float32</code> 정밀도로 변환하여 사용한다:</p>
-<div class="arithmatex">\[
-\text{threshold} = \texttt{float64}(\texttt{float32}(\text{JSON dump threshold}))
-\]</div>
-<p>XGBoost의 JSON model dump는 threshold를 float64 표현으로 출력하지만, 실제 내부 값은 float32이다. 이 변환을 누락하면 경계값에서의 <code>&lt;</code> vs <code>≥</code> 판정이 달라진다.</p>
-<div class="admonition danger">
-<p class="admonition-title">이 방어가 없으면</p>
-<p>depth=3, 2000 trees, 65변수, 447K 관측치 환경에서 float32 방어 없이 purification을 실행하면,
-관측치별 분해 오차의 최대값이 <strong>10⁻¹ 수준</strong>까지 발생한다.
-float32 방어를 적용하면 최대 오차가 <strong>2×10⁻⁵ 수준</strong>(누적 부동소수점 오차)으로 억제된다.</p>
-</div>
-<hr>
 
 
 

@@ -5192,15 +5192,15 @@ z = \sum_{i=1}^{n} w_i x_i + b = \mathbf{w}^\top \mathbf{x} + b
 <p>여기서 <span class="arithmatex">\(\sigma\)</span>는 활성함수다. 원래 퍼셉트론(Rosenblatt, 1958)은 계단 함수(step function)를 사용했다 — 역치를 넘으면 1, 아니면 0.</p>
 <div class="admonition info">
 <p class="admonition-title">퍼셉트론의 한계</p>
-<p>단일 퍼셉트론은 <strong>선형 분리 가능한(linearly separable)</strong> 문제만 풀 수 있다. Minsky &amp; Papert(1969)가 XOR 문제를 풀 수 없음을 증명하면서 첫 번째 AI 겨울이 찾아왔다. 이 한계를 극복하려면 <strong>다층 구조</strong>와 <strong>비선형 활성함수</strong>가 필요하다.</p>
+<p>단일 퍼셉트론은 <strong>선형 분리 가능한(linearly separable)</strong> 문제만 풀 수 있다. Minsky &amp; Papert(1969)는 저서 <em>Perceptrons</em>에서 단층 퍼셉트론이 XOR 같은 문제를 풀 수 없음을 엄밀히 보였고, 이는 이후 신경망(연결주의) 연구가 한동안 위축되는 계기 중 하나가 되었다. 이 한계를 극복하려면 <strong>다층 구조</strong>와 <strong>비선형 활성함수</strong>, 그리고 다층 구조를 학습시킬 방법(역전파)이 필요하다.</p>
 </div>
 <div class="admonition example">
 <p class="admonition-title">신용평가 비유</p>
-<p>퍼셉트론 하나는 "부채비율 × 가중치₁ + 연체횟수 × 가중치₂ + 편향 &gt; 0이면 Bad"라는 <strong>직선 하나</strong>로 Good/Bad를 나누는 것과 같다. 현실의 신용 리스크가 직선 하나로 나뉠 리가 없으므로, 단일 퍼셉트론만으로는 부족하다.</p>
+<p>퍼셉트론 하나는 "DSR × 가중치₁ + 연체횟수 × 가중치₂ + 편향 &gt; 0이면 Bad"라는 <strong>직선 하나</strong>로 Good/Bad를 나누는 것과 같다. 원시 변수 그대로라면 현실의 신용 리스크가 직선 하나로 나뉠 리가 없으므로, 단일 퍼셉트론만으로는 부족하다. (전통 스코어카드가 같은 선형 구조로도 잘 작동하는 것은 WoE 변환이 변수별 비선형을 미리 펴 주기 때문이다.)</p>
 </div>
 <div class="admonition tip">
 <p class="admonition-title">로지스틱 회귀 = 뉴런 1개</p>
-<p>활성함수를 Sigmoid로 놓으면, 퍼셉트론의 수식은 로지스틱 회귀와 완전히 동일하다. 이 연결에 대한 상세한 설명과 다이어그램은 <a href="../lr_as_nn/">다음 장: LR = 단일 뉴런</a>에서 다룬다.</p>
+<p>활성함수를 Sigmoid로 놓으면, 뉴런 하나의 <strong>모형 식</strong>은 로지스틱 회귀와 같아진다. 다만 Rosenblatt의 원래 퍼셉트론은 계단 함수 출력과 오분류 기반의 고유한 학습 규칙을 썼으므로, 학습 방법까지 같지는 않다. 이 연결의 상세한 설명과 다이어그램은 <a href="../lr_as_nn/">다음 장: LR = 단일 뉴런</a>에서 다룬다.</p>
 </div>
 <hr>
 <h2 id="12-activation-function">1.2 활성함수 (Activation Function)<a class="headerlink" href="#12-activation-function" title="Permanent link">¶</a></h2>
@@ -5276,7 +5276,7 @@ z = \sum_{i=1}^{n} w_i x_i + b = \mathbf{w}^\top \mathbf{x} + b
 <tr>
 <td><strong>입력층 (Input Layer)</strong></td>
 <td>원시 변수를 받아들임</td>
-<td>부채비율, 연체횟수, 소득, …</td>
+<td>DSR, 연체횟수, 소득, …</td>
 </tr>
 <tr>
 <td><strong>은닉층 (Hidden Layer)</strong></td>
@@ -5296,7 +5296,11 @@ z = \sum_{i=1}^{n} w_i x_i + b = \mathbf{w}^\top \mathbf{x} + b
 \mathbf{a}^{[l]} = \sigma\!\left(\mathbf{W}^{[l]} \mathbf{a}^{[l-1]} + \mathbf{b}^{[l]}\right)
 \tag{4}
 \]</div>
-<p>여기서 <span class="arithmatex">\(\mathbf{a}^{[0]} = \mathbf{x}\)</span>(입력), <span class="arithmatex">\(\mathbf{W}^{[l]}\)</span>은 <span class="arithmatex">\(l\)</span>번째 층의 가중치 행렬, <span class="arithmatex">\(\mathbf{b}^{[l]}\)</span>은 편향 벡터다.</p>
+<p>여기서 <span class="arithmatex">\(\mathbf{a}^{[0]} = \mathbf{x}\)</span>(입력), <span class="arithmatex">\(\mathbf{W}^{[l]}\)</span>은 <span class="arithmatex">\(l\)</span>번째 층의 가중치 행렬, <span class="arithmatex">\(\mathbf{b}^{[l]}\)</span>은 편향 벡터다. 식 (4)의 <span class="arithmatex">\(\sigma\)</span>는 층마다 정하는 활성함수를 통칭한다(은닉층은 보통 ReLU, 이진분류 출력층은 Sigmoid).</p>
+<div class="admonition warning">
+<p class="admonition-title">신경망은 입력 표준화가 사실상 필수다</p>
+<p>트리 모형은 대소 비교만 하므로 변수 척도와 무관하지만(<a href="../../part1_overview/feature_preprocessing/">피처 전처리</a>), 신경망은 모든 입력을 가중합한다. 소득(수천만)과 연체횟수(0~10)를 그대로 넣으면 큰 척도의 변수가 가중합을 지배하고, 경사하강의 보폭이 변수마다 맞지 않아 학습이 느리거나 불안정해진다. 연속형 변수는 표준화(평균 0, 표준편차 1)하고, 금액처럼 꼬리가 긴 변수는 로그 변환이나 capping을 먼저 하는 것이 일반적이다. 결측값도 신경망은 직접 받지 못하므로 대체와 결측 플래그가 필요하다.</p>
+</div>
 <h3 id="_5">은닉층이 하는 일<a class="headerlink" href="#_5" title="Permanent link">¶</a></h3>
 <p>은닉층의 각 뉴런은 입력 변수의 <strong>서로 다른 조합</strong>에 반응하도록 학습된다. 전통 스코어카드에서 사람이 직접 수행하던 <strong>변수 변환과 교호작용 탐색</strong>을, 신경망은 데이터로부터 자동으로 학습한다.</p>
 <div class="admonition tip">
@@ -5317,7 +5321,7 @@ z = \sum_{i=1}^{n} w_i x_i + b = \mathbf{w}^\top \mathbf{x} + b
 </tr>
 <tr>
 <td><strong>교호작용</strong></td>
-<td>원칙적으로 반영 불가 (WoE는 단변량)</td>
+<td>자동으로는 반영 안 됨 (WoE는 단변량). 세분화 모형이나 교차 변수로 사람이 수동 반영</td>
 <td>은닉층 뉴런이 변수 간 조합 패턴 포착</td>
 </tr>
 <tr>
@@ -5329,7 +5333,7 @@ z = \sum_{i=1}^{n} w_i x_i + b = \mathbf{w}^\top \mathbf{x} + b
 </table>
 </div>
 <h3 id="universal-approximation-theorem">Universal Approximation Theorem<a class="headerlink" href="#universal-approximation-theorem" title="Permanent link">¶</a></h3>
-<p>은닉층이 하나만 있어도, 뉴런 수가 충분하면 어떤 연속함수든 원하는 정밀도로 근사할 수 있다(Cybenko, 1989; Hornik, 1991). 이것이 <strong>만능 근사 정리(Universal Approximation Theorem)</strong>다.</p>
+<p>은닉층이 하나만 있어도, 뉴런 수가 충분하면 유계 영역(compact set) 위의 어떤 연속함수든 원하는 정밀도로 근사할 수 있다(Cybenko, 1989; Hornik, 1991). 이것이 <strong>만능 근사 정리(Universal Approximation Theorem)</strong>다.</p>
 <p>단, "근사할 수 있다"와 "실제로 학습이 잘 된다"는 별개의 문제다. 실전에서는 은닉층을 깊게 쌓는 것이 넓게 펼치는 것보다 효율적인 경우가 많다 — 이것이 <strong>"Deep" Learning</strong>이라는 이름의 근거다.</p>
 <hr>
 <h2 id="14-backpropagation">1.4 역전파 (Backpropagation)<a class="headerlink" href="#14-backpropagation" title="Permanent link">¶</a></h2>
@@ -5341,7 +5345,7 @@ L = -\frac{1}{m}\sum_{i=1}^{m}\left[y^{(i)}\log\hat{y}^{(i)} + (1-y^{(i)})\log(1
 \]</div>
 <p>이 손실함수는 로지스틱 회귀의 <strong>음의 로그 우도(Negative Log-Likelihood)</strong>와 동일하다 — <a href="../../../scorecard/part2_theory/mle/">Part 2 MLE</a>에서 이미 유도한 바 있다.</p>
 <h3 id="chain-rule">Chain Rule — 그래디언트의 전파<a class="headerlink" href="#chain-rule" title="Permanent link">¶</a></h3>
-<p>역전파(Backpropagation, Rumelhart et al., 1986)의 핵심은 <strong>미적분학의 연쇄법칙(Chain Rule)</strong>이다.</p>
+<p>역전파(Backpropagation)의 핵심은 <strong>미적분학의 연쇄법칙(Chain Rule)</strong>이다. 아이디어 자체는 그 이전에도 제안되었으나, Rumelhart, Hinton &amp; Williams(1986)가 다층 신경망 학습에 적용해 널리 알렸다.</p>
 <p>출력층에서 계산한 손실의 그래디언트를, 체인 룰을 따라 앞쪽 층까지 <strong>역방향으로 전파</strong>한다.</p>
 <div class="arithmatex">\[
 \frac{\partial L}{\partial w^{[l]}} = \frac{\partial L}{\partial a^{[L]}} \cdot \frac{\partial a^{[L]}}{\partial a^{[L-1]}} \cdots \frac{\partial a^{[l+1]}}{\partial a^{[l]}} \cdot \frac{\partial a^{[l]}}{\partial w^{[l]}}
@@ -5394,77 +5398,30 @@ L = -\frac{1}{m}\sum_{i=1}^{m}\left[y^{(i)}\log\hat{y}^{(i)} + (1-y^{(i)})\log(1
 <p>Adam(Adaptive Moment Estimation, Kingma &amp; Ba, 2015)은 두 가지 아이디어를 결합한다.</p>
 <ol>
 <li><strong>Momentum</strong>: 과거 그래디언트의 <strong>이동 평균</strong>을 추적하여 진동을 줄임</li>
-<li><strong>RMSProp</strong>: 그래디언트의 <strong>제곱 이동 평균</strong>으로 변수별 학습률을 자동 조절</li>
+<li><strong>RMSProp</strong>: 그래디언트의 <strong>제곱 이동 평균</strong>으로 파라미터(가중치)마다 보폭을 자동 조절</li>
 </ol>
 <div class="arithmatex">\[
 m_t = \beta_1 m_{t-1} + (1-\beta_1) g_t, \quad v_t = \beta_2 v_{t-1} + (1-\beta_2) g_t^2
 \]</div>
 <div class="arithmatex">\[
+\hat{m}_t = \frac{m_t}{1-\beta_1^t}, \quad \hat{v}_t = \frac{v_t}{1-\beta_2^t}
+\]</div>
+<div class="arithmatex">\[
 \mathbf{W} \leftarrow \mathbf{W} - \alpha \frac{\hat{m}_t}{\sqrt{\hat{v}_t} + \epsilon}
 \tag{8}
 \]</div>
+<p>여기서 <span class="arithmatex">\(g_t\)</span>는 <span class="arithmatex">\(t\)</span>번째 스텝의 그래디언트, <span class="arithmatex">\(\beta_1, \beta_2\)</span>는 이동 평균의 감쇠율(원 논문 권장값 0.9, 0.999), <span class="arithmatex">\(\epsilon\)</span>은 0으로 나누는 것을 막는 작은 수다. <span class="arithmatex">\(m_0 = v_0 = 0\)</span>에서 출발하므로 초기 스텝의 이동 평균은 0 쪽으로 치우친다. <span class="arithmatex">\(\hat{m}_t, \hat{v}_t\)</span>는 이를 바로잡는 <strong>편향 보정</strong>이다. 연산은 모두 원소별(파라미터별)로 이루어진다.</p>
 <div class="admonition note">
 <p class="admonition-title">왜 Adam이 기본인가</p>
-<p>학습률 하나만 잘 설정하면 대부분의 경우 합리적으로 수렴한다. 변수별로 학습률을 자동 조절하므로, SGD처럼 학습률 스케줄링에 민감하지 않다. 딥러닝 실무에서 "일단 Adam으로 시작"이 관행이 된 이유다.</p>
+<p>학습률 하나만 잘 설정하면 대부분의 경우 합리적으로 수렴한다. 파라미터마다 보폭을 자동 조절하므로, SGD처럼 학습률 스케줄링에 민감하지 않다. 딥러닝 실무에서 "일단 Adam으로 시작"이 관행이 된 이유다.</p>
 </div>
 <h3 id="weight-decay">과적합 방지: Weight Decay와 정규화<a class="headerlink" href="#weight-decay" title="Permanent link">¶</a></h3>
-<p>경사하강법으로 손실을 최소화하면 학습 데이터에 과적합될 위험이 있다. 뉴럴넷에서 이를 막는 가장 기본적인 방법이 <strong>Weight Decay</strong> — 손실 함수에 가중치의 L2 페널티를 추가하는 것이다.</p>
-<div class="arithmatex">\[
-L_{\text{reg}} = L_{\text{data}} + \frac{\lambda}{2} \sum_{l} \|\mathbf{W}^{[l]}\|_F^2
-\]</div>
-<p>이것은 통계학의 <strong>Ridge 회귀(L2 정규화)</strong>와 정확히 동일한 원리다. 계수(가중치)가 커지면 벌칙을 부과하여, 모형이 학습 데이터의 노이즈를 외우는 것을 방지한다.</p>
-<p>이 외에도 <strong>Dropout</strong>(뉴런을 랜덤하게 비활성화), <strong>Early Stopping</strong>(Validation 성능 악화 시 학습 중단), <strong>Batch Normalization</strong> 등 다양한 정규화 기법이 뉴럴넷에서 사용된다.</p>
-<p>Ridge/Lasso의 수학적 원리와 기하학적 해석은 <a href="../../part1_overview/regularization/">정규화 이론</a>에서 상세히 다룬다. 이 개념은 이후 XGBoost의 정규화된 목적함수에서도 동일하게 등장한다.</p>
+<p>경사하강법으로 손실을 최소화하면 학습 데이터에 과적합될 위험이 있다. 뉴럴넷에서 이를 막는 가장 기본적인 방법이 <strong>Weight Decay</strong>, 즉 가중치를 매 스텝 조금씩 0 쪽으로 줄이는 것이다. 일반 경사하강법(SGD)에서는 손실 함수에 L2 페널티 <span class="arithmatex">\(\frac{\lambda}{2}\sum_l \|\mathbf{W}^{[l]}\|_F^2\)</span>를 더하는 것과 같으며, 통계학의 <strong>Ridge 회귀</strong>와 같은 원리다. Adam에서는 L2 페널티가 파라미터별 보폭 조절과 섞여 weight decay와 같아지지 않으므로, 둘을 분리한 <strong>AdamW</strong>가 쓰인다.</p>
+<p>이 외에도 <strong>Dropout</strong>(뉴런을 랜덤하게 비활성화), <strong>Early Stopping</strong>(Validation 성능 악화 시 학습 중단) 등이 쓰인다. 수식과 기법 비교는 <a href="../../part1_overview/regularization/">정규화</a> 3.7절에 정리했다. 같은 개념이 이후 XGBoost의 정규화된 목적함수에서도 다시 등장한다.</p>
 <hr>
 <h2 id="16-1">1.6 로지스틱 회귀 = 뉴런 1개<a class="headerlink" href="#16-1" title="Permanent link">¶</a></h2>
-<p>이 장의 모든 구성 요소를 조합하면, <strong>로지스틱 회귀가 가장 단순한 신경망</strong>임이 자명해진다.</p>
-<table>
-<thead>
-<tr>
-<th>신경망 구성 요소</th>
-<th>로지스틱 회귀에서의 대응</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>입력층</td>
-<td>원시 변수 <span class="arithmatex">\(x_1, \ldots, x_n\)</span> (비닝 없음)</td>
-</tr>
-<tr>
-<td>은닉층</td>
-<td><strong>없음</strong> (0개)</td>
-</tr>
-<tr>
-<td>출력 뉴런</td>
-<td>1개</td>
-</tr>
-<tr>
-<td>활성함수</td>
-<td>Sigmoid</td>
-</tr>
-<tr>
-<td>손실함수</td>
-<td>Binary Cross-Entropy = Negative Log-Likelihood</td>
-</tr>
-<tr>
-<td>최적화</td>
-<td>Gradient Descent (= MLE의 반복 수치해법)</td>
-</tr>
-</tbody>
-</table>
-<div class="arithmatex">\[
-\hat{y} = \sigma(\mathbf{w}^\top \mathbf{x} + b)
-\]</div>
-<p>이것은 <strong>은닉층이 0개인 Fully Connected Neural Network</strong>다. 전통 스코어카드에서 WoE 변환 후 로지스틱 회귀를 적합하는 것과 달리, 여기서는 변수를 <strong>있는 그대로</strong> 넣는다. 비닝과 WoE가 수행하던 비선형 변환을, 은닉층을 추가하면 신경망이 <strong>스스로 학습</strong>한다.</p>
-<div class="admonition quote">
-<p class="admonition-title">Andrew Ng</p>
-<p><em>"Logistic regression is a very small neural network."</em></p>
-<p>— Andrew Ng, <em>Deep Learning Specialization</em>, Course 1: Neural Networks and Deep Learning, Week 2<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
-<p>Ng 교수는 Coursera 강의에서 로지스틱 회귀를 신경망의 출발점으로 삼는다. 뉴런 1개로 시작해 Forward/Backward Propagation을 설명한 뒤, 은닉층을 추가하며 MLP로 확장하는 흐름이다. 신경망을 "로지스틱 회귀의 일반화"로 보는 이 시각이, 이 가이드북에서 스코어카드(LR)와 ML(NN)을 연결하는 다리가 된다.</p>
-</div>
-<blockquote>
-<p>다음 페이지 <a href="../lr_as_nn/">LR = 단일 뉴런</a>에서 이 관계를 더 깊이 파고든다 — 스코어카드의 WoE 변환이 신경망의 은닉층과 어떻게 대응하는지, 그리고 왜 Tabular 데이터에서는 트리가 더 효과적인지까지.</p>
-</blockquote>
+<p>이 장의 구성 요소를 조합하면, 은닉층 없이 Sigmoid 출력 뉴런 하나만 둔 신경망 <span class="arithmatex">\(\hat{y} = \sigma(\mathbf{w}^\top \mathbf{x} + b)\)</span>를 Binary Cross-Entropy로 학습한 것이 곧 <strong>로지스틱 회귀</strong>다. 은닉층을 추가하면 MLP가 된다.</p>
+<p>구성 요소별 대응표, 스코어카드의 WoE 변환과의 관계, 그리고 Tabular 데이터에서 트리가 더 실전적인 이유는 다음 페이지 <a href="../lr_as_nn/">LR = 단일 뉴런</a>에서 정리한다.</p>
 <hr>
 <h2 id="tensorflow-1x-20">실무 회고: TensorFlow 1.x에서 2.0까지<a class="headerlink" href="#tensorflow-1x-20" title="Permanent link">¶</a></h2>
 <div class="admonition tip">
@@ -5477,7 +5434,7 @@ L_{\text{reg}} = L_{\text{data}} + \frac{\lambda}{2} \sum_{l} \|\mathbf{W}^{[l]}
 Fully Connected Network 형태의 코드 구현은 다 해두었지만,
 실무에서는 <strong>대부분의 Tabular 과제에서 트리 기반 모형(XGBoost, LightGBM)으로 충분</strong>했기 때문에
 뉴럴넷을 본격적으로 투입할 일은 많지 않았다.
-이후 분석실 공용 모듈을 생성할 때 정도가 뉴럴넷을 다시 들여다본 마지막이었다.</p>
+이후 사내 공용 모듈을 만들 때 정도가 뉴럴넷을 다시 들여다본 마지막이었다.</p>
 </div>
 <h3 id="gpu-reproducibility">GPU 학습과 재현성(Reproducibility) 이슈<a class="headerlink" href="#gpu-reproducibility" title="Permanent link">¶</a></h3>
 <p>뉴럴넷 학습은 <strong>GPU</strong>를 사용해야 실질적인 속도를 얻을 수 있다.
@@ -5503,20 +5460,29 @@ Fully Connected Network 형태의 코드 구현은 다 해두었지만,
 <p>TensorFlow 2.x와 PyTorch 모두 결정적(deterministic) 모드를 제공한다.</p>
 <ul>
 <li><strong>PyTorch</strong>: <code>torch.use_deterministic_algorithms(True)</code> + <code>CUBLAS_WORKSPACE_CONFIG</code> 환경변수 설정</li>
-<li><strong>TensorFlow</strong>: <code>tf.config.experimental.enable_op_determinism()</code> (TF 2.9+)</li>
+<li><strong>TensorFlow</strong>: <code>tf.config.experimental.enable_op_determinism()</code> (TF 2.8에서 도입)</li>
 </ul>
 <p>다만 결정적 모드를 켜면 일부 연산에서 <strong>성능 저하</strong>가 발생할 수 있으며,
 지원되지 않는 연산이 있을 경우 런타임 에러가 발생한다.
 완벽한 해결이라기보다는 <strong>트레이드오프</strong>에 가깝다.</p>
-<p>반면 트리 기반 모형(XGBoost, LightGBM)은 시드만 고정하면 CPU/GPU 모두에서 완벽히 재현되므로,
-이 점도 Tabular 데이터에서 트리 모형이 선호되는 실무적 이유 중 하나다.</p>
+<p>트리 기반 모형(XGBoost, LightGBM)은 상대적으로 재현성을 확보하기 쉽다.
+다만 "시드만 고정하면 끝"은 아니다. LightGBM은 결정적 결과를 위한 별도 옵션(deterministic)과
+히스토그램 생성 방식 고정이 권장되고, 같은 설정이라도 라이브러리 버전·컴파일러·운영체제가 다르면
+결과가 달라질 수 있다고 공식 문서에 명시되어 있다. GPU 학습도 별도 확인이 필요하다.
+결국 어떤 모형이든 <strong>시드, 결정적 옵션, 라이브러리 버전, 실행 환경을 함께 고정</strong>해야 재현된다.</p>
 </div>
 <hr>
 <h2 id="_8">참고 자료<a class="headerlink" href="#_8" title="Permanent link">¶</a></h2>
 <ul>
-<li>Andrew Ng, <em>Machine Learning Specialization</em>, Coursera / Stanford, 2022.<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup> — 퍼셉트론, 경사하강법, 신경망 기초를 직관적으로 설명하는 입문 강좌</li>
+<li>Kingma &amp; Ba, "Adam: A Method for Stochastic Optimization", <em>ICLR</em>, 2015.</li>
+<li>
+<p>Loshchilov &amp; Hutter, "Decoupled Weight Decay Regularization", <em>ICLR</em>, 2019. — AdamW</p>
+</li>
+<li>
+<p>Andrew Ng, <em>Machine Learning Specialization</em>, Coursera / Stanford, 2022.<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup> — 퍼셉트론, 경사하강법, 신경망 기초를 직관적으로 설명하는 입문 강좌</p>
+</li>
 <li>Ian Goodfellow, Yoshua Bengio, Aaron Courville, <em>Deep Learning</em>, MIT Press, 2016. — Chapter 6 (Deep Feedforward Networks)이 MLP의 수학적 기초를 다룸</li>
-<li>Rumelhart, Hinton &amp; Williams, "Learning representations by back-propagating errors", <em>Nature</em>, 1986. — 역전파 알고리즘의 원 논문</li>
+<li>Rumelhart, Hinton &amp; Williams, "Learning representations by back-propagating errors", <em>Nature</em>, 1986. — 다층 신경망 학습에 역전파를 적용해 널리 알린 논문</li>
 </ul>
 <div class="admonition tip">
 <p class="admonition-title">다음 섹션</p>
@@ -5526,7 +5492,7 @@ Fully Connected Network 형태의 코드 구현은 다 해두었지만,
 <hr>
 <ol>
 <li id="fn:1">
-<p>Andrew Ng, <em>Neural Networks and Deep Learning</em> (Course 1 of Deep Learning Specialization), Coursera / deeplearning.ai, 2017. <a href="https://www.coursera.org/learn/neural-networks-deep-learning">coursera.org/learn/neural-networks-deep-learning</a>. 로지스틱 회귀를 단일 뉴런으로 소개한 뒤, 다층 신경망으로 확장하는 구성이다.&nbsp;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">↩</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">↩</a></p>
+<p>Andrew Ng, <em>Neural Networks and Deep Learning</em> (Course 1 of Deep Learning Specialization), Coursera / deeplearning.ai, 2017. <a href="https://www.coursera.org/learn/neural-networks-deep-learning">coursera.org/learn/neural-networks-deep-learning</a>. 2주차를 "Logistic Regression as a Neural Network"로 시작해, 로지스틱 회귀를 단일 뉴런으로 소개한 뒤 다층 신경망으로 확장하는 구성이다.&nbsp;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">↩</a></p>
 </li>
 <li id="fn:2">
 <p><a href="https://www.coursera.org/specializations/machine-learning-introduction">coursera.org/specializations/machine-learning-introduction</a>&nbsp;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">↩</a></p>

@@ -2633,10 +2633,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#6-offset" class="md-nav__link">
+  <a href="#6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        6. Offset 배분 = 기준점 설정
+        6. 절편 배분과 기준점 설정은 다른 조작이다
       
     </span>
   </a>
@@ -5157,18 +5157,18 @@
 
 <h1 id="_1">심층 비교 — 사상 차이와 수치 예시<a class="headerlink" href="#_1" title="Permanent link">¶</a></h1>
 <blockquote>
-<p>동일한 로지스틱 회귀라도 WoE 방식과 더미 방식은 <strong>근본적으로 다른 사상(思想)</strong>으로 작동한다.
-이 문서에서는 두 방식의 end-to-end 스코어카드 구축 과정을 수치 예시로 비교하고,
-기준점(reference point) 이동의 수학적 동치성과 변수 중요도 불변 원리를 증명한다.</p>
-<p>두 방식의 수리적 구조(식 A.1~A.6), 기준점 해석, Stepwise 검정 등 상세 비교는 본 부록의 <a href="../">두 방식 비교</a>, <a href="../woe-entry/">1. WoE 직접 투입</a>, <a href="../dummy-entry/">2. 더미 변수 방식</a> 참조.</p>
+<p>같은 로지스틱 회귀라도 WoE 방식과 더미 방식은 <strong>근본적으로 다른 사상(思想)</strong> 으로 작동한다.
+이 문서는 두 방식의 end-to-end 스코어카드 구축 과정을 수치 예시로 비교하고,
+기준점(reference point) 이동이 예측을 바꾸지 않는다는 것과 변수 중요도를 읽는 법을 정리한다.</p>
+<p>두 방식의 수리적 구조, 기준점 해석, Stepwise 검정은 본 부록의 <a href="../">두 방식 비교</a>, <a href="../woe-entry/">1. WoE 직접 투입</a>, <a href="../dummy-entry/">2. 더미 변수 방식</a>을 참조한다. 부호는 <a href="../../">부록 공통 규약</a>을 따른다: Bad logit 적합, WoE 계수 정상 부호 <span class="arithmatex">\(\beta&lt;0\)</span>, 최위험 기준 더미 계수는 안전할수록 <span class="arithmatex">\(\gamma&lt;0\)</span>, 배점 <span class="arithmatex">\(= -B\times\)</span>계수<span class="arithmatex">\(\times\)</span>입력.</p>
 </blockquote>
 <hr>
 <h2 id="1-vs">1. 근본적 사상 차이: 단변량 고정 vs 다변량 자유 추정<a class="headerlink" href="#1-vs" title="Permanent link">¶</a></h2>
-<p>같은 로지스틱 회귀를 쓰더라도, 두 방식은 <strong>"bin 간 효과를 누가 결정하는가"</strong>가 근본적으로 다르다.</p>
+<p>같은 로지스틱 회귀를 쓰더라도, 두 방식은 <strong>"구간 간 효과를 누가 결정하는가"</strong> 가 다르다.</p>
 <h3 id="11-woe">1.1 WoE 방식 — 단변량 패턴을 고정하고, β로 스케일링만<a class="headerlink" href="#11-woe" title="Permanent link">¶</a></h3>
-<p>WoE 방식에서는 단변량 분석에서 계산한 bin 간 상대적 크기가 <strong>다변량 회귀에서도 그대로 유지</strong>된다.</p>
-<div class="arithmatex">\[\text{logit}(p_i) = \beta_0 + \beta_j \cdot WoE_{ij}\]</div>
-<p>변수 j의 각 bin이 기여하는 값:</p>
+<p>WoE 방식에서는 단변량 분석에서 계산한 구간 간 상대 크기가 <strong>다변량 회귀에서도 그대로 유지</strong>된다.</p>
+<div class="arithmatex">\[\text{logit}(p_i) = \beta_0 + \beta_j \cdot \text{WoE}_{ij} + \cdots\]</div>
+<p>변수 <span class="arithmatex">\(j\)</span>의 각 구간이 Bad 로짓에 기여하는 값:</p>
 <table>
 <thead>
 <tr>
@@ -5183,20 +5183,19 @@
 </tr>
 <tr>
 <td>bin 2</td>
-<td><span class="arithmatex">\(\beta_j \times (0.15)\)</span></td>
+<td><span class="arithmatex">\(\beta_j \times (+0.15)\)</span></td>
 </tr>
 <tr>
 <td>bin 3</td>
-<td><span class="arithmatex">\(\beta_j \times (0.55)\)</span></td>
+<td><span class="arithmatex">\(\beta_j \times (+0.55)\)</span></td>
 </tr>
 </tbody>
 </table>
-<p><span class="arithmatex">\(\beta_j\)</span>는 변수 전체를 <strong>균일하게 스케일링</strong>할 뿐이다.
-bin 1과 bin 3의 상대적 크기 비율은 <span class="arithmatex">\(-0.40 : 0.55\)</span>로 <strong>단변량에서 정해진 그대로</strong> 변하지 않는다.</p>
-<p><strong>의미:</strong> 단변량 WoE가 "연소득이 높을수록 단조적으로 우량"이라고 말하면, 다변량에서 다른 변수를 통제하더라도 그 단조 패턴은 깨지지 않는다. <span class="arithmatex">\(\beta_j\)</span>는 그 패턴의 <strong>강도</strong>만 조절한다.</p>
-<h3 id="12-bin">1.2 더미 방식 — 다변량에서 bin별 효과를 자유롭게 재추정<a class="headerlink" href="#12-bin" title="Permanent link">¶</a></h3>
-<p>더미 방식에서는 각 bin이 <strong>독립적인 계수</strong>를 갖는다.</p>
-<div class="arithmatex">\[\text{logit}(p_i) = \beta_0 + \gamma_{j1} \cdot D_1 + \gamma_{j2} \cdot D_2\]</div>
+<p><span class="arithmatex">\(\beta_j\)</span>는 변수 전체를 <strong>균일하게 스케일링</strong>할 뿐이다. 구간 간 차이의 비율(예: bin 1→2 차이 : bin 2→3 차이 = 0.55 : 0.40)은 <strong>단변량에서 정해진 그대로</strong> 변하지 않는다.</p>
+<p><strong>의미:</strong> 단변량 WoE가 "연소득이 높을수록 우량"이라고 말하면, <span class="arithmatex">\(\beta_j\)</span>가 정상 부호(음수)인 한 다변량에서도 그 순서는 깨지지 않는다. <span class="arithmatex">\(\beta_j\)</span>는 패턴의 <strong>강도</strong>만 조절한다.</p>
+<h3 id="12">1.2 더미 방식 — 다변량에서 구간별 효과를 자유롭게 재추정<a class="headerlink" href="#12" title="Permanent link">¶</a></h3>
+<p>더미 방식에서는 각 구간이 <strong>별도의 계수</strong>를 갖는다.</p>
+<div class="arithmatex">\[\text{logit}(p_i) = \beta_0 + \gamma_{j1} \cdot D_1 + \gamma_{j2} \cdot D_2 + \cdots\]</div>
 <table>
 <thead>
 <tr>
@@ -5219,11 +5218,10 @@ bin 1과 bin 3의 상대적 크기 비율은 <span class="arithmatex">\(-0.40 : 
 </tr>
 </tbody>
 </table>
-<p><span class="arithmatex">\(\gamma_{j1}\)</span>과 <span class="arithmatex">\(\gamma_{j2}\)</span>는 서로 독립적으로 추정된다.
-다변량에서 다른 변수를 통제한 후, 각 구간의 효과가 <strong>개별적으로 조정</strong>된다.</p>
-<p><strong>의미:</strong> 단변량 WoE에서는 단조적으로 보였던 패턴이, 다른 변수를 통제하고 나면 <strong>비단조적으로 바뀔 수 있다.</strong></p>
+<p><span class="arithmatex">\(\gamma_{j1}\)</span>과 <span class="arithmatex">\(\gamma_{j2}\)</span>는 서로 제약 없이 각각 추정된다. 다른 변수를 통제한 뒤 구간별 효과가 <strong>개별적으로 조정</strong>된다.</p>
+<p><strong>의미:</strong> 단변량에서는 단조였던 패턴이, 다른 변수를 통제하고 나면 <strong>비단조로 바뀔 수 있다.</strong></p>
 <h3 id="13">1.3 차이가 드러나는 구체적 상황<a class="headerlink" href="#13" title="Permanent link">¶</a></h3>
-<p>연소득 변수를 예로 들자. 단변량 WoE는 다음과 같았다:</p>
+<p>연소득 변수의 단변량 WoE가 다음과 같다고 하자.</p>
 <table>
 <thead>
 <tr>
@@ -5236,52 +5234,53 @@ bin 1과 bin 3의 상대적 크기 비율은 <span class="arithmatex">\(-0.40 : 
 <tr>
 <td>~2천만</td>
 <td>−0.40</td>
-<td>불량</td>
+<td>불량 쪽</td>
 </tr>
 <tr>
 <td>2천~5천만</td>
-<td>0.15</td>
+<td>+0.15</td>
 <td>약간 우량</td>
 </tr>
 <tr>
 <td>5천만~</td>
-<td>0.55</td>
+<td>+0.55</td>
 <td>우량</td>
 </tr>
 </tbody>
 </table>
-<p>단변량에서는 깔끔한 단조 증가 패턴이다.</p>
-<p>그런데 부채비율을 통제하고 나면, 실제로는 중간 소득 구간에 고부채 차주가 집중되어 있어서 효과가 달라질 수 있다:</p>
+<p>단변량에서는 깔끔한 단조 패턴이다. 그런데 중간 소득 구간에 <strong>부채비율이 낮은 차주가 몰려 있다</strong>고 하자. 그러면 중간 소득 구간의 단변량 우량함 중 상당 부분은 사실 "낮은 부채비율" 덕분이다. 부채비율을 함께 넣으면 그 몫이 부채비율 변수로 넘어가므로, 중간 소득 구간 자체의 효과는 작아진다.</p>
+<p>두 방식의 결과를 <strong>같은 기준(~2천만 구간 = 0)</strong> 으로 놓고 비교한다. WoE 방식은 <span class="arithmatex">\(\beta = -0.80\)</span>으로 가정한다.</p>
 <table>
 <thead>
 <tr>
 <th>구간</th>
-<th>WoE 방식 (<span class="arithmatex">\(\beta = 0.80\)</span>)</th>
-<th>더미 방식 (다변량 <span class="arithmatex">\(\gamma\)</span>)</th>
+<th>WoE 방식: <span class="arithmatex">\(\beta(\text{WoE}_b - \text{WoE}_{\text{기준}})\)</span></th>
+<th>더미 방식: <span class="arithmatex">\(\gamma_b\)</span> (기준 ~2천만)</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>~2천만</td>
-<td><span class="arithmatex">\(0.80 \times (-0.40) = -0.32\)</span></td>
-<td><span class="arithmatex">\(\gamma_1 = -0.25\)</span></td>
+<td>0 (기준)</td>
+<td>0 (기준)</td>
 </tr>
 <tr>
 <td>2천~5천만</td>
-<td><span class="arithmatex">\(0.80 \times (0.15) = +0.12\)</span></td>
-<td><span class="arithmatex">\(\gamma_2 = -0.08\)</span></td>
+<td><span class="arithmatex">\(-0.80 \times (0.15 + 0.40) = -0.44\)</span></td>
+<td><span class="arithmatex">\(\gamma_1 = +0.05\)</span></td>
 </tr>
 <tr>
 <td>5천만~</td>
-<td><span class="arithmatex">\(0.80 \times (0.55) = +0.44\)</span></td>
-<td>(기준, 0) → 상대적으로 가장 우량</td>
+<td><span class="arithmatex">\(-0.80 \times (0.55 + 0.40) = -0.76\)</span></td>
+<td><span class="arithmatex">\(\gamma_2 = -0.60\)</span></td>
 </tr>
 </tbody>
 </table>
 <ul>
-<li><strong>WoE 방식:</strong> 단조 패턴 유지. 2천~5천만 구간은 여전히 양수(+0.12).</li>
-<li><strong>더미 방식:</strong> 2천~5천만 구간이 음수(−0.08)로 뒤집힘. 부채비율을 통제하니 이 구간이 실제로는 기준 대비 나쁘다는 신호.</li>
+<li><strong>WoE 방식:</strong> 단변량 비율이 고정되므로 0 → −0.44 → −0.76으로 단조 감소(소득↑ → 더 안전)가 유지된다.</li>
+<li><strong>더미 방식:</strong> 2천~5천만 구간의 로짓 차이가 +0.05로, 부채비율을 통제하면 <strong>최저 소득 구간과 비슷하거나 약간 더 위험</strong>하다는 추정이다. 0 → +0.05 → −0.60은 <strong>비단조</strong>다.</li>
 </ul>
+<p>어느 쪽이 "맞는가"는 데이터만으로 정할 수 없다. 더미 방식의 +0.05가 유의하지 않다면 두 구간을 합치는 것이 자연스럽고(<a href="../stepwise/">Stepwise 3.3절</a>), 유의하다면 소득 구간 설계나 부채비율과의 교호작용을 다시 봐야 한다. 어느 경우든 점수표에서 "중간 소득이 저소득보다 감점"은 설명하기 어렵다.</p>
 <h3 id="14">1.4 정리: 같은 로지스틱, 다른 사상<a class="headerlink" href="#14" title="Permanent link">¶</a></h3>
 <table>
 <thead>
@@ -5293,24 +5292,24 @@ bin 1과 bin 3의 상대적 크기 비율은 <span class="arithmatex">\(-0.40 : 
 </thead>
 <tbody>
 <tr>
-<td><strong>bin 간 패턴 결정자</strong></td>
+<td><strong>구간 간 패턴 결정자</strong></td>
 <td>단변량 분석 (사전 고정)</td>
 <td>다변량 회귀 (사후 추정)</td>
 </tr>
 <tr>
-<td><strong>다변량에서 β의 역할</strong></td>
-<td>변수 전체의 스케일 조절</td>
-<td>각 bin의 효과를 독립 추정</td>
+<td><strong>다변량에서 계수의 역할</strong></td>
+<td>변수 전체의 스케일 조절 (<span class="arithmatex">\(\beta\)</span> 1개)</td>
+<td>각 구간의 효과를 따로 추정</td>
 </tr>
 <tr>
 <td><strong>단조성</strong></td>
-<td>단변량 WoE가 단조면 강제 유지</td>
-<td>비단조 패턴 허용</td>
+<td><span class="arithmatex">\(\beta\)</span>가 정상 부호인 한 단변량 순서가 그대로 유지</td>
+<td>비단조 패턴 허용(사후 점검 필요)</td>
 </tr>
 <tr>
 <td><strong>자유도</strong></td>
 <td>변수당 1개</td>
-<td>변수당 (bin 수 − 1)개</td>
+<td>변수당 (구간 수 − 1)개</td>
 </tr>
 <tr>
 <td><strong>과적합 위험</strong></td>
@@ -5320,17 +5319,17 @@ bin 1과 bin 3의 상대적 크기 비율은 <span class="arithmatex">\(-0.40 : 
 <tr>
 <td><strong>성격</strong></td>
 <td>보수적·안정적</td>
-<td>유연·날카로움</td>
+<td>유연·민감</td>
 </tr>
 </tbody>
 </table>
-<p>WoE 방식의 "단변량 패턴 고정"은 약점이 아니라 <strong>의도적 제약</strong>이다. 신용평가에서는 단조성이 규제·비즈니스 요건인 경우가 많고(소득이 높은데 점수가 낮으면 설명이 안 됨), 자유도를 줄여 과적합을 억제하는 <strong>정규화 효과</strong>가 있다.</p>
-<p>반면 더미 방식은 다변량 관계를 bin 수준에서 자유롭게 포착하므로, 단변량에서 놓친 패턴을 잡아낼 수 있다. 대신 파라미터가 많아지므로 정규화(L1/L2)와 함께 쓰는 것이 일반적이다.</p>
+<p>WoE 방식의 "단변량 패턴 고정"은 약점이 아니라 <strong>의도적 제약</strong>이다. 신용평가에서는 단조성이 업무·규제 요건인 경우가 많고(소득이 높은데 점수가 낮으면 설명이 안 됨), 자유도를 줄여 과적합을 억제하는 <strong>정규화 효과</strong>가 있다.</p>
+<p>반면 더미 방식은 다변량 관계를 구간 수준에서 포착하므로 단변량에서 놓친 패턴을 잡아낼 수 있다. 대신 모수가 많아지므로, 구간 수를 줄이거나 비유의 구간을 합치는 방식으로 자유도를 관리하는 것이 중요하다.</p>
 <hr>
 <h2 id="2-end-to-end-woe">2. End-to-End 스코어카드 구축: WoE 방식<a class="headerlink" href="#2-end-to-end-woe" title="Permanent link">¶</a></h2>
 <h3 id="21">2.1 전체 흐름<a class="headerlink" href="#21" title="Permanent link">¶</a></h3>
-<div class="highlight"><pre><span></span><code>① Binning → ② WoE 계산 → ③ WoE 치환 → ④ 다변량 로지스틱 회귀
-→ ⑤ β 추정 → ⑥ PDO/Anchor 설정 → ⑦ 포인트 변환 (Offset 배분) → ⑧ 스코어카드 완성
+<div class="highlight"><pre><span></span><code>① Binning → ② WoE 계산 → ③ WoE 치환 → ④ 다변량 로지스틱 회귀(Bad logit)
+→ ⑤ β 추정 → ⑥ PDO/Anchor 설정 → ⑦ 배점 변환(상수 배분 포함) → ⑧ 스코어카드 완성
 </code></pre></div>
 <h3 id="22-5">2.2 수치 예시: 5개 변수<a class="headerlink" href="#22-5" title="Permanent link">¶</a></h3>
 <p><strong>① Binning &amp; ② WoE 계산</strong> — 각 변수를 구간화하고 단변량 WoE를 산출한다.</p>
@@ -5420,7 +5419,7 @@ bin 1과 bin 3의 상대적 크기 비율은 <span class="arithmatex">\(-0.40 : 
 </tr>
 </tbody>
 </table>
-<p><strong>③ WoE 치환</strong> — 원본 데이터의 각 관측치를 해당 bin의 WoE 값으로 대체한다.</p>
+<p><strong>③ WoE 치환</strong> — 원본 데이터의 각 관측치를 해당 구간의 WoE 값으로 바꾼다.</p>
 <table>
 <thead>
 <tr>
@@ -5452,9 +5451,9 @@ bin 1과 bin 3의 상대적 크기 비율은 <span class="arithmatex">\(-0.40 : 
 </tbody>
 </table>
 <p>변수당 컬럼 1개. 5개 변수면 5개 컬럼만으로 회귀에 투입한다.</p>
-<p><strong>④ 다변량 로지스틱 회귀</strong> — 5개 WoE 컬럼으로 회귀를 적합한다.</p>
-<div class="arithmatex">\[\text{logit}(p_i) = \beta_0 + \beta_1 \cdot WoE_{연소득} + \beta_2 \cdot WoE_{부채비율} + \beta_3 \cdot WoE_{연체} + \beta_4 \cdot WoE_{근속} + \beta_5 \cdot WoE_{카드}\]</div>
-<p><strong>⑤ β 추정 결과</strong> (예시):</p>
+<p><strong>④ 다변량 로지스틱 회귀(Bad logit)</strong> — 5개 WoE 컬럼으로 회귀를 적합한다.</p>
+<div class="arithmatex">\[\text{logit}(p_i) = \beta_0 + \beta_1 \text{WoE}_{\text{연소득}} + \beta_2 \text{WoE}_{\text{부채비율}} + \beta_3 \text{WoE}_{\text{연체}} + \beta_4 \text{WoE}_{\text{근속}} + \beta_5 \text{WoE}_{\text{카드}}\]</div>
+<p><strong>⑤ β 추정 결과</strong> (가상 예시, 모집단 불량률 약 5%):</p>
 <table>
 <thead>
 <tr>
@@ -5466,55 +5465,59 @@ bin 1과 bin 3의 상대적 크기 비율은 <span class="arithmatex">\(-0.40 : 
 <tbody>
 <tr>
 <td><span class="arithmatex">\(\beta_0\)</span> (절편)</td>
-<td>−0.50</td>
+<td>−2.94</td>
 <td>&lt;0.001</td>
 </tr>
 <tr>
 <td><span class="arithmatex">\(\beta_1\)</span> (연소득)</td>
-<td>0.85</td>
+<td>−0.85</td>
 <td>&lt;0.001</td>
 </tr>
 <tr>
 <td><span class="arithmatex">\(\beta_2\)</span> (부채비율)</td>
-<td>0.92</td>
+<td>−0.92</td>
 <td>&lt;0.001</td>
 </tr>
 <tr>
 <td><span class="arithmatex">\(\beta_3\)</span> (연체이력)</td>
-<td>1.10</td>
+<td>−0.95</td>
 <td>&lt;0.001</td>
 </tr>
 <tr>
 <td><span class="arithmatex">\(\beta_4\)</span> (근속연수)</td>
-<td>0.65</td>
+<td>−0.65</td>
 <td>0.003</td>
 </tr>
 <tr>
 <td><span class="arithmatex">\(\beta_5\)</span> (카드수)</td>
-<td>0.70</td>
+<td>−0.70</td>
 <td>0.008</td>
 </tr>
 </tbody>
 </table>
-<p>각 <span class="arithmatex">\(\beta_j\)</span>는 해당 변수의 WoE 패턴을 <strong>스케일링</strong>하는 역할이다. 단변량 WoE의 bin 간 상대적 크기 비율은 그대로 유지된다.</p>
+<ul>
+<li>모든 <span class="arithmatex">\(\beta_j\)</span>가 음수(정상 부호)이고 <span class="arithmatex">\(|\beta_j| &lt; 1\)</span>이다. 다변량에서 변수 간 겹치는 정보만큼 단변량 계수(−1)보다 작아진 것이다.</li>
+<li>절편 <span class="arithmatex">\(\beta_0 \approx \ln(N_B/N_G)\)</span>이다. 모든 WoE가 0(평균 위험)인 차주의 Bad 로짓이므로 모집단 불량률 5%면 <span class="arithmatex">\(\ln(5/95) = -2.94\)</span> 근처가 된다.</li>
+</ul>
 <p><strong>⑥ PDO/Anchor 설정</strong></p>
 <ul>
-<li>Anchor Score(<span class="arithmatex">\(A\)</span>) = 600 (Odds 1:1에서 600점)</li>
+<li>Anchor: Good Odds 1:1에서 600점(Offset = Anchor가 되어 계산이 단순해지므로 이 예시에서만 쓴다. 본문 <a href="../../../part5_scorecard/scorecard-and-rating/">Part 5</a>는 평균 위험 근처인 50:1을 기준으로 하며, 1:1을 기준으로 두지 않는 이유도 거기서 설명한다)</li>
 <li>PDO = 20 → <span class="arithmatex">\(B = 20 / \ln 2 \approx 28.85\)</span></li>
+<li>총점 <span class="arithmatex">\(= 600 + B \cdot \ln(\text{Good Odds}) = 600 - B \cdot \text{logit}_{\text{Bad}}\)</span></li>
 </ul>
-<p><strong>⑦ 포인트 변환</strong></p>
-<p>각 bin의 부분점수:</p>
-<div class="arithmatex">\[\text{Points}_{j,b} = B \times \beta_j \times WoE_{j,b} + \frac{B \times \beta_0}{k}\]</div>
-<p>절편 배분: <span class="arithmatex">\(28.85 \times (-0.50) / 5 = -2.89\)</span></p>
+<p><strong>⑦ 배점 변환</strong></p>
+<p>총점을 변수별로 나누면 각 구간의 배점은 다음과 같다(절편 몫은 변수 수 <span class="arithmatex">\(k=5\)</span>로 균등 배분).</p>
+<div class="arithmatex">\[\text{Points}_{j,b} = -B \cdot \beta_j \cdot \text{WoE}_{j,b} - \frac{B \cdot \beta_0}{k}\]</div>
+<p>절편 배분: <span class="arithmatex">\(-28.85 \times (-2.94) / 5 = +17.0\)</span></p>
 <table>
 <thead>
 <tr>
 <th>변수</th>
 <th>구간</th>
 <th>WoE</th>
-<th><span class="arithmatex">\(B \times \beta_j \times WoE\)</span></th>
+<th><span class="arithmatex">\(-B \cdot \beta_j \cdot \text{WoE}\)</span></th>
 <th>절편 배분</th>
-<th><strong>부분점수</strong></th>
+<th><strong>배점</strong></th>
 </tr>
 </thead>
 <tbody>
@@ -5522,136 +5525,138 @@ bin 1과 bin 3의 상대적 크기 비율은 <span class="arithmatex">\(-0.40 : 
 <td><strong>연소득</strong></td>
 <td>~2천만</td>
 <td>−0.40</td>
-<td><span class="arithmatex">\(28.85 \times 0.85 \times (-0.40) = -9.8\)</span></td>
-<td>−2.9</td>
-<td><strong>−12.7</strong></td>
+<td><span class="arithmatex">\(-28.85 \times (-0.85) \times (-0.40) = -9.8\)</span></td>
+<td>+17.0</td>
+<td><strong>+7.2</strong></td>
 </tr>
 <tr>
 <td></td>
 <td>2천~5천만</td>
 <td>+0.15</td>
-<td><span class="arithmatex">\(28.85 \times 0.85 \times 0.15 = +3.7\)</span></td>
-<td>−2.9</td>
-<td><strong>+0.8</strong></td>
+<td><span class="arithmatex">\(-28.85 \times (-0.85) \times 0.15 = +3.7\)</span></td>
+<td>+17.0</td>
+<td><strong>+20.6</strong></td>
 </tr>
 <tr>
 <td></td>
 <td>5천만~</td>
 <td>+0.55</td>
-<td><span class="arithmatex">\(28.85 \times 0.85 \times 0.55 = +13.5\)</span></td>
-<td>−2.9</td>
-<td><strong>+10.6</strong></td>
+<td><span class="arithmatex">\(-28.85 \times (-0.85) \times 0.55 = +13.5\)</span></td>
+<td>+17.0</td>
+<td><strong>+30.5</strong></td>
 </tr>
 <tr>
 <td><strong>부채비율</strong></td>
 <td>~30%</td>
 <td>+0.50</td>
-<td><span class="arithmatex">\(28.85 \times 0.92 \times 0.50 = +13.3\)</span></td>
-<td>−2.9</td>
-<td><strong>+10.4</strong></td>
+<td><span class="arithmatex">\(+13.3\)</span></td>
+<td>+17.0</td>
+<td><strong>+30.2</strong></td>
 </tr>
 <tr>
 <td></td>
 <td>30~60%</td>
 <td>+0.10</td>
-<td><span class="arithmatex">\(28.85 \times 0.92 \times 0.10 = +2.7\)</span></td>
-<td>−2.9</td>
-<td><strong>−0.2</strong></td>
+<td><span class="arithmatex">\(+2.7\)</span></td>
+<td>+17.0</td>
+<td><strong>+19.6</strong></td>
 </tr>
 <tr>
 <td></td>
 <td>60%~</td>
 <td>−0.45</td>
-<td><span class="arithmatex">\(28.85 \times 0.92 \times (-0.45) = -11.9\)</span></td>
-<td>−2.9</td>
-<td><strong>−14.8</strong></td>
+<td><span class="arithmatex">\(-11.9\)</span></td>
+<td>+17.0</td>
+<td><strong>+5.0</strong></td>
 </tr>
 <tr>
 <td><strong>연체이력</strong></td>
 <td>없음</td>
 <td>+0.60</td>
-<td><span class="arithmatex">\(28.85 \times 1.10 \times 0.60 = +19.0\)</span></td>
-<td>−2.9</td>
-<td><strong>+16.1</strong></td>
+<td><span class="arithmatex">\(+16.4\)</span></td>
+<td>+17.0</td>
+<td><strong>+33.4</strong></td>
 </tr>
 <tr>
 <td></td>
 <td>1회</td>
 <td>−0.20</td>
-<td><span class="arithmatex">\(28.85 \times 1.10 \times (-0.20) = -6.3\)</span></td>
-<td>−2.9</td>
-<td><strong>−9.2</strong></td>
+<td><span class="arithmatex">\(-5.5\)</span></td>
+<td>+17.0</td>
+<td><strong>+11.5</strong></td>
 </tr>
 <tr>
 <td></td>
 <td>2회+</td>
 <td>−0.70</td>
-<td><span class="arithmatex">\(28.85 \times 1.10 \times (-0.70) = -22.2\)</span></td>
-<td>−2.9</td>
-<td><strong>−25.1</strong></td>
+<td><span class="arithmatex">\(-19.2\)</span></td>
+<td>+17.0</td>
+<td><strong>−2.2</strong></td>
 </tr>
 <tr>
 <td><strong>근속연수</strong></td>
 <td>~1년</td>
 <td>−0.30</td>
-<td><span class="arithmatex">\(28.85 \times 0.65 \times (-0.30) = -5.6\)</span></td>
-<td>−2.9</td>
-<td><strong>−8.5</strong></td>
+<td><span class="arithmatex">\(-5.6\)</span></td>
+<td>+17.0</td>
+<td><strong>+11.3</strong></td>
 </tr>
 <tr>
 <td></td>
 <td>1~5년</td>
 <td>+0.05</td>
-<td><span class="arithmatex">\(28.85 \times 0.65 \times 0.05 = +0.9\)</span></td>
-<td>−2.9</td>
-<td><strong>−2.0</strong></td>
+<td><span class="arithmatex">\(+0.9\)</span></td>
+<td>+17.0</td>
+<td><strong>+17.9</strong></td>
 </tr>
 <tr>
 <td></td>
 <td>5년~</td>
 <td>+0.40</td>
-<td><span class="arithmatex">\(28.85 \times 0.65 \times 0.40 = +7.5\)</span></td>
-<td>−2.9</td>
-<td><strong>+4.6</strong></td>
+<td><span class="arithmatex">\(+7.5\)</span></td>
+<td>+17.0</td>
+<td><strong>+24.5</strong></td>
 </tr>
 <tr>
 <td><strong>카드수</strong></td>
 <td>1~2개</td>
 <td>+0.25</td>
-<td><span class="arithmatex">\(28.85 \times 0.70 \times 0.25 = +5.0\)</span></td>
-<td>−2.9</td>
-<td><strong>+2.1</strong></td>
+<td><span class="arithmatex">\(+5.0\)</span></td>
+<td>+17.0</td>
+<td><strong>+22.0</strong></td>
 </tr>
 <tr>
 <td></td>
 <td>3~5개</td>
 <td>+0.10</td>
-<td><span class="arithmatex">\(28.85 \times 0.70 \times 0.10 = +2.0\)</span></td>
-<td>−2.9</td>
-<td><strong>−0.9</strong></td>
+<td><span class="arithmatex">\(+2.0\)</span></td>
+<td>+17.0</td>
+<td><strong>+19.0</strong></td>
 </tr>
 <tr>
 <td></td>
 <td>6개~</td>
 <td>−0.35</td>
-<td><span class="arithmatex">\(28.85 \times 0.70 \times (-0.35) = -7.1\)</span></td>
-<td>−2.9</td>
-<td><strong>−10.0</strong></td>
+<td><span class="arithmatex">\(-7.1\)</span></td>
+<td>+17.0</td>
+<td><strong>+9.9</strong></td>
 </tr>
 </tbody>
 </table>
+<p>WoE &gt; 0인 우량 구간은 <span class="arithmatex">\(-B\beta\,\text{WoE} &gt; 0\)</span>이 되어 가점, WoE &lt; 0인 불량 구간은 감점이다.</p>
 <p><strong>⑧ 검증: 고객 A의 점수</strong></p>
 <p>고객 A: 연소득 5천만~, 부채비율 ~30%, 연체 없음, 근속 5년~, 카드 1~2개</p>
-<div class="arithmatex">\[\text{Score}_A = 600 + 10.6 + 10.4 + 16.1 + 4.6 + 2.1 = \mathbf{643.8}\]</div>
+<div class="arithmatex">\[\text{Score}_A = 600 + 30.5 + 30.2 + 33.4 + 24.5 + 22.0 = \mathbf{740.6}\]</div>
+<p>검산: 고객 A의 Bad 로짓은 <span class="arithmatex">\(-2.94 + (-0.85)(0.55) + (-0.92)(0.50) + (-0.95)(0.60) + (-0.65)(0.40) + (-0.70)(0.25) = -4.87\)</span>이므로 <span class="arithmatex">\(600 - 28.85 \times (-4.87) = 740.6\)</span>으로 같다. 이 차주의 PD는 약 0.76%다.</p>
 <hr>
 <h2 id="3-end-to-end">3. End-to-End 스코어카드 구축: 더미 방식<a class="headerlink" href="#3-end-to-end" title="Permanent link">¶</a></h2>
 <h3 id="31">3.1 전체 흐름<a class="headerlink" href="#31" title="Permanent link">¶</a></h3>
 <div class="highlight"><pre><span></span><code>① Binning → ② 구간 번호 코딩 → ③ 더미 변수 생성 (기준 범주 지정)
-→ ④ 다변량 로지스틱 회귀 → ⑤ bin별 γ 추정 → ⑥ 포인트 변환 → ⑦ 스코어카드 완성
+→ ④ 다변량 로지스틱 회귀(Bad logit) → ⑤ 구간별 γ 추정 → ⑥ 배점 변환 → ⑦ 스코어카드 완성
 </code></pre></div>
-<h3 id="32-5">3.2 수치 예시: 동일한 5개 변수<a class="headerlink" href="#32-5" title="Permanent link">¶</a></h3>
-<p><strong>① Binning</strong> — WoE 방식과 동일한 구간화를 사용한다.</p>
-<p><strong>② 구간 번호 코딩</strong> — 각 bin에 정수 번호를 부여한다 (위험도 순 또는 값 순).</p>
+<h3 id="32-5">3.2 수치 예시: 같은 5개 변수<a class="headerlink" href="#32-5" title="Permanent link">¶</a></h3>
+<p><strong>① Binning</strong> — WoE 방식과 같은 구간화를 쓴다.</p>
+<p><strong>② 구간 번호 코딩</strong> — 각 구간에 정수 번호를 부여한다. 여기서는 위험도 순으로 최위험 구간을 0번(기준)으로 둔다.</p>
 <table>
 <thead>
 <tr>
@@ -5754,8 +5759,8 @@ bin 1과 bin 3의 상대적 크기 비율은 <span class="arithmatex">\(-0.40 : 
 </tr>
 </tbody>
 </table>
-<p>WoE/IV는 구간화 품질 평가와 변수 선별에만 활용하며, 회귀 입력에는 구간 번호가 직접 투입된다. 기준 범주(0번)는 가장 위험한 구간으로 설정한다.</p>
-<p><strong>③ 더미 변수 생성</strong> — 기준 범주(0)를 제외하고 (bin 수 − 1)개의 더미를 만든다.</p>
+<p>WoE/IV는 구간화 품질 평가와 변수 선별에 쓰고, 회귀에는 구간 번호를 <strong>범주형으로 선언해 더미로 전개</strong>해 투입한다.</p>
+<p><strong>③ 더미 변수 생성</strong> — 기준 범주(0)를 제외하고 (구간 수 − 1)개의 더미를 만든다.</p>
 <table>
 <thead>
 <tr>
@@ -5763,6 +5768,7 @@ bin 1과 bin 3의 상대적 크기 비율은 <span class="arithmatex">\(-0.40 : 
 <th>연소득 원본</th>
 <th>연소득_D1</th>
 <th>연소득_D2</th>
+<th>부채비율 원본</th>
 <th>부채비율_D1</th>
 <th>부채비율_D2</th>
 <th>...</th>
@@ -5774,8 +5780,9 @@ bin 1과 bin 3의 상대적 크기 비율은 <span class="arithmatex">\(-0.40 : 
 <td>6,000만 (코드2)</td>
 <td>0</td>
 <td>1</td>
-<td>1</td>
+<td>25% (코드2)</td>
 <td>0</td>
+<td>1</td>
 <td>...</td>
 </tr>
 <tr>
@@ -5783,6 +5790,7 @@ bin 1과 bin 3의 상대적 크기 비율은 <span class="arithmatex">\(-0.40 : 
 <td>1,500만 (코드0)</td>
 <td>0</td>
 <td>0</td>
+<td>70% (코드0)</td>
 <td>0</td>
 <td>0</td>
 <td>...</td>
@@ -5790,9 +5798,9 @@ bin 1과 bin 3의 상대적 크기 비율은 <span class="arithmatex">\(-0.40 : 
 </tbody>
 </table>
 <p>5개 변수 × 2개 더미 = <strong>10개 컬럼</strong>으로 회귀에 투입한다.</p>
-<p><strong>④ 다변량 로지스틱 회귀</strong></p>
+<p><strong>④ 다변량 로지스틱 회귀(Bad logit)</strong></p>
 <div class="arithmatex">\[\text{logit}(p_i) = \beta_0 + \sum_{j=1}^{5} \sum_{b=1}^{2} \gamma_{jb} \cdot D_{jb}\]</div>
-<p><strong>⑤ bin별 γ 추정 결과</strong> (예시):</p>
+<p><strong>⑤ 구간별 γ 추정 결과</strong> (가상 예시):</p>
 <table>
 <thead>
 <tr>
@@ -5808,7 +5816,7 @@ bin 1과 bin 3의 상대적 크기 비율은 <span class="arithmatex">\(-0.40 : 
 <td></td>
 <td></td>
 <td></td>
-<td><span class="arithmatex">\(\beta_0 = -2.80\)</span></td>
+<td><span class="arithmatex">\(\beta_0 = -1.10\)</span></td>
 <td>&lt;0.001</td>
 </tr>
 <tr>
@@ -5822,14 +5830,14 @@ bin 1과 bin 3의 상대적 크기 비율은 <span class="arithmatex">\(-0.40 : 
 <td></td>
 <td>2천~5천만</td>
 <td>D1</td>
-<td>+0.38</td>
+<td>−0.38</td>
 <td>0.021</td>
 </tr>
 <tr>
 <td></td>
 <td>5천만~</td>
 <td>D2</td>
-<td>+0.72</td>
+<td>−0.72</td>
 <td>&lt;0.001</td>
 </tr>
 <tr>
@@ -5843,14 +5851,14 @@ bin 1과 bin 3의 상대적 크기 비율은 <span class="arithmatex">\(-0.40 : 
 <td></td>
 <td>30~60%</td>
 <td>D1</td>
-<td>+0.45</td>
+<td>−0.45</td>
 <td>0.004</td>
 </tr>
 <tr>
 <td></td>
 <td>~30%</td>
 <td>D2</td>
-<td>+0.88</td>
+<td>−0.88</td>
 <td>&lt;0.001</td>
 </tr>
 <tr>
@@ -5864,14 +5872,14 @@ bin 1과 bin 3의 상대적 크기 비율은 <span class="arithmatex">\(-0.40 : 
 <td></td>
 <td>1회</td>
 <td>D1</td>
-<td>+0.55</td>
+<td>−0.55</td>
 <td>&lt;0.001</td>
 </tr>
 <tr>
 <td></td>
 <td>없음</td>
 <td>D2</td>
-<td>+1.42</td>
+<td>−1.42</td>
 <td>&lt;0.001</td>
 </tr>
 <tr>
@@ -5885,14 +5893,14 @@ bin 1과 bin 3의 상대적 크기 비율은 <span class="arithmatex">\(-0.40 : 
 <td></td>
 <td>1~5년</td>
 <td>D1</td>
-<td>+0.22</td>
+<td>−0.22</td>
 <td>0.085</td>
 </tr>
 <tr>
 <td></td>
 <td>5년~</td>
 <td>D2</td>
-<td>+0.48</td>
+<td>−0.48</td>
 <td>0.002</td>
 </tr>
 <tr>
@@ -5906,36 +5914,40 @@ bin 1과 bin 3의 상대적 크기 비율은 <span class="arithmatex">\(-0.40 : 
 <td></td>
 <td>3~5개</td>
 <td>D1</td>
-<td>+0.30</td>
+<td>−0.30</td>
 <td>0.038</td>
 </tr>
 <tr>
 <td></td>
 <td>1~2개</td>
 <td>D2</td>
-<td>+0.41</td>
+<td>−0.41</td>
 <td>0.009</td>
 </tr>
 </tbody>
 </table>
-<p>각 <span class="arithmatex">\(\gamma_{jb}\)</span>는 <strong>"기준 구간(최위험) 대비 해당 구간의 로짓 개선량"</strong>을 직접 나타낸다. 이 값은 다른 모든 변수를 통제한 후의 순수한 효과이므로, 단변량 WoE와는 다를 수 있다.</p>
-<p><strong>핵심:</strong> WoE 방식에서는 <span class="arithmatex">\(\beta_j\)</span>가 1개이므로 bin 간 비율이 고정되지만, 더미 방식에서는 <span class="arithmatex">\(\gamma_{j1}\)</span>과 <span class="arithmatex">\(\gamma_{j2}\)</span>가 <strong>각각 독립 추정</strong>되므로 bin 간 비율이 다변량에서 자유롭게 결정된다.</p>
-<p><strong>⑥ 포인트 변환</strong></p>
-<p>더미 방식에서는 기준 구간(0번)의 효과가 절편 <span class="arithmatex">\(\beta_0\)</span>에 흡수되어 있다. 따라서:</p>
 <ul>
-<li>기준 구간: 부분점수 = 절편 배분값</li>
-<li>나머지 구간: 부분점수 = 절편 배분값 <span class="arithmatex">\(+ B \times \gamma_{jb}\)</span></li>
+<li>각 <span class="arithmatex">\(\gamma_{jb}\)</span>는 <strong>"기준 구간(최위험) 대비 해당 구간의 Bad 로짓 감소량"</strong> 이다. 모두 음수이고, 같은 변수 안에서 안전한 구간일수록 더 작다(정상).</li>
+<li>절편 <span class="arithmatex">\(\beta_0 = -1.10\)</span>은 다섯 변수 모두 최위험 구간인 차주의 Bad 로짓이다(PD 약 25%).</li>
+<li>근속연수 1~5년(D1, p = 0.085)은 기준 구간과 구분이 약하다. <a href="../stepwise/">Stepwise 3.3절</a>의 기준에 따라 구간 합병을 검토할 대상이다.</li>
 </ul>
-<p>절편 배분: <span class="arithmatex">\(B \times \beta_0 / k = 28.85 \times (-2.80) / 5 = -16.2\)</span></p>
+<p><strong>핵심:</strong> WoE 방식에서는 <span class="arithmatex">\(\beta_j\)</span>가 1개이므로 구간 간 비율이 고정되지만, 더미 방식에서는 <span class="arithmatex">\(\gamma_{j1}\)</span>과 <span class="arithmatex">\(\gamma_{j2}\)</span>가 <strong>각각 추정</strong>되므로 구간 간 비율이 다변량에서 결정된다.</p>
+<p><strong>⑥ 배점 변환</strong></p>
+<p>더미 방식에서는 기준 구간(0번)의 효과가 절편에 흡수되어 있다. 따라서:</p>
+<ul>
+<li>기준 구간: 배점 = 절편 배분값</li>
+<li>나머지 구간: 배점 = 절편 배분값 <span class="arithmatex">\(- B \times \gamma_{jb}\)</span></li>
+</ul>
+<p>절편 배분: <span class="arithmatex">\(-B \times \beta_0 / k = -28.85 \times (-1.10) / 5 = +6.3\)</span></p>
 <table>
 <thead>
 <tr>
 <th>변수</th>
 <th>구간</th>
 <th><span class="arithmatex">\(\gamma\)</span></th>
-<th><span class="arithmatex">\(B \times \gamma\)</span></th>
+<th><span class="arithmatex">\(-B \times \gamma\)</span></th>
 <th>절편 배분</th>
-<th><strong>부분점수</strong></th>
+<th><strong>배점</strong></th>
 </tr>
 </thead>
 <tbody>
@@ -5944,136 +5956,137 @@ bin 1과 bin 3의 상대적 크기 비율은 <span class="arithmatex">\(-0.40 : 
 <td>~2천만 (기준)</td>
 <td>0</td>
 <td>0</td>
-<td>−16.2</td>
-<td><strong>−16.2</strong></td>
+<td>+6.3</td>
+<td><strong>+6.3</strong></td>
 </tr>
 <tr>
 <td></td>
 <td>2천~5천만</td>
-<td>+0.38</td>
+<td>−0.38</td>
 <td>+11.0</td>
-<td>−16.2</td>
-<td><strong>−5.2</strong></td>
+<td>+6.3</td>
+<td><strong>+17.3</strong></td>
 </tr>
 <tr>
 <td></td>
 <td>5천만~</td>
-<td>+0.72</td>
+<td>−0.72</td>
 <td>+20.8</td>
-<td>−16.2</td>
-<td><strong>+4.6</strong></td>
+<td>+6.3</td>
+<td><strong>+27.1</strong></td>
 </tr>
 <tr>
 <td><strong>부채비율</strong></td>
 <td>60%~ (기준)</td>
 <td>0</td>
 <td>0</td>
-<td>−16.2</td>
-<td><strong>−16.2</strong></td>
+<td>+6.3</td>
+<td><strong>+6.3</strong></td>
 </tr>
 <tr>
 <td></td>
 <td>30~60%</td>
-<td>+0.45</td>
+<td>−0.45</td>
 <td>+13.0</td>
-<td>−16.2</td>
-<td><strong>−3.2</strong></td>
+<td>+6.3</td>
+<td><strong>+19.3</strong></td>
 </tr>
 <tr>
 <td></td>
 <td>~30%</td>
-<td>+0.88</td>
+<td>−0.88</td>
 <td>+25.4</td>
-<td>−16.2</td>
-<td><strong>+9.2</strong></td>
+<td>+6.3</td>
+<td><strong>+31.7</strong></td>
 </tr>
 <tr>
 <td><strong>연체이력</strong></td>
 <td>2회+ (기준)</td>
 <td>0</td>
 <td>0</td>
-<td>−16.2</td>
-<td><strong>−16.2</strong></td>
+<td>+6.3</td>
+<td><strong>+6.3</strong></td>
 </tr>
 <tr>
 <td></td>
 <td>1회</td>
-<td>+0.55</td>
+<td>−0.55</td>
 <td>+15.9</td>
-<td>−16.2</td>
-<td><strong>−0.3</strong></td>
+<td>+6.3</td>
+<td><strong>+22.2</strong></td>
 </tr>
 <tr>
 <td></td>
 <td>없음</td>
-<td>+1.42</td>
+<td>−1.42</td>
 <td>+41.0</td>
-<td>−16.2</td>
-<td><strong>+24.8</strong></td>
+<td>+6.3</td>
+<td><strong>+47.3</strong></td>
 </tr>
 <tr>
 <td><strong>근속연수</strong></td>
 <td>~1년 (기준)</td>
 <td>0</td>
 <td>0</td>
-<td>−16.2</td>
-<td><strong>−16.2</strong></td>
+<td>+6.3</td>
+<td><strong>+6.3</strong></td>
 </tr>
 <tr>
 <td></td>
 <td>1~5년</td>
-<td>+0.22</td>
+<td>−0.22</td>
 <td>+6.3</td>
-<td>−16.2</td>
-<td><strong>−9.9</strong></td>
+<td>+6.3</td>
+<td><strong>+12.7</strong></td>
 </tr>
 <tr>
 <td></td>
 <td>5년~</td>
-<td>+0.48</td>
+<td>−0.48</td>
 <td>+13.8</td>
-<td>−16.2</td>
-<td><strong>−2.4</strong></td>
+<td>+6.3</td>
+<td><strong>+20.2</strong></td>
 </tr>
 <tr>
 <td><strong>카드수</strong></td>
 <td>6개~ (기준)</td>
 <td>0</td>
 <td>0</td>
-<td>−16.2</td>
-<td><strong>−16.2</strong></td>
+<td>+6.3</td>
+<td><strong>+6.3</strong></td>
 </tr>
 <tr>
 <td></td>
 <td>3~5개</td>
-<td>+0.30</td>
+<td>−0.30</td>
 <td>+8.7</td>
-<td>−16.2</td>
-<td><strong>−7.5</strong></td>
+<td>+6.3</td>
+<td><strong>+15.0</strong></td>
 </tr>
 <tr>
 <td></td>
 <td>1~2개</td>
-<td>+0.41</td>
+<td>−0.41</td>
 <td>+11.8</td>
-<td>−16.2</td>
-<td><strong>−4.4</strong></td>
+<td>+6.3</td>
+<td><strong>+18.2</strong></td>
 </tr>
 </tbody>
 </table>
+<p>(배점은 반올림 전 값으로 계산해 소수 첫째 자리에서 반올림했다. 예: 절편 배분 6.35 + 11.0 = 17.3)</p>
 <p><strong>⑦ 검증: 고객 A의 점수</strong></p>
 <p>고객 A: 연소득 5천만~, 부채비율 ~30%, 연체 없음, 근속 5년~, 카드 1~2개</p>
-<div class="arithmatex">\[\text{Score}_A = 600 + 4.6 + 9.2 + 24.8 + (-2.4) + (-4.4) = \mathbf{631.8}\]</div>
+<div class="arithmatex">\[\text{Score}_A = 600 + 27.1 + 31.7 + 47.3 + 20.2 + 18.2 = \mathbf{744.5}\]</div>
+<p>(반올림 전 합계는 744.6. Bad 로짓 <span class="arithmatex">\(-1.10 - 0.72 - 0.88 - 1.42 - 0.48 - 0.41 = -5.01\)</span>, PD 약 0.66%)</p>
 <blockquote>
-<p>WoE 방식과 점수가 다른 이유: 서로 다른 모형이기 때문이다. WoE 방식은 단변량 패턴을 고정한 채 <span class="arithmatex">\(\beta\)</span>만 조정하지만, 더미 방식은 다변량에서 bin별 효과를 자유롭게 재추정한다. 입력이 다르면 결과도 다르다.</p>
+<p>WoE 방식(740.6점)과 점수가 다른 이유: 서로 다른 모형이기 때문이다. WoE 방식은 단변량 패턴을 고정한 채 <span class="arithmatex">\(\beta\)</span>만 조정하고, 더미 방식은 다변량에서 구간별 효과를 재추정한다. 입력과 모수 구조가 다르면 결과도 다르다.</p>
 </blockquote>
 <hr>
 <h2 id="4">4. 기준점 이동의 수학적 동치 증명<a class="headerlink" href="#4" title="Permanent link">¶</a></h2>
-<p>WoE와 더미가 "사상이 다르다"는 것과 별개로, <strong>동일한 모형 내에서</strong> 기준점을 옮기는 것은 예측값에 영향을 주지 않음을 증명한다.</p>
+<p>WoE와 더미가 "사상이 다르다"는 것과 별개로, <strong>같은 모형 안에서</strong> 기준점을 옮기는 것은 예측값에 영향을 주지 않는다.</p>
 <h3 id="41">4.1 단일 변수 케이스<a class="headerlink" href="#41" title="Permanent link">¶</a></h3>
-<p>변수 X에 3개 bin이 있고, WoE 값이 각각 <span class="arithmatex">\(w_1, w_2, w_3\)</span>이라 하자.</p>
-<p>bin 2를 기준점(0점)으로 삼고 싶다면, <span class="arithmatex">\(c = w_2\)</span>를 빼준다:</p>
-<div class="arithmatex">\[\beta_0 + \beta_1 \cdot w_i = (\beta_0 + \beta_1 \cdot c) + \beta_1 \cdot (w_i - c)\]</div>
+<p>변수 X에 3개 구간이 있고, WoE 값이 각각 <span class="arithmatex">\(w_1, w_2, w_3\)</span>이라 하자. bin 2를 기준점(0점)으로 삼고 싶다면 <span class="arithmatex">\(c = w_2\)</span>를 뺀다.</p>
+<div class="arithmatex">\[\beta_0 + \beta_1 w_i = (\beta_0 + \beta_1 c) + \beta_1 (w_i - c)\]</div>
 <table>
 <thead>
 <tr>
@@ -6100,22 +6113,25 @@ bin 1과 bin 3의 상대적 크기 비율은 <span class="arithmatex">\(-0.40 : 
 </tr>
 </tbody>
 </table>
-<p><span class="arithmatex">\(\beta_1 \cdot c\)</span>는 절편에 흡수 → <strong>예측값 불변</strong>.</p>
+<p><span class="arithmatex">\(\beta_1 c\)</span>는 절편에 흡수 → <strong>예측값 불변</strong>. <span class="arithmatex">\(\beta_1\)</span> 자체도 바뀌지 않는다.</p>
 <h3 id="42-5">4.2 다변량 케이스 (변수 5개)<a class="headerlink" href="#42-5" title="Permanent link">¶</a></h3>
-<p>변수 <span class="arithmatex">\(X_1, ..., X_5\)</span>이고, 각각의 기준 bin WoE가 <span class="arithmatex">\(c_1, ..., c_5\)</span>일 때:</p>
-<div class="arithmatex">\[\beta_0 + \sum_{j=1}^{5} \beta_j \cdot WoE_{X_j} = \underbrace{\left(\beta_0 + \sum_{j=1}^{5} \beta_j \cdot c_j\right)}_{\beta_0'} + \sum_{j=1}^{5} \beta_j \cdot \underbrace{(WoE_{X_j} - c_j)}_{WoE'_{X_j}}\]</div>
-<p>핵심:
-- 각 변수의 기준점 이동은 <strong>독립적</strong> — 한 변수의 <span class="arithmatex">\(c_j\)</span>를 바꿔도 다른 변수의 <span class="arithmatex">\(\beta_k\)</span>에 영향 없음
-- 모든 shift가 <strong>절편 하나에 합산 흡수</strong>됨
-- <span class="arithmatex">\(\beta_j\)</span> 값 자체는 변하지 않음</p>
+<p>변수 <span class="arithmatex">\(X_1, \dots, X_5\)</span>이고, 각각의 기준 구간 WoE가 <span class="arithmatex">\(c_1, \dots, c_5\)</span>일 때:</p>
+<div class="arithmatex">\[\beta_0 + \sum_{j=1}^{5} \beta_j \text{WoE}_{X_j} = \underbrace{\left(\beta_0 + \sum_{j=1}^{5} \beta_j c_j\right)}_{\beta_0'} + \sum_{j=1}^{5} \beta_j \underbrace{(\text{WoE}_{X_j} - c_j)}_{\text{WoE}'_{X_j}}\]</div>
+<p>핵심:</p>
+<ul>
+<li>각 변수의 기준점 이동은 <strong>독립적</strong>이다. 한 변수의 <span class="arithmatex">\(c_j\)</span>를 바꿔도 다른 변수의 <span class="arithmatex">\(\beta_k\)</span>에 영향이 없다.</li>
+<li>모든 이동량은 <strong><span class="arithmatex">\(\beta_j c_j\)</span>의 합</strong>으로 절편 하나에 흡수된다(<span class="arithmatex">\(c_j\)</span>의 단순 합이 아니다).</li>
+<li><span class="arithmatex">\(\beta_j\)</span> 값 자체는 변하지 않는다.</li>
+</ul>
 <h3 id="43">4.3 수치 검증<a class="headerlink" href="#43" title="Permanent link">¶</a></h3>
-<p>Section 2(본 페이지 위)의 5개 변수 예시에서, 각 변수의 중간 구간을 기준으로 잡아본다.</p>
+<p>2절의 5개 변수 예시(<span class="arithmatex">\(\beta_0 = -2.94\)</span>, <span class="arithmatex">\(\beta = (-0.85, -0.92, -0.95, -0.65, -0.70)\)</span>)에서, 각 변수의 중간 구간을 기준으로 잡아 본다.</p>
 <table>
 <thead>
 <tr>
 <th>변수</th>
 <th>기준 구간</th>
 <th><span class="arithmatex">\(c_j\)</span></th>
+<th><span class="arithmatex">\(\beta_j c_j\)</span></th>
 </tr>
 </thead>
 <tbody>
@@ -6123,26 +6139,37 @@ bin 1과 bin 3의 상대적 크기 비율은 <span class="arithmatex">\(-0.40 : 
 <td>연소득</td>
 <td>2천~5천만</td>
 <td>+0.15</td>
+<td>−0.1275</td>
 </tr>
 <tr>
 <td>부채비율</td>
 <td>30~60%</td>
 <td>+0.10</td>
+<td>−0.0920</td>
 </tr>
 <tr>
 <td>연체이력</td>
 <td>1회</td>
 <td>−0.20</td>
+<td>+0.1900</td>
 </tr>
 <tr>
 <td>근속연수</td>
 <td>1~5년</td>
 <td>+0.05</td>
+<td>−0.0325</td>
 </tr>
 <tr>
 <td>카드수</td>
 <td>3~5개</td>
 <td>+0.10</td>
+<td>−0.0700</td>
+</tr>
+<tr>
+<td><strong>합계</strong></td>
+<td></td>
+<td></td>
+<td><strong>−0.1320</strong></td>
 </tr>
 </tbody>
 </table>
@@ -6266,18 +6293,19 @@ bin 1과 bin 3의 상대적 크기 비율은 <span class="arithmatex">\(-0.40 : 
 </tbody>
 </table>
 <p><strong>절편 흡수:</strong></p>
-<div class="arithmatex">\[\sum c_j = 0.15 + 0.10 + (-0.20) + 0.05 + 0.10 = 0.20\]</div>
-<div class="arithmatex">\[\beta_0' = -0.50 + 0.20 = -0.30\]</div>
-<p><strong>동일 고객 검증</strong> (연소득 5천만~, 부채비율 60%~, 연체 없음, 근속 1~5년, 카드 3~5개):</p>
+<div class="arithmatex">\[\beta_0' = \beta_0 + \sum_j \beta_j c_j = -2.94 + (-0.132) = -3.072\]</div>
+<p><strong>같은 고객 검증</strong> (연소득 5천만~, 부채비율 60%~, 연체 없음, 근속 1~5년, 카드 3~5개):</p>
 <ul>
-<li>원래: <span class="arithmatex">\(-0.50 + 0.55 + (-0.45) + 0.60 + 0.05 + 0.10 = \mathbf{0.35}\)</span></li>
-<li>조정 후: <span class="arithmatex">\(-0.30 + 0.40 + (-0.55) + 0.80 + 0.00 + 0.00 = \mathbf{0.35}\)</span></li>
+<li>원래: <span class="arithmatex">\(-2.94 + (-0.85)(0.55) + (-0.92)(-0.45) + (-0.95)(0.60) + (-0.65)(0.05) + (-0.70)(0.10)\)</span>
+  <span class="arithmatex">\(= -2.94 - 0.4675 + 0.414 - 0.570 - 0.0325 - 0.070 = \mathbf{-3.666}\)</span></li>
+<li>조정 후: <span class="arithmatex">\(-3.072 + (-0.85)(0.40) + (-0.92)(-0.55) + (-0.95)(0.80) + 0 + 0\)</span>
+  <span class="arithmatex">\(= -3.072 - 0.340 + 0.506 - 0.760 = \mathbf{-3.666}\)</span></li>
 </ul>
+<p>두 로짓이 정확히 같다. 기준점 이동은 예측값을 바꾸지 않는다.</p>
 <hr>
 <h2 id="5">5. 변수 중요도: 기준점 이동에 불변<a class="headerlink" href="#5" title="Permanent link">¶</a></h2>
 <h3 id="51">5.1 핵심 원리<a class="headerlink" href="#51" title="Permanent link">¶</a></h3>
-<p>변수의 중요도(판별력)는 개별 bin의 절대값이 아니라 <strong>변수 내 범위(max − min)</strong>로 측정한다.
-기준점 이동은 상수 덧셈이므로 max와 min이 같은 양만큼 이동 → <strong>범위 불변</strong>.</p>
+<p>점수표에서 변수의 영향력을 볼 때는 개별 구간 배점의 절대값이 아니라 <strong>변수 안 배점의 범위(max − min)</strong> 를 본다. 기준점 이동은 상수를 더하는 것이므로 max와 min이 같은 양만큼 움직여 <strong>범위가 불변</strong>이다.</p>
 <h3 id="52-woe">5.2 WoE 범위 비교<a class="headerlink" href="#52-woe" title="Permanent link">¶</a></h3>
 <table>
 <thead>
@@ -6327,58 +6355,62 @@ bin 1과 bin 3의 상대적 크기 비율은 <span class="arithmatex">\(-0.40 : 
 </tr>
 </tbody>
 </table>
-<p>변수 중요도 순위: 연체이력 &gt; 연소득 = 부채비율 &gt; 근속연수 &gt; 카드수 — <strong>기준점과 무관하게 불변</strong>.</p>
-<h3 id="53">5.3 스코어카드 포인트에서도 동일<a class="headerlink" href="#53" title="Permanent link">¶</a></h3>
-<p>포인트 범위 = <span class="arithmatex">\(|\beta_j| \times B \times \text{WoE range}\)</span>이므로, WoE range에 정비례한다.</p>
+<p>WoE range 순위(연체이력 &gt; 연소득 = 부채비율 &gt; 근속연수 &gt; 카드수)는 <strong>기준점과 무관하게 불변</strong>이다. 다만 WoE range는 단변량 정보일 뿐이고, 다변량 모형에서의 영향력은 계수까지 곱한 배점 범위로 본다.</p>
+<h3 id="53">5.3 배점 범위<a class="headerlink" href="#53" title="Permanent link">¶</a></h3>
+<p>배점 범위 <span class="arithmatex">\(= |\beta_j| \times B \times \text{WoE range}\)</span>이다.</p>
 <table>
 <thead>
 <tr>
 <th>변수</th>
 <th>WoE range</th>
 <th><span class="arithmatex">\(\beta_j\)</span></th>
-<th><strong>포인트 범위</strong> (<span class="arithmatex">\(\times B\)</span>)</th>
+<th><strong>배점 범위</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>연체이력</td>
 <td>1.30</td>
-<td>1.10</td>
-<td><span class="arithmatex">\(1.10 \times 28.85 \times 1.30 = \mathbf{41.3}\)</span></td>
+<td>−0.95</td>
+<td><span class="arithmatex">\(0.95 \times 28.85 \times 1.30 = \mathbf{35.6}\)</span></td>
 </tr>
 <tr>
 <td>부채비율</td>
 <td>0.95</td>
-<td>0.92</td>
+<td>−0.92</td>
 <td><span class="arithmatex">\(0.92 \times 28.85 \times 0.95 = \mathbf{25.2}\)</span></td>
 </tr>
 <tr>
 <td>연소득</td>
 <td>0.95</td>
-<td>0.85</td>
+<td>−0.85</td>
 <td><span class="arithmatex">\(0.85 \times 28.85 \times 0.95 = \mathbf{23.3}\)</span></td>
 </tr>
 <tr>
 <td>근속연수</td>
 <td>0.70</td>
-<td>0.65</td>
+<td>−0.65</td>
 <td><span class="arithmatex">\(0.65 \times 28.85 \times 0.70 = \mathbf{13.1}\)</span></td>
 </tr>
 <tr>
 <td>카드수</td>
 <td>0.60</td>
-<td>0.70</td>
+<td>−0.70</td>
 <td><span class="arithmatex">\(0.70 \times 28.85 \times 0.60 = \mathbf{12.1}\)</span></td>
 </tr>
 </tbody>
 </table>
-<p>기준점을 어디로 잡든 이 포인트 범위는 변하지 않는다.</p>
+<p>WoE range가 같던 연소득과 부채비율이 계수 차이 때문에 배점 범위에서는 부채비율 &gt; 연소득으로 갈린다. 기준점을 어디로 잡든 이 배점 범위는 변하지 않는다.</p>
+<div class="admonition warning">
+<p class="admonition-title">배점 범위의 한계</p>
+<p>배점 범위는 <strong>양 끝 구간</strong>만 본다. 극단 구간에 차주가 1%밖에 없다면, 범위가 커도 실제 점수 분포에 미치는 영향은 작다. 변수의 실질적 기여를 보려면 범위와 함께 <strong>IV</strong>나 <strong>배점의 분산(구간 비중 가중)</strong> 을 같이 보고, 극단 구간의 표본 비중을 확인한다.</p>
+</div>
 <h3 id="54">5.4 흔한 오해: "최대 절대값 = 중요도"?<a class="headerlink" href="#54" title="Permanent link">¶</a></h3>
 <table>
 <thead>
 <tr>
 <th>변수</th>
-<th>WoE 범위</th>
+<th>배점 범위</th>
 <th>max 절대값</th>
 <th>range</th>
 </tr>
@@ -6398,8 +6430,7 @@ bin 1과 bin 3의 상대적 크기 비율은 <span class="arithmatex">\(-0.40 : 
 </tr>
 </tbody>
 </table>
-<p>max 절대값만 보면 변수B가 3배 중요해 보이지만, 실제로는 2배(range 기준).
-0점 보정(가장 나쁜 구간 = 0)을 하면:</p>
+<p>max 절대값만 보면 변수B가 3배 중요해 보이지만, 실제 영향력 차이는 2배(range 기준)다. 가장 나쁜 구간을 0점으로 맞추면:</p>
 <table>
 <thead>
 <tr>
@@ -6421,24 +6452,42 @@ bin 1과 bin 3의 상대적 크기 비율은 <span class="arithmatex">\(-0.40 : 
 </tr>
 </tbody>
 </table>
-<p>"보정 때문에 중요도가 바뀌었다"가 아니라, <strong>원래부터 변수B의 판별력이 2배였는데, 보정 후 더 눈에 띄게 된 것</strong>뿐이다.</p>
+<p>"보정 때문에 중요도가 바뀌었다"가 아니라, <strong>원래부터 변수B의 영향 범위가 2배였는데 보정 후 더 눈에 잘 띄게 된 것</strong>뿐이다.</p>
 <hr>
-<h2 id="6-offset">6. Offset 배분 = 기준점 설정<a class="headerlink" href="#6-offset" title="Permanent link">¶</a></h2>
-<h3 id="61">6.1 핵심 통찰<a class="headerlink" href="#61" title="Permanent link">¶</a></h3>
-<p>WoE 방식에서 "기준점 설정이 필요 없다"는 것은 <strong>회귀 단계</strong>에 한정된 이야기다.</p>
-<p>스코어카드 포인트 변환 단계에서 <strong>Offset 배분</strong>이 사실상 기준점 설정 역할을 한다:</p>
-<div class="arithmatex">\[\frac{B \times \beta_0}{k}\]</div>
-<p>이 값이 모든 bin에 동일하게 더해지면서, 각 변수의 포인트가 특정 수준으로 정렬된다.</p>
-<h3 id="62-woe">6.2 WoE 방식의 실제 흐름 요약<a class="headerlink" href="#62-woe" title="Permanent link">¶</a></h3>
-<div class="highlight"><pre><span></span><code>binning → WoE 치환 → 로지스틱 회귀 → β 추정
-                                        ↓
-                       (여기까지 기준점 신경 안 씀)
-                                        ↓
-                         Offset 배분으로 기준점 일괄 설정
-                                        ↓
-                              스코어카드 완성
-</code></pre></div>
-<p>"기준점 설정이 불필요하다"가 아니라, <strong>"회귀가 아닌 포인트 변환 단계에서 한 번에 처리한다"</strong>가 정확하다.</p>
+<h2 id="6">6. 절편 배분과 기준점 설정은 다른 조작이다<a class="headerlink" href="#6" title="Permanent link">¶</a></h2>
+<h3 id="61">6.1 절편 배분 = 상수를 나눠 담는 표시 방식<a class="headerlink" href="#61" title="Permanent link">¶</a></h3>
+<p>2절 ⑦에서 쓴 절편 배분</p>
+<div class="arithmatex">\[-\frac{B \cdot \beta_0}{k}\]</div>
+<p>은 <strong>모든 변수의 모든 구간에 같은 값</strong>을 더한다. 이것은 총점의 상수항을 변수별로 쪼개 담아 "변수 배점의 합 = 총점"이 되게 하는 <strong>표시 방식</strong>일 뿐, 어떤 구간도 0점으로 만들지 않는다. 실제로 2절 예시에서 0점인 구간은 하나도 없다.</p>
+<h3 id="62-0">6.2 기준점 설정 = 특정 구간을 0점으로 맞추는 평행이동<a class="headerlink" href="#62-0" title="Permanent link">¶</a></h3>
+<p>반면 <a href="../woe-entry/">WoE 직접 투입 1.3절</a>의 평행이동은 변수마다 <strong>기준 구간의 WoE를 빼서</strong> 그 구간을 0점으로 만들고, 빠진 만큼을 상수항에서 보정한다. 4절의 증명이 이 조작에 해당한다.</p>
+<p>두 조작은 모두 예측값을 바꾸지 않지만 목적이 다르다.</p>
+<table>
+<thead>
+<tr>
+<th>조작</th>
+<th>무엇을 바꾸나</th>
+<th>결과 점수표의 모습</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>절편 배분</td>
+<td>상수항을 변수 수로 나눠 각 구간에 똑같이 더함</td>
+<td>0점 구간이 없음. "배점 합 = 총점"</td>
+</tr>
+<tr>
+<td>기준점 평행이동</td>
+<td>변수별 기준 구간이 0점이 되도록 이동, 상수항 보정</td>
+<td>변수마다 0점 구간이 하나씩 생김</td>
+</tr>
+<tr>
+<td>둘 다 적용</td>
+<td>평행이동 후 남은 상수항을 다시 배분</td>
+<td>기준 구간 = 배분값, 나머지 = 배분값 + 차이</td>
+</tr>
+</tbody>
+</table>
 <h3 id="63">6.3 두 방식의 기준점 처리 시점 비교<a class="headerlink" href="#63" title="Permanent link">¶</a></h3>
 <table>
 <thead>
@@ -6452,7 +6501,7 @@ bin 1과 bin 3의 상대적 크기 비율은 <span class="arithmatex">\(-0.40 : 
 <tr>
 <td><strong>인코딩</strong></td>
 <td>기준 범주 명시 선택</td>
-<td>전체 평균이 자동 기준</td>
+<td>WoE = 0이 "모집단 평균 위험"에 해당(실제 구간과는 대개 불일치)</td>
 </tr>
 <tr>
 <td><strong>회귀</strong></td>
@@ -6460,14 +6509,14 @@ bin 1과 bin 3의 상대적 크기 비율은 <span class="arithmatex">\(-0.40 : 
 <td>WoE 값에 대한 계수 추정</td>
 </tr>
 <tr>
-<td><strong>포인트 변환</strong></td>
-<td>기준 범주 = 0점 (자연스러움)</td>
-<td>Offset 배분으로 기준 설정</td>
+<td><strong>배점 변환</strong></td>
+<td>기준 범주 = 0점(배분 전)</td>
+<td>기준 구간을 원하면 평행이동으로 설정</td>
 </tr>
 <tr>
-<td><strong>최종 결과</strong></td>
-<td>동일한 구조의 스코어카드</td>
-<td>동일한 구조의 스코어카드</td>
+<td><strong>상수항</strong></td>
+<td>절편 배분 여부는 표시 선택</td>
+<td>절편 배분 여부는 표시 선택</td>
 </tr>
 </tbody>
 </table>
@@ -6475,18 +6524,19 @@ bin 1과 bin 3의 상대적 크기 비율은 <span class="arithmatex">\(-0.40 : 
 <h2 id="7">7. 결론<a class="headerlink" href="#7" title="Permanent link">¶</a></h2>
 <ol>
 <li>
-<p><strong>같은 로지스틱 회귀라도 사상이 다르다.</strong> WoE 방식은 단변량 패턴을 고정하고 β로 스케일링만 하며, 더미 방식은 다변량에서 bin별 효과를 자유롭게 재추정한다. WoE의 패턴 고정은 단조성 보장과 과적합 억제라는 의도적 제약이다.</p>
+<p><strong>같은 로지스틱 회귀라도 사상이 다르다.</strong> WoE 방식은 단변량 패턴을 고정하고 <span class="arithmatex">\(\beta\)</span>(정상 부호 음수)로 스케일링만 하며, 더미 방식은 다변량에서 구간별 효과를 재추정한다. WoE의 패턴 고정은 순서 유지와 과적합 억제라는 의도적 제약이다.</p>
 </li>
 <li>
-<p><strong>동일 모형 내에서 기준점 이동은 예측값을 바꾸지 않는다.</strong> shift는 절편에 흡수되며, 다변량에서도 변수 간 독립적으로 작동한다.</p>
+<p><strong>같은 모형 안에서 기준점 이동은 예측값을 바꾸지 않는다.</strong> 이동량 <span class="arithmatex">\(\sum_j \beta_j c_j\)</span>는 절편에 흡수되며, 다변량에서도 변수별로 독립적으로 작동한다.</p>
 </li>
 <li>
-<p><strong>변수 중요도는 range(max − min)로 측정하며, 기준점과 무관하다.</strong> 포인트 범위 = <span class="arithmatex">\(|\beta_j| \times B \times \text{WoE range}\)</span>이므로, 기준점을 어디로 잡든 순위가 보존된다.</p>
+<p><strong>변수의 영향력은 배점 범위(<span class="arithmatex">\(|\beta_j| \times B \times\)</span> WoE range)로 보되, 극단 구간의 표본 비중과 IV를 함께 본다.</strong> 범위는 기준점과 무관하다.</p>
 </li>
 <li>
-<p><strong>기준점 처리 시점이 다를 뿐이다.</strong> 더미는 인코딩에서, WoE는 Offset 배분에서 처리한다. 어느 쪽이든 스코어카드 완성 시점에서는 동일한 구조가 된다.</p>
+<p><strong>절편 배분과 기준점 설정은 다른 조작이다.</strong> 절편 배분은 상수를 나눠 담는 표시 방식이고, 기준점 설정은 특정 구간을 0점으로 맞추는 평행이동이다. 둘 다 예측에는 영향이 없다.</p>
 </li>
 </ol>
+<div class="source-ref">이 페이지의 모든 계수·점수는 가상 예시이며 직접 계산했다(PDO = 20, \(B = 28.854\)).</div>
 
 
 

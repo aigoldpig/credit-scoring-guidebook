@@ -4876,6 +4876,17 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
+        채무자 보호 제도 — 개인채무자보호법
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         채권 매각·상각
       
     </span>
@@ -5108,43 +5119,134 @@
 
 
 <h1 id="4">④ 부실·추심 — 연체 발생 후의 세계<a class="headerlink" href="#4" title="Permanent link">¶</a></h1>
-<p>차주가 연체에 진입하면, 목표가 "리스크 예측"에서 <strong>"회수 극대화"</strong>로 전환된다.</p>
+<p>차주가 연체에 진입하면, 목표가 "리스크 예측"에서 <strong>"손실 최소화와 회수 극대화"</strong>로 전환된다.
+동시에 이 단계는 채무자 보호 규제가 가장 촘촘한 영역이기도 하다.
+모형이 할 수 있는 일(누구에게 먼저, 어떤 방식으로 접근할지)과 제도가 정한 한계(언제, 얼마나 자주 접촉할 수 있는지)를 함께 이해해야 한다.</p>
 <h2 id="_1">연체 단계 관리<a class="headerlink" href="#_1" title="Permanent link">¶</a></h2>
-<p>일반적으로 연체 기간에 따라 단계별 대응이 달라진다:</p>
+<p>연체 기간에 따라 대응이 달라진다. 구간 경계는 기관마다 다르며, 아래는 <a href="../../scorecard/part1_overview/requirements/">요건 정의 — Roll Rate 분석</a>의 회차 구분과 맞춘 예시이다.</p>
 <table>
 <thead>
 <tr>
 <th>구분</th>
-<th>대응</th>
+<th>연체 기간</th>
+<th>주요 대응</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>초기 연체 (1~30일)</td>
-<td>SMS·전화 안내, 자동이체 재시도</td>
+<td>초기 연체</td>
+<td>1~30일 (1회차)</td>
+<td>SMS·전화 안내, 자동이체 재시도, 납부 채널 안내</td>
 </tr>
 <tr>
-<td>중기 연체 (30~90일)</td>
-<td>전담 추심, 상환 협의, 채무 조정</td>
+<td>중기 연체</td>
+<td>31~90일 (2~3회차)</td>
+<td>전담 추심, 상환 계획 협의, 채무조정 안내</td>
 </tr>
 <tr>
-<td>장기 연체 (90일+)</td>
-<td>법적 절차, 채권 매각 검토, 상각 판단</td>
+<td>장기 연체</td>
+<td>90일 초과 (4회차 이상)</td>
+<td>기한이익 상실, 법적 절차, 매각·상각 검토</td>
 </tr>
 </tbody>
 </table>
-<p>90일 연체는 Basel 기준 부도(default) 정의의 출발점이며,
-가이드북 Part 1에서 다룬 <strong>Bad 정의</strong>와 연결된다.</p>
+<p>Basel 체계에서 부도(default)는 <strong>중요한 채무가 90일을 넘겨 연체</strong>되었거나 <strong>상환 가능성이 낮다고 판단</strong>되는 경우(대손 상각, 손실을 동반한 채무재조정, 파산 등) 중 하나 이상에 해당할 때로 정의된다.
+가이드북 Part 1의 <a href="../../scorecard/part1_overview/requirements/">Bad 정의</a>가 90일 연체를 기준으로 삼는 것도 이 정의와 맞추기 위해서이다. Basel 문언은 "90일 초과"이고 국내 실무는 "90일 이상"으로 쓰는 경우가 많아, 경계일 하루의 처리는 기관 정의를 따른다.</p>
+<div class="source-ref">
+출처: <a href="https://www.bis.org/basel_framework/chapter/CRE/36.htm" target="_blank">Basel Framework CRE36.68 (Definition of default)</a>
+</div>
+
+<p>중기 구간이 중요한 이유는 Roll Rate에 있다. 연체 회차가 올라갈수록 다음 단계로 넘어가는 비율이 급격히 높아지므로,
+<strong>회복 가능성이 남아 있는 2~3회차</strong>에서의 대응이 최종 손실을 크게 좌우한다.</p>
 <h2 id="collection-scoring">Collection Scoring<a class="headerlink" href="#collection-scoring" title="Permanent link">¶</a></h2>
-<p>연체 고객 중 <strong>회수 가능성이 높은 고객</strong>을 식별하여 추심 자원을 효율적으로 배분한다.</p>
+<p>연체 고객 중 <strong>회수 가능성이 높은 고객</strong>과 <strong>방치하면 장기 연체로 진행될 고객</strong>을 구분해, 한정된 추심 자원을 배분한다.</p>
+<table>
+<thead>
+<tr>
+<th>구분</th>
+<th>신용평가모형(AS/BS)</th>
+<th>Collection 모형</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>대상</td>
+<td>정상 차주</td>
+<td>연체 중인 차주</td>
+</tr>
+<tr>
+<td>타겟</td>
+<td>성과 기간 내 부도 여부</td>
+<td>일정 기간 내 자발적 상환·정상화(Cure) 여부, 또는 다음 회차 진행(Roll) 여부</td>
+</tr>
+<tr>
+<td>성과 기간</td>
+<td>보통 12개월</td>
+<td>수 주~수개월로 짧음</td>
+</tr>
+<tr>
+<td>주요 변수</td>
+<td>신청·거래·CB 정보</td>
+<td>연체 금액·일수, 과거 연체·회복 이력, 접촉 반응(약속 이행 여부), 다른 기관 연체</td>
+</tr>
+<tr>
+<td>활용</td>
+<td>승인·한도·금리</td>
+<td>접촉 우선순위, 채널(문자·전화·방문) 배분, 채무조정 대상 선별</td>
+</tr>
+</tbody>
+</table>
+<p>모형 기법 자체(로지스틱 회귀, GBM 등)는 유사하다. 다만 Collection 모형은 규제 PD와 직접 연결되지 않고
+회수 운영 전략에 쓰이므로, 가이드북에서는 <a href="../../scorecard/part1_overview/what-is-css/">전략모형</a> 성격의 모형으로 분류한다.</p>
+<p>실무에서는 연체 단계마다 모형을 따로 두는 경우가 많다. 초기 연체에서는 "스스로 갚을 사람"을 빨리 골라 접촉 비용을 줄이고,
+중기 이후에는 "채무조정을 하면 갚을 수 있는 사람"을 찾아 손실을 줄이는 것이 목적이 된다.</p>
+<h2 id="_2">채무자 보호 제도 — 개인채무자보호법<a class="headerlink" href="#_2" title="Permanent link">¶</a></h2>
+<p>2024년 10월 17일 「개인금융채권의 관리 및 개인금융채무자의 보호에 관한 법률」(개인채무자보호법)이 시행되면서
+개인 연체 채권의 관리 방식에 법적 규율이 크게 늘었다. 금융위원회 보도자료 기준 주요 내용은 다음과 같다.</p>
+<table>
+<thead>
+<tr>
+<th>구분</th>
+<th>주요 내용</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>채무조정 요청권</strong></td>
+<td>대출금액 3천만원 미만 연체 채무자는 금융회사에 직접 채무조정을 요청할 수 있다. 금융회사는 요청일부터 10영업일 내 조정 여부를 통지해야 하며, 요청 후에는 해당 채권의 양도와 주택 경매 신청 등이 제한된다.</td>
+</tr>
+<tr>
+<td><strong>추심총량제</strong></td>
+<td>채권별로 7일에 7회를 초과하여 추심 연락을 할 수 없다.</td>
+</tr>
+<tr>
+<td><strong>연락제한 요청권</strong></td>
+<td>채무자는 1주일에 28시간 범위에서 특정 시간대의 추심 연락을 막거나, 특정 연락 수단을 지정할 수 있다.</td>
+</tr>
+<tr>
+<td><strong>채권 양도 규율</strong></td>
+<td>채무조정 중인 채권, 3회 이상 양도된 채권(예외 있음), 명의도용 등으로 채권·채무관계가 불명확한 채권의 양도가 제한된다.</td>
+</tr>
+<tr>
+<td><strong>연체이자 부담 완화</strong></td>
+<td>대출금액 5천만원 미만 연체 채무자에 대해, 기한이익이 상실되어도 아직 기한이 도래하지 않은 부분에는 연체이자를 부과할 수 없다.</td>
+</tr>
+</tbody>
+</table>
+<p>금융회사가 채무조정 요청을 거절하는 경우에도 법원 회생, 신용회복위원회 채무조정 등 다른 경로를 안내해야 한다.
+모형 관점에서 보면, 접촉 횟수와 매각 시점에 법적 상한이 생겼으므로 <strong>누구에게 먼저, 어떤 수단으로 접촉할지</strong>를 정하는 Collection Scoring의 역할이 오히려 커졌다.</p>
+<div class="source-ref">
+출처: <a href="https://www.fsc.go.kr/no010101/83207" target="_blank">금융위원회 보도자료 (2024.10.16) · 대출을 갚기 어려운 개인채무자의 상환 및 독촉 부담을 완화하여 빠르게 재기할 수 있게 됩니다</a>
+</div>
+
+<h2 id="_3">채권 매각·상각<a class="headerlink" href="#_3" title="Permanent link">¶</a></h2>
+<p>회수 가능성이 낮아진 채권은 두 가지 방식으로 정리한다.</p>
 <ul>
-<li>타겟 변수가 다름: "부도 여부"가 아닌 <strong>"회수 여부"</strong> 또는 "자발적 상환 여부"</li>
-<li>변수도 다름: 연체 금액, 연체 기간, 과거 회복 이력, 접촉 반응 등</li>
-<li>모형 기법 자체는 유사 (Logistic, GBM 등)</li>
+<li><strong>상각</strong> — 회수가 어렵다고 판단된 채권을 대손 처리해 장부에서 제거한다. 회계 처리이므로 상각 후에도 채권 자체가 곧바로 소멸하는 것은 아니며, 이후 회수 실적이 생길 수 있다.</li>
+<li><strong>매각</strong> — 부실채권(NPL)을 외부에 넘기고 매각 대금을 받는다. 매각 이후의 추심도 위의 채무자 보호 규율을 받는다.</li>
 </ul>
-<h2 id="_2">채권 매각·상각<a class="headerlink" href="#_2" title="Permanent link">¶</a></h2>
-<p>회수 가능성이 낮은 채권은 외부 매각(채권추심업체) 또는 장부 상각 처리한다.
-매각 가격 산정에는 <strong>LGD 추정</strong>이 관여하며, PD보다 LGD 모형의 영역이다.</p>
+<p>매각 가격은 결국 "이 채권에서 앞으로 얼마를 언제 회수할 수 있는가"의 현재가치이므로,
+<a href="../terms/lgd/">LGD</a>의 회수 실적 분석(Workout LGD)과 같은 정보가 쓰인다. 이 단계는 PD 모형보다 <strong>LGD 모형의 영역</strong>이다.</p>
 
 
 

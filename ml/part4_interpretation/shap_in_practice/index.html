@@ -5152,9 +5152,9 @@
 <p>2018년, 저자가 데이터 분석 업무를 시작했을 때 SHAP은 이미 Kaggle과 GitHub에서 상당한 주목을 받고 있었다. Lundberg &amp; Lee (2017)의 논문을 읽었고, 실무에서 활용할 방법을 진지하게 고민했다.</p>
 <p>SHAP의 구조는 명쾌하다. 차주 <span class="arithmatex">\(n\)</span>명, 변수 <span class="arithmatex">\(p\)</span>개로 모형을 만들면, SHAP은 <span class="arithmatex">\(n \times p\)</span> 크기의 행렬을 반환한다. 각 행은 한 명의 차주이고, 각 열은 해당 변수가 그 차주의 예측에 기여한 몫이다. 이 값들은 <strong>log-odds 공간</strong>에서 additive하게 작동한다:</p>
 <div class="arithmatex">\[
-\hat{f}(x^{(i)}) = \underbrace{E[\hat{f}(X)]}_{\text{base value (전체 평균 log-odds)}} + \sum_{j=1}^{p} \phi_j^{(i)}
+\hat{f}(x^{(i)}) = \underbrace{\phi_0}_{\text{base value (기준 log-odds)}} + \sum_{j=1}^{p} \phi_j^{(i)}
 \]</div>
-<p>한 차주의 SHAP value를 모두 더하면, 전체 평균 대비 그 차주의 예측이 얼마나 높거나 낮은지가 정확히 나온다. 수학적으로는 완벽하다.</p>
+<p>한 차주의 SHAP value를 모두 더하면, 기준값 대비 그 차주의 예측이 얼마나 높거나 낮은지가 정확히 나온다. 수학적으로는 완벽하다. (기준값이 정확히 무엇의 평균인지는 <a href="../shap_theory/">SHAP 이론</a> 2.2절 참조)</p>
 <hr>
 <h2 id="72-local">7.2 핵심 문제: Local에서만 유효하다<a class="headerlink" href="#72-local" title="Permanent link">¶</a></h2>
 <p>그런데 실무에서 쓰려고 하면 근본적인 문제에 부딪힌다. <strong>같은 변수의 같은 값이라도, 차주마다 SHAP value가 다르다.</strong></p>
@@ -5171,7 +5171,7 @@
 <p>개별 차주의 waterfall plot이나 local 해석은 실무에서 적극적으로 활용하기 어려웠다. 이유는 두 가지다:</p>
 <ol>
 <li>
-<p><strong>현업 설명의 어려움</strong> — SHAP의 이론적 배경 자체가 무겁다. 게임이론, Shapley Value, 조합론적 가중 평균, 그리고 TreeSHAP의 다항 시간 근사까지. 이걸 심사 담당자나 경영진에게 설명해서 "왜 이 고객이 거절되었는가"의 근거로 쓰기에는 진입 장벽이 너무 높았다.</p>
+<p><strong>현업 설명의 어려움</strong> — SHAP의 이론적 배경 자체가 무겁다. 게임이론, Shapley Value, 조합론적 가중 평균, 그리고 TreeSHAP의 다항 시간 알고리즘까지. 이걸 심사 담당자나 경영진에게 설명해서 "왜 이 고객이 거절되었는가"의 근거로 쓰기에는 진입 장벽이 너무 높았다.</p>
 </li>
 <li>
 <p><strong>일관성의 부재</strong> — 같은 변수, 같은 값인데 차주마다 기여도가 다르다는 것은, 규칙 기반의 심사 체계에서는 받아들이기 어렵다. "DTI 60% 이상이면 감점 몇 점"이라는 일관된 규칙을 기대하는 현업에게, "이 고객의 DTI 기여도는 다른 변수와의 조합에 따라 달라집니다"라는 답변은 실질적으로 쓸 수 없었다.</p>
@@ -5184,10 +5184,17 @@
 <p>가장 자연스러운 접근은, SHAP value가 크게 작용한 변수를 중심으로 값을 조금씩 바꿔보면서 승인 경계를 넘는 조합을 찾는 것이다. 그러나 이것을 실제로 구현하려고 하면 두 가지 벽에 부딪혔다.</p>
 <p><strong>첫째, 변수 간 의존성.</strong> 예를 들어 <span class="arithmatex">\(X_1\)</span>이 "최근 6개월 내 은행업권 대출 건수"이고 <span class="arithmatex">\(X_2\)</span>가 "최근 6개월 내 전체업권 대출 건수"라면, <span class="arithmatex">\(X_1\)</span>을 1건에서 2건으로 바꿔보는 순간 <span class="arithmatex">\(X_2\)</span>도 당연히 영향을 받는다. 현실에서 변수 하나만 독립적으로 움직이는 것은 불가능한 경우가 많다. 이 의존 관계를 모든 변수 조합에 대해 설계하는 것은 쉬운 일이 아니었다.</p>
 <p><strong>둘째, 설명 의무의 범위.</strong> 변수 의존성을 무시하고 단일 변수만 조정해서 승인 구간에 도달하는 경로를 찾았다고 치자. 그렇다면 이것을 고객에게 알려줘야 하는가? "고객님, 대출을 1건 줄이시면 승인될 수 있습니다"라고 안내할 의무가 있는 것인가? 솔직히 말하면, 저자는 은행 심사역이나 여신 실무에서 일한 적이 없다. CB사에서 모형을 만드는 쪽이었지, 그 모형이 현장에서 어떤 프로세스를 거쳐 고객과 만나는지 — 거절 시 어디까지 설명해야 하는지, 어떤 법적 의무가 있는지 — 를 정확히 알지 못했다. 그래서 이 시나리오는 "기술적으로 구현할 수 있을까?"라는 호기심 단계에서 멈췄고, "현장에서 실제로 필요한가?"라는 질문에는 답하지 못한 채 남아 있었다.</p>
-<p>결국 구현하지는 못했다. 그런데 이 가이드북을 정리하면서 알게 된 것은, 이 고민이 XAI 문헌에서 <strong>Counterfactual Explanation</strong>(반사실적 설명) 또는 <strong>Algorithmic Recourse</strong>(알고리즘적 구제)라는 이름으로 이미 활발히 연구되고 있다는 사실이었다. 역시나 현업에서 나와 유사한 고민을 한 선배들이 많았던 것이다.</p>
+<p>결국 구현하지는 못했다. 그런데 이 가이드북을 정리하면서 알게 된 것은, 이 고민이 XAI 문헌에서 <strong>Counterfactual Explanation</strong>(반사실적 설명) 또는 <strong>Algorithmic Recourse</strong>(알고리즘적 구제)라는 이름으로 이미 활발히 연구되고 있다는 사실이었다. 역시나 저자와 같은 고민을 한 사람들이 많았던 것이다. 대표적으로 Wachter, Mittelstadt &amp; Russell(2017)은 "무엇이 달랐다면 결과가 바뀌었을까"를 설명의 한 형태로 제안했고, Ustun, Spangher &amp; Liu(2019)는 고객이 실제로 바꿀 수 있는 변수만 움직여 결과를 뒤집는 <strong>실행 가능한 구제(actionable recourse)</strong> 문제를 정식화했다. 앞의 첫째 벽(변수 간 의존성)은 이 문헌에서도 핵심 난제로 다뤄진다.</p>
+<div class="source-ref">Wachter, S., Mittelstadt, B. &amp; Russell, C. (2017). "Counterfactual Explanations without Opening the Black Box: Automated Decisions and the GDPR." <em>Harvard Journal of Law &amp; Technology</em>, 31(2); Ustun, B., Spangher, A. &amp; Liu, Y. (2019). "Actionable Recourse in Linear Classification." <em>FAT* 2019</em>.</div>
+
 <div class="admonition note">
-<p class="admonition-title">거절 사유 고지 의무</p>
-<p>한국 신용정보법과 미국 ECOA(Equal Credit Opportunity Act)는 대출 거절 시 <strong>거절 사유의 고지</strong>를 의무화하고 있다. 그러나 "어떻게 하면 승인된다"는 <strong>구체적 개선 방안의 제시</strong>까지 요구하지는 않는다. 오히려 지나치게 구체적인 안내는 모형의 역공학(gaming)을 유발할 위험이 있다.</p>
+<p class="admonition-title">거절 사유 고지와 설명 요구</p>
+<ul>
+<li><strong>한국</strong>: 「신용정보의 이용 및 보호에 관한 법률」 제36조(상거래 거절 근거 신용정보의 고지 등)는 신용정보를 근거로 거래를 거절한 경우 그 근거가 된 정보를 알리도록 하고, 제36조의2(자동화평가 결과에 대한 설명 및 이의제기 등)는 개인이 자동화평가 결과에 대한 설명을 요구하고 이의를 제기할 수 있게 한다.</li>
+<li><strong>미국</strong>: ECOA(Equal Credit Opportunity Act)의 시행규칙인 Regulation B(12 CFR 1002.9)는 대출 거절 등 불리한 결정 시 <strong>구체적인 주요 사유</strong>를 알리도록 하며, 내부 기준 미달이나 점수 미달이라는 설명만으로는 충분하지 않다고 명시한다.</li>
+</ul>
+<p>두 제도 모두 거절의 <strong>근거·사유</strong>를 요구하지만, "어떻게 하면 승인된다"는 <strong>구체적 개선 방안의 제시</strong>까지 요구하는 것으로 보기는 어렵다. 오히려 지나치게 구체적인 안내는 모형의 역공학(gaming)을 유발할 위험이 있다. 실제 고지 범위는 각 기관의 법무·준법 판단을 따른다.</p>
+<p></p><div class="source-ref">출처: 신용정보법 조문 제목 — <a href="https://elaw.klri.re.kr/kor_service/lawViewTitle.do?hseq=70283" target="_blank">한국법제연구원</a>; 12 CFR 1002.9 — <a href="https://www.consumerfinance.gov/rules-policy/regulations/1002/9/" target="_blank">CFPB</a></div><p></p>
 </div>
 <hr>
 <h2 id="75">7.5 해석에 대한 고민들<a class="headerlink" href="#75" title="Permanent link">¶</a></h2>
@@ -5198,7 +5205,7 @@
 <hr>
 <h3 id="1-depth-gbm">1-Depth GBM을 우연히 알게 되다<a class="headerlink" href="#1-depth-gbm" title="Permanent link">¶</a></h3>
 <p>구글링을 하다가 우연히, GBM에서 <strong>stump(depth=1)로만 구성된 트리 앙상블</strong>은 해석 가능한 형태로 변환할 수 있다는 것을 알게 되었다. 각 트리가 변수 하나만 사용하므로, 최종 모형이 각 변수의 독립적인 비선형 함수의 합 — 즉 GAM(Generalized Additive Model) — 이 된다는 원리였다.</p>
-<p>이것을 구현한 파이썬 패키지도 확인했고, 이론적으로 점검했다. 그 과정에서 <strong>KCB(코리아크레딧뷰로)가 이 방식에 대한 특허를 보유하고 있다</strong>는 사실도 알게 되었다. depth=1이라는 제약을 두면 당연히 deep tree 기반 모형보다 성능은 낮아질 수밖에 없다. 하지만 누구나 생각할 수 있을 법한 아이디어를, 실제 실무에 적용하고 특허까지 확보했다는 점이 대단하다고 느꼈다. Surrogate처럼 근사하는 것이 아니라, 모형 구조 자체가 해석 가능한 형태라는 것 — 이건 실무에서 쓸 수 있겠다고 생각했다.</p>
+<p>이것을 구현한 파이썬 패키지도 확인했고, 이론적으로 점검했다. 그 과정에서 이 방식을 스코어카드 개발 절차로 정리한 국내 공개 특허가 있다는 것도 알게 되었다(<a href="../depth1_gbm/">1-Depth GBM 스코어카드</a> 3.4절). depth=1이라는 제약을 두면 교호작용을 포기하므로 깊은 트리 모형보다 성능이 낮아질 수 있다. 그래도 Surrogate처럼 근사하는 것이 아니라 모형 구조 자체가 해석 가능한 형태라는 점에서, 실무에서 검토해 볼 만한 방향이라고 생각했다.</p>
 <hr>
 <h3 id="ebm">EBM을 알게 되다<a class="headerlink" href="#ebm" title="Permanent link">¶</a></h3>
 <p>1-Depth GBM을 공부하던 중, EBM(Explainable Boosting Machine)의 존재를 알게 되었다. Microsoft Research가 만든 InterpretML 라이브러리의 핵심 모형이었다. 고려대학교 DMQA 연구실의 <a href="https://dmqa.korea.ac.kr/uploads/seminar/[230811]%20DMQA_Open_seminar_Introduction%20to%20Explainable%20Boosting%20Machine%20(EBM)_%EC%8B%AC%EC%84%B8%EC%A7%84_%ED%99%88%ED%8E%98%EC%9D%B4%EC%A7%80%20%EA%B2%8C%EC%8B%9C%EC%9A%A9.pdf">세미나 자료</a>를 통해 대략적인 이론을 접했고, "학습 단계에서부터 변수 효과를 분리하는" 접근이 있다는 것을 이해했다. 그러나 솔직히 말하면, 바쁘다는 핑계로 깊이 파고들지는 못했다.</p>
@@ -5223,9 +5230,9 @@ f(\mathbf{x}) = f_0 + \sum_i f_i(x_i) + \sum_{i&lt;j} f_{ij}(x_i, x_j) + \cdots
 <p>이 가이드북을 쓰면서 계속 머릿속에 맴돈 질문이 있다. SHAP은 ML 해석의 사실상 표준이 되어 수많은 실무자가 사용하고 있는데, <strong>Functional ANOVA는 왜 그만큼 성행하지 않았을까?</strong></p>
 <p>fANOVA가 SHAP보다 못한 프레임워크여서가 아니다. 오히려 global 해석이라는 점에서는 fANOVA가 더 근본적인 답을 제공한다. 그런데도 실무에서 압도적으로 SHAP이 쓰이는 이유를 돌이켜보면, 결국 <strong>워크플로우의 차이</strong>에 있다고 생각한다.</p>
 <p><strong>SHAP이 지배적인 이유:</strong></p>
-<p>SHAP은 기존 워크플로우를 건드리지 않는다. XGBoost든 LightGBM이든 원하는 대로 학습하고, 끝나고 나서 <code>shap.Explainer(model)</code> 한 줄이면 된다. 모형을 바꿀 필요가 없다. Lundberg가 만든 <code>shap</code> 라이브러리는 waterfall, beeswarm, dependence plot까지 시각화가 완비되어 있고, 결과도 단순하다 — 변수당 숫자 하나. 보고서 한 장에 넣기 좋다.</p>
+<p>SHAP은 기존 워크플로우를 건드리지 않는다. XGBoost든 LightGBM이든 원하는 대로 학습하고, 끝나고 나서 라이브러리 함수 한 줄만 호출하면 된다. 모형을 바꿀 필요가 없다. Lundberg가 만든 <code>shap</code> 라이브러리는 waterfall, beeswarm, dependence plot까지 시각화가 완비되어 있고, 결과도 단순하다 — 변수당 숫자 하나. 보고서 한 장에 넣기 좋다.</p>
 <p><strong>fANOVA가 성행하지 못한 이유:</strong></p>
-<p>fANOVA는 워크플로우를 바꿔야 한다. ante-hoc 방식(EBM, 1-Depth GBM)은 모형 자체를 바꿔야 하고, post-hoc 방식(Purification)도 GAM 구조에서만 깔끔하게 작동한다. "지금 쓰는 XGBoost depth-6 그대로 두고 fANOVA 해석만 붙여주세요"가 안 된다. 결과물도 숫자 하나가 아니라 <strong>곡선과 heatmap</strong> — 더 풍부한 정보이지만, 정리하기는 더 어렵다. 수학적 진입 장벽(직교 분해, 분포 의존성, non-identifiability)도 SHAP보다 높다.</p>
+<p>fANOVA는 사정이 다르다. ante-hoc 방식(EBM, 1-Depth GBM)은 모형 자체를 바꿔야 한다. post-hoc 방식(Purification)은 기존 트리 모형에 그대로 적용할 수 있지만, <strong>사람이 읽을 수 있는 결과</strong>가 나오는 것은 깊이·구간 수·교호작용이 제한된 모형뿐이다. "지금 쓰는 XGBoost depth-6 그대로 두고 fANOVA 해석을 붙여주세요"라고 하면, 분해는 되지만 수십 구간짜리 곡선과 수백 장의 heatmap, 그리고 3-way 이상의 항이 돌아온다(<a href="../fanova_concepts/">fANOVA 개념과 Purification</a> 5.6절). 결과물도 숫자 하나가 아니라 <strong>곡선과 heatmap</strong> — 더 풍부한 정보이지만, 정리하기는 더 어렵다. 수학적 진입 장벽(직교 분해, 측도 선택, non-identifiability)도 SHAP보다 높다.</p>
 <p>정리하면 이렇다:</p>
 <table>
 <thead>
@@ -5239,7 +5246,7 @@ f(\mathbf{x}) = f_0 + \sum_i f_i(x_i) + \sum_{i&lt;j} f_{ij}(x_i, x_j) + \cdots
 <tr>
 <td>워크플로우</td>
 <td>모형은 그대로, 해석만 추가</td>
-<td>해석을 위해 모형부터 다시 설계</td>
+<td>읽을 수 있는 결과를 얻으려면 모형 설계부터 제약</td>
 </tr>
 <tr>
 <td>결과물</td>
@@ -5253,16 +5260,16 @@ f(\mathbf{x}) = f_0 + \sum_i f_i(x_i) + \sum_{i&lt;j} f_{ij}(x_i, x_j) + \cdots
 </tr>
 <tr>
 <td>진입 장벽</td>
-<td>라이브러리 한 줄</td>
-<td>모형 구조 변경 + 수학적 이해 필요</td>
+<td>라이브러리 호출 한 줄</td>
+<td>모형 구조 제약 + 수학적 이해 필요</td>
 </tr>
 </tbody>
 </table>
 <p>대부분의 실무자는 전자를 택할 수밖에 없다. 모형을 바꾸는 것은 성능 리스크를 수반하고, 조직 내 합의도 필요하다. SHAP은 그 부담 없이 "설명을 붙일 수 있다"는 점에서 압도적으로 편리하다.</p>
-<p>그러나 이 가이드북에서 계속 이야기해온 것처럼, <strong>SHAP의 global 해석은 local 값을 모아서 흉내 낸 것</strong>이고, fANOVA는 태생적으로 global이다. "DTI가 모형에 미치는 효과"를 곡선 한 줄로 보여줄 수 있다는 것 — 이것이 fANOVA 계열(1-Depth GBM, EBM)의 진짜 강점이고, SHAP으로는 대체할 수 없는 가치다.</p>
+<p>그러나 이 가이드북에서 계속 이야기해온 것처럼, <strong>SHAP의 global 해석은 local 값을 모아서 흉내 낸 것</strong>이고, fANOVA는 태생적으로 global이다. "DTI가 모형에 미치는 효과"를 곡선 한 줄로 보여줄 수 있다는 것 — 이것이 fANOVA 계열(1-Depth GBM, EBM)의 진짜 강점이고, 교호작용이 있는 일반 모형에서는 SHAP으로 대체할 수 없는 가치다. 교호작용이 없는 1-Depth GBM에서는 SHAP dependence plot이 shape function을 평행이동한 곡선과 같아지므로(<a href="../depth1_gbm/">1-Depth GBM</a>), 이 차이는 모형 구조에서 나온다.</p>
 <div class="admonition tip">
 <p class="admonition-title">이론을 알고 도구를 쓰자</p>
-<p>SHAP은 강력한 도구다. 그러나 이론적 배경 — Shapley Value의 조합론적 정의, TreeSHAP의 다항 시간 알고리즘, 그리고 local 해석의 본질적 한계 — 을 이해하지 않고 라이브러리만 돌리면, summary plot의 막대 그래프를 보면서 "변수 중요도가 높다/낮다"를 말하는 수준에 머물게 된다. 이론을 어느 정도 이해한 뒤에 도구를 활용하는 것이, 결국 더 정확하고 신뢰할 수 있는 분석으로 이어진다.</p>
+<p>SHAP은 강력한 도구다. 그러나 이론적 배경 — Shapley Value의 조합론적 정의, TreeSHAP의 다항 시간 알고리즘, 그리고 local 해석의 본질적 한계 — 을 이해하지 않고 라이브러리만 돌리면, bar plot의 막대를 보면서 "변수 중요도가 높다/낮다"를 말하는 수준에 머물게 된다. 이론을 어느 정도 이해한 뒤에 도구를 활용하는 것이, 결국 더 정확하고 신뢰할 수 있는 분석으로 이어진다.</p>
 </div>
 <div class="admonition info">
 <p class="admonition-title">부록: 수학적 기초</p>

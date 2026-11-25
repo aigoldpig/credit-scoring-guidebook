@@ -1536,10 +1536,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
       
         <li class="md-nav__item">
-  <a href="#31" class="md-nav__link">
+  <a href="#31-one-hot" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3.1 증명
+        3.1 증명 — 절편 없는 One-Hot 모형
       
     </span>
   </a>
@@ -1547,10 +1547,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#32-woe" class="md-nav__link">
+  <a href="#32-woe-hatbeta-1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3.2 β̂ 와 WoE 비교 — 실제 산출 예시
+        3.2 WoE 치환 모형 — \(\hat\beta = -1\)도 정확히 성립한다
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#33-woe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 그렇다면 β와 WoE의 비교는 어디에 쓰는가
       
     </span>
   </a>
@@ -5100,213 +5111,182 @@
 
 
 
-<h1 id="woe">β ≈ −WoE: 수학적 증명<a class="headerlink" href="#woe" title="Permanent link">¶</a></h1>
-<h2 id="31">3.1 증명<a class="headerlink" href="#31" title="Permanent link">¶</a></h2>
+<h1 id="woe">β = −WoE + 상수: 수학적 증명<a class="headerlink" href="#woe" title="Permanent link">¶</a></h1>
+<h2 id="31-one-hot">3.1 증명 — 절편 없는 One-Hot 모형<a class="headerlink" href="#31-one-hot" title="Permanent link">¶</a></h2>
 <div class="admonition note">
-<p class="admonition-title">No Intercept 로지스틱 회귀에서 <span class="arithmatex">\(\hat{\beta}_i \approx -\text{WoE}_i\)</span>가 되는 이유</p>
-<p>현재 Part 1~4에서는 <strong>y = 1 = Bad(불량)</strong>으로 정의하고 있으므로, 로지스틱 회귀의 log-odds는 Bad Odds <span class="arithmatex">\(\ln(P_B/P_G)\)</span>이다. 반면 WoE는 업계 표준에 따라 <span class="arithmatex">\(\ln(\%\text{Good}/\%\text{Bad})\)</span>로 정의한다. <strong>두 지표의 방향이 반대</strong>이므로 부호가 뒤집히는 것은 오류가 아니라 정의의 차이다.</p>
+<p class="admonition-title">왜 부호가 반대인가</p>
+<p>Part 1~4는 <strong>y = 1 = Bad(불량)</strong> 로 적합하므로, 회귀가 추정하는 것은 Bad log-odds <span class="arithmatex">\(\ln(P_B/P_G)\)</span>다. 반면 WoE는 <span class="arithmatex">\(\ln(\%\text{Good}/\%\text{Bad})\)</span>로 우량할수록 커진다. <strong>두 지표의 방향이 반대</strong>이므로 부호가 뒤집히는 것은 오류가 아니라 정의의 차이다. 이 가이드북은 이 규약을 일관되게 쓴다: WoE 변수의 정상 계수는 음수다.</p>
 </div>
-<blockquote>
-<p>식 (1)은 <a href="../../woe_iv/woe/">WoE 정의</a>를 참조한다.</p>
-</blockquote>
-<p><strong>Step 1 — 구간 <span class="arithmatex">\(i\)</span>의 실제 Log-Odds (Bad Odds)</strong></p>
+<p>기호: 구간 <span class="arithmatex">\(i\)</span>의 정상·불량 건수 <span class="arithmatex">\(n_{G,i}, n_{B,i}\)</span>, 구간 건수 <span class="arithmatex">\(n_i = n_{G,i} + n_{B,i}\)</span>, 전체 정상·불량 <span class="arithmatex">\(N_G, N_B\)</span>.</p>
+<p><strong>Step 1 — 로그우도와 score equation</strong></p>
+<p>절편 없는 One-Hot 모형에서 구간 <span class="arithmatex">\(i\)</span>의 모든 고객은 같은 예측 확률 <span class="arithmatex">\(p_i = 1/(1+e^{-\beta_i})\)</span>를 갖는다. 로그우도는 구간별로 분리된다.</p>
 <div class="arithmatex">\[
-\text{(실제 log-odds)}_i = \ln\!\left(\frac{n_{B,i}/n_i}{n_{G,i}/n_i}\right) = \ln\!\left(\frac{n_{B,i}}{n_{G,i}}\right) \tag{2}
+\ell(\beta_1,\ldots,\beta_k) = \sum_{i=1}^{k}\Big[\, n_{B,i}\ln p_i + n_{G,i}\ln(1-p_i) \,\Big] \tag{1}
 \]</div>
-<p><strong>Step 2 — WoE 정의 전개</strong></p>
+<p><span class="arithmatex">\(\partial p_i/\partial\beta_i = p_i(1-p_i)\)</span>를 이용해 <span class="arithmatex">\(\beta_i\)</span>로 미분하면(score equation)</p>
 <div class="arithmatex">\[
-\text{WoE}_i = \ln\!\left(\frac{n_{G,i}/N_G}{n_{B,i}/N_B}\right) = \ln\!\left(\frac{n_{G,i}}{n_{B,i}}\right) + \ln\!\left(\frac{N_B}{N_G}\right) \tag{3}
+\frac{\partial \ell}{\partial \beta_i} = n_{B,i}(1-p_i) - n_{G,i}\,p_i = n_{B,i} - n_i\,p_i = 0 \tag{2}
 \]</div>
-<p>WoE의 핵심 항인 <span class="arithmatex">\(\ln(n_{G,i}/n_{B,i})\)</span>는 Step 1의 log-odds <span class="arithmatex">\(\ln(n_{B,i}/n_{G,i})\)</span>와 <strong>부호가 반대</strong>임에 주목하자:</p>
+<p><strong>Step 2 — 닫힌 해</strong></p>
+<p>식 (2)에서 <span class="arithmatex">\(\hat p_i = n_{B,i}/n_i\)</span>, 즉 <strong>예측 확률 = 구간의 실제 불량률</strong>이다. 이를 log-odds로 바꾸면</p>
 <div class="arithmatex">\[
-\ln\!\left(\frac{n_{G,i}}{n_{B,i}}\right) = -\ln\!\left(\frac{n_{B,i}}{n_{G,i}}\right)
+\hat\beta_i = \ln\!\left(\frac{\hat p_i}{1-\hat p_i}\right) = \ln\!\left(\frac{n_{B,i}}{n_{G,i}}\right) \tag{3}
 \]</div>
-<p><strong>Step 3 — <span class="arithmatex">\(\hat{\beta}_i\)</span>에 대해 정리</strong></p>
-<p>Step 2를 log-odds 기준으로 재배열하면:</p>
+<p>로그우도는 각 <span class="arithmatex">\(\beta_i\)</span>에 대해 오목하므로 이 해가 유일한 최대점이다(단, <span class="arithmatex">\(n_{B,i}\)</span>나 <span class="arithmatex">\(n_{G,i}\)</span>가 0이면 해가 무한대로 발산한다 — Bad 0건 Bin을 허용하지 않는 이유).</p>
+<p><strong>Step 3 — WoE와 연결</strong></p>
+<p>WoE 정의를 전개하면</p>
 <div class="arithmatex">\[
-\ln\!\left(\frac{n_{B,i}}{n_{G,i}}\right) = -\text{WoE}_i + \ln\!\left(\frac{N_B}{N_G}\right)
+\text{WoE}_i = \ln\!\left(\frac{n_{G,i}/N_G}{n_{B,i}/N_B}\right) = -\ln\!\left(\frac{n_{B,i}}{n_{G,i}}\right) + \ln\!\left(\frac{N_B}{N_G}\right)
 \]</div>
-<p>따라서:</p>
+<p>이므로, 식 (3)과 합치면</p>
 <div class="arithmatex">\[
-\hat{\beta}_i = \text{(실제 log-odds)}_i = -\text{WoE}_i + \ln\!\left(\frac{N_B}{N_G}\right) \tag{4}
+\boxed{\;\hat{\beta}_i = -\text{WoE}_i + \ln\!\left(\frac{N_B}{N_G}\right)\;} \tag{4}
 \]</div>
 <div class="admonition success">
 <p class="admonition-title">결론</p>
-<p>No Intercept 모형(y=1=Bad)에서 각 Bin의 회귀계수는 <span class="arithmatex">\(\hat{\beta}_i = -\text{WoE}_i + \ln(N_B/N_G)\)</span>이다. 전체 모집단 log-odds <span class="arithmatex">\(\ln(N_B/N_G)\)</span>는 상수이므로, <strong><span class="arithmatex">\(\hat{\beta}_i\)</span>와 <span class="arithmatex">\(\text{WoE}_i\)</span>는 부호가 반대이고 상수 차이만큼 평행 이동한 관계</strong>다. 구간 간 상대적 크기와 순서(단조성)는 완전히 보존된다.</p>
+<p>절편 없는 One-Hot 모형(y=1=Bad)의 구간 계수는 <span class="arithmatex">\(\hat{\beta}_i = -\text{WoE}_i + \ln(N_B/N_G)\)</span>로 <strong>정확히</strong> 결정된다. 반복 계산의 수렴 결과가 아니라 대수적 항등식이다. <span class="arithmatex">\(\ln(N_B/N_G)\)</span>는 모든 구간에 공통인 상수이므로, <span class="arithmatex">\(\hat{\beta}_i\)</span>와 <span class="arithmatex">\(\text{WoE}_i\)</span>는 <strong>부호가 반대이고 상수만큼 평행 이동한 관계</strong>다.</p>
 </div>
-<hr>
-<h3 id="woe_1">왜 β와 WoE의 실제 수치가 다른가?<a class="headerlink" href="#woe_1" title="Permanent link">¶</a></h3>
-<div class="admonition tip">
-<p class="admonition-title">부호 반전 + 상수항(모집단 로그 오즈) 때문</p>
-<p>위 Step 3의 결론을 다시 보면:</p>
-<div class="arithmatex">\[\hat{\beta}_i = -\text{WoE}_i + \underbrace{\ln\!\left(\frac{N_B}{N_G}\right)}_{\text{전체 모집단 Bad 로그 오즈 (상수)}}\]</div>
-<p>이 식은 두 가지를 보여준다:</p>
-<ol>
-<li><strong>부호가 반대다</strong> — WoE는 Good 집중도(<span class="arithmatex">\(\ln(\%G/\%B)\)</span>), β는 Bad log-odds(<span class="arithmatex">\(\ln(P_B/P_G)\)</span>)를 측정하므로 방향이 반대다.</li>
-<li><strong>상수 차이가 있다</strong> — 데이터 전체의 Bad/Good 비율인 <span class="arithmatex">\(\ln(N_B/N_G)\)</span>만큼 평행 이동한다.</li>
-</ol>
-<p>두 지표의 <strong>기준점(Reference Point)</strong>이 다르기 때문이다:</p>
+<h3 id="_1">두 지표의 기준점<a class="headerlink" href="#_1" title="Permanent link">¶</a></h3>
 <ul>
-<li><strong><span class="arithmatex">\(\hat{\beta}_i\)</span>의 기준점:</strong> "불량과 우량이 1:1로 같은 상태 (로그 오즈 = 0)"</li>
-<li><strong>WoE의 기준점:</strong> "이 구간의 Good/Bad 비율이 전체 모집단 평균과 같은 상태 (WoE = 0)"</li>
+<li><strong><span class="arithmatex">\(\hat{\beta}_i\)</span>의 기준점(0):</strong> "이 구간의 불량과 정상이 1:1" (불량률 50%)</li>
+<li><strong>WoE의 기준점(0):</strong> "이 구간의 Bad/Good 비율이 전체 평균과 같음"</li>
 </ul>
-</div>
-<h3 id="_1">수치 예시로 확인<a class="headerlink" href="#_1" title="Permanent link">¶</a></h3>
-<p>전체 모집단에서 <span class="arithmatex">\(N_B = 500\)</span>건, <span class="arithmatex">\(N_G = 4500\)</span>건이라 하면:</p>
-<div class="arithmatex">\[\ln\!\left(\frac{N_B}{N_G}\right) = \ln\!\left(\frac{500}{4500}\right) = \ln(0.111) \approx -2.20\]</div>
-<p>그러면 <span class="arithmatex">\(\hat{\beta}_i = -\text{WoE}_i + (-2.20)\)</span>이므로:</p>
+<p>그래서 상수 <span class="arithmatex">\(\ln(N_B/N_G)\)</span>(전체 Bad log-odds)만큼 차이가 난다. 이 차이가 <a href="../significance-test/">유의성 검정</a>에서 Wald 검정의 귀무가설을 고를 때 중요해진다.</p>
+<h3 id="5-good-1000-bad-200">수치로 확인 — 매출액 5구간 (Good 1,000 / Bad 200)<a class="headerlink" href="#5-good-1000-bad-200" title="Permanent link">¶</a></h3>
+<p><span class="arithmatex">\(\ln(N_B/N_G) = \ln(200/1000) = -1.609\)</span></p>
 <table>
 <thead>
 <tr>
 <th>Bin</th>
-<th><span class="arithmatex">\(\text{WoE}_i\)</span> (집계값)</th>
-<th><span class="arithmatex">\(-\text{WoE}_i\)</span></th>
-<th>상수 <span class="arithmatex">\(\ln(N_B/N_G)\)</span></th>
-<th><span class="arithmatex">\(\hat{\beta}_i = -\text{WoE}_i + (-2.20)\)</span></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Bin 1 (고위험)</td>
-<td>−1.80</td>
-<td>+1.80</td>
-<td>−2.20</td>
-<td><strong>−0.40</strong></td>
-</tr>
-<tr>
-<td>Bin 3 (중간)</td>
-<td>0.00</td>
-<td>0.00</td>
-<td>−2.20</td>
-<td><strong>−2.20</strong></td>
-</tr>
-<tr>
-<td>Bin 5 (저위험)</td>
-<td>+0.92</td>
-<td>−0.92</td>
-<td>−2.20</td>
-<td><strong>−3.12</strong></td>
-</tr>
-</tbody>
-</table>
-<ul>
-<li>WoE가 <strong>음수</strong>(Bad 집중)인 Bin 1에서 β는 <strong>0에 가장 가까운</strong> 값(−0.40) → Bad odds가 가장 높음 ✓</li>
-<li>WoE가 <strong>양수</strong>(Good 집중)인 Bin 5에서 β는 <strong>가장 큰 음수</strong>(−3.12) → Bad odds가 가장 낮음 ✓</li>
-<li>모든 구간에서 β와 WoE의 <strong>순서(단조성)가 정확히 반대로 보존</strong>됨을 확인할 수 있다.</li>
-</ul>
-<div class="admonition note">
-<p class="admonition-title">실무적 시사점</p>
-<p>y=1=Bad 모형에서 <span class="arithmatex">\(\hat{\beta}\)</span>와 WoE는 <strong>부호가 반대</strong>이고, 구간 간 <strong>상대적 크기 차이의 절댓값이 동일</strong>하다. 검증 시 확인할 점은: (1) β와 WoE의 부호가 반대인가, (2) 구간 간 β 차이가 WoE 차이와 비례하는가이다. 모형 피팅 후 두 값을 비교하여 Classing의 통계적 타당성을 검증하는 것이 단변량 로지스틱 회귀의 핵심 목적이다.</p>
-</div>
-<hr>
-<h2 id="32-woe">3.2 β̂ 와 WoE 비교 — 실제 산출 예시<a class="headerlink" href="#32-woe" title="Permanent link">¶</a></h2>
-<div class="admonition info">
-<p class="admonition-title">Balanced Sample에서의 비교 (y=1=Bad)</p>
-<p>아래 예시는 <strong>개발 샘플이 Bad/Good 1:1로 균형 조정(Balanced Sampling)된 경우</strong>의 결과다. 균형 샘플에서는 <span class="arithmatex">\(\ln(N_B/N_G) \approx 0\)</span>이므로 3.1절의 상수 이동량이 사실상 소멸하여 <span class="arithmatex">\(\hat{\beta}_i \approx -\text{WoE}_i\)</span>가 성립한다. 실무에서는 Bad 비율이 낮은 원본 데이터(Unbalanced)를 사용할 경우 3.1절처럼 상수만큼 추가 차이가 발생하지만, 구간 간 <strong>상대적 크기와 순서는 동일</strong>하게 보존된다.</p>
-</div>
-<table>
-<thead>
-<tr>
-<th>Bin</th>
-<th>구간</th>
 <th>불량률</th>
-<th>WoE (집계값)</th>
-<th><span class="arithmatex">\(\hat{\beta}\)</span> (회귀 추정)</th>
-<th><span class="arithmatex">\(\hat{\beta} + \text{WoE}\)</span></th>
-<th>해석</th>
+<th><span class="arithmatex">\(\text{WoE}_i\)</span></th>
+<th><span class="arithmatex">\(-\text{WoE}_i\)</span></th>
+<th><span class="arithmatex">\(\hat{\beta}_i = \ln(n_{B,i}/n_{G,i})\)</span></th>
+<th><span class="arithmatex">\(\hat\beta_i + \text{WoE}_i\)</span></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>1</td>
-<td>1억 미만</td>
+<td>1 (1억 미만)</td>
 <td>54.5%</td>
-<td>−1.79</td>
-<td>+1.81</td>
-<td>+0.02</td>
-<td>불량률 최고 → WoE 최저, β 최고</td>
+<td>−1.792</td>
+<td>+1.792</td>
+<td>ln(60/50) = <strong>+0.182</strong></td>
+<td>−1.609</td>
 </tr>
 <tr>
-<td>2</td>
-<td>1억~5억</td>
+<td>2 (1억~5억)</td>
 <td>25.0%</td>
-<td>−0.51</td>
-<td>+0.49</td>
-<td>−0.02</td>
-<td>부호 반대, 크기 일치</td>
+<td>−0.511</td>
+<td>+0.511</td>
+<td>ln(50/150) = <strong>−1.099</strong></td>
+<td>−1.609</td>
 </tr>
 <tr>
-<td>3</td>
-<td>5억~10억</td>
+<td>3 (5억~10억)</td>
 <td>16.7%</td>
-<td>0.00</td>
-<td>−0.01</td>
-<td>−0.01</td>
-<td>불량률 ≈ 전체 평균 → WoE ≈ 0</td>
+<td>0.000</td>
+<td>0.000</td>
+<td>ln(40/200) = <strong>−1.609</strong></td>
+<td>−1.609</td>
 </tr>
 <tr>
-<td>4</td>
-<td>10억~50억</td>
+<td>4 (10억~50억)</td>
 <td>7.9%</td>
-<td>+0.85</td>
-<td>−0.84</td>
-<td>+0.01</td>
-<td>부호 반대, 크기 일치</td>
+<td>+0.847</td>
+<td>−0.847</td>
+<td>ln(30/350) = <strong>−2.457</strong></td>
+<td>−1.609</td>
 </tr>
 <tr>
-<td>5</td>
-<td>50억 초과</td>
+<td>5 (50억 초과)</td>
 <td>7.4%</td>
-<td>+0.92</td>
-<td>−0.90</td>
-<td>+0.02</td>
-<td>불량률 최저 → WoE 최고, β 최저</td>
+<td>+0.916</td>
+<td>−0.916</td>
+<td>ln(20/250) = <strong>−2.526</strong></td>
+<td>−1.609</td>
 </tr>
 </tbody>
 </table>
-<p>미세한 차이는 MLE 최적화 수렴 과정에서 발생하는 수치적 오차다. <span class="arithmatex">\(\hat{\beta}_i + \text{WoE}_i \approx 0\)</span>이므로, 실질적으로 <span class="arithmatex">\(\hat{\beta}_i \approx -\text{WoE}_i\)</span>가 성립함을 확인할 수 있다.</p>
-<p><a class="glightbox" data-type="image" data-width="100%" data-height="auto" href="../images/beta_vs_woe_diagnostic.png" data-desc-position="bottom"><img alt="WoE vs Beta 진단 — y=1=Bad에서 점들이 β = −WoE 선 위에 위치하면 정상" src="../images/beta_vs_woe_diagnostic.png"></a></p>
-<hr>
-<h3 id="woe_2">WoE 치환 방식과의 관계<a class="headerlink" href="#woe_2" title="Permanent link">¶</a></h3>
-<div class="admonition tip">
-<p class="admonition-title">연속형 변수 X를 WoE로 치환하면 β → −1로 수렴하는 이유 (y=1=Bad)</p>
-<p>연속형 변수 <span class="arithmatex">\(X\)</span>를 각 구간의 WoE 값으로 치환한 새로운 변수 <span class="arithmatex">\(X_{\text{WoE}}\)</span>를 만들어 <strong>절편 포함(No Intercept 아님)</strong> 로지스틱 회귀를 수행하면:</p>
-<div class="arithmatex">\[\ln\!\left(\frac{P(\text{Bad})}{P(\text{Good})}\right) = \alpha + \beta \cdot X_{\text{WoE},i}\]</div>
-<p>이때 이론적으로 <span class="arithmatex">\(\hat{\beta} \to -1\)</span>에 수렴하고, <span class="arithmatex">\(\hat{\alpha} \to \ln(N_B/N_G)\)</span>가 된다.</p>
-<p><strong>이유:</strong> WoE가 양수인 구간(Good 집중)에서는 Bad 확률이 낮아야 하므로 Bad log-odds가 감소해야 한다. 즉 WoE가 1 단위 증가하면 Bad log-odds는 1만큼 <strong>감소</strong>한다 → 기울기 <span class="arithmatex">\(\beta = -1\)</span>.</p>
-</div>
+<ul>
+<li>WoE가 가장 낮은 Bin 1에서 <span class="arithmatex">\(\hat\beta\)</span>가 가장 크다(Bad log-odds 최고). 불량률이 50%를 넘으므로 <span class="arithmatex">\(\hat\beta\)</span>는 양수다.</li>
+<li>불량률이 50% 미만인 구간은 <span class="arithmatex">\(\hat\beta\)</span>가 음수다. 그래서 <strong>WoE가 음수인데 <span class="arithmatex">\(\hat\beta\)</span>도 음수</strong>인 구간(Bin 2)이 정상적으로 생긴다. "β와 WoE의 부호가 같으면 오류"라는 판정은 틀린 규칙이다.</li>
+<li>마지막 열이 모두 같다는 것이 식 (4)의 내용이다.</li>
+</ul>
+<p><a class="glightbox" data-type="image" data-width="100%" data-height="auto" href="../images/beta_vs_woe_diagnostic.png" data-desc-position="bottom"><img alt="단변량에서 β는 항상 기울기 −1 직선 위에 놓인다" src="../images/beta_vs_woe_diagnostic.png"></a></p>
 <div class="admonition info">
-<p class="admonition-title">Part 5 예고 — y=1=Good 전환 시 β → +1</p>
-<p><a href="../../../part5_scorecard/scorecard-and-rating/">Part 5(스코어카드)</a>에서 y = 1 = Good으로 전환하면, log-odds가 <span class="arithmatex">\(\ln(P_G/P_B)\)</span>로 바뀐다. 이때 WoE와 log-odds의 방향이 일치하므로 <span class="arithmatex">\(\hat{\beta} \to +1\)</span>이 된다. 이것이 교과서에서 흔히 "WoE 치환 시 β → 1"이라고 설명하는 결과다.</p>
+<p class="admonition-title">균형 표본에서는 상수가 사라진다</p>
+<p>개발 표본을 Bad:Good = 1:1로 맞추면 <span class="arithmatex">\(\ln(N_B/N_G) = 0\)</span>이므로 <span class="arithmatex">\(\hat\beta_i = -\text{WoE}_i\)</span>가 그대로 성립한다. 교재에서 "β ≈ −WoE"라고 쓰는 것은 대개 이 경우다. 불균형 표본에서는 상수만큼 평행 이동한다.</p>
 </div>
+<hr>
+<h2 id="32-woe-hatbeta-1">3.2 WoE 치환 모형 — <span class="arithmatex">\(\hat\beta = -1\)</span>도 정확히 성립한다<a class="headerlink" href="#32-woe-hatbeta-1" title="Permanent link">¶</a></h2>
+<p>연속형 변수 <span class="arithmatex">\(X\)</span>를 구간의 WoE 값으로 바꾼 변수 <span class="arithmatex">\(X_{\text{WoE}}\)</span>를 만들어 <strong>절편을 포함한</strong> 로지스틱 회귀를 하면</p>
+<div class="arithmatex">\[
+\ln\!\left(\frac{P(\text{Bad})}{P(\text{Good})}\right) = \beta_0 + \beta \cdot X_{\text{WoE}} \tag{5}
+\]</div>
+<p><span class="arithmatex">\(\beta_0 = \ln(N_B/N_G)\)</span>, <span class="arithmatex">\(\beta = -1\)</span>을 넣으면 각 구간의 예측 log-odds가 <span class="arithmatex">\(-\text{WoE}_i + \ln(N_B/N_G)\)</span>, 즉 식 (4)의 포화 모형 해와 <strong>완전히 같아진다</strong>. 포화 모형의 로그우도는 구간 단위 모형이 도달할 수 있는 최대값이므로, 이 점이 식 (5)의 최대우도해다.</p>
+<div class="arithmatex">\[
+\hat\beta = -1, \qquad \hat\beta_0 = \ln\!\left(\frac{N_B}{N_G}\right) \quad \text{(정확히)} \tag{6}
+\]</div>
+<p>직관적으로는, WoE가 1 증가하면 Bad log-odds가 정확히 1 감소하도록 WoE가 <strong>만들어져 있기</strong> 때문이다.</p>
+<div class="admonition info">
+<p class="admonition-title">Part 5 예고 — Good Odds로 볼 때는 +1</p>
+<p><a href="../../../part5_scorecard/scorecard-and-rating/">Part 5 스코어카드</a>는 계수를 다시 적합하지 않는다. 같은 계수를 쓰고 <span class="arithmatex">\(\ln(\text{Good Odds}) = -\text{logit}_{\text{Bad}}\)</span>로 부호만 뒤집는다. 그래서 Good log-odds 기준으로 보면 WoE의 기울기는 +1이 된다. 교재에서 흔히 "WoE 치환 시 β = 1"이라고 설명하는 것은 y=1=Good으로 적합한 경우다.</p>
+</div>
+<hr>
+<h2 id="33-woe">3.3 그렇다면 β와 WoE의 비교는 어디에 쓰는가<a class="headerlink" href="#33-woe" title="Permanent link">¶</a></h2>
+<p>식 (4)·(6)은 Classing이 좋든 나쁘든 개발 표본에서 <strong>항상</strong> 성립한다. 따라서 단변량 단계의 "β ≈ −WoE 확인"은 진단이 아니라 <strong>계산 검증(sanity check)</strong> 이다 — 어긋나면 집계·조인·코딩 오류를 의심한다.</p>
+<p>β와 WoE의 관계가 실제 진단 정보가 되는 곳은 두 군데다.</p>
+<table>
+<thead>
+<tr>
+<th>상황</th>
+<th>확인 방법</th>
+<th>정상</th>
+<th>이상 신호</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>다변량 모형</strong></td>
+<td>Full Model의 WoE 변수 계수</td>
+<td>−1 ~ 0 사이의 음수(다른 변수와 정보를 나눔)</td>
+<td>양수(부호 역전), 또는 <span class="arithmatex">\(\lvert\beta\rvert &gt; 1\)</span>(억제효과·공선성 의심) — <a href="../../../part4_modeling/multivariate-regression/">다변량 회귀</a></td>
+</tr>
+<tr>
+<td><strong>검증(OOT) 표본</strong></td>
+<td>개발 표본의 WoE를 OOT 표본에 적용한 뒤 단변량 재적합</td>
+<td><span class="arithmatex">\(\hat\beta\)</span>가 −1 근처, Bin별 실제 log-odds가 직선 근처</td>
+<td><span class="arithmatex">\(\lvert\hat\beta\rvert\)</span>가 크게 줄어듦(WoE 패턴 약화), 특정 Bin이 직선에서 크게 이탈</td>
+</tr>
+</tbody>
+</table>
 <div class="admonition note">
-<p class="admonition-title">Two Approaches: 사실상 같은 말</p>
-<p>아래 두 방법은 서로 다른 방식으로 수행되지만, WoE가 모형 내에서 어떻게 작동하는지를 검증한다는 동일한 본질을 갖는다.</p>
+<p class="admonition-title">Two Approaches 정리</p>
 <table>
 <thead>
 <tr>
 <th>방법</th>
 <th>설계</th>
-<th>결과 (y=1=Bad)</th>
-<th>의미</th>
+<th>개발 표본 결과 (y=1=Bad)</th>
+<th>쓰임</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>1. One-Hot + No Intercept</strong></td>
+<td><strong>One-Hot + No Intercept</strong></td>
 <td><span class="arithmatex">\(k\)</span>개 더미, 절편 제거</td>
-<td><span class="arithmatex">\(\hat{\beta}_j \approx -\text{WoE}_j\)</span> (각 구간별)</td>
-<td>모형이 스스로 각 구간의 리스크를 탐색하여 WoE와 크기가 같고 부호가 반대인 값을 도출함을 확인</td>
+<td><span class="arithmatex">\(\hat{\beta}_i = -\text{WoE}_i + \ln(N_B/N_G)\)</span> (정확)</td>
+<td>구간별 SE → 인접 Bin 차이 검정</td>
 </tr>
 <tr>
-<td><strong>2. WoE 치환 + Intercept 포함</strong></td>
+<td><strong>WoE 치환 + Intercept</strong></td>
 <td><span class="arithmatex">\(X_{\text{WoE}}\)</span> 단일 변수, 절편 포함</td>
-<td><span class="arithmatex">\(\hat{\beta} \to -1\)</span> (전체 변수에 대해)</td>
-<td>WoE로 집계된 구간별 리스크가 로지스틱 모형의 선형 가정과 정확히 일치함을 확인</td>
+<td><span class="arithmatex">\(\hat{\beta} = -1\)</span> (정확)</td>
+<td>본 모형의 입력 형태. 진단은 다변량·OOT에서</td>
 </tr>
 </tbody>
 </table>
-<p>(1)은 "구간별 WoE가 통계적으로 유의한가"를 검증하고, (2)는 "WoE 구조 전체가 모형에서 비례적으로 작동하는가"를 검증한다. 둘 다 WoE의 타당성을 확인하는 작업이며, 두 결과가 모두 성립할 때 Classing이 통계적으로 건전하다고 판단할 수 있다.</p>
 </div>
 
 

@@ -5133,7 +5133,7 @@
 
 <h1 id="_1">도구 · 구현 · 요약<a class="headerlink" href="#_1" title="Permanent link">¶</a></h1>
 <h2 id="61">6.1 관련 기법과 오픈소스 도구<a class="headerlink" href="#61" title="Permanent link">¶</a></h2>
-<p>1-Depth GBM은 "해석 가능한 ML" 생태계의 일부다. 같은 철학을 공유하는 기법과 도구를 정리한다.</p>
+<p>1-Depth GBM과 EBM은 "해석 가능한 ML" 생태계의 일부다. 같은 철학(가법 구조 + 제한된 교호작용)을 공유하는 기법과 도구를 정리한다.</p>
 <h3 id="_2">관련 모형 계보<a class="headerlink" href="#_2" title="Permanent link">¶</a></h3>
 <table>
 <thead>
@@ -5169,7 +5169,7 @@
 </tr>
 <tr>
 <td><strong>EBM</strong></td>
-<td>Round-robin cyclic boosting GAM</td>
+<td>Cyclic boosting 기반 GA<span class="arithmatex">\(^2\)</span>M 구현</td>
 <td style="text-align: center;">2019</td>
 <td>Nori, Caruana (Microsoft)</td>
 <td style="text-align: center;">선택적 2-way</td>
@@ -5178,28 +5178,28 @@
 <td><strong>NAM</strong></td>
 <td>Feature별 신경망</td>
 <td style="text-align: center;">2021</td>
-<td>Agarwal, Hinton, Caruana</td>
+<td>Agarwal, Hinton, Caruana 외</td>
 <td style="text-align: center;">없음</td>
 </tr>
 <tr>
 <td><strong>GAMI-Net</strong></td>
 <td>신경망 GAM + purified interactions</td>
 <td style="text-align: center;">2021</td>
-<td>Yang, Sudjianto</td>
+<td>Yang, Zhang, Sudjianto</td>
 <td style="text-align: center;">2-way (purified)</td>
 </tr>
 <tr>
 <td><strong>NODE-GAM</strong></td>
-<td>Oblivious Decision Tree GAM</td>
+<td>Oblivious Decision Tree 기반 GAM</td>
 <td style="text-align: center;">2022</td>
-<td>Chang, Caruana</td>
-<td style="text-align: center;">없음</td>
+<td>Chang, Caruana, Goldenberg</td>
+<td style="text-align: center;">없음 (GA<span class="arithmatex">\(^2\)</span>M 변형 있음)</td>
 </tr>
 <tr>
 <td><strong>Add-XGBoost</strong></td>
-<td>Feature별 XGBoost + Lasso</td>
+<td>변수별 XGBoost shape function의 가법 결합 + Lasso로 가중치 조정</td>
 <td style="text-align: center;">2025</td>
-<td>(신용평가 특화)</td>
+<td>Zou, Xia, Lan</td>
 <td style="text-align: center;">2-way</td>
 </tr>
 </tbody>
@@ -5217,7 +5217,7 @@
 <tr>
 <td><strong>InterpretML / EBM</strong></td>
 <td>Microsoft Research의 해석 가능 ML 프레임워크</td>
-<td>GAM의 "정석" 구현. Round-robin 학습, inner/outer bagging</td>
+<td>GA<span class="arithmatex">\(^2\)</span>M의 대표 구현. Cyclic boosting, outer bagging</td>
 </tr>
 <tr>
 <td><strong>PiML</strong></td>
@@ -5226,13 +5226,13 @@
 </tr>
 <tr>
 <td><strong>xBooster</strong></td>
-<td>GBM → 스코어카드 변환기</td>
-<td>XGBoost/LightGBM/CatBoost의 leaf weight를 전통 스코어카드 포인트로 변환</td>
+<td>부스팅 모형 → 스코어카드 변환기</td>
+<td>부스팅 모형의 leaf 값을 전통 스코어카드 포인트로 변환</td>
 </tr>
 <tr>
 <td><strong>skorecard</strong></td>
 <td>ING Bank의 스코어카드 파이프라인</td>
-<td>전통 LR 스코어카드 벤치마크용. WoE 구간화 + 로지스틱 회귀</td>
+<td>전통 LR 스코어카드 벤치마크용. 구간화 + 로지스틱 회귀</td>
 </tr>
 </tbody>
 </table>
@@ -5246,7 +5246,7 @@
 
 <hr>
 <h2 id="62">6.2 실무 파라미터 가이드<a class="headerlink" href="#62" title="Permanent link">¶</a></h2>
-<h3 id="_4">핵심 파라미터<a class="headerlink" href="#_4" title="Permanent link">¶</a></h3>
+<p>1-Depth GBM을 XGBoost·LightGBM으로 만들 때의 출발점이다. 파라미터의 일반적인 의미는 <a href="../../part3_tree_ensemble/hyperparameter_tuning/">하이퍼파라미터 튜닝</a>을 따른다.</p>
 <table>
 <thead>
 <tr>
@@ -5259,32 +5259,32 @@
 <tr>
 <td><code>max_depth</code></td>
 <td><strong>1</strong></td>
-<td>stump 구조 확보 (GAM 보장)</td>
+<td>stump 구조 확보 (가법 구조 보장)</td>
 </tr>
 <tr>
-<td><code>num_leaves</code></td>
+<td><code>num_leaves</code> (LightGBM)</td>
 <td><strong>2</strong></td>
 <td>depth=1이면 leaf는 반드시 2개</td>
 </tr>
 <tr>
-<td><code>monotone_constraints</code></td>
+<td>단조 제약</td>
 <td><strong>변수별 지정</strong></td>
-<td><a href="../depth1_gbm/">개요 — 단조성</a> 참조</td>
+<td><a href="../../part3_tree_ensemble/boosting_advanced/">Boosting 심화 — 단조 제약</a> 참조. WoE 입력이면 모두 −1</td>
 </tr>
 <tr>
 <td><code>learning_rate</code></td>
-<td><strong>0.01 ~ 0.05</strong></td>
-<td>낮을수록 shape function이 부드럽고 안정적</td>
+<td>일반 권장 범위(0.01~0.1)의 낮은 쪽</td>
+<td>stump 하나의 보정량이 작아야 곡선이 매끄럽다. 기준은 <a href="../../part3_tree_ensemble/hyperparameter_tuning/">학습률 표</a></td>
 </tr>
 <tr>
-<td><code>n_estimators</code></td>
-<td><strong>1,000 ~ 5,000</strong></td>
-<td>낮은 learning_rate를 보상. early stopping과 병용</td>
+<td>트리 수</td>
+<td>탐색 단계에서 Early Stopping으로 결정</td>
+<td>최종 모형은 정한 트리 수를 완주</td>
 </tr>
 <tr>
 <td><code>colsample_bytree</code></td>
-<td><strong>1.0 권장</strong></td>
-<td>depth-1 stump은 변수 1개만 사용하므로, subsampling하면 shape function이 불안정해질 수 있다</td>
+<td>1.0에서 시작해 비교</td>
+<td>상관된 변수 사이에서 효과가 한쪽으로 쏠린다면(concurvity), 열 샘플링으로 다른 변수에도 기회를 주는 것이 도움이 될 수 있다. 반대로 곡선이 재학습마다 크게 흔들리면 1.0이 낫다. 재학습 안정성을 보고 정한다</td>
 </tr>
 <tr>
 <td><code>subsample</code></td>
@@ -5296,22 +5296,31 @@
 <td><strong>0.1 ~ 1.0</strong></td>
 <td>leaf weight 크기를 제어하여 개별 stump의 영향력을 제한</td>
 </tr>
+<tr>
+<td>히스토그램 bin 수</td>
+<td>필요 시 축소</td>
+<td>분할점 후보를 줄여 곡선의 계단 수를 통제. 최종 점수표는 <a href="../interpretability/">해석 가능 조건</a>(변수당 ≤ 5구간)에 맞춰 묶는다</td>
+</tr>
 </tbody>
 </table>
 <div class="admonition note">
 <p class="admonition-title">변수 수 관리</p>
-<p>1-Depth GBM도 전통 스코어카드와 마찬가지로 <strong>최종 변수를 10~20개 내외로 관리</strong>하는 것이 바람직하다. Feature importance로 상위 변수를 선별한 뒤, 해당 변수만으로 재학습하는 2단계 접근이 실무적이다.</p>
+<p>1-Depth GBM도 전통 스코어카드와 마찬가지로 <strong>최종 변수를 10~20개 내외로 관리</strong>하는 것이 바람직하다. Feature importance로 상위 변수를 선별한 뒤, 해당 변수만으로 재학습하는 2단계 접근이 실무적이다. 강하게 상관된 변수는 이 단계에서 하나만 남긴다.</p>
 </div>
 <hr>
 <h2 id="63">6.3 실무 적용 시나리오<a class="headerlink" href="#63" title="Permanent link">¶</a></h2>
-<h3 id="1">시나리오 1: 규제 모형 대체<a class="headerlink" href="#1" title="Permanent link">¶</a></h3>
-<p>전통 LR 스코어카드의 대체 모형으로 1-Depth GBM을 제안. GAM 구조이므로 변수별 효과를 점수표처럼 제출할 수 있다.</p>
+<h3 id="1">시나리오 1: 전통 스코어카드의 대안 모형<a class="headerlink" href="#1" title="Permanent link">¶</a></h3>
+<p>전통 LR 스코어카드의 대안으로 1-Depth GBM(또는 EBM)을 검토한다. 가법 구조이므로 변수별 효과를 점수표 형태로 제시할 수 있다.</p>
+<ul>
+<li><strong>적합한 경우</strong>: 변수의 비선형 효과가 커서 수동 구간화로 놓치는 정보가 많고, 교호작용은 크지 않은 데이터</li>
+<li><strong>주의할 점</strong>: 감독·검증 부서가 요구하는 문서화(구간 정의, 변수 선정 근거, 안정성 검증)를 전통 스코어카드 수준으로 갖춰야 한다. 성능 향상이 OOT에서 유지되는지 확인한다</li>
+</ul>
 <h3 id="2">시나리오 2: 챌린저 모형<a class="headerlink" href="#2" title="Permanent link">¶</a></h3>
-<p>운영 중인 전통 모형(챔피언) 대비 1-Depth GBM(챌린저)의 성능 우위를 OOT에서 검증하여 교체 근거를 확보.</p>
+<p>운영 중인 전통 모형(챔피언) 대비 1-Depth GBM(챌린저)의 성능을 OOT에서 비교한다. 교체 근거를 확보하거나, 반대로 "현재 데이터에서는 비선형 이득이 크지 않다"는 것을 확인하는 데도 쓴다.</p>
 <h3 id="3">시나리오 3: 변수 탐색 도구<a class="headerlink" href="#3" title="Permanent link">¶</a></h3>
-<p>Full GBM을 바로 만들기 전에, 1-Depth GBM으로 <strong>각 변수의 비선형 효과를 탐색</strong>한다. WoE Classing의 구간 설정에도 참고할 수 있다 — "1-Depth GBM의 효과 곡선이 꺾이는 지점"이 자연스러운 Classing 경계가 된다.</p>
-<h3 id="4-fico-ml">시나리오 4: FICO 방식 — ML로 탐색, 전통으로 배포<a class="headerlink" href="#4-fico-ml" title="Permanent link">¶</a></h3>
-<p>Fahner (2018)의 transmutation 전략. Full GBM으로 패턴을 발견하고, 그 인사이트를 단조성 제약이 있는 스코어카드로 변환하여 배포한다.</p>
+<p>Full GBM을 바로 만들기 전에, 1-Depth GBM으로 <strong>각 변수의 비선형 효과를 탐색</strong>한다. WoE Classing의 구간 설정에도 참고할 수 있다 — "1-Depth GBM의 효과 곡선이 꺾이는 지점"이 자연스러운 Classing 경계 후보가 된다. 이 용도에서는 성능보다 곡선의 모양이 중요하므로 가장 부담 없이 쓸 수 있는 시나리오다.</p>
+<h3 id="4-ml">시나리오 4: ML로 탐색, 전통으로 배포<a class="headerlink" href="#4-ml" title="Permanent link">¶</a></h3>
+<p>Fahner (2018)의 transmutation 전략. Full GBM으로 패턴을 발견하고, 그 인사이트를 단조성 제약이 있는 스코어카드로 변환하여 배포한다(<a href="../depth1_gbm/">1-Depth GBM 스코어카드</a> 3.4절).</p>
 <hr>
 <h2 id="64">6.4 참고 자료<a class="headerlink" href="#64" title="Permanent link">¶</a></h2>
 <table>
@@ -5331,17 +5340,17 @@
 <tr>
 <td>Friedman (2001). "Greedy Function Approximation: A Gradient Boosting Machine." <em>Annals of Statistics</em></td>
 <td style="text-align: center;">논문</td>
-<td>GBM 원논문. Stump = additive model 명시</td>
+<td>GBM 원논문. 트리 크기와 교호작용 수준의 관계 설명</td>
 </tr>
 <tr>
 <td>Lou et al. (2012). "Intelligible Models for Classification and Regression." <em>KDD</em></td>
 <td style="text-align: center;">논문</td>
-<td>Tree-based GAM이 최적 적합법임을 실증</td>
+<td>GAM 적합법 비교 — 얕은 트리의 bagging + boosting이 가장 정확</td>
 </tr>
 <tr>
 <td>Lou et al. (2013). "Accurate Intelligible Models with Pairwise Interactions." <em>KDD</em></td>
 <td style="text-align: center;">논문</td>
-<td>GA<span class="arithmatex">\(^2\)</span>M — 2-way 교호작용 추가</td>
+<td>GA<span class="arithmatex">\(^2\)</span>M — 2-way 교호작용 추가, FAST</td>
 </tr>
 <tr>
 <td>Caruana et al. (2015). "Intelligible Models for HealthCare." <em>KDD</em></td>
@@ -5349,9 +5358,9 @@
 <td>해석 가능 ML의 필요성을 보여준 대표 사례</td>
 </tr>
 <tr>
-<td>Fahner (2018). "Developing Transparent Credit Risk Scorecards." <em>Data Analytics</em></td>
+<td>Fahner (2018). "Developing Transparent Credit Risk Scorecards More Effectively." <em>DATA ANALYTICS 2018</em></td>
 <td style="text-align: center;">논문</td>
-<td>FICO의 transmutation 전략. <strong>Best Paper Award</strong></td>
+<td>FICO의 transmutation 전략</td>
 </tr>
 <tr>
 <td>Nori et al. (2019). "InterpretML." arXiv:1909.09223</td>
@@ -5359,7 +5368,7 @@
 <td>EBM 구현체와 InterpretML 프레임워크</td>
 </tr>
 <tr>
-<td>Lengerich et al. (2020). "Purifying Interaction Effects." <em>AISTATS</em></td>
+<td>Lengerich et al. (2020). "Purifying Interaction Effects with the Functional ANOVA." <em>AISTATS</em></td>
 <td style="text-align: center;">논문</td>
 <td>Main effect / interaction 분리 알고리즘</td>
 </tr>
@@ -5369,14 +5378,14 @@
 <td>신경망 기반 GAM (NAM)</td>
 </tr>
 <tr>
-<td>Yang et al. (2021). "GAMI-Net." <em>Pattern Recognition</em></td>
+<td>Yang, Zhang &amp; Sudjianto (2021). "GAMI-Net." <em>Pattern Recognition</em></td>
 <td style="text-align: center;">논문</td>
 <td>Purified interaction이 있는 신경망 GAM</td>
 </tr>
 <tr>
 <td>Chang et al. (2021). "How Interpretable and Trustworthy are GAMs?" <em>KDD</em></td>
 <td style="text-align: center;">논문</td>
-<td>Tree-based GAM이 가장 신뢰할 수 있는 GAM</td>
+<td>여러 GAM 적합법이 같은 데이터에서 서로 다른 shape function을 내는 문제를 비교</td>
 </tr>
 <tr>
 <td>Sudjianto et al. (2023). "PiML Toolbox." arXiv:2305.04214</td>
@@ -5384,9 +5393,9 @@
 <td>XGB1, XGB2를 해석 가능 모형으로 내장</td>
 </tr>
 <tr>
-<td>(2025). "Interpretable credit scoring based on Add-XGBoost." <em>Chaos, Solitons &amp; Fractals</em></td>
+<td>Zou, Xia &amp; Lan (2025). "Interpretable credit scoring based on an additive extreme gradient boosting." <em>Chaos, Solitons &amp; Fractals</em>, 194, 116216</td>
 <td style="text-align: center;">논문</td>
-<td>Feature별 XGBoost를 가산적으로 결합하는 신용평가 특화 기법</td>
+<td>변수별 XGBoost shape function을 가산 결합하고 2차 교호작용과 Lasso 가중치 조정을 더한 신용평가 기법</td>
 </tr>
 <tr>
 <td>Moody's Analytics. "Automating Interpretable ML Scorecards."</td>
@@ -5395,7 +5404,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="_5">온라인 가이드<a class="headerlink" href="#_5" title="Permanent link">¶</a></h3>
+<h3 id="_4">온라인 가이드<a class="headerlink" href="#_4" title="Permanent link">¶</a></h3>
 <table>
 <thead>
 <tr>
@@ -5432,14 +5441,14 @@
 <td style="text-align: center;"><span class="arithmatex">\(\beta_0 + \sum \beta_j \cdot \text{WoE}_j\)</span></td>
 <td style="text-align: center;"><span class="arithmatex">\(F_0 + \sum f_j(x_j)\)</span></td>
 <td style="text-align: center;"><span class="arithmatex">\(F_0 + \sum f_j + \sum f_{jk}\)</span></td>
-<td style="text-align: center;"><span class="arithmatex">\(F_0 + \sum h_t(\mathbf{x})\)</span></td>
+<td style="text-align: center;"><span class="arithmatex">\(F_0 + \eta \sum h_t(\mathbf{x})\)</span></td>
 </tr>
 <tr>
 <td><strong>해석</strong></td>
 <td style="text-align: center;">점수표</td>
 <td style="text-align: center;">효과 곡선</td>
 <td style="text-align: center;">효과 곡선 + 교호작용</td>
-<td style="text-align: center;">SHAP</td>
+<td style="text-align: center;">SHAP 등 사후 설명</td>
 </tr>
 <tr>
 <td><strong>비선형</strong></td>
@@ -5456,17 +5465,15 @@
 <td style="text-align: center;">자동</td>
 </tr>
 <tr>
-<td><strong>규제 수용성</strong></td>
-<td style="text-align: center;">매우 높음</td>
-<td style="text-align: center;">높음</td>
-<td style="text-align: center;">높음</td>
-<td style="text-align: center;">제한적</td>
+<td><strong>해석 조건 충족</strong></td>
+<td style="text-align: center;">충족</td>
+<td style="text-align: center;">단조 제약 시 충족</td>
+<td style="text-align: center;">단조 처리 + 점수표용 bin 정리 시 충족</td>
+<td style="text-align: center;">사후 요약만 가능</td>
 </tr>
 </tbody>
 </table>
-<p>1-Depth GBM은 전통과 ML 사이의 <strong>징검다리</strong>다. 전통의 해석 가능성과 ML의 자동 비선형 학습을 동시에 얻을 수 있다.</p>
-<p>한 걸음 더 나아가면, EBM은 round-robin 학습과 선택적 교호작용으로 1-Depth GBM의 발전형이며, Full GBM과의 성능 격차를 상당 부분 좁힌다. PiML, xBooster 같은 도구 생태계도 성숙해지고 있다.</p>
-<p>모든 상황에서 최선은 아니지만, <strong>"왜 ML을 쓰는가?"에 대한 가장 설명하기 쉬운 답</strong>이다.</p>
+<p>가법 모형 계열(1-Depth GBM, EBM)은 전통 스코어카드와 Full GBM 사이의 선택지다. 수동 구간화 없이 비선형 효과를 학습하면서도 변수별 효과를 곡선으로 보여줄 수 있다. 대신 교호작용을 포기하거나(1-Depth GBM) 제한해야 하고(EBM), 상관된 변수의 효과가 임의로 나뉘는 문제와 해석 조건(단조성, 점수표 환산)과 운영 평점표의 구간 수 관행을 맞추기 위한 추가 작업이 따른다. 어느 쪽이 나은지는 데이터의 교호작용 크기와 조직의 검증 요구 수준에 따라 다르므로, OOT 성능과 해석 검토 결과를 함께 놓고 정한다.</p>
 <div class="admonition tip">
 <p class="admonition-title">다음 페이지</p>
 <p><a href="../shap_in_practice/">ML 해석을 고민한 기록</a> --- SHAP 실전의 벽, Counterfactual Explanation, 그리고 왜 SHAP은 교과서가 되고 fANOVA는 아닌가.</p>

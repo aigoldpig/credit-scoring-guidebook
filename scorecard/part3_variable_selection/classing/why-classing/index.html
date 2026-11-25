@@ -5102,7 +5102,7 @@
 
 <h1 id="classing">왜 Classing(구간화)인가<a class="headerlink" href="#classing" title="Permanent link">¶</a></h1>
 <h2 id="11">1.1 연속형 변수를 그대로 쓸 수 없는 이유<a class="headerlink" href="#11" title="Permanent link">¶</a></h2>
-<p>로지스틱 회귀는 <span class="arithmatex">\(\ln\!\left(\frac{p}{1-p}\right)\)</span>와 <span class="arithmatex">\(x\)</span> 사이의 <strong>선형 관계</strong>를 가정한다. 연속형 변수를 그대로 투입하면 이 선형 가정을 위반하게 되므로, Classing + WoE 변환은 로지스틱 회귀 기반 스코어카드에서 <strong>필수적인 전처리</strong>다.</p>
+<p>로지스틱 회귀는 <span class="arithmatex">\(\ln\!\left(\frac{p}{1-p}\right)\)</span>와 <span class="arithmatex">\(x\)</span> 사이의 <strong>선형 관계</strong>를 가정한다. 신용 변수는 불량률과의 관계가 꺾이거나 포화되는 경우가 많아, 연속형 변수를 그대로 투입하면 이 선형 가정을 <strong>위반할 수 있다</strong>. 그래서 로지스틱 회귀 기반 스코어카드에서는 Classing + WoE 변환을 표준 전처리로 사용한다. (로그 변환·스플라인 등 다른 대안도 있지만, 구간별 점수표라는 스코어카드의 산출 형태와 가장 잘 맞는 것이 Classing이다.)</p>
 <p>그러나 Classing의 가치는 로지스틱 회귀에 국한되지 않는다. ML 모형(XGBoost, LightGBM 등)은 비선형을 자체적으로 포착하므로 Classing이 모형 적합의 필수 요건은 아니지만, 실무에서는 <strong>변수 탐색·검증 도구</strong>로서 모형 방법론과 무관하게 활용된다 — 구간별 구성비와 불량률 패턴 확인, 단변량 KS/AR/IV 산출, 시점별 PSI를 통한 안정성 검증이 그것이다.</p>
 <p>신용 변수들은 불량률과의 관계가 단순 선형이 아닌 경우가 존재한다. 실무에서 자주 등장하는 비선형 패턴 세 가지를 살펴보자.</p>
 <hr>
@@ -5180,10 +5180,10 @@
 </tbody>
 </table>
 <div class="admonition example">
-<p class="admonition-title">CB사 실무: NICE 기업신용평가 — 재무비율 구간화</p>
-<p>NICE평가정보의 기업신용등급 모형은 재무 평가 요소(안정성·수익성·활동성·성장성·규모·현금흐름)에 대해 구간화 변환하여 사용한다. 특히 영업이익률, 부채비율 등은 위 패턴 1(단조감소 + 포화)과 패턴 2(Cliff)가 전형적으로 나타나는 변수로, Classing 없이는 모형 적합이 어렵다.</p>
+<p class="admonition-title">CB사 공개 자료: NICE평가정보 — 기업평가의 재무 모형</p>
+<p>NICE평가정보 공개 페이지는 재무 모형이 "기업의 재무제표 정보를 이용하여 기업의 부실 가능성을 측정"하며, 수익성·안정성·활동성·성장성·부채상환능력·유동성 등을 평가 요소로 본다고 설명한다. 공개 자료에 구간화 방식이 나와 있지는 않지만, 이런 재무비율(영업이익률, 부채비율 등)은 위 패턴 1(포화)과 패턴 2(단절)가 흔히 나타나는 대표적인 변수군이다.</p>
 <p></p><div class="source-ref">
-출처: <a href="https://www.niceinfo.co.kr/creditrating/bi_score_1_4.nice" target="_blank">NICE평가정보 · 기업신용등급 평가요소</a>
+출처: <a href="https://www.niceinfo.co.kr/creditrating/bi_score_1_4.nice" target="_blank">NICE평가정보 · 기업평가등급의 의미</a>
 </div><p></p>
 </div>
 

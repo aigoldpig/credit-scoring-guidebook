@@ -97,7 +97,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#mipcp-iv" class="md-skip">
+        <a href="#_1" class="md-skip">
           콘텐츠로 이동
         </a>
       
@@ -2274,7 +2274,7 @@
   <a href="#11" class="md-nav__link">
     <span class="md-ellipsis">
       
-        1.1 문제 정식화
+        1.1 왜 "최적화"인가
       
     </span>
   </a>
@@ -2282,10 +2282,32 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#12-solver" class="md-nav__link">
+  <a href="#12" class="md-nav__link">
     <span class="md-ellipsis">
       
-        1.2 Solver 선택
+        1.2 문제 정식화
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#13-prebin-5-16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3 소형 예시 — prebin 5개, 분할 16개
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#14-solver" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.4 Solver 선택
       
     </span>
   </a>
@@ -5100,88 +5122,209 @@
 
 
 
-<h1 id="mipcp-iv">최적화 엔진 — MIP/CP로 IV 최대화<a class="headerlink" href="#mipcp-iv" title="Permanent link">¶</a></h1>
-<h2 id="11">1.1 문제 정식화<a class="headerlink" href="#11" title="Permanent link">¶</a></h2>
-<p>Pre-binning으로 생성된 <span class="arithmatex">\(n\)</span>개 Fine Bin을 <strong>어떻게 합병해야 IV가 최대</strong>가 되는지를 수학적 최적화로 푼다.</p>
-<p><strong>목적함수:</strong></p>
-<div class="arithmatex">\[\max \sum_{i,j} V_{ij} \cdot x_{ij} \tag{1}\]</div>
-<ul>
-<li><span class="arithmatex">\(x_{ij}\)</span>: 이진 결정 변수 — Fine Bin <span class="arithmatex">\(j\)</span>부터 <span class="arithmatex">\(i\)</span>까지를 하나의 Coarse Bin으로 합병하면 1</li>
-<li><span class="arithmatex">\(V_{ij}\)</span>: 해당 합병 조합의 IV 기여분 (사전 계산된 divergence 행렬)</li>
-</ul>
-<p><strong>제약조건:</strong></p>
+<h1 id="_1">최적화 엔진 — 구간 병합을 이진 최적화로 푼다<a class="headerlink" href="#_1" title="Permanent link">¶</a></h1>
+<h2 id="11">1.1 왜 "최적화"인가<a class="headerlink" href="#11" title="Permanent link">¶</a></h2>
+<p>전통적 Coarse Classing은 Fine Bin을 보면서 비슷한 구간을 <strong>하나씩</strong> 합친다(ChiMerge 등). 이런 탐욕적(greedy) 병합은 매 단계에서 가장 좋아 보이는 쌍을 합칠 뿐, 앞에서 내린 병합을 되돌리지 않는다. 그래서 "단조성을 지키면서 Bin 수는 5개 이하, 각 Bin은 5% 이상"처럼 제약이 여러 개 걸리면, 최종 결과가 가능한 조합 중 최선이라는 보장이 없다.</p>
+<p>optbinning은 이 문제를 <strong>"가능한 모든 병합 조합 중, 제약을 만족하면서 IV가 최대인 것"</strong> 을 찾는 수리 최적화 문제로 바꿔 푼다(Navas-Palencia, 2020). 엄밀 Solver는 해를 찾을 뿐 아니라 그 해가 최적임을 상한·하한 비교로 증명하므로, 제약 하에서 <strong>전역 최적(global optimum)</strong> 이 보장된다. 단, 이 최적은 "Pre-binning이 만든 경계 안에서의 최적"이다.</p>
+<hr>
+<h2 id="12">1.2 문제 정식화<a class="headerlink" href="#12" title="Permanent link">¶</a></h2>
+<p>Pre-binning으로 <span class="arithmatex">\(n\)</span>개의 Fine Bin(이하 prebin)이 있다고 하자. prebin <span class="arithmatex">\(j\)</span>부터 <span class="arithmatex">\(i\)</span>까지(<span class="arithmatex">\(j \le i\)</span>)를 하나로 합친 구간을 <span class="arithmatex">\([j, i]\)</span>라 쓴다.</p>
+<p><strong>결정 변수</strong>: 각 후보 구간 <span class="arithmatex">\([j,i]\)</span>마다 이진 변수 <span class="arithmatex">\(x_{ij}\)</span>를 둔다. 이 구간이 최종 Bin으로 채택되면 1, 아니면 0이다. 후보 구간은 연속된 prebin만으로 만들므로 <strong>인접성은 변수 정의에 이미 들어 있다</strong>.</p>
+<p><strong>목적함수</strong>: 채택된 구간들의 IV 합을 최대화한다. IV는 구간별 기여의 합이므로, 각 후보 구간의 IV 기여 <span class="arithmatex">\(V_{ij}\)</span>를 미리 계산해 두면 목적함수가 선형이 된다.</p>
+<div class="arithmatex">\[
+\max \sum_{j \le i} V_{ij}\, x_{ij}, \qquad V_{ij} = (\%\text{Good}_{[j,i]} - \%\text{Bad}_{[j,i]}) \cdot \text{WoE}_{[j,i]} \tag{1}
+\]</div>
+<p><strong>제약식</strong>:</p>
+<div class="arithmatex">\[
+\sum_{j \le r \le i} x_{ij} = 1 \quad (r = 1, \dots, n) \tag{2}
+\]</div>
+<p>식 (2)는 "모든 prebin <span class="arithmatex">\(r\)</span>은 채택된 구간 중 <strong>정확히 하나</strong>에 속한다"는 뜻이다. 이 제약만으로 해는 항상 연속 구간들로 이뤄진 분할(partition)이 된다.</p>
 <table>
 <thead>
 <tr>
 <th>제약</th>
-<th>수학적 의미</th>
-<th>대응 파라미터</th>
+<th>수학적 표현(개념)</th>
+<th>대응 옵션</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>유일 할당</td>
-<td>각 Fine Bin은 정확히 하나의 Coarse Bin에 소속</td>
+<td>식 (2)</td>
 <td>—</td>
-</tr>
-<tr>
-<td>인접성</td>
-<td>합병은 연속된 Fine Bin끼리만 가능</td>
-<td>—</td>
-</tr>
-<tr>
-<td>단조성</td>
-<td>합병 후 Event Rate가 단조증가/감소</td>
-<td><code>monotonic_trend</code></td>
 </tr>
 <tr>
 <td>Bin 수</td>
-<td>최종 Bin 수의 상한/하한</td>
-<td><code>min_n_bins</code>, <code>max_n_bins</code></td>
+<td><span class="arithmatex">\(n_{\min} \le \sum x_{ij} \le n_{\max}\)</span></td>
+<td>최소/최대 Bin 수</td>
 </tr>
 <tr>
-<td>최소 샘플</td>
-<td>각 Coarse Bin의 최소 샘플 비율</td>
-<td><code>min_bin_size</code></td>
+<td>최소·최대 표본</td>
+<td>표본 비중이 기준 밖인 후보 구간은 <span class="arithmatex">\(x_{ij}=0\)</span>으로 고정</td>
+<td>최소/최대 Bin 비중, 최소 Bad·Good 건수</td>
 </tr>
 <tr>
-<td>p-value</td>
-<td>인접 Coarse Bin 간 통계적 유의성</td>
-<td><code>max_pvalue</code></td>
+<td>단조성</td>
+<td>이웃하는 두 채택 구간 <span class="arithmatex">\([k, j-1]\)</span>과 <span class="arithmatex">\([j, i]\)</span>의 Event rate 순서가 지정 방향과 어긋나면 동시에 채택할 수 없다: <span class="arithmatex">\(x_{j-1,k} + x_{ij} \le 1\)</span></td>
+<td>단조성 방향(Event rate 기준)</td>
+</tr>
+<tr>
+<td>유의성</td>
+<td>이웃하는 두 채택 구간의 불량률 차이 검정 p-value가 기준을 넘으면 동시 채택 금지</td>
+<td>최대 p-value</td>
 </tr>
 </tbody>
 </table>
+<p>단조성과 유의성 제약은 위 표처럼 "어긋나는 이웃 쌍 금지"로 이해하면 직관적이다. 원 논문은 같은 내용을 Event rate에 대한 선형 부등식(big-M 형태)으로 더 간결하게 정식화한다.</p>
+<div class="admonition note">
+<p class="admonition-title">목적함수는 IV만이 아니다</p>
+<p>기본 목적함수는 IV(Jeffreys divergence)지만, 라이브러리는 Jensen-Shannon, Hellinger, Triangular divergence도 고를 수 있다(<a href="https://gnpalencia.org/optbinning/binning_binary.html">공식 문서</a>). 어느 쪽이든 "구간별 기여의 합"이라는 구조는 같다.</p>
+</div>
 <hr>
-<h2 id="12-solver">1.2 Solver 선택<a class="headerlink" href="#12-solver" title="Permanent link">¶</a></h2>
-<div class="highlight"><pre><span></span><code><span class="n">optb</span> <span class="o">=</span> <span class="n">OptimalBinning</span><span class="p">(</span>
-    <span class="n">solver</span><span class="o">=</span><span class="s2">"cp"</span><span class="p">,</span>        <span class="c1"># 제약 프로그래밍 (기본값, 권장)</span>
-    <span class="c1"># solver="mip",     # 혼합정수계획법</span>
-<span class="p">)</span>
-</code></pre></div>
+<h2 id="13-prebin-5-16">1.3 소형 예시 — prebin 5개, 분할 16개<a class="headerlink" href="#13-prebin-5-16" title="Permanent link">¶</a></h2>
+<p>prebin 5개의 경계는 4곳이다. 각 경계를 "유지/삭제" 중 하나로 고르므로 가능한 분할은 <span class="arithmatex">\(2^4 = 16\)</span>가지다. 카드 사용률 변수의 가상 prebin(총 10,000건, Bad 900건)으로 16개를 모두 계산하면 다음과 같다.</p>
 <table>
 <thead>
 <tr>
-<th>Solver</th>
-<th>내부 엔진</th>
-<th>특징</th>
+<th>prebin</th>
+<th style="text-align: center;">P1</th>
+<th style="text-align: center;">P2</th>
+<th style="text-align: center;">P3</th>
+<th style="text-align: center;">P4</th>
+<th style="text-align: center;">P5</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>"cp"</code></td>
-<td>Google OR-Tools CP-SAT</td>
-<td>제약 전파(constraint propagation) 기반. Pre-bin 20개 이상일 때 효율적</td>
+<td>건수</td>
+<td style="text-align: center;">1,500</td>
+<td style="text-align: center;">1,300</td>
+<td style="text-align: center;">1,200</td>
+<td style="text-align: center;">2,500</td>
+<td style="text-align: center;">3,500</td>
 </tr>
 <tr>
-<td><code>"mip"</code></td>
-<td>Google OR-Tools BOP/CBC</td>
-<td>분기한정법(branch-and-bound). Pre-bin 20개 이하에서 빠름</td>
+<td>Bad</td>
+<td style="text-align: center;">20</td>
+<td style="text-align: center;">70</td>
+<td style="text-align: center;">55</td>
+<td style="text-align: center;">250</td>
+<td style="text-align: center;">505</td>
+</tr>
+<tr>
+<td>불량률</td>
+<td style="text-align: center;">1.33%</td>
+<td style="text-align: center;">5.38%</td>
+<td style="text-align: center;">4.58%</td>
+<td style="text-align: center;">10.0%</td>
+<td style="text-align: center;">14.4%</td>
 </tr>
 </tbody>
 </table>
+<p>P2→P3에서 불량률이 잠깐 내려간다(역전). 사용률이 높을수록 위험하다는 업무 논리상 <strong>Event rate 증가(ascending)</strong> 제약을 건다. 아래 표에서 <code>·</code>는 구간 경계를, <code>+</code>는 병합을 뜻한다.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">순위</th>
+<th>분할</th>
+<th>구간 불량률</th>
+<th style="text-align: center;">IV</th>
+<th style="text-align: center;">단조 증가?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">1</td>
+<td>P1 · P2 · P3 · P4 · P5 (병합 없음)</td>
+<td>1.33 / 5.38 / 4.58 / 10.0 / 14.4%</td>
+<td style="text-align: center;">0.4853</td>
+<td style="text-align: center;">✗</td>
+</tr>
+<tr>
+<td style="text-align: center;">2</td>
+<td><strong>P1 · P2+P3 · P4 · P5</strong></td>
+<td>1.33 / 5.00 / 10.0 / 14.4%</td>
+<td style="text-align: center;"><strong>0.4838</strong></td>
+<td style="text-align: center;">✓</td>
+</tr>
+<tr>
+<td style="text-align: center;">3</td>
+<td>P1 · P2 · P3 · P4+P5</td>
+<td>1.33 / 5.38 / 4.58 / 12.6%</td>
+<td style="text-align: center;">0.4565</td>
+<td style="text-align: center;">✗</td>
+</tr>
+<tr>
+<td style="text-align: center;">4</td>
+<td><strong>P1 · P2+P3 · P4+P5</strong></td>
+<td>1.33 / 5.00 / 12.6%</td>
+<td style="text-align: center;"><strong>0.4550</strong></td>
+<td style="text-align: center;">✓</td>
+</tr>
+<tr>
+<td style="text-align: center;">5</td>
+<td>P1 · P2 · P3+P4 · P5</td>
+<td>1.33 / 5.38 / 8.24 / 14.4%</td>
+<td style="text-align: center;">0.4383</td>
+<td style="text-align: center;">✓</td>
+</tr>
+<tr>
+<td style="text-align: center;">…</td>
+<td>(나머지 10개)</td>
+<td></td>
+<td style="text-align: center;">≤ 0.4214</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">16</td>
+<td>전부 병합</td>
+<td>9.00%</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">✓</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>제약이 없으면</strong> 병합하지 않는 것(1위)이 항상 IV 최대다. 구간을 합치면 IV는 줄거나 같을 뿐 늘지 않기 때문이다. 즉 IV 최대화는 제약이 있어야 의미가 생긴다.</li>
+<li><strong>단조 제약만</strong> 걸면 최적해는 역전 쌍 P2+P3만 합친 2위다.</li>
+<li><strong>단조 제약 + 최대 Bin 3개</strong>를 걸면 최적해는 4위(P1 · P2+P3 · P4+P5)로 바뀐다.</li>
+</ul>
+<p>prebin이 20개면 후보 분할은 <span class="arithmatex">\(2^{19} = 524{,}288\)</span>개다. 이 정도는 전수 탐색도 가능하지만 prebin 수가 늘면 <span class="arithmatex">\(2^{n-1}\)</span>로 폭증하고, 실제 문제는 여러 제약이 얽혀 있다. Solver는 제약 전파와 분기한정(branch-and-bound)으로 대부분의 조합을 계산하지 않고 잘라내면서도 최적성을 증명한다.</p>
+<div class="source-ref">예시 수치는 가상 데이터이며, 16개 분할의 IV는 직접 전수 계산한 값이다.</div>
+
+<hr>
+<h2 id="14-solver">1.4 Solver 선택<a class="headerlink" href="#14-solver" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Solver 옵션</th>
+<th>내부 엔진</th>
+<th>원리</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CP (기본값)</td>
+<td>Google OR-Tools CP-SAT</td>
+<td>제약 전파(constraint propagation) + 탐색</td>
+</tr>
+<tr>
+<td>MIP</td>
+<td>Google OR-Tools BOP 또는 COIN-OR CBC</td>
+<td>분기한정(branch-and-bound)</td>
+</tr>
+<tr>
+<td>LS</td>
+<td>LocalSolver(상용)</td>
+<td>국소 탐색 기반 — 대규모 문제용</td>
+</tr>
+</tbody>
+</table>
+<div class="source-ref">출처: <a href="https://gnpalencia.org/optbinning/binning_binary.html" target="_blank">optbinning 공식 문서 — OptimalBinning</a></div>
+
 <div class="admonition note">
 <p class="admonition-title">실무 권장</p>
-<p>기본값 <code>"cp"</code>를 거의 모든 경우에 사용한다. <code>"mip"</code>은 변수 수가 수백 개이고 Pre-bin이 적을 때만 고려.</p>
+<p>특별한 이유가 없으면 기본값 CP를 쓴다. CP와 MIP는 같은 문제를 풀므로 최적 IV 값은 같아야 하며(동률 해가 여럿이면 다른 분할이 나올 수 있다), 차이는 주로 계산 시간이다. prebin이 많아 시간이 오래 걸리면 Solver를 바꾸기보다 단조성 옵션의 휴리스틱 버전을 쓰거나(공식 문서는 prebin 20개 초과에서 "significantly faster"라고 안내한다) prebin 수를 줄이는 쪽이 효과적이다.</p>
 </div>
 
 

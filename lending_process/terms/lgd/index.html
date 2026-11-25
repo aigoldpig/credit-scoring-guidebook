@@ -5150,7 +5150,7 @@ LGD는 <strong>"부도가 났을 때 얼마를 못 받는가"</strong> — 부�
 \]</div>
 <hr>
 <h2 id="pd-lgd">PD와 LGD의 근본적 차이<a class="headerlink" href="#pd-lgd" title="Permanent link">¶</a></h2>
-<p>PD와 LGD는 같은 EL 산식의 구성 요소이지만, <strong>만들어지는 방식과 쓰이는 방식이 완전히 다르다.</strong></p>
+<p>PD와 LGD는 같은 EL 산식의 구성 요소이지만, <strong>만들어지는 방식과 쓰이는 방식이 크게 다르다.</strong></p>
 <table>
 <thead>
 <tr>
@@ -5168,7 +5168,7 @@ LGD는 <strong>"부도가 났을 때 얼마를 못 받는가"</strong> — 부�
 <tr>
 <td><strong>대상</strong></td>
 <td>모든 차주 (부도 전)</td>
-<td><strong>부도가 난 차주만</strong> (부도 후)</td>
+<td><strong>부도가 난 건만</strong> (부도 후)</td>
 </tr>
 <tr>
 <td><strong>결정 요인</strong></td>
@@ -5178,24 +5178,24 @@ LGD는 <strong>"부도가 났을 때 얼마를 못 받는가"</strong> — 부�
 <tr>
 <td><strong>산출</strong></td>
 <td>모형 개발 (로지스틱, GBM 등)</td>
-<td>과거 부도 건 회수 실적 집계</td>
+<td>과거 부도 건 회수 실적 집계 → 필요 시 모형화</td>
 </tr>
 <tr>
 <td><strong>적용</strong></td>
 <td>차주별 모형 스코어링</td>
-<td><strong>상품·담보 유형별 테이블 룩업</strong></td>
+<td><strong>상품·담보 유형별 세그먼트 값</strong>이 출발점</td>
 </tr>
 <tr>
 <td><strong>개별화</strong></td>
 <td>차주마다 다른 값</td>
-<td>같은 상품·담보면 같은 값</td>
+<td>같은 세그먼트면 같은 값 (모형화하면 거래별로 달라짐)</td>
 </tr>
 </tbody>
 </table>
-<p>핵심은 이것이다:</p>
+<p>핵심은 이것이다.</p>
 <ul>
 <li>PD는 <strong>예측 모형</strong> — 신규 차주가 오면 모형을 돌려서 개별 값을 산출</li>
-<li>LGD는 대부분 <strong>테이블 룩업</strong> — 상품·담보 유형에 따라 미리 정해진 값을 가져다 씀</li>
+<li>LGD는 <strong>세그먼트 값에서 출발</strong> — 상품·담보 유형별로 과거 회수 실적을 집계한 값을 쓰고, 데이터가 충분하면 거래별 모형으로 세분화</li>
 </ul>
 <p>같은 사람이라도 주택담보대출과 신용대출의 LGD는 완전히 다르다.
 차주(사람)보다 <strong>거래(deal)</strong>의 특성이 LGD를 지배하기 때문이다.</p>
@@ -5210,58 +5210,127 @@ LGD는 <strong>"부도가 났을 때 얼마를 못 받는가"</strong> — 부�
 <div class="arithmatex">\[
 \text{LGD} = 1 - \text{회수율}
 \]</div>
-<p>분모는 부도 시점에 빌려준 잔액(EAD), 분자는 비용을 제외하고 순수하게 들어온 금액이다.
+<p>분모는 부도 시점에 빌려준 잔액(EAD), 분자는 회수 비용을 제외하고 순수하게 들어온 금액이다.
 이 비율이 <strong>회수율</strong>이고, 그 반대편이 <strong>LGD</strong>이다.</p>
 <h3 id="_1">한 건의 예시<a class="headerlink" href="#_1" title="Permanent link">¶</a></h3>
-<div class="highlight"><pre><span></span><code>차주 A — 주택담보대출:
-  부도 시점 잔액(EAD):    5,000만 원
-  담보 매각:             3,000만 원
-  추심 회수:               500만 원
-  회수 비용(법률, 경매):   −300만 원
-  ───────────────────────────────
-  순회수액:              3,200만 원
-  회수율:                 64%
-  LGD:                   36%
-</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>항목 (차주 A — 주택담보대출, 가상 예시)</th>
+<th style="text-align: right;">금액</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>부도 시점 잔액(EAD)</td>
+<td style="text-align: right;">5,000만 원</td>
+</tr>
+<tr>
+<td>담보 매각</td>
+<td style="text-align: right;">3,000만 원</td>
+</tr>
+<tr>
+<td>추심 회수</td>
+<td style="text-align: right;">500만 원</td>
+</tr>
+<tr>
+<td>회수 비용(법률, 경매)</td>
+<td style="text-align: right;">−300만 원</td>
+</tr>
+<tr>
+<td><strong>순회수액</strong></td>
+<td style="text-align: right;"><strong>3,200만 원</strong></td>
+</tr>
+<tr>
+<td>회수율</td>
+<td style="text-align: right;">3,200 ÷ 5,000 = 64%</td>
+</tr>
+<tr>
+<td><strong>LGD</strong></td>
+<td style="text-align: right;"><strong>36%</strong></td>
+</tr>
+</tbody>
+</table>
 <h3 id="_2">회수는 한 번에 끝나지 않는다<a class="headerlink" href="#_2" title="Permanent link">¶</a></h3>
 <p>부도가 발생하면 회수가 수개월~수년에 걸쳐 진행된다.</p>
-<div class="highlight"><pre><span></span><code>부도 시점(t=0):  EAD = 5,000만 원
-
-t = 3개월:   담보 매각 착수
-t = 6개월:   담보 매각 완료 → 3,000만 원 회수
-t = 12개월:  추심으로 300만 원 추가 회수
-t = 18개월:  추심으로 200만 원 추가 회수
-t = 24개월:  회수 종결 (최종 상각 처리)
-</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>시점 (부도 후)</th>
+<th>사건</th>
+<th style="text-align: right;">회수액</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0개월</td>
+<td>부도, EAD = 5,000만 원</td>
+<td style="text-align: right;">—</td>
+</tr>
+<tr>
+<td>3개월</td>
+<td>담보 매각 착수</td>
+<td style="text-align: right;">—</td>
+</tr>
+<tr>
+<td>6개월</td>
+<td>담보 매각 완료</td>
+<td style="text-align: right;">3,000만 원</td>
+</tr>
+<tr>
+<td>12개월</td>
+<td>추심 회수</td>
+<td style="text-align: right;">300만 원</td>
+</tr>
+<tr>
+<td>18개월</td>
+<td>추심 회수</td>
+<td style="text-align: right;">200만 원</td>
+</tr>
+<tr>
+<td>24개월</td>
+<td>회수 종결 (잔여 상각)</td>
+<td style="text-align: right;">—</td>
+</tr>
+</tbody>
+</table>
 <p>시간이 지나서 받은 돈은 현재 가치가 떨어지므로,
-실무에서는 회수 현금흐름을 <strong>부도 시점 기준으로 할인</strong>한다.</p>
+실무에서는 회수 현금흐름을 <strong>부도 시점 기준으로 할인</strong>한다. Basel도 LGD 산정 시 손실을 회계상 손실이 아닌
+<strong>경제적 손실</strong>로 보고, 할인 효과와 직간접 회수 비용을 반영하도록 요구한다(CRE36.77).</p>
 <div class="arithmatex">\[
-\text{Workout LGD} = 1 - \frac{\displaystyle\sum_{t} \frac{R_t}{(1+r)^t}}{\text{EAD}}
+\text{Workout LGD} = 1 - \frac{\displaystyle\sum_{k} \frac{R_k}{(1+r)^{t_k}}}{\text{EAD}}
 \]</div>
 <ul>
-<li><span class="arithmatex">\(R_t\)</span>: 시점 <span class="arithmatex">\(t\)</span>에서의 회수 금액 (비용 차감 후)</li>
-<li><span class="arithmatex">\(r\)</span>: 할인율 (계약금리 또는 실효금리)</li>
+<li><span class="arithmatex">\(R_k\)</span>: <span class="arithmatex">\(k\)</span>번째 회수 금액 (비용 차감 후)</li>
+<li><span class="arithmatex">\(t_k\)</span>: 부도 시점부터 그 회수까지의 기간 (<strong>연 단위</strong>, 예: 18개월 = 1.5)</li>
+<li><span class="arithmatex">\(r\)</span>: 연 할인율 (계약금리, 실효금리 또는 위험을 반영한 할인율)</li>
 </ul>
 <p>할인하면 회수액의 현재가치가 줄어드니 LGD가 올라간다.
 회수가 오래 걸릴수록 더 올라간다.</p>
 <h3 id="lgd-bimodal">LGD 분포의 특수성 — 양봉(Bimodal)<a class="headerlink" href="#lgd-bimodal" title="Permanent link">¶</a></h3>
-<p>PD는 대부분 낮은 값에 몰려 있지만,
-LGD는 <strong>"거의 다 회수"와 "거의 못 회수"</strong> 양쪽에 몰리는 양봉 분포가 흔하다.</p>
-<p><a class="glightbox" data-type="image" data-width="100%" data-height="auto" href="../images/lgd_bimodal.png" data-desc-position="bottom"><img alt="LGD 양봉 분포" src="../images/lgd_bimodal.png"></a></p>
-<p>담보가 있으면 LGD가 낮고(왼쪽 봉), 없으면 높다(오른쪽 봉).
-이 양봉 특성 때문에 평균값 하나로 대표하기 어렵고,
-LGD 모형화가 PD보다 까다로운 이유이기도 하다.</p>
+<p>PD 모형의 타겟은 0/1이지만, 부도 건별 LGD 값은 0%와 100% 사이에 분포한다.
+그 분포는 <strong>"거의 다 회수"와 "거의 못 회수"</strong> 양쪽에 몰리는 양봉 형태가 흔하다.</p>
+<p><a class="glightbox" data-type="image" data-width="100%" data-height="auto" href="../images/lgd_bimodal.png" data-desc-position="bottom"><img alt="LGD 분포의 양봉 특성 — 가상 예시" src="../images/lgd_bimodal.png"></a></p>
+<p>양봉의 주된 원인은 <strong>부도 이후의 결말이 크게 둘로 갈린다</strong>는 데 있다.</p>
+<ul>
+<li><strong>왼쪽 봉 (LGD ≈ 0%)</strong> — 부도 후 연체를 해소하고 정상으로 돌아온 경우(Cure), 또는 담보로 전액 회수한 경우</li>
+<li><strong>오른쪽 봉 (LGD ≈ 100%)</strong> — 회수에 실패해 대부분을 상각한 경우</li>
+<li><strong>가운데</strong> — 담보 매각 등으로 일부만 회수한 경우</li>
+</ul>
+<p>담보 유무는 어느 봉으로 갈지에 영향을 주는 중요한 요인이지만, 봉 자체를 만드는 것은 Cure와 상각이라는 결말의 이분성이다.
+이 특성 때문에 평균값 하나로 대표하기 어렵고, 일반적인 회귀 모형을 그대로 적용하기도 어렵다(아래 4절의 2단계 모형).</p>
 <hr>
 <h2 id="2-lgd">2. LGD 테이블 — 실무에서의 적용<a class="headerlink" href="#2-lgd" title="Permanent link">¶</a></h2>
 <h3 id="_3">테이블 구축<a class="headerlink" href="#_3" title="Permanent link">¶</a></h3>
-<p>과거 5~7년간의 부도 건 회수 실적을 <strong>상품·담보 유형별</strong>로 집계한다.</p>
+<p>과거 수년간의 부도 건 회수 실적을 <strong>상품·담보 유형별</strong>로 집계한다.
+아래 값은 구조를 보여주기 위한 <strong>가상 예시</strong>이다.</p>
 <table>
 <thead>
 <tr>
 <th>상품 유형</th>
 <th>담보 유형</th>
 <th>채권 순위</th>
-<th style="text-align: center;">관측 LGD (평균)</th>
+<th style="text-align: center;">관측 LGD (평균, 가상)</th>
 </tr>
 </thead>
 <tbody>
@@ -5282,6 +5351,12 @@ LGD 모형화가 PD보다 까다로운 이유이기도 하다.</p>
 <td>없음</td>
 <td>선순위</td>
 <td style="text-align: center;">70%</td>
+</tr>
+<tr>
+<td>신용카드</td>
+<td>없음</td>
+<td>선순위</td>
+<td style="text-align: center;">80%</td>
 </tr>
 <tr>
 <td>기업대출</td>
@@ -5305,18 +5380,38 @@ LGD 모형화가 PD보다 까다로운 이유이기도 하다.</p>
 </table>
 <p>PD가 <strong>등급별</strong>로 묶인다면, LGD는 <strong>상품·담보 유형별</strong>로 묶인다.</p>
 <h3 id="_4">신규 대출에 적용<a class="headerlink" href="#_4" title="Permanent link">¶</a></h3>
-<div class="highlight"><pre><span></span><code>김철수 — 주택담보대출 신청:
-  PD:  모형 돌려서 3등급 → PD = 1.5%
-  LGD: 테이블에서 "주택담보 + 선순위" → 25%
-  EAD: 대출 잔액 2억
-  EL = 1.5% × 25% × 2억 = 75만 원
-
-박영희 — 신용대출 신청:
-  PD:  모형 돌려서 5등급 → PD = 4.0%
-  LGD: 테이블에서 "무담보 + 선순위" → 70%
-  EAD: 대출 잔액 3,000만 원
-  EL = 4.0% × 70% × 3,000만 = 84만 원
-</code></pre></div>
+<p>등급별 PD는 <a href="../pd/">PD 페이지</a>의 레벨링 예시(TtC PD)를 쓴다.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>김철수 — 주택담보대출</th>
+<th>박영희 — 개인 신용대출</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PD</td>
+<td>3등급 → 1.8%</td>
+<td>5등급 → 4.6%</td>
+</tr>
+<tr>
+<td>LGD</td>
+<td>주택담보 + 선순위 → 25%</td>
+<td>무담보 + 선순위 → 70%</td>
+</tr>
+<tr>
+<td>EAD</td>
+<td>대출 잔액 2억 원</td>
+<td>대출 잔액 3,000만 원</td>
+</tr>
+<tr>
+<td><strong>EL</strong></td>
+<td>0.018 × 0.25 × 2억 = <strong>90만 원</strong></td>
+<td>0.046 × 0.70 × 3,000만 = <strong>96.6만 원</strong></td>
+</tr>
+</tbody>
+</table>
 <p>PD는 차주마다 모형을 돌려서 다른 값이 나오지만,
 LGD는 같은 상품·담보 유형이면 같은 값을 쓴다.</p>
 <hr>
@@ -5325,53 +5420,106 @@ LGD는 같은 상품·담보 유형이면 같은 값을 쓴다.</p>
 LGD도 목적에 따라 다른 버전이 존재한다.</p>
 <h3 id="downturn-lgd-basel">Downturn LGD — Basel이 요구하는 것<a class="headerlink" href="#downturn-lgd-basel" title="Permanent link">¶</a></h3>
 <p>PD에서 Basel은 장기 평균(TtC)을 요구했지만,
-LGD에서는 <strong>평균이 아니라 경기 악화 시의 LGD</strong>를 요구한다.</p>
-<p>이유는 <strong>PD와 LGD가 동시에 올라가기 때문</strong>이다.</p>
-<p>2008년 금융위기:</p>
+자체 추정 LGD는 <strong>경기 하강기 상황을 반영</strong>해야 하며 장기 부도가중 평균 손실률보다 낮을 수 없다(CRE36.85).</p>
+<p>이유는 <strong>PD와 LGD가 함께 오르는 경향</strong>이 있기 때문이다.</p>
 <ul>
-<li>PD 급등 → 부도 건수 폭증</li>
-<li>동시에 부동산 가격 급락 → 담보 매각해도 회수율 하락</li>
-<li>부실채권이 시장에 쏟아짐 → NPL 매각가도 하락</li>
+<li>경기 악화 → 부도 건수 증가</li>
+<li>동시에 담보(특히 부동산) 가격 하락 → 담보 매각 회수율 하락</li>
+<li>부실채권이 시장에 몰림 → 매각 가격도 하락</li>
 </ul>
-<p>부도가 몰리는 시기에 담보 가치도 동시에 떨어지는 것 — PD와 LGD의 <strong>양의 상관관계</strong> —
+<p>부도가 몰리는 시기에 담보 가치도 함께 떨어지는 것 — PD와 LGD의 <strong>양의 상관관계</strong> —
 을 평균 LGD로는 포착할 수 없다.</p>
-<div class="highlight"><pre><span></span><code>평시 (2015~2019):   담보대출 평균 LGD = 25%
-불황기 (2008~2009): 담보대출 평균 LGD = 42%  ← Downturn LGD
-</code></pre></div>
-<h3 id="pit-lgd-ifrs-9">PiT LGD — IFRS 9가 요구하는 것<a class="headerlink" href="#pit-lgd-ifrs-9" title="Permanent link">¶</a></h3>
-<p>PiT PD와 동일한 구조이다. 현재 경기를 반영한다.</p>
-<div class="arithmatex">\[
-\text{PiT LGD} \approx \text{기본 LGD} \times g(\text{부동산 가격지수},\; \text{GDP},\; \ldots)
-\]</div>
-<p>특히 담보대출의 경우 <strong>부동산 가격지수</strong>가 직접적 영향을 준다.
-부동산이 빠지면 담보 매각 회수액이 줄어들기 때문이다.</p>
-<h3 id="foundation-irb">Foundation IRB 규제값<a class="headerlink" href="#foundation-irb" title="Permanent link">¶</a></h3>
-<p>Basel은 자체 LGD 추정이 어려운 은행을 위해 <strong>고정값</strong>을 제공한다.</p>
 <table>
 <thead>
 <tr>
-<th>구분</th>
-<th style="text-align: center;">규제 LGD</th>
+<th>기간 (가상 예시)</th>
+<th style="text-align: center;">담보대출 평균 LGD</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>선순위, 무담보</td>
+<td>평시</td>
+<td style="text-align: center;">25%</td>
+</tr>
+<tr>
+<td>경기 하강기</td>
+<td style="text-align: center;">42% ← Downturn LGD</td>
+</tr>
+</tbody>
+</table>
+<h3 id="pit-lgd-ifrs-9">PiT LGD — IFRS 9가 요구하는 것<a class="headerlink" href="#pit-lgd-ifrs-9" title="Permanent link">¶</a></h3>
+<p>PiT PD와 같은 논리이다. 현재와 예상 경기를 반영한다.</p>
+<div class="arithmatex">\[
+\text{PiT LGD} \approx \text{기본 LGD} \times g(\text{부동산 가격지수},\; \text{GDP},\; \ldots)
+\]</div>
+<p>특히 담보대출의 경우 <strong>부동산 가격 전망</strong>이 직접적 영향을 준다.
+부동산이 빠지면 담보 매각 회수액이 줄어들기 때문이다. 곱셈식은 개념 표현이며, 실제로는 담보가치 하락 시나리오를 회수 현금흐름에 직접 반영하는 방식이 많이 쓰인다.</p>
+<h3 id="_5">감독 기준값과 자체 추정<a class="headerlink" href="#_5" title="Permanent link">¶</a></h3>
+<p>Basel 내부등급법에서 LGD를 어떻게 정하는지는 <strong>자산군</strong>에 따라 다르다.</p>
+<p><strong>기업·금융기관·국가 익스포저</strong> — 기본 내부등급법(F-IRB)에서는 감독 기준값을 쓴다.</p>
+<table>
+<thead>
+<tr>
+<th>구분 (F-IRB, 담보 미인정)</th>
+<th style="text-align: center;">Basel III 최종안 (CRE32.6~32.7)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>선순위 — 국가·은행·증권사 등 금융기관</td>
 <td style="text-align: center;"><strong>45%</strong></td>
 </tr>
 <tr>
-<td>후순위, 무담보</td>
+<td>선순위 — 그 밖의 기업</td>
+<td style="text-align: center;"><strong>40%</strong></td>
+</tr>
+<tr>
+<td>후순위</td>
 <td style="text-align: center;"><strong>75%</strong></td>
 </tr>
 <tr>
 <td>담보 인정 시</td>
-<td style="text-align: center;">담보 유형별 차등</td>
+<td style="text-align: center;">담보 유형별 공식으로 차등</td>
 </tr>
 </tbody>
 </table>
-<p>자체 추정(Advanced IRB)을 하려면 최소 <strong>7년</strong> 이상의 회수 이력 데이터가 필요하며,
-기업 포트폴리오에서는 부도 건 자체가 적어 데이터 확보가 매우 어렵다.</p>
-<h3 id="_5">층위 종합<a class="headerlink" href="#_5" title="Permanent link">¶</a></h3>
+<p>Basel II에서는 기업 선순위 무담보도 45%였으나, Basel III 최종안에서 비금융 기업은 40%로 낮아졌다.
+LGD까지 자체 추정하는 고급 내부등급법(A-IRB)을 쓰려면 기업 익스포저는 <strong>최소 7년</strong>, 가능하면 경기 한 사이클 이상의 관측 데이터가 필요하다(CRE36.89).</p>
+<p><strong>리테일 익스포저</strong> — F-IRB가 <strong>없다.</strong> 내부등급법을 쓰는 은행은 풀(pool)별 PD와 LGD를 자체 추정해야 하고(CRE32.58),
+관측 기간은 최소 5년이다(CRE36.90). 대신 Basel III 최종안은 자체 추정 LGD에 하한을 둔다.</p>
+<table>
+<thead>
+<tr>
+<th>리테일 LGD 하한 (CRE32.58)</th>
+<th style="text-align: center;">무담보</th>
+<th style="text-align: center;">담보</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>주택담보대출</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">5%</td>
+</tr>
+<tr>
+<td>적격 리볼빙(QRRE, 신용카드 등)</td>
+<td style="text-align: center;">50%</td>
+<td style="text-align: center;">—</td>
+</tr>
+<tr>
+<td>그 밖의 리테일</td>
+<td style="text-align: center;">30%</td>
+<td style="text-align: center;">담보 유형별 0~15%</td>
+</tr>
+</tbody>
+</table>
+<p>개인(소매) 신용평가 맥락에서는 "규제값을 가져다 쓴다"는 선택지가 없다는 점이 중요하다.</p>
+<div class="source-ref">
+출처: <a href="https://www.bis.org/basel_framework/chapter/CRE/32.htm" target="_blank">Basel Framework CRE32 · IRB approach: risk components (32.6, 32.7, 32.58)</a>,
+<a href="https://www.bis.org/basel_framework/chapter/CRE/36.htm" target="_blank">CRE36 · minimum requirements (36.77, 36.85, 36.89, 36.90)</a>
+</div>
+
+<h3 id="_6">층위 종합<a class="headerlink" href="#_6" title="Permanent link">¶</a></h3>
 <table>
 <thead>
 <tr>
@@ -5379,16 +5527,16 @@ LGD에서는 <strong>평균이 아니라 경기 악화 시의 LGD</strong>를 �
 <th>관측 LGD</th>
 <th>Downturn LGD</th>
 <th>PiT LGD</th>
-<th>FIRB 규제값</th>
+<th>F-IRB 감독 기준값</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><strong>기준</strong></td>
 <td>회수 실적</td>
-<td>경기 악화 시</td>
-<td>현재 경기 반영</td>
-<td>감독당국 고정</td>
+<td>경기 하강기 반영</td>
+<td>현재·예상 경기 반영</td>
+<td>감독당국 고정값</td>
 </tr>
 <tr>
 <td><strong>성격</strong></td>
@@ -5400,16 +5548,16 @@ LGD에서는 <strong>평균이 아니라 경기 악화 시의 LGD</strong>를 �
 <tr>
 <td><strong>용도</strong></td>
 <td>모형 개발·검증</td>
-<td>Basel 자기자본</td>
+<td>Basel 자기자본 (자체 추정)</td>
 <td>IFRS 9 충당금</td>
-<td>Basel FIRB</td>
+<td>Basel 자기자본 (기업 F-IRB만)</td>
 </tr>
 </tbody>
 </table>
 <hr>
 <h2 id="4-lgd-pd">4. LGD 모델링 — PD 모형과 무엇이 다른가<a class="headerlink" href="#4-lgd-pd" title="Permanent link">¶</a></h2>
-<h3 id="_6">문제 구조의 차이<a class="headerlink" href="#_6" title="Permanent link">¶</a></h3>
-<p>PD 모형은 <strong>이진 분류</strong>(부도 0/1)이지만, LGD는 <strong>회귀</strong> 문제이다.</p>
+<h3 id="_7">문제 구조의 차이<a class="headerlink" href="#_7" title="Permanent link">¶</a></h3>
+<p>PD 모형은 <strong>이진 분류</strong>(부도 0/1)이지만, LGD는 <strong>0~1 사이 연속값을 예측하는 회귀</strong> 문제이다.</p>
 <table>
 <thead>
 <tr>
@@ -5421,8 +5569,8 @@ LGD에서는 <strong>평균이 아니라 경기 악화 시의 LGD</strong>를 �
 <tbody>
 <tr>
 <td><strong>대상</strong></td>
-<td>모든 차주 (10만 명)</td>
-<td>부도난 차주만 (1만 명)</td>
+<td>모든 차주 (예: 10만 명)</td>
+<td>부도난 건만 (예: 1만 건)</td>
 </tr>
 <tr>
 <td><strong>타겟</strong></td>
@@ -5435,13 +5583,13 @@ LGD에서는 <strong>평균이 아니라 경기 악화 시의 LGD</strong>를 �
 <td>회귀</td>
 </tr>
 <tr>
-<td><strong>분포</strong></td>
-<td>불균형이지만 단봉</td>
+<td><strong>타겟 분포</strong></td>
+<td>0/1 불균형 (부도가 소수)</td>
 <td><strong>양봉</strong> (0% 근처 + 100% 근처)</td>
 </tr>
 </tbody>
 </table>
-<h3 id="_7">변수의 차이<a class="headerlink" href="#_7" title="Permanent link">¶</a></h3>
+<h3 id="_8">변수의 차이<a class="headerlink" href="#_8" title="Permanent link">¶</a></h3>
 <p><strong>쓰는 변수가 다르다.</strong> PD는 사람 변수, LGD는 거래·담보 변수가 지배적이다.</p>
 <table>
 <thead>
@@ -5454,7 +5602,7 @@ LGD에서는 <strong>평균이 아니라 경기 악화 시의 LGD</strong>를 �
 <tbody>
 <tr>
 <td><strong>차주 정보</strong></td>
-<td>핵심 (소득, 연체이력, 부채비율)</td>
+<td>핵심 (소득, 연체이력, 부채 수준)</td>
 <td>보조적</td>
 </tr>
 <tr>
@@ -5479,25 +5627,45 @@ LGD에서는 <strong>평균이 아니라 경기 악화 시의 LGD</strong>를 �
 </tr>
 </tbody>
 </table>
-<h3 id="_8">모델링 접근법<a class="headerlink" href="#_8" title="Permanent link">¶</a></h3>
-<h4 id="1">접근 1: 풀 평균 (가장 흔함)<a class="headerlink" href="#1" title="Permanent link">¶</a></h4>
+<h3 id="_9">모델링 접근법<a class="headerlink" href="#_9" title="Permanent link">¶</a></h3>
+<h4 id="1">접근 1: 세그먼트(풀) 평균<a class="headerlink" href="#1" title="Permanent link">¶</a></h4>
 <p>모형을 만들지 않는다. 상품·담보 유형별로 과거 회수 실적의 평균을 쓴다.</p>
-<div class="highlight"><pre><span></span><code>세그먼트별 평균 LGD:
-  주택담보 + LTV 60% 이하:  15%
-  주택담보 + LTV 60~80%:   25%
-  주택담보 + LTV 80% 초과:  35%
-  신용대출:                  72%
-</code></pre></div>
-<p>단순하고 설명이 쉽다. FIRB 은행이나 데이터가 부족한 기관은 이 방식이거나
-Basel 규제값(무담보 선순위 45% 등)을 그대로 사용한다.</p>
+<table>
+<thead>
+<tr>
+<th>세그먼트 (가상 예시)</th>
+<th style="text-align: center;">평균 LGD</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>주택담보 + LTV 60% 이하</td>
+<td style="text-align: center;">15%</td>
+</tr>
+<tr>
+<td>주택담보 + LTV 60~80%</td>
+<td style="text-align: center;">25%</td>
+</tr>
+<tr>
+<td>주택담보 + LTV 80% 초과</td>
+<td style="text-align: center;">35%</td>
+</tr>
+<tr>
+<td>신용대출</td>
+<td style="text-align: center;">70%</td>
+</tr>
+</tbody>
+</table>
+<p>단순하고 설명이 쉬워 LGD 추정의 출발점으로 많이 쓰인다.
+세그먼트를 잘게 나눌수록 거래별 모형에 가까워지지만, 세그먼트당 부도 건수가 줄어 추정이 불안정해진다.</p>
 <h4 id="2-2-two-stage-model">접근 2: 2단계 모형 (Two-Stage Model)<a class="headerlink" href="#2-2-two-stage-model" title="Permanent link">¶</a></h4>
-<p>양봉 분포를 정면으로 다루는 가장 대표적인 방법이다.</p>
+<p>양봉 분포를 정면으로 다루는 대표적인 방법이다.</p>
 <p><strong>1단계 — Cure 모형 (이진 분류)</strong></p>
 <p>부도난 차주 중 일부는 연체를 해소하고 정상으로 돌아온다(Cure).
 Cure되면 LGD ≈ 0%이므로, 먼저 Cure 여부를 분류한다.</p>
 <ul>
 <li>타겟: Cure 여부 (0 or 1) — PD 모형과 동일한 구조</li>
-<li>방법론: 로지스틱 회귀</li>
+<li>방법론: 로지스틱 회귀 등</li>
 <li>변수: 연체 금액, 연체 기간, 과거 Cure 이력, 담보 유무 등</li>
 </ul>
 <p><strong>2단계 — Loss 모형 (회귀)</strong></p>
@@ -5505,64 +5673,61 @@ Cure되면 LGD ≈ 0%이므로, 먼저 Cure 여부를 분류한다.</p>
 <ul>
 <li>대상: Non-Cure 건만</li>
 <li>타겟: LGD (0~1 연속값)</li>
-<li>방법론: Beta 회귀, OLS, 트리 기반 회귀</li>
+<li>방법론: Beta 회귀, 분수 반응(fractional response) 회귀, 트리 기반 회귀 등</li>
 </ul>
-<p><strong>최종 결합:</strong></p>
+<p><strong>최종 결합:</strong> Cure 건의 LGD를 0으로 둘 때</p>
 <div class="arithmatex">\[
 \text{LGD} = (1 - P(\text{Cure})) \times \text{E}[\text{LGD} \mid \text{Non-Cure}]
 \]</div>
-<p>Cure 확률이 40%, Non-Cure 시 평균 LGD가 65%라면:</p>
-<div class="arithmatex">\[
-\text{LGD} = 0.6 \times 0.65 = 39\%
-\]</div>
+<p>Cure 확률이 40%, Non-Cure 시 평균 LGD가 65%라면 <span class="arithmatex">\(\text{LGD} = 0.6 \times 0.65 = 39\%\)</span>이다.</p>
 <h4 id="3-beta">접근 3: Beta 회귀<a class="headerlink" href="#3-beta" title="Permanent link">¶</a></h4>
-<p>LGD가 0~1 사이 값이므로, 0~1 구간을 자연스럽게 다루는 Beta 분포를 사용한다.
+<p>LGD가 0~1 사이 값이므로, 0~1 구간에서 정의되는 Beta 분포를 사용한다.
 일반 OLS는 예측값이 0 미만이나 1 초과가 나올 수 있지만,
-Beta 회귀는 이 범위를 구조적으로 보장한다.</p>
+Beta 회귀는 예측값이 (0, 1) 안에 머문다. 다만 Beta 분포는 정확히 0이나 1인 값을 다룰 수 없어,
+LGD가 정확히 0%·100%인 건이 많으면 값을 약간 조정하거나 2단계 모형과 결합해야 한다.</p>
 <h4 id="4">접근 4: 트리 기반 회귀<a class="headerlink" href="#4" title="Permanent link">¶</a></h4>
-<p>PD에서 GBM Classifier를 쓰듯, LGD에서는 <strong>GBM Regressor</strong>를 쓴다.
-분포 가정이 없어 양봉이든 유연하게 다룰 수 있지만,
-해석 가능성 문제는 PD 모형과 동일하다.</p>
-<h3 id="_9">현실적 채택 현황<a class="headerlink" href="#_9" title="Permanent link">¶</a></h3>
+<p>PD에서 GBM 분류기를 쓰듯, LGD에서는 <strong>GBM 회귀</strong>를 쓸 수 있다.
+분포 가정이 없어 양봉도 유연하게 다룰 수 있지만,
+해석 가능성 문제는 PD 모형과 동일하고, 부도 건수가 적어 과적합 위험이 더 크다.</p>
+<h3 id="_10">접근법 비교<a class="headerlink" href="#_10" title="Permanent link">¶</a></h3>
 <table>
 <thead>
 <tr>
 <th>접근법</th>
 <th style="text-align: center;">복잡도</th>
-<th style="text-align: center;">실무 채택</th>
-<th>비고</th>
+<th>장점</th>
+<th>한계</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>풀 평균 / 규제값</td>
+<td>세그먼트 평균</td>
 <td style="text-align: center;">낮음</td>
-<td style="text-align: center;"><strong>가장 흔함</strong></td>
-<td>FIRB, 데이터 부족 기관</td>
+<td>단순, 설명 용이, 적은 데이터로 가능</td>
+<td>세그먼트 내 차이 무시</td>
 </tr>
 <tr>
 <td>2단계 모형</td>
 <td style="text-align: center;">중간</td>
-<td style="text-align: center;">AIRB 은행</td>
-<td>Cure + Loss 분리가 직관적</td>
+<td>양봉 구조를 직접 반영, Cure·Loss 분리가 직관적</td>
+<td>두 모형의 오차가 누적</td>
 </tr>
 <tr>
 <td>Beta 회귀</td>
 <td style="text-align: center;">중간</td>
-<td style="text-align: center;">학계·일부 실무</td>
 <td>0~1 범위 보장</td>
+<td>정확히 0·1인 값 처리 필요</td>
 </tr>
 <tr>
 <td>트리 기반 회귀</td>
 <td style="text-align: center;">높음</td>
-<td style="text-align: center;">시도 중</td>
-<td>해석 가능성 이슈</td>
+<td>비선형·상호작용 포착</td>
+<td>해석 가능성, 소표본 과적합</td>
 </tr>
 </tbody>
 </table>
-<p>PD 모형은 거의 모든 금융기관이 자체 개발하지만,
-LGD 모형을 자체 개발하는 곳은 상대적으로 적다.
-데이터 확보가 어렵고, 풀 평균이나 규제값으로도 규제 요건을 충족할 수 있기 때문이다.</p>
+<p>LGD는 표본이 부도 건으로 한정되고 회수가 끝나기까지 오래 걸리므로,
+거래별 모형을 갖추려면 PD보다 긴 데이터 축적이 필요하다.</p>
 <hr>
 <h2 id="5-lgd-pd">5. LGD 모형화가 PD보다 어려운 이유 — 요약<a class="headerlink" href="#5-lgd-pd" title="Permanent link">¶</a></h2>
 <table>
@@ -5587,7 +5752,7 @@ LGD 모형을 자체 개발하는 곳은 상대적으로 적다.
 </tr>
 <tr>
 <td><strong>회수 기간</strong></td>
-<td>담보 매각에 2~3년, 법적 절차까지 5년+ → 데이터 완성에 시간 소요</td>
+<td>담보 처분과 법적 절차에 수년이 걸리기도 함 → 데이터 완성에 시간 소요</td>
 </tr>
 <tr>
 <td><strong>경기 의존성</strong></td>
@@ -5597,13 +5762,12 @@ LGD 모형을 자체 개발하는 곳은 상대적으로 적다.
 </table>
 <div class="admonition info">
 <p class="admonition-title">Censoring과 생존분석</p>
-<p>회수 미완료 건(censored observation)을 처리하기 위해
-생존분석(survival analysis)의 아이디어를 차용하는 연구가 있다.
-회수 현금흐름을 시간 축으로 모형화하거나,
-정상화(cure) 여부를 먼저 분류한 뒤 손실률을 추정하는
-mixture cure model 등이 대표적이다.
-다만 실무 적용은 AIRB 승인 대형 은행 위주이며,
-감독당국 검증 부담이 있어 보편적이지는 않다.</p>
+<p>회수가 끝나지 않은 건(censored observation)을 버리면, 회수가 빨리 끝난 건만 남아 LGD가 한쪽으로 치우친다.
+이를 다루기 위해 생존분석(survival analysis)의 아이디어를 쓰는 연구가 있다.
+회수 현금흐름을 시간 축의 위험률로 모형화해 미완료 건의 남은 회수를 추정하거나,
+"끝내 회수되지 않는(또는 반드시 정상화되는) 집단"이 섞여 있다고 보는 <strong>mixture cure model</strong>처럼
+생존 모형에 두 집단의 혼합을 넣는 방식이 대표적이다.
+2단계 모형이 Cure 여부를 먼저 분류한다는 발상과 닮았지만, 시간 축과 미완료 건을 함께 다룬다는 점이 다르다.</p>
 </div>
 
 

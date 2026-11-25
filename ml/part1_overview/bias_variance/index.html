@@ -5128,7 +5128,7 @@
 </blockquote>
 <p>이 질문에 수학적 프레임을 제공하는 것이 <strong>Bias-Variance Tradeoff</strong>다. 트리 기반 모델로 넘어가기 전에, 이 개념을 먼저 잡아야 이후 모든 하이퍼파라미터 선택에 근거가 생긴다.</p>
 <h2 id="22">2.2 예측 오차의 분해<a class="headerlink" href="#22" title="Permanent link">¶</a></h2>
-<p>모형 <span class="arithmatex">\(\hat{f}(x)\)</span>가 참 함수 <span class="arithmatex">\(f(x)\)</span>를 추정할 때, 새로운 데이터에 대한 기대 예측 오차(Expected Prediction Error)는 세 가지 성분으로 분해된다.</p>
+<p>모형 <span class="arithmatex">\(\hat{f}(x)\)</span>가 참 함수 <span class="arithmatex">\(f(x)\)</span>를 추정한다고 하자. 관측값이 <span class="arithmatex">\(y = f(x) + \epsilon\)</span>(<span class="arithmatex">\(\mathrm{E}[\epsilon]=0\)</span>, <span class="arithmatex">\(\mathrm{Var}[\epsilon]=\sigma^2_\epsilon\)</span>)이고 손실을 <strong>제곱오차</strong>로 잡으면, 한 점 <span class="arithmatex">\(x\)</span>에서의 기대 예측 오차(Expected Prediction Error)는 세 가지 성분으로 분해된다. 여기서 기댓값은 "학습 데이터를 새로 뽑아 모형을 다시 적합하는 일"을 반복했을 때의 평균이다.</p>
 <div class="arithmatex">\[
 \text{EPE}(x) = \underbrace{\text{Bias}^2[\hat{f}(x)]}_{\text{편향}^2} + \underbrace{\text{Var}[\hat{f}(x)]}_{\text{분산}} + \underbrace{\sigma^2_\epsilon}_{\text{노이즈}}
 \tag{1}
@@ -5161,17 +5161,28 @@
 </table>
 <div class="admonition info">
 <p class="admonition-title">핵심 직관</p>
-<p>Noise는 어떤 모형을 쓰든 줄일 수 없다. 따라서 모형이 통제할 수 있는 것은 오직 <strong>Bias</strong>와 <strong>Variance</strong> 뿐이다 — 그리고 이 둘은 서로 반대 방향으로 움직인다.</p>
+<p>Noise는 어떤 모형을 쓰든 줄일 수 없다. 따라서 모형이 통제할 수 있는 것은 오직 <strong>Bias</strong>와 <strong>Variance</strong> 뿐이다. 그리고 모형 복잡도를 바꾸면 이 둘은 대체로 서로 반대 방향으로 움직인다.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">분류 문제에서는?</p>
+<p>식 (1)의 깔끔한 세 항 분해는 제곱오차 손실에서 성립한다. 신용평가처럼 Good/Bad를 맞히는 분류 문제에서 쓰는 log-loss나 0-1 손실에서는 같은 형태로 깔끔하게 분해되지 않는다(0-1 손실에서는 Bias와 Variance가 서로 상쇄되기도 한다). 그래도 "너무 단순하면 체계적으로 틀리고, 너무 복잡하면 학습 데이터에 따라 흔들린다"는 직관은 그대로 유효하므로, 이 가이드북은 이 직관을 모형 설계의 기준으로 쓴다.</p>
 </div>
 <p><a class="glightbox" data-type="image" data-width="100%" data-height="auto" href="../images/bias_variance_dartboard.png" data-desc-position="bottom"><img alt="Bias-Variance 과녁 비유" src="../images/bias_variance_dartboard.png"></a></p>
 <hr>
 <h2 id="23">2.3 멍청한 모형과 똑똑한 모형<a class="headerlink" href="#23" title="Permanent link">¶</a></h2>
-<p>위 과녁 그림의 4사분면을 보자. <strong>똑똑한 모형은 우하단 딱 하나뿐</strong>이다. 나머지 셋은 멍청한 이유만 다를 뿐, 실전에서 못 쓰는 건 똑같다.</p>
+<p>위 과녁 그림의 4사분면을 보자. 과녁의 점 하나는 서로 다른 학습 데이터로 적합한 모형 하나의 예측이다. <strong>똑똑한 모형은 우하단 딱 하나뿐</strong>이다. 나머지 셋은 멍청한 이유만 다를 뿐, 실전에서 못 쓰는 건 똑같다.</p>
 <h3 id="1-high-bias-low-variance">멍청한 모형 ① — High Bias, Low Variance<a class="headerlink" href="#1-high-bias-low-variance" title="Permanent link">¶</a></h3>
 <p>모형이 너무 단순해서 데이터의 패턴을 <strong>제대로 학습하지 못하는</strong> 상태다.</p>
 <ul>
-<li>Tree Ensemble에서 <code>max_depth=1</code> (stump) — 한 번의 split으로 뭘 배우겠는가</li>
+<li><strong>단일</strong> 결정 트리에서 <code>max_depth=1</code> (stump) — 한 번의 split으로 뭘 배우겠는가</li>
+<li>부스팅 라운드를 너무 적게 돌려 학습이 덜 끝난 앙상블</li>
 <li>Train 성능 자체가 낮음 → Valid/Test도 당연히 낮음</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">stump 하나와 stump 수백 개는 다르다</p>
+<p>stump <strong>하나</strong>는 멍청한 모형이지만, stump를 부스팅으로 수백 개 쌓으면 변수별 비선형 효과를 모두 더한 가법 모형(GAM)이 되어 이야기가 달라진다. 이 구조는 <a href="../../part4_interpretation/depth1_gbm/">1-Depth GBM 스코어카드</a>에서 다룬다.</p>
+</div>
+<ul>
 <li><strong>Train ≈ Valid ≈ Test, 그런데 셋 다 나쁨</strong></li>
 </ul>
 <div class="arithmatex">\[
@@ -5184,7 +5195,7 @@
 <div class="admonition tip">
 <p class="admonition-title">개선 방향: 복잡도를 올린다</p>
 <ul>
-<li><code>max_depth</code> 증가, <code>n_estimators</code> 증가, <code>learning_rate</code> 하향 + 라운드 증가</li>
+<li><code>max_depth</code> 증가, 부스팅 라운드(<code>n_estimators</code>) 증가, 라운드가 제한된 상황이라면 <code>learning_rate</code> 상향</li>
 <li>변수 추가 또는 피처 엔지니어링으로 정보량 확대</li>
 <li>핵심: <strong>모형에게 배울 기회를 더 준다</strong></li>
 </ul>
@@ -5206,7 +5217,8 @@
 <div class="admonition tip">
 <p class="admonition-title">개선 방향: 복잡도를 낮추고 제약을 건다</p>
 <ul>
-<li><code>max_depth</code> 제한, <code>min_samples_leaf</code> 증가, Early Stopping 적용</li>
+<li><code>max_depth</code> 제한, <code>min_samples_leaf</code> 증가, Early Stopping으로 적정 라운드 수 탐색</li>
+<li><code>learning_rate</code>를 낮추고 그만큼 라운드를 늘려, 트리 하나하나의 기여를 작게(shrinkage)</li>
 <li>정규화 강화: <code>reg_alpha</code>, <code>reg_lambda</code> 증가</li>
 <li><code>subsample</code>, <code>colsample_bytree</code>로 학습 데이터/변수에 랜덤성 부여</li>
 <li>핵심: <strong>모형이 외우지 못하게 방해한다</strong></li>
@@ -5295,10 +5307,10 @@
 </tbody>
 </table>
 <p><a class="glightbox" data-type="image" data-width="100%" data-height="auto" href="../images/bias_variance_tradeoff.png" data-desc-position="bottom"><img alt="Bias-Variance Tradeoff U자 곡선" src="../images/bias_variance_tradeoff.png"></a></p>
-<p>왼쪽 영역은 Bias가 지배하고(Underfitting, 멍청한 모형), 오른쪽 영역은 Variance가 지배한다(Overfitting, 과적합 모형). <strong>Total Error의 U자 바닥이 최적 복잡도</strong>이며, 우리가 찾는 "똑똑한 모형"이 여기에 있다.</p>
+<p>왼쪽 영역은 Bias가 지배하고(Underfitting, 멍청한 모형 ①), 오른쪽 영역은 Variance가 지배한다(Overfitting, 멍청한 모형 ②). <strong>Total Error의 U자 바닥이 최적 복잡도</strong>이며, 우리가 찾는 "똑똑한 모형"이 여기에 있다. 실무에서는 참 함수를 모르므로 이 곡선을 직접 그릴 수 없고, 학습셋과 검증셋 성능을 비교해 지금 어느 쪽에 있는지 진단한다(<a href="../data_splitting/">데이터 분리 전략</a>의 진단표 참조).</p>
 <h3 id="_1">트리 구조로 보는 복잡도의 차이<a class="headerlink" href="#_1" title="Permanent link">¶</a></h3>
 <p>Decision Tree에서 복잡도는 곧 <strong>트리의 깊이(depth)</strong>와 <strong>리프 노드 수</strong>다. 같은 데이터에 대해 복잡도를 달리 하면 트리 구조가 극적으로 달라진다.</p>
-<p><strong>Underfitting — <code>max_depth=1</code> (Stump)</strong></p>
+<p><strong>Underfitting — 단일 트리 <code>max_depth=1</code> (Stump)</strong></p>
 <div class="highlight"><pre><span></span><code>         [연체 여부]
         /          \
    Bad 15%        Bad 8%

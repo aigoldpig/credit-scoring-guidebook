@@ -5037,7 +5037,7 @@
 <ol>
 <li><strong>문제 정의</strong> — 확률 <span class="arithmatex">\(p \in [0,1]\)</span>를 직접 선형회귀로 모형화할 수 없는 이유를 확인한다.</li>
 <li><strong>Logit 변환</strong> — 확률을 Odds → Log-Odds로 변환하여 실수 전체 범위 <span class="arithmatex">\((-\infty, +\infty)\)</span>로 매핑한다.</li>
-<li><strong>MLE</strong> — 변환된 공간에서 관측 데이터의 우도를 최대화하는 계수 <span class="arithmatex">\(\boldsymbol{\beta}\)</span>를 추정한다.</li>
+<li><strong>MLE</strong> — 변환된 공간에서 관측 데이터의 우도를 최대화하는 계수 <span class="arithmatex">\(\boldsymbol{\beta}\)</span>를 추정하고, Hessian으로부터 계수의 표준오차를 얻는다.</li>
 </ol>
 <blockquote>
 <p><strong>확률</strong> <span class="arithmatex">\(\xrightarrow{\text{Odds}}\)</span> <strong><span class="arithmatex">\((0,\infty)\)</span></strong> <span class="arithmatex">\(\xrightarrow{\ln}\)</span> <strong><span class="arithmatex">\((-\infty,\infty)\)</span></strong> <span class="arithmatex">\(\xrightarrow{\text{선형 모형}}\)</span> <strong><span class="arithmatex">\(\beta_0 + \boldsymbol{\beta}^\top\mathbf{x}\)</span></strong></p>
@@ -5065,7 +5065,7 @@
 <tr>
 <td>3</td>
 <td><a href="mle/">MLE</a></td>
-<td>로지스틱 회귀의 계수는 어떻게 추정하는가?</td>
+<td>로지스틱 회귀의 계수는 어떻게 추정하고, 그 정밀도(표준오차)는 어디서 나오는가?</td>
 </tr>
 </tbody>
 </table>

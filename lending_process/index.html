@@ -5038,8 +5038,8 @@
 실제 프로세스는 금융기관마다 다르며,
 심사(여신심사부), 사후관리(채권관리부·추심부), 리스크관리(리스크관리부) 등
 각 단계는 해당 현업 부서가 깊은 전문성을 가지고 있는 영역이다.
-저는 모형 개발자로서 이들 영역의 실무 경험이 없으며,
-이 챕터의 내용은 Claude Code와 공부하면서 정리한 것으로 실무와 다를 수 있다.</p>
+이 챕터는 모형 개발자의 관점에서 공개 자료를 바탕으로 정리한 것이므로,
+기관별 실무와 다를 수 있다.</p>
 </div>
 <hr>
 <h2 id="_2">여신 라이프사이클 전체 그림<a class="headerlink" href="#_2" title="Permanent link">¶</a></h2>
@@ -5054,6 +5054,10 @@
     <span style="display:flex; align-items:center; gap:6px;">
       <span style="width:11px;height:11px;border-radius:3px;background:#f59f00;display:inline-block;"></span>
       가이드북 범위 밖 (일반론)
+    </span>
+    <span style="display:flex; align-items:center; gap:6px;">
+      <span style="font-weight:700; color:#1bb76e;">초록 굵은 글씨</span>
+      범위 밖 단계 중 가이드북 본문에서 다루는 항목
     </span>
   </div>
 
@@ -5073,8 +5077,7 @@
           · LR / ML 학습<br>
           · 성능 검증<br>
           · p̂→Score→등급<br>
-          · Score 산출<br>
-          · 전략모형
+          · 등급별 PD 산정
         </div>
       </div>
 
@@ -5101,12 +5104,11 @@
           <span style="font-size:0.82rem; font-weight:700; display:block; margin-bottom:1px;">③</span>
           사후 관리
         </div>
-        <div style="flex:1; padding:10px 8px; border-radius:0 0 8px 8px; font-size:0.7rem; line-height:1.7; background:rgba(245,159,0,0.06); border:1px solid rgba(139,149,161,0.25); border-top:none;">
+        <div style="flex:1; padding:10px 8px; border-radius:0 0 8px 8px; font-size:0.7rem; line-height:1.7; background:rgba(245,159,0,0.06); border:1px solid rgba(245,159,0,0.25); border-top:none;">
           · Behavioral Score<br>
           · 한도 증감<br>
           · 조기경보(EWS)<br>
-          · Cross/Up-sell<br>
-          · 금리 재조정
+          · Cross/Up-sell
         </div>
       </div>
 
@@ -5118,10 +5120,10 @@
           <span style="font-size:0.82rem; font-weight:700; display:block; margin-bottom:1px;">④</span>
           부실·추심
         </div>
-        <div style="flex:1; padding:10px 8px; border-radius:0 0 8px 8px; font-size:0.7rem; line-height:1.7; background:rgba(245,159,0,0.06); border:1px solid rgba(139,149,161,0.25); border-top:none;">
+        <div style="flex:1; padding:10px 8px; border-radius:0 0 8px 8px; font-size:0.7rem; line-height:1.7; background:rgba(245,159,0,0.06); border:1px solid rgba(245,159,0,0.25); border-top:none;">
           · 연체 관리<br>
           · Collection Score<br>
-          · 회수 전략<br>
+          · 채무조정<br>
           · 채권 매각·상각
         </div>
       </div>
@@ -5134,12 +5136,11 @@
           <span style="font-size:0.82rem; font-weight:700; display:block; margin-bottom:1px;">⑤</span>
           리스크·규제
         </div>
-        <div style="flex:1; padding:10px 8px; border-radius:0 0 8px 8px; font-size:0.7rem; line-height:1.7; background:rgba(245,159,0,0.06); border:1px solid rgba(139,149,161,0.25); border-top:none;">
+        <div style="flex:1; padding:10px 8px; border-radius:0 0 8px 8px; font-size:0.7rem; line-height:1.7; background:rgba(245,159,0,0.06); border:1px solid rgba(245,159,0,0.25); border-top:none;">
           · IFRS 9 ECL<br>
           · Basel 자기자본<br>
           · 스트레스 테스트<br>
-          · 모형 검증<br>
-          · 감독당국 보고
+          · <span style="font-weight:700; color:#1bb76e;">모형 검증·모니터링</span>
         </div>
       </div>
 
@@ -5147,13 +5148,54 @@
   </div>
 </div>
 
-<p>각 단계에서 신용평가모형의 산출물(p̂, Score, 등급)이 어떻게 활용되는지 하위 페이지에서 살펴본다.</p>
+<p>각 단계에서 신용평가모형의 산출물(p̂, Score, 등급, 등급별 PD)이 어떻게 활용되는지 하위 페이지에서 살펴본다.</p>
+<table>
+<thead>
+<tr>
+<th>단계</th>
+<th>페이지</th>
+<th>모형 산출물과의 접점</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>① 모형 개발</td>
+<td><a href="model-development/">모형 개발</a></td>
+<td>가이드북 각 파트와의 매핑, 서열과 캘리브레이션의 역할 분담</td>
+</tr>
+<tr>
+<td>② 심사·승인</td>
+<td><a href="underwriting/">심사·승인</a></td>
+<td>승인/거절 cross-matrix, 금리의 신용원가(EL), 한도 밴드</td>
+</tr>
+<tr>
+<td>③ 사후 관리</td>
+<td><a href="portfolio-mgmt/">사후 관리</a></td>
+<td>행동평점(BS), 한도 재심사, 조기경보</td>
+</tr>
+<tr>
+<td>④ 부실·추심</td>
+<td><a href="collection/">부실·추심</a></td>
+<td>Collection Score, 채무조정, 매각·상각과 LGD</td>
+</tr>
+<tr>
+<td>⑤ 리스크·규제</td>
+<td><a href="risk-regulation/">리스크·규제</a></td>
+<td>IFRS 9 충당금, Basel 자본, 정기 검증</td>
+</tr>
+<tr>
+<td>용어</td>
+<td><a href="terms/pd/">PD</a> · <a href="terms/lgd/">LGD</a> · <a href="terms/ead/">EAD</a></td>
+<td>신용원가(EL)의 세 축과 PD의 층위</td>
+</tr>
+</tbody>
+</table>
 <hr>
 <h2 id="p-pd">p̂ / PD 활용 방식 종합<a class="headerlink" href="#p-pd" title="Permanent link">¶</a></h2>
 <p>아래 표에서 <strong>서열</strong>과 <strong>절대값</strong>은 다음을 의미한다.</p>
 <ul>
-<li><strong>서열</strong> — p̂을 변환한 <strong>평점(Score)과 등급</strong>. 누가 더 위험한지의 <strong>순서</strong>만 중요하며, p̂이 정확히 몇 %인지는 관여하지 않음.</li>
-<li><strong>절대값</strong> — p̂ = 0.03이냐 0.05이냐처럼, <strong>확률값 자체</strong>가 금액 산출(충당금, 자본 등)에 직접 투입됨.</li>
+<li><strong>서열</strong> — p̂을 변환한 <strong>평점(Score)과 등급</strong>. 누가 더 위험한지의 <strong>순서</strong>만 중요하며, p̂이 정확히 몇 %인지는 관여하지 않는다.</li>
+<li><strong>절대값</strong> — p̂ = 0.03이냐 0.05이냐처럼, <strong>확률값 자체</strong>가 금액 산출(충당금, 자본 등)에 직접 투입된다.</li>
 </ul>
 <table>
 <thead>
@@ -5161,7 +5203,7 @@
 <th>영역</th>
 <th>PD 사용 방식</th>
 <th style="text-align: center;">서열/절대값</th>
-<th style="text-align: center;">calibration 민감도</th>
+<th style="text-align: center;">캘리브레이션 민감도</th>
 </tr>
 </thead>
 <tbody>
@@ -5169,7 +5211,7 @@
 <td>승인/거절</td>
 <td>cross-matrix 기반</td>
 <td style="text-align: center;">서열</td>
-<td style="text-align: center;">낮음</td>
+<td style="text-align: center;">낮음 (손익 기반 Cut-off를 쓰면 중간)</td>
 </tr>
 <tr>
 <td>금리 산정</td>
@@ -5221,19 +5263,23 @@
 </tr>
 <tr>
 <td>모형 정기 검증</td>
-<td>예측 PD vs 실현율</td>
+<td>예측 PD vs 실현 부도율</td>
 <td style="text-align: center;"><strong>절대값</strong></td>
 <td style="text-align: center;"><strong>높음</strong></td>
 </tr>
 </tbody>
 </table>
 <div class="admonition tip">
-<p class="admonition-title">핵심 구분</p>
-<p><strong>서열만 필요한 단계</strong> — 승인/거절, Behavioral Score, Collection Score, 한도 밴드
-→ ML vs Logistic의 p̂ 분포 차이가 문제되지 않음</p>
-<p><strong>절대값이 필요한 단계</strong> — 금리(EL), IFRS 9, Basel, 스트레스 테스트
-→ calibration 차이가 실질적 영향을 미침
-→ 단, 등급별 PD 테이블을 경유하면 calibration 이슈가 등급화 단계에서 흡수됨</p>
+<p class="admonition-title">핵심 구분 — 서열은 모형, 수준은 캘리브레이션</p>
+<p><strong>서열만 필요한 단계</strong> — 승인/거절, Behavioral Score, Collection Score, 한도 밴드.
+이 단계에서는 점수의 순서만 쓰므로, 같은 차주 집단에 대해 서열이 같다면
+로지스틱 회귀와 ML 모형의 p̂ <strong>수준·퍼짐</strong>이 서로 달라도 의사결정에 영향을 주지 않는다.</p>
+<p><strong>절대값이 필요한 단계</strong> — 금리(EL), IFRS 9, Basel, 스트레스 테스트, 정기 검증.
+여기서는 p̂ 또는 등급에 붙는 PD 숫자가 곧 금액이 되므로 <strong>캘리브레이션</strong>(예측 PD와 실현 부도율의 일치)이 실질적 영향을 미친다.</p>
+<p>실무에서 흔한 방식은 모형의 p̂을 직접 쓰지 않고 <strong>등급별 PD 테이블</strong>을 경유하는 것이다.
+이때 각 등급의 PD를 해당 등급의 <strong>실현 부도율(또는 CT 기준 장기 평균)로 다시 산정</strong>한다면,
+모형 p̂의 수준 차이는 등급화 단계에서 흡수된다. 반대로 등급별 PD를 p̂의 평균으로 붙인다면
+p̂의 캘리브레이션 오차가 그대로 남는다. 등급별 PD를 붙이는 방법은 <a href="terms/pd/">PD 용어 정리</a>에서 다룬다.</p>
 </div>
 
 

@@ -4559,10 +4559,76 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
       
         <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
+  <a href="#21" class="md-nav__link">
     <span class="md-ellipsis">
       
-        다룰 내용
+        2.1 두 가지 측도
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#22-product-measure-fanova" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 Product measure — 전통적 fANOVA
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#23-joint-measure-hooker-2007-fanova" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 Joint measure — Hooker (2007)의 일반화 fANOVA
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#24" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4 흔한 함정 — 조건부 평균을 재귀 공식에 그대로 넣기
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#25" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.5 수치 예시 — 같은 모형, 세 가지 분해
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#26-cross-covariance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.6 Cross-covariance는 피할 수 없다
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#27" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.7 두 측도의 비교
       
     </span>
   </a>
@@ -5093,265 +5159,276 @@
 <blockquote>
 <p>같은 fANOVA 분해라도, 적분에 사용하는 측도(measure)에 따라 결과가 달라진다.</p>
 </blockquote>
-<div class="admonition warning">
-<p class="admonition-title">작성 중</p>
-<p>이 페이지는 현재 작성 중이며, 내용이 추가·변경될 수 있습니다.</p>
-</div>
-<h2 id="_1">다룰 내용<a class="headerlink" href="#_1" title="Permanent link">¶</a></h2>
-<h3 id="20-4">2.0 실험에 사용된 4가지 방법론<a class="headerlink" href="#20-4" title="Permanent link">¶</a></h3>
-<p>본 부록에서 언급하는 A-1, A-2, B-1, B-2는 다음과 같다.</p>
-<table>
-<thead>
-<tr>
-<th>코드</th>
-<th>분해 방법</th>
-<th>적분 측도 (Measure)</th>
-<th>설명</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>A-1</strong></td>
-<td>Mobius Inversion</td>
-<td>Joint (조건부 분포)</td>
-<td>관측치 기반으로 <span class="arithmatex">\( E[f \mid x_S] \)</span>를 조건부 평균으로 계산</td>
-</tr>
-<tr>
-<td><strong>A-2</strong></td>
-<td>Mobius Inversion</td>
-<td>Product (주변분포)</td>
-<td>leaf value에 주변 확률을 곱하여 <span class="arithmatex">\( E_{\text{product}}[f \mid x_S] \)</span> 계산</td>
-</tr>
-<tr>
-<td><strong>B-1</strong></td>
-<td>Tensor + Mass-Moving</td>
-<td>Joint (조건부 분포)</td>
-<td>트리별 coefficient 텐서를 조건부 가중치로 centering</td>
-</tr>
-<tr>
-<td><strong>B-2</strong></td>
-<td>Tensor + Mass-Moving</td>
-<td>Product (주변분포)</td>
-<td>트리별 coefficient 텐서를 주변분포 가중치로 centering</td>
-</tr>
-</tbody>
-</table>
-<ul>
-<li><strong>A-2 = B-2</strong>는 동일한 결과를 산출하며, 계산 경로만 다르다 (Product Measure에서 Möbius와 iterative centering은 동치).</li>
-<li><strong>A-1 ≠ B-1</strong>: Joint Measure에서 Möbius inversion은 centered ANOVA 분해를 주지 않는다. B-1 (iterative centering)만이 Hooker (2007)의 generalized functional ANOVA를 올바르게 산출한다. 따라서 Joint Measure 분해에는 <strong>B-1만 사용</strong>한다.</li>
-<li>Joint measure는 SHAP의 <code>tree_path_dependent</code>에, Product measure는 <code>interventional</code>에 대응된다.</li>
-</ul>
+<p><a href="../observational-vs-interventional/">1절</a>에서 "나머지 변수를 어떤 분포로 평균하느냐"에 따라 답이 둘로 갈라지는 것을 보았다. fANOVA에서는 이 선택이 <strong>측도(measure)</strong>, 즉 분해 조건을 계산할 때 쓰는 가중치 <span class="arithmatex">\(w(\mathbf{x})\)</span>의 선택으로 나타난다. 이 페이지는 두 측도의 정의와 성질을 정리하고, 흔히 빠지는 계산 함정을 짚은 뒤, 같은 모형을 세 가지 방식으로 분해한 수치 예시로 차이를 확인한다.</p>
 <hr>
-<h3 id="a-2-b-2">A-2 = B-2가 성립하는 이유<a class="headerlink" href="#a-2-b-2" title="Permanent link">¶</a></h3>
-<p>Product measure에서 Möbius inversion(Hoeffding 분해)은 자동으로 직교성 조건(centering condition)을 만족한다.</p>
-<p>Möbius inversion의 핵심은 inclusion-exclusion으로 효과를 분리하는 것이다:</p>
-<div class="arithmatex">\[
-f_S(x_S) = E_S[f \mid x_S] - \sum_{T \subsetneq S} f_T(x_T)
-\]</div>
-<p>여기서 <span class="arithmatex">\(E_S\)</span>는 <span class="arithmatex">\(S\)</span> 밖의 변수에 대해 적분한 조건부 기대값이다.</p>
-<p>Product measure에서 직교성 조건 <span class="arithmatex">\(E[f_S \mid x_T] = 0\)</span>이 자동으로 만족되는 이유를 2변수 interaction <span class="arithmatex">\(f_{12}\)</span>에 대해 확인하면:</p>
-<div class="arithmatex">\[
-E_{\text{prod}}[f_{12} \mid x_1 = a] = E_{\text{prod}}[f \mid x_1 = a] - f_1(a) - E_{\text{prod}}[f_2(x_2) \mid x_1 = a] - \mu
-\]</div>
-<p>Product measure에서 <span class="arithmatex">\(P(x_2 \mid x_1) = P(x_2)\)</span> (독립)이므로:</p>
-<div class="arithmatex">\[
-E_{\text{prod}}[f_2(x_2) \mid x_1 = a] = E[f_2(x_2)] = 0 \quad (f_2 \text{는 이미 centered})
-\]</div>
-<p>따라서 <span class="arithmatex">\(E_{\text{prod}}[f_{12} \mid x_1] = 0\)</span>이 <strong>자동으로 성립</strong>한다.</p>
-<p>Tensor centering(B-2)도 같은 조건을 반복적으로 부과하므로, 둘은 같은 해에 수렴한다. Product measure의 독립성이 Möbius inversion과 iterative centering의 <strong>동치성을 보장</strong>하는 핵심이다.</p>
-<div class="admonition success">
-<p class="admonition-title">실증 검증</p>
-<p>CB 시뮬레이션 데이터(Phase 1, depth=2, lr=0.0001)에서
-A-2와 B-2의 Main Effect % 차이: <strong>8.13×10⁻²⁰</strong> — 기계 정밀도 수준에서 완전 일치.</p>
-</div>
-<h3 id="a-1-b-1-joint-measure-mobius">A-1 ≠ B-1인 이유 — Joint Measure에서 Möbius의 한계<a class="headerlink" href="#a-1-b-1-joint-measure-mobius" title="Permanent link">¶</a></h3>
-<p>Joint measure에서는 <span class="arithmatex">\(P(x_2 \mid x_1) \neq P(x_2)\)</span>이다. 이 비독립성이 Möbius inversion의 직교성을 깨뜨린다.</p>
-<p>A-1은 Joint 조건부 기대값을 Möbius 공식에 대입하여 효과를 계산한다:</p>
-<div class="arithmatex">\[
-f_1(x_1) = E_{\text{joint}}[f \mid x_1] - \mu, \quad
-f_2(x_2) = E_{\text{joint}}[f \mid x_2] - \mu
-\]</div>
-<div class="arithmatex">\[
-f_{12}(x_1, x_2) = f(x_1, x_2) - f_1(x_1) - f_2(x_2) - \mu
-\]</div>
-<p>이 분해에서 <span class="arithmatex">\(f_{12}\)</span>의 직교성을 확인하면:</p>
-<div class="arithmatex">\[
-E_{\text{joint}}[f_{12} \mid x_1 = a]
-= E_{\text{joint}}[f \mid x_1\!=\!a] - f_1(a) - E_{\text{joint}}[f_2(x_2) \mid x_1\!=\!a] - \mu
-\]</div>
-<p>여기서:</p>
-<div class="arithmatex">\[
-E_{\text{joint}}[f_2(x_2) \mid x_1 = a]
-= \sum_b f_2(b) \cdot P(x_2 = b \mid x_1 = a)
-\]</div>
-<p><strong>Product measure에서는</strong> <span class="arithmatex">\(P(x_2 \mid x_1) = P(x_2)\)</span>이므로 이 값이 <span class="arithmatex">\(E[f_2] = 0\)</span>이 되어 직교성이 자동 성립했다.</p>
-<p><strong>Joint measure에서는</strong> <span class="arithmatex">\(P(x_2 \mid x_1) \neq P(x_2)\)</span>이므로:</p>
-<div class="arithmatex">\[
-\sum_b f_2(b) \cdot P(x_2 = b \mid x_1 = a) \neq 0 \quad \text{(일반적으로)}
-\]</div>
-<p>따라서:</p>
-<div class="arithmatex">\[
-\boxed{E_{\text{joint}}[f_{12} \mid x_1] = -\sum_b f_2(b) \cdot P(x_2\!=\!b \mid x_1) \neq 0}
-\]</div>
-<p><strong>Interaction 항이 centered되지 않는다.</strong> 이것이 A-1의 근본적 결함이다.</p>
-<p>이 결함의 실질적 의미:</p>
-<ul>
-<li><strong>Main effect가 과대추정된다</strong> — interaction에 있어야 할 분산이 main effect로 누출</li>
-<li><strong>차이의 크기는 변수 간 상관에 비례</strong> — 변수가 독립이면 Joint = Product이므로 A-1 = B-1이 자명하게 성립</li>
-<li>A-1의 분해는 Hoeffding (1948)의 원래 분해와 동일하지만, 이 분해는 product measure를 전제로 설계된 것이므로 joint measure와 결합하면 직교성이 보장되지 않음</li>
-</ul>
-<p>반면 B-1(<code>purify_tensor_joint</code>)은 반복적으로 <strong>조건부 기대값을 빼는</strong> centering을 수행한다:</p>
-<div class="arithmatex">\[
-\text{각 변수 } j \text{에 대해}: \quad
-T_u \leftarrow T_u - E_{\text{joint}}[T_u \mid x_j]
-\]</div>
-<p>이 ALS(Alternating Least Squares) 반복은 수렴 시 <strong>모든 하위 집합에 대해 <span class="arithmatex">\(E_{\text{joint}}[f_S \mid x_T] = 0\)</span>을 강제</strong>한다. 이것이 Hooker (2007)의 generalized functional ANOVA 정의와 정확히 일치한다.</p>
-<div class="admonition danger">
-<p class="admonition-title">실증 검증 — A-1 ≠ B-1</p>
-<p>CB 시뮬레이션 데이터(Phase 1, depth=2, lr=0.0001)에서:</p>
-<table>
-<thead>
-<tr>
-<th>방식</th>
-<th style="text-align: center;">Main %</th>
-<th style="text-align: center;">2-way %</th>
-<th style="text-align: center;">Cross-cov %</th>
-<th style="text-align: center;">소요시간</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>A-1 (Möbius+Joint)</td>
-<td style="text-align: center;"><strong>29.93</strong></td>
-<td style="text-align: center;">0.45</td>
-<td style="text-align: center;">69.62</td>
-<td style="text-align: center;">276초</td>
-</tr>
-<tr>
-<td>B-1 (Tensor+Joint)</td>
-<td style="text-align: center;"><strong>15.90</strong></td>
-<td style="text-align: center;">0.13</td>
-<td style="text-align: center;">83.97</td>
-<td style="text-align: center;">655초</td>
-</tr>
-</tbody>
-</table>
-<p>A-1의 Main%가 B-1의 약 <strong>2배</strong>로 과대추정된다.
-이 차이는 신용정보 변수 간 상관이 높기 때문에 발생한다.
-변수가 독립이면 Joint = Product이 되어 A-1 = B-1이 자명하게 성립한다.</p>
-</div>
-<h3 id="_2">결론 — 방법 선택 가이드<a class="headerlink" href="#_2" title="Permanent link">¶</a></h3>
-<table>
-<thead>
-<tr>
-<th>기준</th>
-<th style="text-align: center;">A-1 (Möbius+Joint)</th>
-<th style="text-align: center;">B-1 (Tensor+Joint)</th>
-<th style="text-align: center;">A-2/B-2 (Product)</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>완전 분해 <span class="arithmatex">\(f = \sum f_S\)</span></td>
-<td style="text-align: center;">O</td>
-<td style="text-align: center;">O</td>
-<td style="text-align: center;">O</td>
-</tr>
-<tr>
-<td>직교성 <span class="arithmatex">\(E[f_S \mid x_T] = 0\)</span></td>
-<td style="text-align: center;"><strong>X</strong></td>
-<td style="text-align: center;">O</td>
-<td style="text-align: center;">O</td>
-</tr>
-<tr>
-<td>Hooker (2007) 정의 충족</td>
-<td style="text-align: center;"><strong>아님</strong></td>
-<td style="text-align: center;"><strong>맞음</strong></td>
-<td style="text-align: center;">맞음</td>
-</tr>
-<tr>
-<td>main effect 정확성</td>
-<td style="text-align: center;">과대추정</td>
-<td style="text-align: center;">정확</td>
-<td style="text-align: center;">정확</td>
-</tr>
-<tr>
-<td>속도</td>
-<td style="text-align: center;">중간</td>
-<td style="text-align: center;">느림</td>
-<td style="text-align: center;">빠름</td>
-</tr>
-</tbody>
-</table>
-<ul>
-<li><strong>Product measure 분해</strong>: A-2 또는 B-2 (동치). A-2가 더 빠르므로 A-2 권장</li>
-<li><strong>Joint measure 분해</strong>: <strong>B-1만 사용</strong>. A-1은 직교성이 깨져 사용 불가</li>
-<li>depth=1에서는 트리당 변수 1개이므로, 교호작용이 구조적으로 불가능하여 A-1 = B-1이 자명하게 성립</li>
-</ul>
-<h3 id="21-product-measure-fanova">2.1 Product Measure (전통적 fANOVA)<a class="headerlink" href="#21-product-measure-fanova" title="Permanent link">¶</a></h3>
-<ul>
-<li><span class="arithmatex">\( f_j(x_j) = \int f(x) \prod_{k \neq j} dP(x_k) - f_0 \)</span></li>
-<li>변수 독립 가정 → 직교성 보장 → Variance Decomposition 가능</li>
-<li>Hoeffding (1948), Sobol (1969)의 원래 정의</li>
-</ul>
-<h3 id="22-joint-measure-hooker-2007">2.2 Joint Measure (Hooker 2007)<a class="headerlink" href="#22-joint-measure-hooker-2007" title="Permanent link">¶</a></h3>
-<ul>
-<li><span class="arithmatex">\( f_j(x_j) = \int f(x) \, dP(x_{-j} \mid x_j) - f_0 \)</span></li>
-<li>실제 데이터 분포 사용 → 직교성 깨짐 → Cross-covariance 발생</li>
-<li>Hooker (2007) <em>Generalized Functional ANOVA</em></li>
-</ul>
-<h3 id="23-cross-covariance">2.3 Cross-Covariance의 불가피성<a class="headerlink" href="#23-cross-covariance" title="Permanent link">¶</a></h3>
-<div class="admonition example">
-<p class="admonition-title">예시 — 실제 신용평가모형에서의 분산 분해</p>
-<p>저자가 과거 개발에 참여했던 신용평가모형에 4가지 방법론을 적용한 결과, 대략 아래와 같은 추세를 보였다.</p>
-</div>
+<h2 id="21">2.1 두 가지 측도<a class="headerlink" href="#21" title="Permanent link">¶</a></h2>
 <table>
 <thead>
 <tr>
 <th></th>
-<th>Joint (B-1)</th>
-<th>Product (A-2/B-2)</th>
+<th>Product measure</th>
+<th>Joint measure</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Main</td>
-<td>~50%</td>
-<td>~50%</td>
+<td>가중치</td>
+<td>각 변수 주변분포의 곱 <span class="arithmatex">\(w(\mathbf{x}) = \prod_j p_j(x_j)\)</span></td>
+<td>데이터의 결합분포 <span class="arithmatex">\(w(\mathbf{x}) = p(\mathbf{x})\)</span></td>
 </tr>
 <tr>
-<td>2-way</td>
-<td>&lt; 1%</td>
-<td>&lt; 1%</td>
+<td>상관 구조</td>
+<td>무시 (모든 변수를 독립으로 취급)</td>
+<td>그대로 반영</td>
 </tr>
 <tr>
-<td>Cross-cov</td>
-<td>~50%</td>
-<td>~50%</td>
+<td>대표 문헌</td>
+<td>Hoeffding, Sobol (전통적 fANOVA)</td>
+<td>Hooker (2007), Lengerich et al. (2020)의 Definition 1</td>
+</tr>
+<tr>
+<td>대응하는 기대값</td>
+<td>interventional (1절 식 2)</td>
+<td>observational 쪽 (단, 아래 2.3의 함정 주의)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="22-product-measure-fanova">2.2 Product measure — 전통적 fANOVA<a class="headerlink" href="#22-product-measure-fanova" title="Permanent link">¶</a></h2>
+<p><a href="../../shap-fanova/functional-anova/">부록 A 2절</a>에서 다룬 fANOVA가 이것이다. 변수가 독립이라고 보고 적분하므로, 주효과는</p>
+<div class="arithmatex">\[
+f_j(x_j) = \int f(\mathbf{x}) \prod_{k \neq j} dP(x_k) - f_0
+\tag{1}
+\]</div>
+<p>이다. 고차 성분도 "나머지 변수를 주변분포로 적분하고, 하위 성분을 빼는" 재귀 공식으로 구한다. 이 방식에서는 다음이 모두 성립한다.</p>
+<ul>
+<li>Integrate-to-Zero: 각 성분을 그 안의 어느 변수 방향으로 적분해도 0</li>
+<li><strong>모든</strong> 성분 쌍이 직교 (서로 다른 <span class="arithmatex">\(S, V\)</span>에 대해 <span class="arithmatex">\(\mathbb{E}[f_S f_V] = 0\)</span>)</li>
+<li>분산 분해: product measure 위에서 계산한 분산은 성분별 분산의 합과 정확히 같다</li>
+</ul>
+<p><strong>왜 재귀 공식(Möbius 방식)과 반복 centering이 같은 답을 주는가.</strong> 재귀 공식은 포함·배제 원리로 효과를 분리한다:</p>
+<div class="arithmatex">\[
+f_S(\mathbf{x}_S) = \mathbb{E}_S[f \mid \mathbf{x}_S] - \sum_{T \subsetneq S} f_T(\mathbf{x}_T)
+\]</div>
+<p>여기서 <span class="arithmatex">\(\mathbb{E}_S\)</span>는 <span class="arithmatex">\(S\)</span> 밖의 변수를 product measure로 적분한 값이다. 두 변수 함수의 경우 <span class="arithmatex">\(f_{12} = f - f_1 - f_2 - f_0\)</span>이므로,</p>
+<div class="arithmatex">\[
+\mathbb{E}_{\text{prod}}[f_{12} \mid x_1 = a] = \mathbb{E}_{\text{prod}}[f \mid x_1 = a] - f_1(a) - \mathbb{E}_{\text{prod}}[f_2(X_2) \mid x_1 = a] - f_0
+\]</div>
+<p>이다. 정의에 의해 <span class="arithmatex">\(\mathbb{E}_{\text{prod}}[f \mid x_1 = a] - f_1(a) - f_0 = 0\)</span>이고, product measure에서는 <span class="arithmatex">\(P(x_2 \mid x_1) = P(x_2)\)</span>이므로 <span class="arithmatex">\(\mathbb{E}_{\text{prod}}[f_2(X_2) \mid x_1 = a] = \mathbb{E}[f_2(X_2)] = 0\)</span>이다. 따라서 <span class="arithmatex">\(\mathbb{E}_{\text{prod}}[f_{12} \mid x_1] = 0\)</span>이 <strong>자동으로</strong> 성립한다. 재귀 공식이 만든 분해가 이미 Integrate-to-Zero를 만족하므로, purification(반복 centering)을 product 가중으로 돌려도 같은 분해에 도달한다. fANOVA 분해는 주어진 측도에서 유일하기 때문이다. 실제로 과거 개발했던 XGBoost 기반 신용평가모형에 두 경로를 모두 적용했을 때, 결과가 부동소수점 오차 수준에서 일치했다.</p>
+<h2 id="23-joint-measure-hooker-2007-fanova">2.3 Joint measure — Hooker (2007)의 일반화 fANOVA<a class="headerlink" href="#23-joint-measure-hooker-2007-fanova" title="Permanent link">¶</a></h2>
+<p>변수가 상관되어 있으면, product measure는 데이터에 거의 없는 조합에도 상당한 비중을 준다. 아래 2.5 예시에서 "현금서비스는 이용하는데 카드론은 이용하지 않는" 조합은 데이터의 5%뿐이지만, product measure에서는 <span class="arithmatex">\(0.4 \times 0.5 = 20\%\)</span>의 가중을 받는다(<a href="../independence-extrapolation/">4절</a>). Hooker (2007)는 이 문제를 피하려고 <strong>실제 결합분포</strong> <span class="arithmatex">\(p(\mathbf{x})\)</span>를 가중치로 쓰는 일반화 fANOVA를 제안했다. Lengerich et al. (2020)의 "순수 교호작용" 정의(Definition 1)도 같은 형태다. 조건은 다음과 같다.</p>
+<div class="arithmatex">\[
+\forall\, S,\; \forall\, i \in S: \quad \mathbb{E}_{p}\big[f_S(\mathbf{X}_S) \mid \mathbf{X}_{S \setminus i}\big] = 0
+\tag{2}
+\]</div>
+<p>즉 각 성분 <span class="arithmatex">\(f_S\)</span>를, <span class="arithmatex">\(S\)</span> 안의 다른 변수를 고정한 채 <strong>결합분포에 따른 조건부 분포</strong>로 평균하면 0이어야 한다. 이것은 <span class="arithmatex">\(f_S\)</span>가 <span class="arithmatex">\(S\)</span>보다 작은 변수 집합의 <strong>모든 함수와 직교</strong>한다는 조건(위계적 직교성)과 동치다. 성질은 다음과 같이 바뀐다.</p>
+<ul>
+<li><strong>위계적 직교는 유지된다</strong>: <span class="arithmatex">\(f_1\)</span>과 <span class="arithmatex">\(f_{12}\)</span>처럼 한쪽이 다른 쪽의 부분집합인 쌍은 직교한다.</li>
+<li><strong>겹치지 않는 성분은 상관될 수 있다</strong>: <span class="arithmatex">\(f_1\)</span>과 <span class="arithmatex">\(f_2\)</span>처럼 변수 집합이 겹치지 않는 쌍은, 두 변수가 상관되어 있으면 서로 상관된다.</li>
+<li>그 결과 데이터 분포 위의 분산은 <span class="arithmatex">\(\sigma^2(f) = \sum_S \sigma^2(f_S) + \sum_{S \neq V} \text{Cov}(f_S, f_V)\)</span>가 되어, <strong>교차공분산 항</strong>이 남는다.</li>
+</ul>
+<p>식 (2)를 만족하는 분해는 재귀 공식으로 한 번에 얻을 수 없고, purification(mass-moving)처럼 각 방향의 조건부 평균을 <strong>반복해서</strong> 빼는 방식으로 구한다. 반복할 때마다 남은 조건부 평균이 줄어들며, 줄어드는 속도는 변수 간 상관이 강할수록 느리다(<a href="../../shap-fanova/purification/">부록 A 3절</a>).</p>
+<h2 id="24">2.4 흔한 함정 — 조건부 평균을 재귀 공식에 그대로 넣기<a class="headerlink" href="#24" title="Permanent link">¶</a></h2>
+<p>가장 손쉬운 "joint 버전"은 재귀 공식의 적분을 조건부 기대값으로 바꾸는 것이다.</p>
+<div class="arithmatex">\[
+f_1(x_1) = \mathbb{E}_p[f \mid x_1] - \mu, \qquad f_2(x_2) = \mathbb{E}_p[f \mid x_2] - \mu, \qquad f_{12} = f - f_1 - f_2 - \mu
+\]</div>
+<p>이 분해에서 <span class="arithmatex">\(f_{12}\)</span>의 조건부 평균을 계산하면, 2.2의 유도와 같은 방식으로</p>
+<div class="arithmatex">\[
+\mathbb{E}_p[f_{12} \mid x_1] = -\sum_b f_2(b)\, P(x_2 = b \mid x_1)
+\tag{3}
+\]</div>
+<p>가 된다. product measure에서는 <span class="arithmatex">\(P(x_2 \mid x_1) = P(x_2)\)</span>이므로 이 값이 <span class="arithmatex">\(\mathbb{E}[f_2] = 0\)</span>이었지만, 상관이 있으면 일반적으로 0이 아니다. <strong>교호작용 항이 식 (2)를 만족하지 않는다.</strong> 즉 이 방식은 Hoeffding의 공식을 결합분포의 조건부 기대값에 그대로 대입한 것일 뿐, 어느 측도의 fANOVA도 아니다.</p>
+<p>실질적인 문제는 두 가지다.</p>
+<ul>
+<li><strong>주효과에 상관된 변수의 효과가 섞인다.</strong> <span class="arithmatex">\(\mathbb{E}_p[f \mid x_1]\)</span>은 <a href="../observational-vs-interventional/">1절</a>의 observational 기대값이므로, <span class="arithmatex">\(x_1\)</span>과 상관된 변수의 효과가 <span class="arithmatex">\(f_1\)</span>에 들어온다. 그 결과 주효과의 비중이 부풀려지기 쉽다. 과거 개발했던 XGBoost 기반 신용평가모형 실험에서도, 이 방식으로 구한 주효과 분산 비중이 반복 centering(joint) 방식의 약 2배로 나타났다.</li>
+<li><strong>교호작용이 없는 모형에서도 가짜 교호작용이 생긴다.</strong> 이 방식을 트리 하나하나가 아니라 모형 전체에 적용하면, 가법 모형(depth-1 트리 모형)에도 0이 아닌 <span class="arithmatex">\(f_{12}\)</span>가 생긴다. 예를 들어 <a href="../observational-vs-interventional/">1절</a>의 분포(상관 0.6) 위에서 교호작용이 전혀 없는 모형 <span class="arithmatex">\(h = 1.0\,x_1 + 0.5\,x_2\)</span>에 이 방식을 적용하면 <span class="arithmatex">\(f_{12} = [0.45, -0.15;\; 0.15, -0.45]\)</span>가 나온다. 식 (2)를 만족하는 반복 centering은 <span class="arithmatex">\(f_{12} = 0\)</span>을 정확히 돌려준다.</li>
+</ul>
+<h2 id="25">2.5 수치 예시 — 같은 모형, 세 가지 분해<a class="headerlink" href="#25" title="Permanent link">¶</a></h2>
+<p><a href="../observational-vs-interventional/">1절</a>의 모형 <span class="arithmatex">\(f\)</span>를 그대로 쓰되, 측도의 차이가 주효과에도 드러나도록 분포를 비대칭으로 바꾼다 (가상 예시).</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th><span class="arithmatex">\(X_2 = 0\)</span></th>
+<th><span class="arithmatex">\(X_2 = 1\)</span></th>
+<th><span class="arithmatex">\(X_1\)</span> 주변</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><span class="arithmatex">\(X_1 = 0\)</span></strong></td>
+<td>45% / <span class="arithmatex">\(f = 0.0\)</span></td>
+<td>15% / <span class="arithmatex">\(f = 0.5\)</span></td>
+<td>60%</td>
+</tr>
+<tr>
+<td><strong><span class="arithmatex">\(X_1 = 1\)</span></strong></td>
+<td>5% / <span class="arithmatex">\(f = 1.0\)</span></td>
+<td>35% / <span class="arithmatex">\(f = 2.5\)</span></td>
+<td>40%</td>
+</tr>
+<tr>
+<td><strong><span class="arithmatex">\(X_2\)</span> 주변</strong></td>
+<td>50%</td>
+<td>50%</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>두 변수의 상관계수는 약 0.61이다. 세 방식으로 분해한 결과는 다음과 같다.</p>
+<table>
+<thead>
+<tr>
+<th>성분</th>
+<th>Product measure</th>
+<th>Joint measure (반복 centering)</th>
+<th>조건부 평균 대입 (2.4의 함정)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="arithmatex">\(f_0\)</span></td>
+<td>0.85</td>
+<td>1.00</td>
+<td>1.00</td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(f_1(0),\; f_1(1)\)</span></td>
+<td>−0.60, +0.90</td>
+<td>−0.68, +1.02</td>
+<td>−0.875, +1.3125</td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(f_2(0),\; f_2(1)\)</span></td>
+<td>−0.45, +0.45</td>
+<td>−0.39, +0.39</td>
+<td>−0.90, +0.90</td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(f_{12}\)</span> [(0,0), (0,1); (1,0), (1,1)]</td>
+<td>[0.20, −0.20; −0.30, 0.30]</td>
+<td>[0.07, −0.21; −0.63, 0.09]</td>
+<td>[0.775, −0.525; −0.4125, −0.7125]</td>
+</tr>
+<tr>
+<td>식 (2) 충족</td>
+<td>product 가중 기준 ✓</td>
+<td>✓</td>
+<td>✗ (<span class="arithmatex">\(\mathbb{E}_p[f_{12} \mid x_1] = 0.45, -0.675\)</span>)</td>
+</tr>
+</tbody>
+</table>
+<p>세 분해 모두 네 칸에서 원래 예측값을 정확히 재구성한다. 예를 들어 joint 분해의 (1, 0) 칸은 <span class="arithmatex">\(1.00 + 1.02 - 0.39 - 0.63 = 1.0\)</span>이다. 그런데도 성분의 값은 측도에 따라 다르다. joint measure에서는 현금서비스(<span class="arithmatex">\(X_1\)</span>)의 주효과가 커지고(0.90 → 1.02) 카드론(<span class="arithmatex">\(X_2\)</span>)의 주효과가 작아졌다(0.45 → 0.39). 두 변수가 함께 움직이는 데이터에서, 공통으로 설명되는 몫을 어느 쪽에 얼마나 배분하느냐가 측도에 따라 달라진 것이다.</p>
+<p>이 분해들을 <strong>실제 데이터 분포 위에서</strong> 분산 분해하면 (총 분산 1.275):</p>
+<table>
+<thead>
+<tr>
+<th>분산 비중</th>
+<th style="text-align: right;">Product measure</th>
+<th style="text-align: right;">Joint measure</th>
+<th style="text-align: right;">조건부 평균 대입</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>주효과 (<span class="arithmatex">\(\sigma^2(f_1) + \sigma^2(f_2)\)</span>)</td>
+<td style="text-align: right;">58.2%</td>
+<td style="text-align: right;">66.3%</td>
+<td style="text-align: right;">153.6%</td>
+</tr>
+<tr>
+<td>2-way 교호작용 (<span class="arithmatex">\(\sigma^2(f_{12})\)</span>)</td>
+<td style="text-align: right;">2.9%</td>
+<td style="text-align: right;">2.5%</td>
+<td style="text-align: right;">39.0%</td>
+</tr>
+<tr>
+<td>교차공분산 (<span class="arithmatex">\(2\sum \text{Cov}\)</span>)</td>
+<td style="text-align: right;">38.8%</td>
+<td style="text-align: right;">31.2%</td>
+<td style="text-align: right;">−92.6%</td>
 </tr>
 </tbody>
 </table>
 <ul>
-<li>두 measure 모두 Cross-cov가 전체 분산의 약 절반을 차지했다. 그 이유:</li>
-<li>Product measure 하에서 이론적 직교는 보장되지만</li>
-<li>실제 데이터 위에서 평가하면 <span class="arithmatex">\( \text{Cov}_{\text{data}}(f_i, f_j) \neq 0 \)</span></li>
-<li>데이터 상관이 존재하는 한, 어떤 measure를 쓰든 Cross-cov는 남음</li>
+<li><strong>Product measure</strong>: 데이터 분포 위에서는 <span class="arithmatex">\(f_1\)</span>과 <span class="arithmatex">\(f_2\)</span>의 공분산(31.8%p)뿐 아니라 <span class="arithmatex">\(f_1\)</span>과 <span class="arithmatex">\(f_{12}\)</span>의 공분산(7.1%p)도 생긴다. 측도와 평가 분포가 다르기 때문이다.</li>
+<li><strong>Joint measure</strong>: 위계적 직교 덕분에 <span class="arithmatex">\(f_1\)</span>·<span class="arithmatex">\(f_{12}\)</span>, <span class="arithmatex">\(f_2\)</span>·<span class="arithmatex">\(f_{12}\)</span>의 공분산은 정확히 0이고, 교차공분산은 전부 <span class="arithmatex">\(f_1\)</span>과 <span class="arithmatex">\(f_2\)</span>의 공분산에서 온다.</li>
+<li><strong>조건부 평균 대입</strong>: 주효과 비중이 100%를 넘고 교차공분산이 음수가 되는, 해석할 수 없는 결과가 나온다.</li>
 </ul>
-<h3 id="24-measure">2.4 두 Measure의 비교표<a class="headerlink" href="#24-measure" title="Permanent link">¶</a></h3>
+<h2 id="26-cross-covariance">2.6 Cross-covariance는 피할 수 없다<a class="headerlink" href="#26-cross-covariance" title="Permanent link">¶</a></h2>
+<p>위 예시에서 보듯이, 변수가 상관된 데이터에서는 <strong>어느 측도를 쓰든 데이터 분포 위의 분산에 교차공분산 항이 남는다.</strong> product measure는 측도 위에서의 직교를 보장할 뿐, 실제 데이터 위에서 성분들이 무상관이라는 뜻은 아니다. joint measure는 겹치지 않는 성분 사이의 상관을 처음부터 허용한다.</p>
+<div class="admonition example">
+<p class="admonition-title">과거 개발했던 XGBoost 기반 신용평가모형에서의 경험</p>
+<p>과거 개발했던 XGBoost 기반 신용평가모형을 두 측도로 분해했을 때, 공통적으로 다음과 같은 경향이 나타났다.</p>
 <ul>
-<li>Reconstruction: 둘 다 성립</li>
-<li>mu (intercept): 서로 다른 값</li>
-<li>변수 중요도 순위: 유사하지만 미세 차이</li>
-<li>답하는 질문이 다를 뿐, 둘 다 수학적으로 유효</li>
+<li>교차공분산이 전체 분산의 <strong>상당 부분</strong>을 차지했다 (실험 조건에 따라 절반 안팎, 또는 그 이상).</li>
+<li>2-way 교호작용 성분의 분산 비중은 <strong>매우 작았다</strong> (1% 미만).</li>
+<li>두 측도의 상위 변수 중요도 순위는 대체로 비슷했고, 차이는 일부 변수에 국한되었다.</li>
 </ul>
-<h3 id="25-shape-function">2.5 우리 실험 — Shape Function 비교<a class="headerlink" href="#25-shape-function" title="Permanent link">¶</a></h3>
+<p>신용정보 변수들은 같은 차주의 신용 행태를 여러 각도에서 잰 것이라 서로 강하게 상관되어 있다. 이런 데이터에서 "주효과 몇 %, 교호작용 몇 %"만 보고하면 분산의 큰 몫을 차지하는 교차공분산이 빠진다. 분산 분해를 보고할 때는 교차공분산 항을 <strong>반드시 함께</strong> 제시해야 한다.</p>
+</div>
+<h2 id="27">2.7 두 측도의 비교<a class="headerlink" href="#27" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>기준</th>
+<th style="text-align: center;">Product measure</th>
+<th style="text-align: center;">Joint measure (반복 centering)</th>
+<th style="text-align: center;">조건부 평균 대입</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>완전 재구성 <span class="arithmatex">\(f = \sum_S f_S\)</span></td>
+<td style="text-align: center;">O</td>
+<td style="text-align: center;">O</td>
+<td style="text-align: center;">O</td>
+</tr>
+<tr>
+<td>해당 측도의 Integrate-to-Zero</td>
+<td style="text-align: center;">O</td>
+<td style="text-align: center;">O</td>
+<td style="text-align: center;"><strong>X</strong></td>
+</tr>
+<tr>
+<td>성분 간 직교</td>
+<td style="text-align: center;">모든 쌍 (측도 위에서)</td>
+<td style="text-align: center;">부분집합 관계인 쌍만</td>
+<td style="text-align: center;">보장 없음</td>
+</tr>
+<tr>
+<td>데이터 없는 조합 평가</td>
+<td style="text-align: center;">있음 (외삽)</td>
+<td style="text-align: center;">없음</td>
+<td style="text-align: center;">없음</td>
+</tr>
+<tr>
+<td>계산</td>
+<td style="text-align: center;">재귀 공식 또는 1회 centering</td>
+<td style="text-align: center;">반복 centering (상관이 강하면 느림)</td>
+<td style="text-align: center;">1회 계산</td>
+</tr>
+<tr>
+<td>답하는 질문</td>
+<td style="text-align: center;">모형이 각 변수에 어떻게 반응하는가</td>
+<td style="text-align: center;">데이터가 있는 영역에서 효과를 어떻게 나누는가</td>
+<td style="text-align: center;">— (사용하지 않음)</td>
+</tr>
+</tbody>
+</table>
 <ul>
-<li>B-1 vs B-2의 동일 변수 shape function 비교 그림</li>
-<li>Joint measure: 상관 효과가 묻어 들어가 진폭이 다름</li>
+<li><strong>Product measure 분해</strong>: 재귀 공식과 반복 centering이 같은 답을 준다. 재귀 공식이 더 빠르다.</li>
+<li><strong>Joint measure 분해</strong>: 식 (2)를 만족하는 반복 centering을 쓴다. 조건부 평균을 재귀 공식에 그대로 넣는 방식은 쓰지 않는다.</li>
+<li>두 측도는 <strong>답하는 질문이 다를 뿐 둘 다 수학적으로 유효하다.</strong> intercept <span class="arithmatex">\(f_0\)</span>부터 다르다(위 예시에서 0.85와 1.00). product의 <span class="arithmatex">\(f_0\)</span>는 변수를 독립으로 섞은 가상의 모집단 평균이고, joint의 <span class="arithmatex">\(f_0\)</span>는 실제 데이터의 평균 예측이다.</li>
 </ul>
+<p>다음 페이지에서는 같은 선택이 SHAP에서 어떻게 나타나는지 본다. → <a href="../shap-two-modes/">3절. SHAP의 두 모드</a></p>
 <hr>
 <div class="source-ref">
-<p><strong>참고</strong>: Hooker (2007). <em>Generalized Functional ANOVA Diagnostics for High-Dimensional Functions of Dependent Variables.</em> JCGS 16(3):709-732</p>
+<p><strong>참고</strong></p>
+<ul>
+<li>Hooker (2007). <a href="https://doi.org/10.1198/106186007X237892">Generalized Functional ANOVA Diagnostics for High-Dimensional Functions of Dependent Variables</a>. <em>JCGS</em> 16(3):709–732</li>
+<li>Lengerich, Tan, Chang, Hooker, Caruana (2020). <a href="https://proceedings.mlr.press/v108/lengerich20a.html">Purifying Interaction Effects with the Functional ANOVA</a>. AISTATS — 식 (5a)–(5c), Definition 1</li>
+</ul>
 </div>
 
 

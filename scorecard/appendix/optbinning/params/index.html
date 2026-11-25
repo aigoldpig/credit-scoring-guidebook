@@ -2302,7 +2302,7 @@
   <a href="#21-monotonic_trend" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2.1 monotonic_trend — 단조성 제약
+        2.1 단조성 제약 (monotonic_trend)
       
     </span>
   </a>
@@ -2313,7 +2313,7 @@
   <a href="#22" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2.2 샘플 크기 제약
+        2.2 표본 크기 제약
       
     </span>
   </a>
@@ -2321,10 +2321,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#23-bin" class="md-nav__link">
+  <a href="#23-bin-min_n_bins-max_n_bins" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2.3 Bin 수 제약
+        2.3 Bin 수 제약 (min_n_bins, max_n_bins)
       
     </span>
   </a>
@@ -2332,10 +2332,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#24-p-value-bin" class="md-nav__link">
+  <a href="#24-max_pvalue-max_pvalue_policy" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2.4 p-value 제약 — 인접 Bin 간 유의성
+        2.4 유의성 제약 (max_pvalue, max_pvalue_policy)
       
     </span>
   </a>
@@ -2354,10 +2354,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#26" class="md-nav__link">
+  <a href="#26-dtype-cat_cutoff" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2.6 범주형 변수 처리
+        2.6 범주형 변수 처리 (dtype, cat_cutoff)
       
     </span>
   </a>
@@ -2368,7 +2368,7 @@
   <a href="#27-gamma" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2.7 정규화 — gamma 파라미터
+        2.7 정규화 (gamma)
       
     </span>
   </a>
@@ -5155,131 +5155,167 @@
 
 
 
-<h1 id="_1">핵심 파라미터 상세<a class="headerlink" href="#_1" title="Permanent link">¶</a></h1>
-<h2 id="21-monotonic_trend">2.1 monotonic_trend — 단조성 제약<a class="headerlink" href="#21-monotonic_trend" title="Permanent link">¶</a></h2>
-<p>가장 중요한 파라미터다. WoE(또는 Event Rate)의 방향을 제약한다.</p>
+<h1 id="_1">핵심 옵션의 의미<a class="headerlink" href="#_1" title="Permanent link">¶</a></h1>
+<p>이 페이지는 optbinning의 주요 옵션이 <a href="../optimizer/">최적화 정식화</a>의 <strong>어느 제약에 해당하고, 왜 필요하며, 어떻게 정하는가</strong>를 정리한다. 옵션 이름은 공식 문서와 대조할 수 있도록 괄호로만 표기한다. 기본값은 <a href="https://gnpalencia.org/optbinning/binning_binary.html">공식 문서</a> 기준이다.</p>
+<h2 id="21-monotonic_trend">2.1 단조성 제약 (<code>monotonic_trend</code>)<a class="headerlink" href="#21-monotonic_trend" title="Permanent link">¶</a></h2>
+<p>가장 중요한 옵션이다. <strong>Event rate(불량률)</strong> 의 방향을 제약한다. WoE 방향이 아니다.</p>
 <table>
 <thead>
 <tr>
 <th>값</th>
-<th>의미</th>
-<th>사용 시점</th>
+<th>의미 (Event rate 기준)</th>
+<th>가이드북 WoE 기준</th>
+<th>사용 예</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>"auto"</code></td>
-<td>ML 분류기로 자동 탐지 (기본값)</td>
-<td>변수 특성을 모를 때</td>
+<td>auto (기본값)</td>
+<td>학습된 분류기로 방향을 자동 결정</td>
+<td>—</td>
+<td>방향을 모를 때의 첫 탐색</td>
 </tr>
 <tr>
-<td><code>"ascending"</code></td>
-<td>WoE 단조증가 강제</td>
-<td>사용률↑ → 위험↑ 등</td>
+<td>ascending</td>
+<td>Event rate 단조 증가</td>
+<td>WoE 단조 감소</td>
+<td>사용률↑ → 위험↑, 부채비율↑ → 위험↑</td>
 </tr>
 <tr>
-<td><code>"descending"</code></td>
-<td>WoE 단조감소 강제</td>
-<td>소득↑ → 위험↓ 등</td>
+<td>descending</td>
+<td>Event rate 단조 감소</td>
+<td>WoE 단조 증가</td>
+<td>소득↑ → 위험↓, 업력↑ → 위험↓</td>
 </tr>
 <tr>
-<td><code>"peak"</code></td>
-<td>역U형 (중간이 최대)</td>
-<td>업력, 특정 재무비율</td>
+<td>peak</td>
+<td>중간 구간에서 Event rate 최대(역U형)</td>
+<td>중간에서 WoE 최소</td>
+<td>드문 경우. 업무 논리 확인 필수</td>
 </tr>
 <tr>
-<td><code>"valley"</code></td>
-<td>U형 (중간이 최소)</td>
-<td>드문 경우</td>
+<td>valley</td>
+<td>중간 구간에서 Event rate 최소(U형)</td>
+<td>중간에서 WoE 최대</td>
+<td>재고자산회전율처럼 너무 낮아도 높아도 위험한 비율</td>
 </tr>
 <tr>
-<td><code>"auto_asc_desc"</code></td>
-<td>ascending/descending 중 자동 선택</td>
-<td>peak/valley 배제하고 싶을 때</td>
+<td>concave / convex</td>
+<td>Event rate 곡선의 오목·볼록 제약</td>
+<td>—</td>
+<td>곡률까지 통제하고 싶을 때</td>
+</tr>
+<tr>
+<td>auto_asc_desc</td>
+<td>ascending·descending 중 IV가 큰 쪽 자동 선택</td>
+<td>—</td>
+<td>U형·역U형을 배제하고 싶을 때</td>
+</tr>
+<tr>
+<td>*_heuristic</td>
+<td>peak/valley/auto의 변곡점을 휴리스틱으로 결정</td>
+<td>—</td>
+<td>prebin이 많을 때(속도)</td>
 </tr>
 </tbody>
 </table>
 <div class="admonition tip">
-<p class="admonition-title"><code>auto</code> 내부 동작</p>
-<p><code>"auto"</code> 설정 시 optbinning은 Pre-binning 결과의 Event Rate 패턴에서 <strong>16개 특성</strong>(추세 변화 횟수, 회귀 기울기 부호, 극값 위치, 볼록 껍질 비율 등)을 추출하고, 사전 학습된 결정 트리 분류기로 ascending / descending / peak / valley 중 하나를 예측한다. 이후 네 방향 각각으로 최적화를 실행해 <strong>IV가 가장 높은 방향</strong>을 최종 선택한다.</p>
+<p class="admonition-title">auto는 '탐색용'으로만</p>
+<p>공식 문서는 auto를 "머신러닝 분류기를 이용해 IV를 최대화하는 추세를 자동으로 결정"한다고 설명한다. 편리하지만, 신용평가에서는 방향이 <strong>업무 논리로 먼저 정해져야 하는</strong> 경우가 대부분이다. auto의 결과는 "데이터가 말하는 방향"을 확인하는 참고로만 쓰고, 최종 모형에는 ascending/descending을 명시하는 것을 권한다. 데이터가 고른 방향이 업무 논리와 반대라면 그 자체가 표본·정의 오류의 신호다.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">흔한 실수 — 방향을 WoE로 착각</p>
+<p>"소득이 높을수록 WoE가 커지니 ascending"이라고 설정하면, 실제로는 <strong>소득이 높을수록 불량률이 커지도록</strong> 강제된다. 결과 Binning Table의 불량률 열을 보고 방향을 반드시 재확인한다.</p>
 </div>
 <hr>
-<h2 id="22">2.2 샘플 크기 제약<a class="headerlink" href="#22" title="Permanent link">¶</a></h2>
-<div class="highlight"><pre><span></span><code><span class="n">optb</span> <span class="o">=</span> <span class="n">OptimalBinning</span><span class="p">(</span>
-    <span class="n">min_bin_size</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>        <span class="c1"># Bin당 최소 전체 샘플의 5%</span>
-    <span class="n">max_bin_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>        <span class="c1"># 최대 비율 (None=제한 없음)</span>
-    <span class="n">min_bin_n_event</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>       <span class="c1"># Bin당 최소 Bad 건수</span>
-    <span class="n">min_bin_n_nonevent</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>    <span class="c1"># Bin당 최소 Good 건수</span>
-<span class="p">)</span>
-</code></pre></div>
-<hr>
-<h2 id="23-bin">2.3 Bin 수 제약<a class="headerlink" href="#23-bin" title="Permanent link">¶</a></h2>
-<div class="highlight"><pre><span></span><code><span class="n">optb</span> <span class="o">=</span> <span class="n">OptimalBinning</span><span class="p">(</span>
-    <span class="n">min_n_bins</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>             <span class="c1"># 최소 Bin 수</span>
-    <span class="n">max_n_bins</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span>             <span class="c1"># 최대 Bin 수</span>
-<span class="p">)</span>
-</code></pre></div>
-<div class="admonition note">
-<p class="admonition-title">미지정 시</p>
-<p><code>max_n_bins=None</code>이면 solver가 IV를 최대화하는 Bin 수를 자동 결정한다. 실무에서는 <strong>5~7</strong>로 상한을 두는 것이 해석 가능성 측면에서 권장된다.</p>
-</div>
-<hr>
-<h2 id="24-p-value-bin">2.4 p-value 제약 — 인접 Bin 간 유의성<a class="headerlink" href="#24-p-value-bin" title="Permanent link">¶</a></h2>
-<div class="highlight"><pre><span></span><code><span class="n">optb</span> <span class="o">=</span> <span class="n">OptimalBinning</span><span class="p">(</span>
-    <span class="n">max_pvalue</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>                  <span class="c1"># 인접 Bin 간 최대 p-value</span>
-    <span class="n">max_pvalue_policy</span><span class="o">=</span><span class="s2">"consecutive"</span><span class="p">,</span>  <span class="c1"># "consecutive" 또는 "all"</span>
-<span class="p">)</span>
-</code></pre></div>
+<h2 id="22">2.2 표본 크기 제약<a class="headerlink" href="#22" title="Permanent link">¶</a></h2>
 <table>
 <thead>
 <tr>
-<th>파라미터</th>
-<th>설명</th>
+<th>옵션</th>
+<th>의미</th>
+<th>기본값</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>max_pvalue</code></td>
-<td>인접 Bin 쌍의 Event Rate 차이에 대한 Z-test p-value 상한. 이를 초과하는 쌍은 합병 대상</td>
+<td>최소 Bin 비중 (<code>min_bin_size</code>)</td>
+<td>각 Bin이 전체 표본에서 차지해야 하는 최소 비율</td>
+<td>미지정 시 Fine Bin 최소 비중(5%)과 같음</td>
 </tr>
 <tr>
-<td><code>max_pvalue_policy</code></td>
-<td><code>"consecutive"</code>: 바로 인접한 쌍만 검정 (기본값). <code>"all"</code>: 모든 Bin 쌍 검정</td>
+<td>최대 Bin 비중 (<code>max_bin_size</code>)</td>
+<td>한 Bin에 표본이 과도하게 몰리는 것 방지</td>
+<td>제한 없음</td>
+</tr>
+<tr>
+<td>최소 Bad / Good 건수 (<code>min_bin_n_event</code>, <code>min_bin_n_nonevent</code>)</td>
+<td>각 Bin의 최소 불량·정상 건수</td>
+<td>제한 없음</td>
 </tr>
 </tbody>
 </table>
+<p><strong>왜 필요한가.</strong> WoE는 <span class="arithmatex">\(\ln(\%\text{Good}/\%\text{Bad})\)</span>이므로 Bad 건수가 적은 Bin에서는 Bad 1~2건 차이로 WoE가 크게 흔들린다. 예를 들어 Bad 5건인 Bin은 Bad가 4건이 되면 WoE가 <span class="arithmatex">\(\ln(5/4) \approx 0.22\)</span>만큼 움직인다. 그런 Bin의 WoE는 OOT에서 재현되지 않는다. 비율 기준(최소 비중)만으로는 저불량 포트폴리오에서 Bad 건수가 부족할 수 있으므로, <strong>최소 Bad 건수를 함께</strong> 거는 것이 안전하다. Coarse Bin 기준값(각 Bin ≥ 5%, Bad 건수 최소 기준 병기)은 본문 <a href="../../../part3_variable_selection/classing/decision-criteria/">구간화 결정 기준</a>을 따른다.</p>
+<hr>
+<h2 id="23-bin-min_n_bins-max_n_bins">2.3 Bin 수 제약 (<code>min_n_bins</code>, <code>max_n_bins</code>)<a class="headerlink" href="#23-bin-min_n_bins-max_n_bins" title="Permanent link">¶</a></h2>
+<p>최대 Bin 수를 지정하지 않으면 공식 문서상 Bin 수는 "0과 최대 Fine Bin 수 사이의 값"이 된다. 여기서 주의할 점은 <strong>IV는 구간을 합칠수록 줄어들기만 한다</strong>는 사실이다(<a href="../optimizer/">최적화 엔진 1.3절</a> 예시의 1위 참조). 따라서 Bin 수 상한이 없으면 Solver는 다른 제약(단조성·최소 표본·p-value)이 허용하는 한 <strong>가능한 많은 Bin</strong>을 남긴다. "Solver가 적당한 Bin 수를 알아서 고른다"가 아니라, <strong>Bin 수는 다른 제약이 결정한다</strong>.</p>
+<p>실무에서는 해석 가능성과 안정성을 위해 상한을 명시한다. 스코어카드에서는 변수당 5개 안팎이 흔하다(<a href="../../../part3_variable_selection/classing/decision-criteria/">기준값 정본</a>). 해석 가능한 ML의 조건과 운영 평점표의 구간 수 관행은 <a href="../../../../ml/part4_interpretation/interpretability/">해석 가능성 페이지</a>를 참고한다.</p>
+<hr>
+<h2 id="24-max_pvalue-max_pvalue_policy">2.4 유의성 제약 (<code>max_pvalue</code>, <code>max_pvalue_policy</code>)<a class="headerlink" href="#24-max_pvalue-max_pvalue_policy" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>옵션</th>
+<th>의미</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>최대 p-value (<code>max_pvalue</code>)</td>
+<td>이웃한 두 Bin의 불량률 차이에 대한 Z-test p-value 상한. 기준을 넘는 쌍은 동시에 채택될 수 없다(최적화 제약). 기본값은 미적용</td>
+</tr>
+<tr>
+<td>비교 범위 (<code>max_pvalue_policy</code>)</td>
+<td>consecutive(기본값): 바로 이웃한 쌍만 / all: 모든 Bin 쌍</td>
+</tr>
+</tbody>
+</table>
+<p><strong>왜 필요한가.</strong> 불량률 차이가 통계적으로 구분되지 않는 두 Bin은 서로 다른 점수를 줄 근거가 약하다. 이 제약은 본문 <a href="../../../part3_variable_selection/univariate_lr/significance-test/">비유의 Bin 처리 기준</a>("인접 Bin 간 차이가 비유의면 합병 검토")을 최적화 단계에서 미리 강제하는 장치다.</p>
 <div class="admonition warning">
-<p class="admonition-title">p-value 산출 방식</p>
-<p>최적화 <strong>내부</strong>에서는 Event Rate 차이에 대한 <strong>Z-test</strong>를 사용한다(연속형 타겟은 T-test). 이는 ChiMerge의 카이제곱 검정과 원리는 유사하지만 구현이 다르다. 사후 검증 시 <code>binning_table.analysis()</code>에서 Chi-square 또는 Fisher exact test를 별도로 수행할 수 있다.</p>
+<p class="admonition-title">최적화 내부 검정과 사후 검정은 다르다</p>
+<p>최적화 내부에서는 Event rate 차이에 대한 <strong>Z-test</strong>를 쓴다(연속형 타겟은 T-test). 결과표의 사후 분석에서는 카이제곱 또는 Fisher 정확 검정을 고를 수 있다. 같은 Bin 쌍이라도 검정 방식에 따라 p-value가 조금씩 다르므로, 보고서에는 어떤 검정을 썼는지 명시한다. 대표본에서는 거의 모든 차이가 유의해지므로 p-value 제약은 사실상 작동하지 않는 경우가 많다. 이때는 최소 Bin 비중·Bin 수 상한이 실질적인 제약이 된다.</p>
 </div>
 <hr>
 <h2 id="25-special-codes-missing">2.5 Special Codes와 Missing 처리<a class="headerlink" href="#25-special-codes-missing" title="Permanent link">¶</a></h2>
-<div class="highlight"><pre><span></span><code><span class="n">optb</span> <span class="o">=</span> <span class="n">OptimalBinning</span><span class="p">(</span>
-    <span class="n">special_codes</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">9</span><span class="p">,</span> <span class="o">-</span><span class="mi">99</span><span class="p">],</span>          <span class="c1"># 센티널 값 → 별도 Bin으로 분리</span>
-    <span class="c1"># 또는 딕셔너리로 그룹화:</span>
-    <span class="c1"># special_codes={"sentinel": [-9, -99], "zero": [0]},</span>
-<span class="p">)</span>
-</code></pre></div>
 <ul>
-<li><code>special_codes</code>에 지정된 값은 최적화에서 제외되고, <strong>별도의 Special Bin</strong>으로 처리된다.</li>
-<li><strong>Missing 값</strong>(NaN)도 자동으로 별도 Bin으로 분리된다.</li>
-<li>WoE 변환 시 <code>metric_special=0</code>, <code>metric_missing=0</code>이 기본값 (WoE=0, 즉 중립).</li>
+<li><strong>Special Codes</strong>(<code>special_codes</code>): 지정한 값(예: −9, −99 같은 센티널 값)은 최적화 대상에서 빠지고 <strong>별도의 Special Bin</strong>이 된다. 여러 코드를 묶어 그룹별로 별도 Bin을 만들 수도 있다.</li>
+<li><strong>Missing</strong>(NaN): 자동으로 별도 Bin이 된다.</li>
+<li>두 Bin 모두 단조성 제약의 대상이 아니다. 즉 Special/Missing Bin의 불량률은 정상 구간의 추세와 무관하게 나온다.</li>
+</ul>
+<div class="admonition danger">
+<p class="admonition-title">변환 시 기본값 0 = '평균 위험' 처리 — 실무 함정</p>
+<p>WoE 변환에서 Special·Missing의 기본값은 <strong>0</strong>이다(공식 문서: 변환 옵션 기본값 0). WoE = 0은 "모집단 평균과 같은 위험"을 뜻한다. 그런데 실무에서 특수코드·결측은 <strong>그 자체가 위험 신호</strong>인 경우가 많다(예: 소득 미확인, 신용이력 없음). 이런 구간에 0을 주면 위험한 차주가 평균 점수를 받는다.</p>
+<ul>
+<li>표본이 충분하면 변환 옵션을 <strong>empirical</strong>(해당 Bin의 실제 WoE 사용)로 두는 것을 검토한다.</li>
+<li>표본이 부족하면 업무 판단으로 보수적인 값(예: 가장 위험한 정상 구간의 WoE)을 부여하고 근거를 문서화한다.</li>
+<li>Special Value의 WoE 처리 방침은 본문 <a href="../../../part3_variable_selection/classing/fine-classing/">Fine Classing</a>의 특수코드 처리와 일관되게 정한다.</li>
+</ul>
+</div>
+<hr>
+<h2 id="26-dtype-cat_cutoff">2.6 범주형 변수 처리 (<code>dtype</code>, <code>cat_cutoff</code>)<a class="headerlink" href="#26-dtype-cat_cutoff" title="Permanent link">¶</a></h2>
+<p>범주형 변수로 지정하면 라이브러리는 각 범주의 Event rate를 계산해 <strong>범주를 Event rate 순으로 정렬한 뒤</strong> 연속형처럼 인접 범주끼리 병합한다. 그래서 업종 코드처럼 순서가 없는 변수도 "위험도 순서"를 기준으로 묶인다.</p>
+<p>희귀 범주 기준(<code>cat_cutoff</code>)을 지정하면, 출현 비율이 기준 미만인 범주들은 최적화 전에 하나의 <strong>"others"</strong> 그룹으로 묶인다(기본값은 미적용). 희귀 범주는 Event rate 추정이 불안정해 정렬 순서 자체가 우연에 좌우되기 때문이다. 단, others 그룹은 성격이 다른 범주들이 섞인 집합이므로 다음을 점검한다.</p>
+<ul>
+<li>others의 표본이 커서 결과에 큰 영향을 주는지</li>
+<li>신규 범주(학습 때 없던 업종 코드)가 운영 중 들어오면 어느 Bin으로 갈지 — 보통 others 또는 별도 규칙으로 처리하고 문서화한다</li>
 </ul>
 <hr>
-<h2 id="26">2.6 범주형 변수 처리<a class="headerlink" href="#26" title="Permanent link">¶</a></h2>
-<div class="highlight"><pre><span></span><code><span class="n">optb</span> <span class="o">=</span> <span class="n">OptimalBinning</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">"industry_code"</span><span class="p">,</span>
-    <span class="n">dtype</span><span class="o">=</span><span class="s2">"categorical"</span><span class="p">,</span>        <span class="c1"># 범주형 지정</span>
-    <span class="n">cat_cutoff</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>            <span class="c1"># 빈도 5% 미만 범주는 자동 그룹화</span>
-<span class="p">)</span>
-</code></pre></div>
-<hr>
-<h2 id="27-gamma">2.7 정규화 — gamma 파라미터<a class="headerlink" href="#27-gamma" title="Permanent link">¶</a></h2>
-<div class="highlight"><pre><span></span><code><span class="n">optb</span> <span class="o">=</span> <span class="n">OptimalBinning</span><span class="p">(</span>
-    <span class="n">gamma</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>   <span class="c1"># L1 정규화 강도 (기본값 0)</span>
-<span class="p">)</span>
-</code></pre></div>
-<p>gamma &gt; 0이면 목적함수에서 <strong>Bin 크기 불균형에 대한 페널티</strong>가 추가된다. 특정 Bin이 IV를 독점하는 것을 방지하여 더 균형 잡힌 Bin 구성을 유도한다.</p>
+<h2 id="27-gamma">2.7 정규화 (<code>gamma</code>)<a class="headerlink" href="#27-gamma" title="Permanent link">¶</a></h2>
+<p>공식 문서는 이 옵션을 "dominating bins의 수를 줄이는 정규화 강도"로 설명한다(기본값 0). 여기서 dominating bin은 <strong>표본이 한 Bin에 과도하게 쏠린 경우</strong>를 말한다. 값이 클수록 목적함수에서 Bin 크기 불균형에 대한 페널티가 커져, 표본이 여러 Bin에 더 고르게 나뉘도록 유도한다.</p>
+<ul>
+<li>언제 쓰나: 최적해가 "한 Bin에 표본 60%, 나머지는 잘게 쪼갠" 형태로 나와 운영상 변별이 약해 보일 때</li>
+<li>주의: 페널티만큼 IV를 희생한다. 값은 몇 단계로 바꿔 보며 IV 감소폭과 Bin 분포 변화를 함께 보고 정한다. 최대 Bin 비중 제약으로 같은 목적을 더 직접적으로 달성할 수도 있다.</li>
+</ul>
 
 
 

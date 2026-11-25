@@ -5130,7 +5130,7 @@
 <div style="background:var(--md-code-bg-color,#f5f5f5);border-radius:16px;padding:24px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.06)">
 <div style="font-size:2rem;font-weight:700;color:#0064ff">OOS</div>
 <div style="font-size:.85rem;color:#6b7280;margin:4px 0 8px">Out-of-Sample</div>
-<div style="font-size:.8rem;text-align:left;color:var(--md-default-fg-color--light)">같은 기간 내 Hold-out 샘플로 과적합을 점검한다.</div>
+<div style="font-size:.8rem;text-align:left;color:var(--md-default-fg-color--light)">같은 기간 내 Hold-out 표본으로 과적합을 점검한다.</div>
 </div>
 <div style="background:var(--md-code-bg-color,#f5f5f5);border-radius:16px;padding:24px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.06)">
 <div style="font-size:2rem;font-weight:700;color:#0064ff">안정성</div>
@@ -5138,11 +5138,11 @@
 <div style="font-size:.8rem;text-align:left;color:var(--md-default-fg-color--light)">성능·변수 기여도·등급별 부도율이 시간에 걸쳐 유지되는가.</div>
 </div>
 </div>
-<p>모형 성능 평가에서 KS·AR·Gini가 아무리 높아도, <strong>개발 데이터에서만 잘 작동하는 모형은 실전에서 쓸 수 없다.</strong> OOT 검증은 모형이 <strong>미래 데이터에서도 유효한지</strong> 확인하는 가장 중요한 관문이다.</p>
+<p>모형 성능 평가에서 KS·AR이 아무리 높아도, <strong>개발 데이터에서만 잘 작동하는 모형은 실전에서 쓸 수 없다.</strong> OOT 검증은 모형이 <strong>미래 데이터에서도 유효한지</strong> 확인하는 가장 중요한 관문이다.</p>
 <hr>
 <h2 id="31-oot">3.1 왜 OOT가 필요한가<a class="headerlink" href="#31-oot" title="Permanent link">¶</a></h2>
-<h3 id="_1">개발 샘플의 한계<a class="headerlink" href="#_1" title="Permanent link">¶</a></h3>
-<p>개발 샘플(Training)에서 산출한 KS·AR은 모형이 이미 "본 적 있는" 데이터에 대한 성능이다. 이 수치가 높다고 해서 미래에도 같은 성능이 보장되지 않는다.</p>
+<h3 id="_1">개발 표본의 한계<a class="headerlink" href="#_1" title="Permanent link">¶</a></h3>
+<p>개발 표본(Training)에서 산출한 KS·AR은 모형이 이미 "본 적 있는" 데이터에 대한 성능이다. 이 수치가 높다고 해서 미래에도 같은 성능이 보장되지 않는다.</p>
 <table>
 <thead>
 <tr>
@@ -5171,9 +5171,14 @@
 </table>
 <div class="admonition warning">
 <p class="admonition-title">OOS만으로는 부족한 이유</p>
-<p>OOS는 개발 샘플과 <strong>같은 시점</strong>의 데이터를 무작위 분리한 것이다. 같은 경제 환경, 같은 심사 정책, 같은 포트폴리오 구성을 공유하므로 <strong>시간 변화에 따른 열화를 감지하지 못한다.</strong> OOT만이 "이 모형이 내일도 통하는가"에 답할 수 있다.</p>
+<p>OOS는 개발 표본과 <strong>같은 시점</strong>의 데이터를 무작위로 나눈 것이다. 같은 경제 환경, 같은 심사 정책, 같은 포트폴리오 구성을 공유하므로 <strong>시간 변화에 따른 열화를 감지하지 못한다.</strong> "이 모형이 내일도 통하는가"에 가장 가깝게 답하는 것은 OOT다.</p>
 </div>
-<h3 id="_2">개발·검증 샘플 설계<a class="headerlink" href="#_2" title="Permanent link">¶</a></h3>
+<div class="admonition info">
+<p class="admonition-title">규제 문서에서의 근거</p>
+<p>Basel II는 통계 모형을 등급 부여에 쓰는 은행에 <strong>"out-of-time 및 out-of-sample 성능 검정을 포함한 엄격한 통계적 검증 절차"</strong> 를 갖추도록 요구한다(BCBS 128 문단 420). 또 등급별 실현 부도율과 추정 PD를 정기적으로 비교하고 그 분석을 적어도 연 1회 갱신하도록 요구한다(문단 501).</p>
+<p></p><div class="source-ref">출처: <a href="https://www.bis.org/publications/200606-standards-basel-ii-international-convergence-capital-measurement-and-capital-standards-revised-framework.pdf" target="_blank">BCBS, Basel II Comprehensive Version (2006), 문단 420·501</a></div><p></p>
+</div>
+<h3 id="_2">개발·검증 표본 설계<a class="headerlink" href="#_2" title="Permanent link">¶</a></h3>
 <blockquote>
 <p><strong>관측 윈도우</strong> (변수 산출 기간) → <strong>성과 윈도우</strong> (불량 판정 기간)</p>
 </blockquote>
@@ -5181,19 +5186,19 @@
 <thead>
 <tr>
 <th>구분</th>
-<th>기간 (예시)</th>
+<th>관측 시점 (예시)</th>
 <th>용도</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>개발 샘플</strong></td>
+<td><strong>개발 표본</strong></td>
 <td>2021.01 ~ 2022.06</td>
 <td>모형 학습</td>
 </tr>
 <tr>
 <td><strong>OOS</strong></td>
-<td>2021.01 ~ 2022.06 중 20~30% 무작위 분리</td>
+<td>같은 기간에서 20~30% 무작위 분리</td>
 <td>과적합 점검</td>
 </tr>
 <tr>
@@ -5203,49 +5208,68 @@
 </tr>
 </tbody>
 </table>
+<p>이 페이지의 OOS는 같은 기간 안에서 떼어 둔 Hold-out을 가리킨다(ML 파트는 개발에 쓰지 않은 표본 전체를 OOS로 부른다). OOT라고 부를 수 있는 것은 개발 기간 뒤 시점 중 성과 기간이 끝난 표본을 개발 모형 그대로 채점한 결과뿐이다. 학습 기간보다 과거 시점에 적용한 결과는 "안정성 진단"으로, 성과가 아직 끝나지 않은 최근 시점은 "분포 점검"(PSI)으로 구분해 적는다.</p>
 <div class="admonition tip">
 <p class="admonition-title">OOT 기간 설정 실무</p>
 <ul>
 <li>OOT 기간은 최소 <strong>6개월~1년</strong> 이상이 권장된다.</li>
-<li><strong>성과 윈도우(Performance Window)</strong>가 12개월이면, OOT 관측 시점은 그만큼 앞서야 부도 레이블이 확정된다.</li>
+<li><strong>성과 윈도우(Performance Window)</strong> 가 12개월이면, 관측 시점에서 12개월이 지나야 불량 여부가 확정된다. 위 예시의 OOT 표본은 2024년 6월이 지나야 모두 확정된다. 그래서 OOT 관측 시점은 현재보다 최소 성과 윈도우만큼 앞서야 한다.</li>
 <li>경기 변동을 포착하려면 OOT 기간이 개발 기간과 <strong>다른 경기 국면</strong>을 포함하는 것이 이상적이다.</li>
 </ul>
 </div>
+<div class="admonition warning">
+<p class="admonition-title">같은 차주가 여러 시점에 반복 관측되는 자료</p>
+<p>여러 기준시점의 스냅샷을 합친 자료를 무작위로 나누면, 한 차주의 서로 다른 시점이 학습과 검증에 나뉘어 들어가 검증 성능이 실제보다 좋게 나온다. 차주 단위로 묶어 나누거나, 최신 시점을 먼저 OOT로 떼어 둔 뒤 나머지에서 학습·검증 표본을 나눈다.</p>
+</div>
 <hr>
 <h2 id="32-oot">3.2 OOT에서 확인할 사항<a class="headerlink" href="#32-oot" title="Permanent link">¶</a></h2>
-<h3 id="_3">변별력 안정성<a class="headerlink" href="#_3" title="Permanent link">¶</a></h3>
+<h3 id="oot">변별력 안정성 — OOT 허용폭 (기준값 정본)<a class="headerlink" href="#oot" title="Permanent link">¶</a></h3>
+<p>이 표가 가이드북 전체의 <strong>OOT 허용폭 정본</strong>이다. ML 모형 검증 등 다른 페이지는 이 표를 참조한다.</p>
 <table>
 <thead>
 <tr>
-<th>항목</th>
-<th>기준</th>
+<th>지표</th>
+<th>양호</th>
+<th>주의 (원인 분석)</th>
+<th>재검토</th>
 <th>판정 예시</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>KS 하락폭</strong></td>
-<td>개발 대비 5~10%p 이내</td>
-<td>개발 KS 38 → OOT KS 33 (허용)</td>
+<td><strong>KS 하락폭</strong> (개발 KS − OOT KS, %p)</td>
+<td>≤ 5</td>
+<td>5 ~ 10</td>
+<td>&gt; 10</td>
+<td>개발 38.2 → OOT 34.1 (−4.1%p, 양호)</td>
 </tr>
 <tr>
-<td><strong>AR/Gini 하락폭</strong></td>
-<td>개발 대비 0.05 이내</td>
-<td>개발 AR 0.54 → OOT AR 0.50 (허용)</td>
+<td><strong>AR 하락폭</strong> (개발 AR − OOT AR)</td>
+<td>≤ 0.05</td>
+<td>0.05 ~ 0.10</td>
+<td>&gt; 0.10</td>
+<td>개발 0.54 → OOT 0.50 (−0.04, 양호)</td>
 </tr>
 <tr>
-<td><strong>AUC 하락폭</strong></td>
-<td>개발 대비 0.03 이내</td>
-<td>개발 AUC 0.77 → OOT AUC 0.74 (허용)</td>
+<td><strong>PSI</strong> (개발 vs OOT 점수 분포)</td>
+<td>&lt; 0.10</td>
+<td>0.10 ~ 0.25</td>
+<td>&gt; 0.25</td>
+<td>0.06 (양호)</td>
 </tr>
 </tbody>
 </table>
+<ul>
+<li>KS 하락폭은 <strong>절대 차이(%p)</strong> 다. "KS가 10% 하락"(상대 비율)과 혼동하지 않는다.</li>
+<li>개발 시점 성능 자체의 수준(벤치마크)은 <a href="../performance-ks-ar-gini/">성능 평가 2.4절</a>에서 판단한다.</li>
+<li>AUC는 AR과 1:1로 환산되므로(AR = 2·AUC − 1) 별도 기준을 두지 않는다. AR 0.05 하락은 AUC 0.025 하락과 같다.</li>
+</ul>
 <div class="admonition warning">
-<p class="admonition-title">하락폭 기준은 절대적이지 않다</p>
-<p>위 기준은 업계 관행이지, 규제가 정한 일률적 수치는 아니다. 모형 용도(심사 자동화 vs 참고용), 포트폴리오 특성(소매 vs 기업), 불량률 수준에 따라 허용 범위가 달라질 수 있다. 중요한 것은 <strong>하락의 크기와 원인을 함께 보는 것</strong>이다.</p>
+<p class="admonition-title">허용폭은 실무 경험칙이다</p>
+<p>위 기준은 업계에서 흔히 쓰는 경험칙이지, 규제가 정한 일률적 수치는 아니다. 모형 용도(심사 자동화 vs 참고용), 포트폴리오 특성(소매 vs 기업), 불량 건수에 따라 허용 범위가 달라질 수 있다. 특히 불량 건수가 적으면 OOT KS·AR 자체의 표본 오차가 커서, 몇 %p의 하락은 우연일 수 있다(부트스트랩 신뢰구간으로 확인). 중요한 것은 <strong>하락의 크기와 원인을 함께 보는 것</strong>이다. 같은 차주가 여러 관찰 시점에 반복되는 자료라면 관측행이 독립이 아니어서 행 단위 신뢰구간이 실제보다 좁게 나오므로, 차주 단위로 재표집한다. 허용폭과 판정 기준은 결과를 보기 전에 정해 두고, 결과를 본 뒤 새 기준을 만들어 합격을 주장하지 않는다.</p>
 </div>
 <h3 id="monotonicity">등급별 부도율 단조성 (Monotonicity)<a class="headerlink" href="#monotonicity" title="Permanent link">¶</a></h3>
-<p>OOT에서도 <strong>등급이 나쁠수록 부도율이 높아지는</strong> 단조 관계가 유지되어야 한다. 개발 샘플에서 단조였더라도 OOT에서 역전이 발생하면 해당 구간의 WoE 패턴이 변질되었을 가능성이 있다.</p>
+<p>OOT에서도 <strong>등급이 나쁠수록 부도율이 높아지는</strong> 단조 관계가 유지되어야 한다. 개발 표본에서 단조였더라도 OOT에서 역전이 생기면, 해당 구간의 변수-위험 관계가 바뀌었을 가능성이 있다.</p>
 <table>
 <thead>
 <tr>
@@ -5283,8 +5307,8 @@
 <tr>
 <td><strong>5</strong></td>
 <td><strong>5.5%</strong></td>
-<td><strong>4.8%</strong></td>
-<td><strong>역전 — 4등급보다 낮음, 점검 필요</strong></td>
+<td><strong>3.3%</strong></td>
+<td><strong>역전 — 4등급(3.5%)보다 낮음, 점검 필요</strong></td>
 </tr>
 <tr>
 <td>6 (최불량)</td>
@@ -5295,39 +5319,17 @@
 </tbody>
 </table>
 <div class="admonition tip">
-<p class="admonition-title">단조성 위반 시 조치</p>
-<p>① 해당 등급의 관측 수가 극소수인지 확인 (소표본 변동 가능성)
-② 해당 구간의 WoE 패턴이 개발 시점 대비 변했는지 CSI로 점검
-③ 역전이 통계적으로 유의하면 해당 등급 구간 합병(Merge) 또는 Coarse Classing 재검토</p>
+<p class="admonition-title">단조성 이상 시 조치</p>
+<p>① 해당 등급의 관측 수·불량 수가 극소수인지 확인 (소표본 변동 가능성)
+② 해당 등급에 많이 속한 구간의 <strong>변수-위험 관계가 바뀌었는지</strong> 확인: OOT 표본에서 변수별 구간 불량률·WoE를 다시 계산해 개발 값과 비교하거나, 개발 WoE를 OOT 표본에 적용해 단변량 로지스틱 회귀를 다시 적합한다(정상이면 계수가 −1 근처 — <a href="../../part3_variable_selection/univariate_lr/beta-woe-proof/">증명</a>). CSI는 구성비 이동만 보므로 이 점검에는 쓸 수 없다.
+③ 역전이 통계적으로 유의하고 지속되면 해당 등급 구간 합병 또는 Coarse Classing 재검토</p>
 </div>
-<h3 id="_4">점수 분포 안정성<a class="headerlink" href="#_4" title="Permanent link">¶</a></h3>
-<p>OOT 샘플의 점수 분포가 개발 샘플과 유사한지 PSI로 확인한다. PSI 산출 방법과 임계값은 <a href="../performance-ks-ar-gini/">성능 평가</a>의 PSI 섹션에서 다루었다.</p>
-<table>
-<thead>
-<tr>
-<th>PSI</th>
-<th>판정</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>&lt; 0.10</td>
-<td>안정 — 점수 분포 유사</td>
-</tr>
-<tr>
-<td>0.10 ~ 0.25</td>
-<td>소폭 이동 — 원인 분석 필요</td>
-</tr>
-<tr>
-<td>&gt; 0.25</td>
-<td>유의미한 이동 — 모형 유효성 재검토</td>
-</tr>
-</tbody>
-</table>
+<h3 id="_3">점수 분포 안정성<a class="headerlink" href="#_3" title="Permanent link">¶</a></h3>
+<p>OOT 표본의 점수 분포가 개발 표본과 비슷한지 PSI로 확인한다. 판정 기준은 위 허용폭 표와 같고, 산출 방법은 <a href="../performance-ks-ar-gini/">성능 평가</a>의 PSI 절에서 다룬다.</p>
 <hr>
 <h2 id="33-oot">3.3 OOT 성능이 크게 떨어졌을 때<a class="headerlink" href="#33-oot" title="Permanent link">¶</a></h2>
 <p>OOT에서 성능이 급락했다면, <strong>모형의 문제인지 환경의 문제인지</strong> 구분하는 것이 첫 번째 단계다.</p>
-<h3 id="_5">원인 진단 체크리스트<a class="headerlink" href="#_5" title="Permanent link">¶</a></h3>
+<h3 id="_4">원인 진단 체크리스트<a class="headerlink" href="#_4" title="Permanent link">¶</a></h3>
 <table>
 <thead>
 <tr>
@@ -5338,44 +5340,52 @@
 </thead>
 <tbody>
 <tr>
-<td><strong>PSI</strong></td>
-<td>낮음 (분포 유사한데 성능만 하락)</td>
-<td>높음 (모집단 자체가 변동)</td>
-</tr>
-<tr>
-<td><strong>CSI</strong></td>
-<td>특정 변수 급등 → 해당 변수 데이터 이상</td>
-<td>다수 변수 전반적 상승 → 경기·정책 변화</td>
-</tr>
-<tr>
-<td><strong>과적합</strong></td>
-<td>OOS도 개발 대비 큰 차이</td>
+<td><strong>OOS 성능</strong></td>
+<td>OOS도 개발 대비 크게 하락 → 과적합</td>
 <td>OOS는 양호, OOT만 하락</td>
 </tr>
 <tr>
+<td><strong>PSI</strong></td>
+<td>낮음 (분포가 같은데 성능만 하락)</td>
+<td>높음 (모집단 구성 자체가 변동)</td>
+</tr>
+<tr>
+<td><strong>CSI</strong></td>
+<td>특정 변수만 급등 → 그 변수의 데이터·정의 이상</td>
+<td>다수 변수가 함께 상승 → 경기·정책 변화</td>
+</tr>
+<tr>
+<td><strong>변수별 WoE 재계산</strong></td>
+<td>—</td>
+<td>분포는 같은데 구간별 불량률이 변함 → <strong>개념 드리프트</strong>(변수와 위험의 관계 변화)</td>
+</tr>
+<tr>
 <td><strong>데이터 누수</strong></td>
-<td>특정 변수 제거 시 성능 정상화</td>
-<td>변수 제거해도 변화 없음</td>
+<td>특정 변수를 빼면 개발 성능이 크게 떨어지고 OOT와 비슷해짐</td>
+<td>변수를 빼도 변화 없음</td>
 </tr>
 </tbody>
 </table>
+<p>PSI가 낮은데 성능이 떨어지면 "모형 문제"로 단정하기 쉽지만, 경기 변화로 <strong>같은 점수대의 부도 행태가 바뀐 경우</strong>(개념 드리프트)도 같은 모습을 보인다. 변수별 구간 불량률을 개발 시점과 비교해 구분한다.</p>
 <div class="admonition danger">
 <p class="admonition-title">Target Leakage 점검</p>
-<p>OOT 성능이 개발 대비 <strong>과도하게 좋거나</strong> 과도하게 나쁜 경우 모두 Target Leakage를 의심한다.</p>
+<p>Leakage(불량 판정 이후에야 관측 가능한 정보가 변수에 섞임)는 <strong>개발 표본 성능을 부풀린다.</strong> OOT에서 그 정보가 같은 방식으로 들어오지 않으면 성능이 크게 떨어지고, 같은 방식으로 들어오면 OOT도 비현실적으로 높게 나온다.</p>
 <ul>
-<li><strong>과도하게 좋은 경우:</strong> 불량 판정 이후에야 관측 가능한 변수(연체일수, 채권회수 단계 등)가 학습 변수에 포함</li>
-<li><strong>과도하게 나쁜 경우:</strong> 개발 데이터에 Leakage가 있어 성능이 부풀려졌고, OOT에서 Leakage가 해소되면서 "실제 성능"이 드러남</li>
+<li><strong>개발·OOT 모두 비현실적으로 높은 경우:</strong> 연체일수·채권회수 단계 등 사후 정보가 변수에 포함됐는지, 관측 시점 기준 데이터 추출이 맞는지 확인</li>
+<li><strong>개발만 높고 OOT에서 급락하는 경우:</strong> 개발 기간에만 존재했던 사후 정보(예: 데이터 적재 시점 차이)가 있었는지 확인</li>
 </ul>
 </div>
-<h3 id="_6">대응 방향<a class="headerlink" href="#_6" title="Permanent link">¶</a></h3>
+<h3 id="_5">대응 방향<a class="headerlink" href="#_5" title="Permanent link">¶</a></h3>
 <div class="highlight"><pre><span></span><code>OOT 성능 급락
     │
     ├─ 모집단 변화 (PSI 높음)
     │   ├─ 일시적 (경기 충격 등) → 모니터링 지속, 다음 OOT 재확인
     │   └─ 구조적 (채널·상품·정책 변경) → 리캘리브레이션 또는 재개발
     │
+    ├─ 관계 변화 (PSI 낮음, 구간별 불량률 변화) → 해당 변수 Classing 재검토 또는 재개발
+    │
     ├─ 과적합 (OOS도 하락)
-    │   └─ 변수 축소, 정규화 강화, 데이터 증량 검토
+    │   └─ 변수 축소, Bin 수 축소, 표본 증량 검토
     │
     └─ 데이터 누수 (Leakage)
         └─ 해당 변수 제거 후 재개발
@@ -5383,7 +5393,7 @@
 <hr>
 <h2 id="34-oot">3.4 실무 보고 — OOT 검증 보고서 구성<a class="headerlink" href="#34-oot" title="Permanent link">¶</a></h2>
 <p>OOT 검증 결과는 모형 승인의 핵심 근거로, 내부 검증 부서와 감독당국에 제출하는 <strong>공식 문서</strong>다.</p>
-<h3 id="_7">보고서 필수 항목<a class="headerlink" href="#_7" title="Permanent link">¶</a></h3>
+<h3 id="_6">보고서 필수 항목<a class="headerlink" href="#_6" title="Permanent link">¶</a></h3>
 <table>
 <thead>
 <tr>
@@ -5393,12 +5403,12 @@
 </thead>
 <tbody>
 <tr>
-<td><strong>개발·OOT 샘플 정의</strong></td>
+<td><strong>개발·OOT 표본 정의</strong></td>
 <td>기간, 건수, 불량률, 제외 기준</td>
 </tr>
 <tr>
 <td><strong>변별력 비교</strong></td>
-<td>KS, AR, AUC — 개발 vs OOT 대비표</td>
+<td>KS, AR — 개발 vs OOS vs OOT 대비표</td>
 </tr>
 <tr>
 <td><strong>PSI</strong></td>
@@ -5410,7 +5420,7 @@
 </tr>
 <tr>
 <td><strong>변수 안정성</strong></td>
-<td>주요 변수 CSI</td>
+<td>주요 변수 CSI, 구간별 불량률 변화</td>
 </tr>
 <tr>
 <td><strong>종합 판정</strong></td>
@@ -5420,8 +5430,7 @@
 </table>
 <div class="admonition example">
 <p class="admonition-title">실무 참고 — OOT 검증 관행</p>
-<p>신용평가모형 개발 시 최소 1개 이상의 OOT 기간을 설정하여 검증하는 것이 업계 표준이다. 개인 CSS의 경우 개발 기간 2~3년, OOT 기간 1년이 일반적이며, 기업 CSS는 불량 건수 확보를 위해 개발 기간을 더 길게 설정하는 경우가 많다.</p>
-<p>Basel IRB 프레임워크에서도 OOT 검증을 요구하고 있으며, OOT 없이 배포된 모형은 검증 미흡으로 판정될 수 있다.</p>
+<p>신용평가모형 개발 시 최소 1개 이상의 OOT 기간을 설정하여 검증하는 것이 일반적이다. 개인 CSS는 개발 기간 2~3년, OOT 기간 1년 정도가 흔하며, 기업 CSS는 불량 건수 확보를 위해 개발 기간을 더 길게 잡는 경우가 많다. 공개된 개인신용평가체계 검증위원회 보고서도 개발 시점과 검증 시점의 AR·KS·PSI를 나란히 비교하는 형식을 쓴다(<a href="../performance-ks-ar-gini/">벤치마크 표</a>).</p>
 </div>
 <div class="admonition info">
 <p class="admonition-title">다음 단계</p>

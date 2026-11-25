@@ -5134,10 +5134,6 @@
 
 
 <h1 id="1-non-identifiability">1. 왜 분해가 필요한가 — Non-identifiability 문제<a class="headerlink" href="#1-non-identifiability" title="Permanent link">¶</a></h1>
-<div class="admonition warning">
-<p class="admonition-title">작성 중</p>
-<p>이 페이지는 현재 작성 중입니다.</p>
-</div>
 <hr>
 <p>ML 모형의 예측을 "이 변수가 얼마나 기여했는가?"로 쪼개는 것은 모형 해석의 기본이다. "이 고객의 부도 확률이 높은 이유는 소득이 낮아서 +0.3, 부채가 많아서 +0.5" 같은 진술을 하려면, 전체 예측을 변수별 기여로 <strong>분해</strong>해야 한다. 이런 분해에는 크게 두 가지 수학적 프레임워크가 있다:</p>
 <ul>
@@ -5147,7 +5143,7 @@
 <p>둘 다 "변수별 기여"를 구한다는 점에서 비슷해 보이지만, <strong>묻는 질문 자체가 다르다.</strong> 그 차이를 이해하려면, 먼저 "분해"가 왜 어려운지를 알아야 한다. 핵심 문제는 이것이다: <strong>같은 예측을 하는 모형인데도, 분해 방식에 따라 해석이 정반대가 될 수 있다.</strong> 이 절에서는 그 문제를 대수식과 구체적인 숫자로 확인한다.</p>
 <h2 id="_1">같은 예측, 다른 해석<a class="headerlink" href="#_1" title="Permanent link">¶</a></h2>
 <p>교호작용을 포함하는 모형에서 이 문제가 왜 발생하는지, 대수식으로 원리를 먼저 확인하자. 이 원리를 이해하면, 뒤에 나올 숫자 예시가 "운이 나쁜 특수 케이스"가 아니라 <strong>구조적으로 피할 수 없는 문제</strong>라는 것을 알게 된다.</p>
-<p>GA2M (또는 depth-2 이상의 트리)처럼 교호작용을 포함하는 모형을 생각하자.</p>
+<p>GA2M이나 depth-2 트리 앙상블처럼 2-way 교호작용까지 포함하는 모형을 생각하자.</p>
 <div class="arithmatex">\[
 Y \approx f_0 + f_1(X_1) + f_2(X_2) + f_{12}(X_1, X_2)
 \]</div>
@@ -5166,9 +5162,14 @@ Y = \underbrace{(a - d\alpha\beta)}_{f_0'} + \underbrace{(b + d\beta)}_{f_1'} X_
 <li><span class="arithmatex">\(\alpha = 0, \beta = -b/d\)</span> → <span class="arithmatex">\(f_1'\)</span>의 계수가 <span class="arithmatex">\(b + d \cdot (-b/d) = b - b = 0\)</span>이 되어, main effect가 아예 <strong>소멸</strong>한다!</li>
 </ul>
 <p><strong>같은 예측을 하는 모형인데, 해석이 완전히 달라진다.</strong> 이것이 non-identifiability(비식별성)이다. <span class="arithmatex">\(\alpha, \beta\)</span>는 아무 실수나 넣을 수 있으므로, 가능한 분해는 <strong>무한히 많다.</strong></p>
+<p>Lengerich et al. (2020, 1.2절)은 이 식을 그대로 다루면서, 단순히 변수를 평균 중심화하는 것만으로는 <span class="arithmatex">\(\alpha, \beta\)</span> 선택의 자유가 사라지지 않는다는 점을 보였다. 그리고 2절에서 다룰 Functional ANOVA가 <strong>교호작용 항의 분산이 최소가 되도록</strong> <span class="arithmatex">\(\alpha, \beta\)</span>를 암묵적으로 고정하는 규칙이라고 설명한다.</p>
 <hr>
 <h2 id="boolean">Boolean 예시 — 숫자로 확인하기<a class="headerlink" href="#boolean" title="Permanent link">¶</a></h2>
-<p>위의 대수식은 "자유 파라미터 <span class="arithmatex">\(\alpha, \beta\)</span>에 따라 분해가 무한히 달라진다"는 원리를 보여주었다. 그렇다면 이것이 해석을 실제로 <strong>얼마나</strong> 뒤흔드는지, 구체적인 함수 하나를 네 가지 방식으로 분해해보면서 확인하자 (Lengerich et al., 2020, Fig.1).</p>
+<p>위의 대수식은 "자유 파라미터 <span class="arithmatex">\(\alpha, \beta\)</span>에 따라 분해가 무한히 달라진다"는 원리를 보여주었다. 그렇다면 이것이 해석을 실제로 <strong>얼마나</strong> 뒤흔드는지, 구체적인 함수 하나를 네 가지 방식으로 분해해보면서 확인하자.</p>
+<div class="admonition note">
+<p class="admonition-title">원논문 Fig.1과의 관계</p>
+<p>이 예시는 Lengerich et al. (2020) Fig.1의 아이디어를 빌려온 것이다. 원논문은 출력이 <span class="arithmatex">\(\pm 0.25\)</span>인 함수(중심화된 XOR의 절반)를 네 가지로 표현하는데, 그중 (a)는 AND, (b)는 OR처럼 보이는 교호작용 표를 갖고, (d)가 purification 알고리즘이 돌려주는 정준형(fANOVA)이다. 여기서는 손으로 검산하기 쉽도록 출력이 0/1인 XOR로 바꿨기 때문에, 각 분해의 숫자는 원논문 그림과 다르다.</p>
+</div>
 <p><span class="arithmatex">\(X_1, X_2 \in \{0, 1\}\)</span>인 Boolean 함수를 쓰는 이유는 간단하다: 가능한 입력이 4개뿐이라 검산이 쉽고, 교호작용의 효과가 극적으로 드러나기 때문이다. 대상 함수는 <strong>XOR</strong>(배타적 논리합)다:</p>
 <h3 id="_2">대상 함수<a class="headerlink" href="#_2" title="Permanent link">¶</a></h3>
 <table>
@@ -5499,8 +5500,8 @@ f_0 = -0.25, \quad f_1(X_1) = 0, \quad f_2(X_2) = 0
 <th><span class="arithmatex">\(f_0\)</span></th>
 <th><span class="arithmatex">\(X_1\)</span>의 main effect</th>
 <th><span class="arithmatex">\(X_2\)</span>의 main effect</th>
+<th><span class="arithmatex">\(f_{12}\)</span>의 모양</th>
 <th>해석</th>
-<th>원논문</th>
 </tr>
 </thead>
 <tbody>
@@ -5509,45 +5510,47 @@ f_0 = -0.25, \quad f_1(X_1) = 0, \quad f_2(X_2) = 0
 <td>0</td>
 <td>0</td>
 <td>0</td>
+<td>XOR</td>
 <td>"개별 효과 없음, 순수 교호작용"</td>
-<td>Fig.1(d)</td>
 </tr>
 <tr>
 <td><strong>②</strong></td>
 <td>0.25</td>
 <td><span class="arithmatex">\(f_1(1) = +0.25\)</span></td>
 <td><span class="arithmatex">\(f_2(1) = +0.25\)</span></td>
+<td>AND형</td>
 <td>"<span class="arithmatex">\(X = 1\)</span>이면 <strong>위험 증가</strong>"</td>
-<td>Fig.1(a)</td>
 </tr>
 <tr>
 <td><strong>③</strong></td>
 <td>-0.75</td>
 <td><span class="arithmatex">\(f_1(1) = -0.25\)</span></td>
 <td><span class="arithmatex">\(f_2(1) = -0.25\)</span></td>
+<td>OR형</td>
 <td>"<span class="arithmatex">\(X = 1\)</span>이면 <strong>위험 감소</strong>"</td>
-<td>Fig.1(b)</td>
 </tr>
 <tr>
 <td><strong>④</strong></td>
 <td>-0.25</td>
 <td>0</td>
 <td>0</td>
+<td>XOR (+0.25 이동)</td>
 <td>"개별 효과 없음, intercept만 다름"</td>
-<td>Fig.1(c)</td>
 </tr>
 </tbody>
 </table>
 <p><strong>네 가지 모두 같은 <span class="arithmatex">\(Y\)</span>를 산출한다.</strong> 그런데 main effect의 부호가 양(②)일 수도, 음(③)일 수도, 0(①④)일 수도 있다. 이것이 non-identifiability의 핵심이다: <strong>제약 조건 없이는 "이 변수의 효과가 양(+)이다/음(-)이다"조차 말할 수 없다.</strong> 그리고 이것은 XOR이라는 특수한 함수에서만 벌어지는 일이 아니다 — 위의 대수식이 보여주듯, 교호작용을 포함하는 <strong>모든 모형</strong>에서 <span class="arithmatex">\(\alpha, \beta\)</span> 선택에 따라 main effect가 달라진다. XOR은 그 효과가 가장 극적으로 드러나는 사례일 뿐이다.</p>
 <hr>
 <h2 id="_4">실무에서 이것이 왜 위험한가<a class="headerlink" href="#_4" title="Permanent link">¶</a></h2>
-<p>신용평가 맥락으로 바꿔보자. XGBoost depth-2 모형에서 DTI(부채비율)와 소득의 교호작용이 있다고 하자. 위에서 본 것과 정확히 같은 원리로, 분해 방식에 따라 세 가지 상충하는 해석이 가능하다:</p>
+<p>먼저, 트리 모형에서 이런 "분해"가 어디서 나오는지 짚고 가자. depth-2 트리로 이루어진 XGBoost 모형은 각 leaf가 많아야 두 변수의 조건(예: "DTI &gt; 40% 그리고 소득 &lt; 3,000만 원")으로 정의된다. leaf를 <strong>경로에 등장한 변수 집합별로 모아서 더하면</strong>, 모형 전체가 <span class="arithmatex">\(f_0 + \sum_j f_j(x_j) + \sum_{j&lt;k} f_{jk}(x_j, x_k)\)</span> 형태로 다시 쓰인다. 변수 하나만 쓰는 leaf는 <span class="arithmatex">\(f_j\)</span>로, 두 변수를 쓰는 leaf는 <span class="arithmatex">\(f_{jk}\)</span>로 가는 식이다. 그런데 이 묶음은 <strong>트리가 어떤 순서로 분할했는가</strong>에 따라 정해질 뿐이다. "소득" 효과가 depth-1 분할로 학습되면 main effect에, depth-2 경로의 일부로 학습되면 교호작용 표에 들어간다. 즉, 학습된 그대로의 분해는 위의 ①~④ 중 하나를 우연히 고른 것과 같다.</p>
+<p>신용평가 맥락으로 바꿔보자. depth-2 XGBoost 모형에서 DTI(총부채상환비율)와 소득의 교호작용이 있다고 하자. 위에서 본 것과 정확히 같은 원리로, 분해 방식에 따라 세 가지 상충하는 해석이 가능하다:</p>
 <ul>
 <li><strong>해석 A</strong>: "DTI가 높을수록 위험하다" (main effect가 양)</li>
 <li><strong>해석 B</strong>: "DTI의 main effect는 거의 없고, 소득과의 교호작용에서만 위험도가 결정된다"</li>
 <li><strong>해석 C</strong>: "DTI가 높을수록 오히려 안전하다" (main effect가 음, 교호작용이 이를 상쇄)</li>
 </ul>
-<p>세 가지 해석 모두 <strong>동일한 예측값</strong>을 산출한다. Lengerich의 COMPAS(재범 예측) 실험에서 실제로 이런 일이 발생했다: XGB depth-2의 main effect가 purification 전후로 <strong>부호까지 뒤바뀌었다.</strong> 만약 이것이 신용평가 모형이었다면, 알고리즘 공정성 감사에서 치명적이다.</p>
+<p>세 가지 해석 모두 <strong>동일한 예측값</strong>을 산출한다. 실제 데이터에서도 이런 일이 관찰되었다. Lengerich et al. (2020, 6.1절)의 COMPAS(재범 위험 예측) 실험에서, 교호작용 없이 학습한 XGBoost(depth-1 트리) 모형의 main effect 다수가 GAM이나, purification을 거친 GA2M·depth-2 XGBoost의 main effect와 <strong>반대 부호</strong>로 나타났다. 학습 방식과 분해 방식에 따라 "이 변수가 위험을 높이는가, 낮추는가"라는 기본 질문의 답이 달라진 것이다.</p>
+<p>신용평가에서는 이 문제가 더 직접적이다. 거절 사유를 설명하거나, 모형검증에서 "이 변수의 효과 방향이 업무 상식과 맞는가"를 확인할 때, 분해 방식에 따라 답이 뒤집힌다면 그 설명은 신뢰할 수 없다.</p>
 <h2 id="_5">어떤 제약이 필요한가<a class="headerlink" href="#_5" title="Permanent link">¶</a></h2>
 <p>문제의 본질은 <strong>main effect와 교호작용 사이에 효과를 자유롭게 이동시킬 수 있다</strong>는 것이다. 이를 막으려면 "각 component에 무엇이 담겨야 하는가"를 수학적으로 고정해야 한다. 직관적으로 세 가지 원칙이 필요하다:</p>
 <ol>
@@ -5555,7 +5558,7 @@ f_0 = -0.25, \quad f_1(X_1) = 0, \quad f_2(X_2) = 0
 <p><strong>"교호작용에는 교호작용만 담아라"</strong> — <span class="arithmatex">\(f_{12}\)</span>에 <span class="arithmatex">\(X_1\)</span> 하나만으로도 설명할 수 있는 효과가 섞여 있으면 안 된다. 예를 들어, <span class="arithmatex">\(f_{12}\)</span> 테이블에서 "<span class="arithmatex">\(X_1 = 0\)</span>인 행"과 "<span class="arithmatex">\(X_1 = 1\)</span>인 행"의 평균이 다르다면, 그 차이는 <span class="arithmatex">\(X_1\)</span>의 개별 효과이지 교호작용이 아니다. 이런 부분은 반드시 하위 component(<span class="arithmatex">\(f_1\)</span>)로 내려보내야 한다.</p>
 </li>
 <li>
-<p><strong>"main effect에는 전체 평균을 담지 마라"</strong> — 분해 ①과 ④의 차이가 바로 이것이다. <span class="arithmatex">\(f_{12}\)</span>의 전체 평균이 0이 아니라면, 그 평균값은 <span class="arithmatex">\(f_0\)</span>(intercept)에 담겨야 한다. 마찬가지로 <span class="arithmatex">\(f_1\)</span>의 평균이 0이 아니라면, 그 평균도 <span class="arithmatex">\(f_0\)</span>의 몫이다.</p>
+<p><strong>"intercept 외의 component에는 전체 평균을 담지 마라"</strong> — 분해 ①과 ④의 차이가 바로 이것이다. <span class="arithmatex">\(f_{12}\)</span>의 전체 평균이 0이 아니라면(①은 0.5, ④는 0.75), 그 평균값은 <span class="arithmatex">\(f_0\)</span>(intercept)에 담겨야 한다. 마찬가지로 <span class="arithmatex">\(f_1\)</span>의 평균이 0이 아니라면, 그 평균도 <span class="arithmatex">\(f_0\)</span>의 몫이다.</p>
 </li>
 <li>
 <p><strong>"component 간에 정보가 겹치지 않아야 한다"</strong> — <span class="arithmatex">\(f_1\)</span>에 이미 담긴 효과가 <span class="arithmatex">\(f_{12}\)</span>에도 중복으로 담기면, "소득의 기여"와 "소득×부채 교호작용의 기여"를 더했을 때 소득 효과가 이중 계상된다.</p>
@@ -5574,7 +5577,7 @@ f_0 = -0.25, \quad f_1(X_1) = 0, \quad f_2(X_2) = 0
 <tbody>
 <tr>
 <td>Lengerich, Tan, Chang, Hooker, Caruana (2020)</td>
-<td><a href="https://proceedings.mlr.press/v108/lengerich20a.html">Purification 알고리즘</a> (AISTATS) — Fig.1 Boolean 예시</td>
+<td><a href="https://proceedings.mlr.press/v108/lengerich20a.html">Purifying Interaction Effects with the Functional ANOVA</a> (AISTATS) — 1.1절 Boolean 예시(Fig.1), 1.2절 곱셈 모형, 6.1절 COMPAS</td>
 </tr>
 </tbody>
 </table>

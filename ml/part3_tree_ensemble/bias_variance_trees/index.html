@@ -3628,10 +3628,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
       
         <li class="md-nav__item">
-  <a href="#31" class="md-nav__link">
+  <a href="#31-random-forest" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3.1 하이퍼파라미터별 영향
+        3.1 단일 트리·Random Forest의 파라미터
       
     </span>
   </a>
@@ -3639,10 +3639,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#32" class="md-nav__link">
+  <a href="#32-boosting" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3.2 요약 테이블
+        3.2 Boosting 파라미터 미리보기
       
     </span>
   </a>
@@ -3653,7 +3653,7 @@
   <a href="#33" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3.3 요약
+        3.3 요약 테이블
       
     </span>
   </a>
@@ -3661,10 +3661,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#34-ks-plot" class="md-nav__link">
+  <a href="#34" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3.4 KS Plot으로 모형 복잡도 진단
+        3.4 요약
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#35-ks-plot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.5 KS Plot으로 모형 복잡도 진단
       
     </span>
   </a>
@@ -5122,52 +5133,64 @@
 
 <h1 id="bias-variance">트리에서의 Bias-Variance<a class="headerlink" href="#bias-variance" title="Permanent link">¶</a></h1>
 <p><a href="../../part1_overview/bias_variance/">Bias-Variance Tradeoff</a>의 개념은 트리 기반 모델에서 구체적으로 체감된다. 각 하이퍼파라미터가 <strong>트리의 물리적 구조를 어떻게 바꾸는지</strong> 이해하면, Bias-Variance에 미치는 영향이 직관적으로 와닿는다.</p>
+<p>이 페이지는 두 부분으로 나뉜다. 3.1절은 지금까지 다룬 <strong>단일 트리와 Random Forest</strong>의 파라미터를 다룬다. 3.2절은 다음 장부터 배울 <strong>Boosting</strong> 파라미터를 Bias-Variance 관점에서 미리 훑어보는 지도다. 각 파라미터의 작동 원리는 <a href="../boosting_fundamentals/">Boosting 기초</a>~<a href="../hyperparameter_tuning/">하이퍼파라미터 튜닝</a>에서 다시 다루므로, 3.2절은 Boosting을 배운 뒤 다시 읽어도 좋다.</p>
 <hr>
-<h2 id="31">3.1 하이퍼파라미터별 영향<a class="headerlink" href="#31" title="Permanent link">¶</a></h2>
+<h2 id="31-random-forest">3.1 단일 트리·Random Forest의 파라미터<a class="headerlink" href="#31-random-forest" title="Permanent link">¶</a></h2>
 <h3 id="max_depth-"><code>max_depth</code> -- 트리의 깊이 제한<a class="headerlink" href="#max_depth-" title="Permanent link">¶</a></h3>
 <p>트리가 몇 층까지 분기할 수 있는지를 결정한다.</p>
 <ul>
 <li><strong>깊이가 깊으면</strong>: 분기가 많아져 세밀한 패턴을 포착 → <strong>Bias ↓</strong>, 하지만 리프 노드당 샘플이 줄어 노이즈에 민감 → <strong>Variance ↑</strong></li>
 <li><strong>깊이가 얕으면</strong>: 큰 패턴만 포착, 세부 정보 무시 → <strong>Bias ↑</strong>, 하지만 리프 노드당 샘플이 충분해 안정적 → <strong>Variance ↓</strong></li>
-<li><a href="../tree_models/">트리 기반 모델</a> 1.5절의 트리 구조 예시에서 depth=1(Stump)이 Underfitting, depth=None이 Overfitting이었던 이유가 바로 이것이다</li>
-</ul>
-<h3 id="n_estimators-"><code>n_estimators</code> -- 앙상블의 트리 개수<a class="headerlink" href="#n_estimators-" title="Permanent link">¶</a></h3>
-<p>Boosting에서 순차적으로 쌓는 트리의 총 수. 라운드가 늘어날수록 이전 트리의 실수를 보정한다.</p>
-<ul>
-<li><strong>라운드가 많으면</strong>: 잔차를 계속 보정하므로 패턴을 더 잘 포착 → <strong>Bias ↓</strong>, 하지만 학습 데이터의 미세한 노이즈까지 보정하기 시작 → <strong>Variance ↑</strong></li>
-<li><strong>라운드가 적으면</strong>: 보정이 부족해 패턴을 다 못 잡음 → <strong>Bias ↑</strong>, 하지만 노이즈 보정까지는 못 가므로 안정적 → <strong>Variance ↓</strong></li>
-<li><strong>Early Stopping</strong>이 이 파라미터를 자동으로 제어하는 핵심 기법이다</li>
-</ul>
-<h3 id="learning_rate-"><code>learning_rate</code> -- 각 트리의 기여 비중<a class="headerlink" href="#learning_rate-" title="Permanent link">¶</a></h3>
-<p>각 트리의 예측값에 곱하는 축소 계수(shrinkage). 0.1이면 각 트리의 보정을 10%만 반영한다.</p>
-<ul>
-<li><strong>낮으면</strong> (예: 0.01): 한 트리가 조금씩만 기여 → 개별 트리의 과적합이 희석되어 <strong>Variance ↓</strong>, 하지만 같은 성능을 내려면 훨씬 많은 라운드가 필요 → n_estimators와 함께 조정</li>
-<li><strong>높으면</strong> (예: 0.3): 각 트리가 크게 기여 → 빠르게 학습하지만 노이즈에도 과민 반응 → <strong>Variance ↑</strong></li>
-<li>실무에서는 <strong>learning_rate를 낮추고 n_estimators를 늘리는 조합</strong>이 안정적인 성능을 낸다</li>
+<li><a href="../tree_models/">트리 기반 모델</a> 1.5절의 결정 경계 그림에서 depth=1(Stump)이 Underfitting, 제약 없는 트리(depth=None)가 Overfitting이었던 이유가 바로 이것이다</li>
 </ul>
 <h3 id="min_samples_leaf-"><code>min_samples_leaf</code> -- 리프 노드의 최소 샘플 수<a class="headerlink" href="#min_samples_leaf-" title="Permanent link">¶</a></h3>
 <p>리프(최종 노드)에 최소 몇 건의 데이터가 남아야 하는지를 제한한다.</p>
 <ul>
 <li><strong>크면</strong> (예: 100): 리프당 샘플이 충분해 안정적 → <strong>Variance ↓</strong>, 하지만 세밀한 분기를 하지 못함 → <strong>Bias ↑</strong></li>
 <li><strong>작으면</strong> (예: 1): 극단적으로 세밀한 분기 허용 → 리프에 1~2건만 남아 개별 고객의 노이즈를 학습 → <strong>Variance ↑</strong></li>
-<li>신용평가에서는 "리프 노드에 Bad가 최소 몇 건" 있어야 통계적으로 의미 있는 추정이 가능한지를 고려한다</li>
+<li>신용평가에서는 "리프 노드에 Bad가 최소 몇 건" 있어야 통계적으로 의미 있는 추정이 가능한지를 고려한다. 불량률이 3%라면 리프 100건에 Bad는 3건 남짓이다</li>
+</ul>
+<h3 id="max_features-rf"><code>max_features</code> -- 분할 후보 변수 수 (RF)<a class="headerlink" href="#max_features-rf" title="Permanent link">¶</a></h3>
+<p><a href="../ensemble/">앙상블</a> 2.3절에서 본 것처럼, 각 분할에서 일부 변수만 후보로 올린다.</p>
+<ul>
+<li><strong>작으면</strong>: 트리마다 다른 변수를 쓰게 되어 트리 간 상관 <span class="arithmatex">\(\rho\)</span>가 내려감 → 앙상블 <strong>Variance ↓</strong>, 하지만 개별 트리가 최선의 분할을 못 할 수 있음 → <strong>Bias ↑</strong></li>
+<li><strong>크면</strong>: 모든 트리가 같은 강한 변수에서 갈라져 비슷해짐 → <span class="arithmatex">\(\rho\)</span> ↑ → 평균의 Variance 감소 효과가 약해짐</li>
+</ul>
+<h3 id="n_estimators-rf-"><code>n_estimators</code> (RF) -- 평균하는 트리 수<a class="headerlink" href="#n_estimators-rf-" title="Permanent link">¶</a></h3>
+<p>RF에서 트리 수는 <strong>Variance만 줄이고 Bias는 바꾸지 않는다</strong>. 트리를 늘려서 과적합되는 일은 없고, 일정 수 이상에서 성능이 평탄해질 뿐이다. 이 점이 다음 절의 Boosting과 결정적으로 다르다.</p>
+<hr>
+<h2 id="32-boosting">3.2 Boosting 파라미터 미리보기<a class="headerlink" href="#32-boosting" title="Permanent link">¶</a></h2>
+<p>Boosting은 트리를 <strong>순차적으로</strong> 쌓아 이전 트리의 오차를 보정한다(<a href="../boosting_fundamentals/">Boosting 기초</a>). 같은 이름의 파라미터라도 RF와 효과가 다를 수 있다.</p>
+<h3 id="n_estimators-boosting-"><code>n_estimators</code> (Boosting) -- 부스팅 라운드 수<a class="headerlink" href="#n_estimators-boosting-" title="Permanent link">¶</a></h3>
+<ul>
+<li><strong>라운드가 많으면</strong>: 잔차를 계속 보정하므로 패턴을 더 잘 포착 → <strong>Bias ↓</strong>, 하지만 학습 데이터의 미세한 노이즈까지 보정하기 시작 → <strong>Variance ↑</strong></li>
+<li><strong>라운드가 적으면</strong>: 보정이 부족해 패턴을 다 못 잡음 → <strong>Bias ↑</strong></li>
+<li>RF와 달리 <strong>트리를 너무 많이 쌓으면 과적합된다</strong>. 몇 그루가 적당한지는 탐색 단계에서 Early Stopping으로 찾는다(<a href="../hyperparameter_tuning/">하이퍼파라미터 튜닝</a>)</li>
+</ul>
+<h3 id="learning_rate-"><code>learning_rate</code> -- 각 트리의 기여 비중<a class="headerlink" href="#learning_rate-" title="Permanent link">¶</a></h3>
+<p>각 트리의 예측값에 곱하는 축소 계수(shrinkage). 0.1이면 각 트리의 보정을 10%만 반영한다.</p>
+<ul>
+<li><strong>낮으면</strong> (예: 0.01): 한 트리가 조금씩만 기여 → 개별 트리의 과적합이 희석되어 <strong>Variance ↓</strong>. 다만 <strong>트리 수를 고정하면</strong> 학습이 덜 되어 Bias가 올라가므로, 같은 성능을 내려면 훨씬 많은 라운드가 필요하다</li>
+<li><strong>높으면</strong> (예: 0.3): 각 트리가 크게 기여 → 빠르게 학습하지만 노이즈에도 과민 반응 → <strong>Variance ↑</strong></li>
+<li>권장 범위는 <a href="../hyperparameter_tuning/">하이퍼파라미터 튜닝</a>의 학습률 표를 따른다</li>
 </ul>
 <h3 id="subsample-colsample_bytree-"><code>subsample</code>, <code>colsample_bytree</code> -- 랜덤성 주입<a class="headerlink" href="#subsample-colsample_bytree-" title="Permanent link">¶</a></h3>
 <p>각 트리를 학습할 때 전체 데이터/변수의 일부만 사용한다.</p>
 <ul>
 <li><strong>비율이 낮으면</strong> (예: 0.5): 각 트리가 다른 데이터/변수를 보므로 트리 간 다양성 증가 → <strong>Variance ↓</strong>, 하지만 정보량이 줄어 개별 트리가 약해짐 → <strong>Bias ↑</strong></li>
 <li><strong>비율이 높으면</strong> (예: 1.0): 모든 트리가 같은 데이터를 보므로 비슷한 실수를 반복 → <strong>Variance ↑</strong></li>
-<li>이것이 Random Forest의 핵심 아이디어이기도 하다 — "다양한 시각을 가진 트리들의 평균이 한 트리보다 낫다"</li>
+<li>RF의 Bootstrap·Feature Subsampling과 같은 발상이다. Boosting에 행 샘플링을 넣는 것을 Stochastic Gradient Boosting이라 부른다(<a href="../boosting_advanced/">Boosting 심화</a>)</li>
 </ul>
-<h3 id="reg_alpha-reg_lambda-l1l2"><code>reg_alpha</code>, <code>reg_lambda</code> -- 정규화 (L1/L2)<a class="headerlink" href="#reg_alpha-reg_lambda-l1l2" title="Permanent link">¶</a></h3>
-<p>리프 노드의 가중치(예측값)가 극단적인 값을 갖지 못하도록 페널티를 부과한다.</p>
+<h3 id="reg_lambda-reg_alpha-gamma-"><code>reg_lambda</code>, <code>reg_alpha</code>, <code>gamma</code> -- 정규화<a class="headerlink" href="#reg_lambda-reg_alpha-gamma-" title="Permanent link">¶</a></h3>
+<p>리프 가중치(예측값)와 트리 구조에 페널티를 부과한다.</p>
 <ul>
-<li><strong>크면</strong>: 극단적 예측을 억제 → 보수적이지만 안정적 → <strong>Variance ↓, Bias ↑</strong></li>
-<li><strong>작으면</strong>: 자유로운 예측 허용 → 데이터에 밀착하지만 흔들림 → <strong>Variance ↑</strong></li>
-<li>L1(<code>reg_alpha</code>)은 불필요한 분기를 제거(pruning 효과), L2(<code>reg_lambda</code>)는 극단값을 완화</li>
+<li><code>reg_lambda</code>(L2): 리프 가중치를 0 쪽으로 <strong>연속적으로 수축</strong>시켜 극단적 예측을 억제한다</li>
+<li><code>reg_alpha</code>(L1): 리프 안 gradient 합의 절댓값이 <span class="arithmatex">\(\alpha\)</span> 이하이면 그 리프의 가중치를 <strong>정확히 0</strong>으로 만든다(soft-thresholding). 리프 값을 없애는 효과는 있지만, <strong>분할 자체를 막는 장치는 아니다</strong></li>
+<li><code>gamma</code>(최소 손실 감소량): 분할로 얻는 Gain이 <span class="arithmatex">\(\gamma\)</span>보다 작으면 그 분할을 하지 않는다. <strong>분기를 직접 제거하는 것은 이 파라미터다</strong></li>
+<li>셋 다 <strong>크면</strong> 보수적이지만 안정적 → <strong>Variance ↓, Bias ↑</strong></li>
 </ul>
 <hr>
-<h2 id="32">3.2 요약 테이블<a class="headerlink" href="#32" title="Permanent link">¶</a></h2>
+<h2 id="33">3.3 요약 테이블<a class="headerlink" href="#33" title="Permanent link">¶</a></h2>
 <table>
 <thead>
 <tr>
@@ -5185,20 +5208,32 @@
 <td style="text-align: center;"><strong>↑</strong></td>
 </tr>
 <tr>
-<td><code>n_estimators</code> ↑</td>
-<td>더 많은 트리로 보정</td>
-<td style="text-align: center;">↓</td>
-<td style="text-align: center;">↑ (Boosting)</td>
-</tr>
-<tr>
-<td><code>learning_rate</code> ↓</td>
-<td>각 트리의 기여를 축소</td>
+<td><code>min_samples_leaf</code> ↑</td>
+<td>리프에 최소 샘플 보장</td>
 <td style="text-align: center;">↑</td>
 <td style="text-align: center;"><strong>↓</strong></td>
 </tr>
 <tr>
-<td><code>min_samples_leaf</code> ↑</td>
-<td>리프에 최소 샘플 보장</td>
+<td><code>max_features</code> ↓ (RF)</td>
+<td>분할 후보 변수 축소</td>
+<td style="text-align: center;">↑</td>
+<td style="text-align: center;"><strong>↓</strong></td>
+</tr>
+<tr>
+<td><code>n_estimators</code> ↑ (RF)</td>
+<td>평균하는 트리 증가</td>
+<td style="text-align: center;">변화 없음</td>
+<td style="text-align: center;">↓</td>
+</tr>
+<tr>
+<td><code>n_estimators</code> ↑ (Boosting)</td>
+<td>보정 라운드 증가</td>
+<td style="text-align: center;">↓</td>
+<td style="text-align: center;">↑</td>
+</tr>
+<tr>
+<td><code>learning_rate</code> ↓ (트리 수 고정)</td>
+<td>각 트리의 기여를 축소</td>
 <td style="text-align: center;">↑</td>
 <td style="text-align: center;"><strong>↓</strong></td>
 </tr>
@@ -5209,8 +5244,8 @@
 <td style="text-align: center;"><strong>↓</strong></td>
 </tr>
 <tr>
-<td><code>reg_alpha</code>, <code>reg_lambda</code> ↑</td>
-<td>극단적 예측에 페널티</td>
+<td><code>reg_lambda</code>, <code>reg_alpha</code>, <code>gamma</code> ↑</td>
+<td>리프 값·분할에 페널티</td>
 <td style="text-align: center;">↑</td>
 <td style="text-align: center;"><strong>↓</strong></td>
 </tr>
@@ -5225,21 +5260,23 @@
 <p>두 앙상블 전략 모두 Bias-Variance Tradeoff를 다루는 방식이지만, 접근 방향이 정반대다.</p>
 </div>
 <hr>
-<h2 id="33">3.3 요약<a class="headerlink" href="#33" title="Permanent link">¶</a></h2>
+<h2 id="34">3.4 요약<a class="headerlink" href="#34" title="Permanent link">¶</a></h2>
 <div class="arithmatex">\[
-\boxed{\text{EPE} = \text{Bias}^2 + \text{Variance} + \text{Noise}}
+\text{EPE} = \text{Bias}^2 + \text{Variance} + \sigma^2_{\varepsilon}
+\tag{1}
 \]</div>
+<p><span class="arithmatex">\(\sigma^2_{\varepsilon}\)</span>는 어떤 모형으로도 줄일 수 없는 노이즈(irreducible error)다. <a href="../../part1_overview/bias_variance/">Bias-Variance Tradeoff</a>의 과녁 그림으로 정리하면:</p>
 <ul>
 <li><strong>멍청한 모형 (1)</strong>: High Bias — 패턴을 못 잡음 → 복잡도를 올려야 함</li>
-<li><strong>멍청한 모형 (2)</strong>: High Variance — 노이즈를 외움 → 정규화·제약이 필요함</li>
+<li><strong>멍청한 모형 (2)</strong>: High Variance — 노이즈를 외움(train↔valid 격차 큼) → 정규화·제약이 필요함</li>
 <li><strong>멍청한 모형 (3)</strong>: Both Bad — 데이터·구조 자체에 문제 → 데이터 품질부터 재점검</li>
-<li><strong>똑똑한 모형</strong>: 4사분면 중 유일한 Sweet Spot — Train/Valid/Test 성능이 안정적이고 높음</li>
+<li><strong>똑똑한 모형</strong>: 과녁의 4사분면 중 유일한 Sweet Spot — Train/Valid/Test 성능이 안정적이고 높음</li>
 <li>모형 튜닝의 본질은 이 <strong>Tradeoff의 최적점</strong>을 찾는 것</li>
 </ul>
 <hr>
-<h2 id="34-ks-plot">3.4 KS Plot으로 모형 복잡도 진단<a class="headerlink" href="#34-ks-plot" title="Permanent link">¶</a></h2>
-<p>위 요약 테이블의 성능 지표만으로는 놓치기 쉬운 문제가 있다. <strong>예측 확률 분포의 형태</strong>를 보면 모형의 복잡도 부족을 더 직접적으로 체감할 수 있다.</p>
-<p><strong>로지스틱 회귀</strong>는 연속형 <span class="arithmatex">\(\hat{p}\)</span> 값을 산출하므로, KS Plot(누적 분포 비교)이나 ROC 곡선이 <strong>매끈한 포물선</strong> 형태를 띤다. 반면 <strong>트리 기반 모형</strong>은 리프 노드의 수가 곧 예측 확률의 종류 수다. 트리의 분기가 적으면 예측 확률이 몇 가지 값에 집중된다.</p>
+<h2 id="35-ks-plot">3.5 KS Plot으로 모형 복잡도 진단<a class="headerlink" href="#35-ks-plot" title="Permanent link">¶</a></h2>
+<p>KS, AR 같은 요약 지표 하나만 보면 놓치기 쉬운 문제가 있다. <strong>예측 확률 분포의 형태</strong>를 보면 모형의 표현력 부족을 더 직접적으로 체감할 수 있다.</p>
+<p><strong>로지스틱 회귀</strong>는 연속형 <span class="arithmatex">\(\hat{p}\)</span> 값을 산출하므로, KS Plot(누적 분포 비교)이나 ROC 곡선이 <strong>매끄러운 곡선</strong> 형태를 띤다. 반면 <strong>트리 기반 모형</strong>은 리프 노드의 수가 곧 예측 확률의 종류 수다. 트리의 분기가 적으면 예측 확률이 몇 가지 값에 집중된다.</p>
 <table>
 <thead>
 <tr>
@@ -5252,7 +5289,7 @@
 <tr>
 <td>로지스틱 회귀 / 뉴럴넷</td>
 <td>연속적 — 고객마다 다른 <span class="arithmatex">\(\hat{p}\)</span></td>
-<td>매끈한 곡선</td>
+<td>매끄러운 곡선</td>
 </tr>
 <tr>
 <td>Tree Ensemble</td>
@@ -5266,18 +5303,22 @@
 </tr>
 </tbody>
 </table>
-<p><a class="glightbox" data-type="image" data-width="100%" data-height="auto" href="../images/ks_plot_comparison.png" data-desc-position="bottom"><img alt="KS Plot 비교: 로지스틱 회귀(매끈) vs Tree Ensemble(준연속) vs 변수 다양성 부족(계단형)" src="../images/ks_plot_comparison.png"></a></p>
+<figure>
+  <a class="glightbox" data-type="image" data-width="100%" data-height="auto" href="../images/ks_plot_comparison.png" data-desc-position="bottom"><img alt="KS Plot 비교: 로지스틱 회귀(매끈) vs Tree Ensemble(준연속) vs 변수 다양성 부족(계단형)" src="../images/ks_plot_comparison.png"></a>
+<br>
+<figcaption>예측 확률의 종류가 적을수록 KS 곡선이 계단 모양이 된다. 왼쪽부터 로지스틱 회귀, 충분히 다양한 Tree Ensemble, 변수 다양성이 부족한 얕은 트리 앙상블.</figcaption>
+</figure>
 <div class="admonition warning">
 <p class="admonition-title">depth가 얕다고 반드시 멍청한 것은 아니다</p>
-<p><code>max_depth=2~3</code> 정도의 얕은 트리라도 <strong>n_estimators가 충분하고 변수 다양성이 확보</strong>되면 좋은 성능을 낼 수 있다. 합산 예측값이 준연속적으로 분포하여 매끈한 KS 곡선이 나온다. 문제는 depth 자체가 아니라 <strong>변수 다양성이 부족할 때</strong>다 — 같은 변수의 같은 지점에서만 반복 분기되면 500그루를 쌓아도 예측 확률은 소수의 값에 몰린다. 이때 KS Plot은 <strong>뚜렷한 계단 형태</strong>를 보이며, 이는 모형이 데이터의 미세한 리스크 차이를 구분하지 못하고 있다는 신호다.</p>
+<p><code>max_depth=2~3</code> 정도의 얕은 트리라도 <strong>n_estimators가 충분하고 변수 다양성이 확보</strong>되면 좋은 성능을 낼 수 있다. 합산 예측값이 준연속적으로 분포하여 매끄러운 KS 곡선이 나온다. 문제는 depth 자체가 아니라 <strong>변수 다양성이 부족할 때</strong>다 — 같은 변수의 같은 지점에서만 반복 분기되면 500그루를 쌓아도 예측 확률은 소수의 값에 몰린다. 이때 KS Plot은 <strong>뚜렷한 계단 형태</strong>를 보이며, 이는 모형이 데이터의 미세한 리스크 차이를 구분하지 못하고 있다는 신호다.</p>
 </div>
 <div class="admonition tip">
 <p class="admonition-title">실무 진단법</p>
 <p>모형 적합 후 KS Plot을 그려보자.</p>
 <ul>
-<li><strong>곡선이 매끈하면</strong> → 모형이 충분히 다양한 리스크 수준을 표현하고 있다</li>
+<li><strong>곡선이 매끄러우면</strong> → 모형이 충분히 다양한 리스크 수준을 표현하고 있다</li>
 <li><strong>계단이 뚜렷하면</strong> → 동점자(tied scores)가 많다는 뜻. <code>max_depth</code> 증가, 변수 다양성 확보, 또는 <code>max_leaves</code> 조정을 검토</li>
-<li>동점자가 전체의 30% 이상이면 <strong>등급화(Rating Grade) 시 분해능이 부족</strong>하여, 특정 등급에 고객이 과도하게 몰리는 문제가 발생한다</li>
+<li>동점자 비중이 크면 <strong>등급화(Rating Grade) 시 분해능이 부족</strong>하여, 특정 등급에 고객이 과도하게 몰린다. 몇 %부터 문제인지는 등급 수와 등급별 목표 비중에 따라 다르므로, 점수 분포표에서 한 점수값에 몰린 비중을 직접 확인한다</li>
 </ul>
 </div>
 <div class="admonition tip">

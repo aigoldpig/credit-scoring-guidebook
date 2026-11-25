@@ -2114,7 +2114,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         참고자료
@@ -5152,7 +5152,7 @@
 <div style="background:var(--md-code-bg-color,#f5f5f5);border-radius:16px;padding:24px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.06)">
 <div style="font-size:2rem;font-weight:700;color:#0064ff">CSI</div>
 <div style="font-size:.85rem;color:#6b7280;margin:4px 0 8px">변수별 분포 안정성</div>
-<div style="font-size:.8rem;text-align:left;color:var(--md-default-fg-color--light)">어떤 변수가 드리프트의 원인인지 분해하여 추적한다.</div>
+<div style="font-size:.8rem;text-align:left;color:var(--md-default-fg-color--light)">어떤 변수의 분포가 움직였는지 추적한다.</div>
 </div>
 <div style="background:var(--md-code-bg-color,#f5f5f5);border-radius:16px;padding:24px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.06)">
 <div style="font-size:2rem;font-weight:700;color:#0064ff">KS · AR</div>
@@ -5160,7 +5160,7 @@
 <div style="font-size:.8rem;text-align:left;color:var(--md-default-fg-color--light)">모형 성능이 시간에 따라 열화되고 있는지 추적한다.</div>
 </div>
 </div>
-<p>모형은 개발이 끝이 아니다. <strong>배포 이후 환경은 끊임없이 변한다</strong> — 포트폴리오 구성, 경기 국면, 심사 정책, 데이터 시스템 모두 움직인다. 개발 당시 최고 성능이었던 모형도 시간이 지나면 열화(Degradation)된다. 모니터링은 이 열화를 <strong>조기에 감지</strong>하고, 적시에 <strong>리캘리브레이션 또는 재개발</strong> 판단을 내리기 위한 체계다.</p>
+<p>모형은 개발이 끝이 아니다. <strong>배포 이후 환경은 끊임없이 변한다</strong> — 포트폴리오 구성, 경기 국면, 심사 정책, 데이터 시스템 모두 움직인다. 개발 당시 성능이 좋았던 모형도 시간이 지나면 열화(Degradation)된다. 모니터링은 이 열화를 <strong>조기에 감지</strong>하고, 적시에 <strong>리캘리브레이션 또는 재개발</strong>을 판단하기 위한 체계다.</p>
 <hr>
 <h2 id="41">4.1 모니터링 프레임워크 — 무엇을 왜 보는가<a class="headerlink" href="#41" title="Permanent link">¶</a></h2>
 <p>모형 모니터링은 크게 세 축으로 구성된다.</p>
@@ -5175,39 +5175,89 @@
 <tbody>
 <tr>
 <td><strong>안정성 (Stability)</strong></td>
-<td>입력 데이터 분포가 변했는가?</td>
+<td>입력·점수 분포가 변했는가?</td>
 <td>PSI, CSI</td>
 </tr>
 <tr>
 <td><strong>변별력 (Discrimination)</strong></td>
 <td>모형이 여전히 Good/Bad를 잘 구분하는가?</td>
-<td>KS, AR/Gini, AUC 추이</td>
+<td>KS, AR 추이</td>
 </tr>
 <tr>
 <td><strong>정확성 (Calibration)</strong></td>
-<td>예측 확률이 실제 부도율과 일치하는가?</td>
-<td>등급별 예측 PD vs 실현 PD, Binomial Test</td>
+<td>예측 PD가 실제 부도율과 맞는가?</td>
+<td>등급별 예측 PD vs 실현 부도율, 이항검정</td>
 </tr>
 </tbody>
 </table>
 <div class="admonition tip">
 <p class="admonition-title">세 축의 관계</p>
-<p>안정성 지표(PSI·CSI)는 <strong>선행 지표</strong>다. 입력 분포가 먼저 변하고, 그 결과로 변별력과 정확성이 뒤따라 나빠진다. 따라서 PSI·CSI가 임계값을 넘으면 변별력·정확성이 아직 괜찮더라도 <strong>선제적으로 원인을 분석</strong>해야 한다.</p>
+<p>안정성 지표(PSI·CSI)는 불량 여부가 확정되기 전에도 계산할 수 있어 <strong>가장 먼저 볼 수 있는 신호</strong>다. 분포가 크게 움직이면 변별력·정확성이 아직 괜찮더라도 원인을 먼저 분석한다. 다만 분포 이동이 항상 성능 저하로 이어지지는 않고(예: 우량 고객 비중이 늘어나는 이동), 반대로 분포는 그대로인데 변수와 위험의 관계가 바뀌어 성능이 떨어지는 경우(개념 드리프트)도 있다. 그래서 세 축을 <strong>모두</strong> 본다.</p>
 </div>
 <hr>
 <h2 id="42-csi-characteristic-stability-index">4.2 CSI (Characteristic Stability Index) — 변수별 안정성<a class="headerlink" href="#42-csi-characteristic-stability-index" title="Permanent link">¶</a></h2>
-<p><a href="../performance-ks-ar-gini/">성능 평가</a>에서 다룬 PSI가 <strong>최종 점수 분포</strong>의 이동을 측정한다면, CSI는 <strong>개별 변수(Characteristic)의 분포</strong> 이동을 측정한다. 수식 구조는 PSI와 동일하되, 대상이 점수가 아닌 각 변수의 WoE 구간(bin)이다.</p>
+<p><a href="../performance-ks-ar-gini/">성능 평가</a>에서 다룬 PSI가 <strong>최종 점수 분포</strong>의 이동을 측정한다면, CSI는 <strong>개별 변수(Characteristic)의 분포</strong> 이동을 측정한다. 수식 구조는 PSI와 같고, 대상이 점수 구간이 아닌 각 변수의 구간(bin)이다.</p>
 <div class="arithmatex">\[
 \text{CSI}_j = \sum_{b=1}^{B_j} \left(A_{jb} - E_{jb}\right) \times \ln\!\left(\frac{A_{jb}}{E_{jb}}\right) \tag{1}
 \]</div>
-<p>여기서 <span class="arithmatex">\(j\)</span>는 변수 인덱스, <span class="arithmatex">\(B_j\)</span>는 해당 변수의 bin 수, <span class="arithmatex">\(E_{jb}\)</span>는 개발 샘플의 bin b 비율, <span class="arithmatex">\(A_{jb}\)</span>는 비교 시점의 bin b 비율이다.</p>
-<h3 id="psi-csi">PSI와 CSI의 관계<a class="headerlink" href="#psi-csi" title="Permanent link">¶</a></h3>
+<p><span class="arithmatex">\(j\)</span>는 변수, <span class="arithmatex">\(B_j\)</span>는 해당 변수의 구간 수, <span class="arithmatex">\(E_{jb}\)</span>는 개발 표본의 구간 <span class="arithmatex">\(b\)</span> 비율, <span class="arithmatex">\(A_{jb}\)</span>는 비교 시점의 구간 <span class="arithmatex">\(b\)</span> 비율이다.</p>
+<h3 id="psi-csi">PSI와 CSI의 관계 — 그리고 점수 이동 기여<a class="headerlink" href="#psi-csi" title="Permanent link">¶</a></h3>
 <div class="admonition info">
-<p class="admonition-title">PSI = 모형 전체, CSI = 변수별 분해</p>
-<p>PSI가 높게 나왔을 때, <strong>어떤 변수가 원인인지</strong> 파악하려면 CSI를 봐야 한다. 예를 들어 PSI = 0.18이면 "점수 분포가 움직였다"는 사실만 알 수 있다. CSI를 확인하면 "변수 X3(부채비율)의 CSI = 0.14로 대부분의 이동이 이 변수에서 발생"처럼 원인을 특정할 수 있다.</p>
+<p class="admonition-title">CSI는 PSI를 '나눈 값'이 아니다</p>
+<p>PSI가 올랐을 때 어떤 변수가 원인인지 찾으려면 CSI를 본다. 다만 CSI들을 더해도 PSI가 되지는 않는다. 변수마다 점수에 주는 무게가 다르기 때문이다. CSI가 크더라도 점수 영향이 작은 변수라면 PSI에는 거의 반영되지 않는다.</p>
+<p>점수가 실제로 얼마나 움직였는지를 변수별로 나누려면 <strong>점수 이동 기여(Characteristic Analysis)</strong> 를 함께 계산한다.</p>
+<div class="arithmatex">\[
+\Delta\text{Score}_j = \sum_{b} \left(A_{jb} - E_{jb}\right) \times \text{PartScore}_{j,b} \tag{2}
+\]</div>
+<p><span class="arithmatex">\(\text{PartScore}_{j,b}\)</span>는 <a href="../scorecard-and-rating/">스코어카드</a>의 구간 부분점수다. 모든 변수의 <span class="arithmatex">\(\Delta\text{Score}_j\)</span>를 더하면 평균 점수의 변화가 된다.</p>
+</div>
+<div class="admonition example">
+<p class="admonition-title">부채비율 변수의 CSI와 점수 이동 (가상 예시)</p>
+<table>
+<thead>
+<tr>
+<th>부채비율 구간</th>
+<th>부분점수</th>
+<th>개발 비율 <span class="arithmatex">\(E\)</span></th>
+<th>최근 비율 <span class="arithmatex">\(A\)</span></th>
+<th><span class="arithmatex">\((A-E) \times\)</span> 부분점수</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>100% 미만</td>
+<td>+33</td>
+<td>0.25</td>
+<td>0.20</td>
+<td>−1.65</td>
+</tr>
+<tr>
+<td>100~150%</td>
+<td>+22</td>
+<td>0.30</td>
+<td>0.28</td>
+<td>−0.44</td>
+</tr>
+<tr>
+<td>150~250%</td>
+<td>+11</td>
+<td>0.30</td>
+<td>0.34</td>
+<td>+0.44</td>
+</tr>
+<tr>
+<td>250% 이상</td>
+<td>−2</td>
+<td>0.15</td>
+<td>0.18</td>
+<td>−0.06</td>
+</tr>
+</tbody>
+</table>
+<p>CSI = 0.023(안정 범위)이지만, 이 변수 때문에 평균 점수가 <strong>1.7점 하락</strong>했다. 고객이 부채비율이 높은 쪽으로 옮겨 가고 있다는 뜻이다. CSI만 보면 놓치기 쉬운 방향 정보를 점수 이동 기여가 알려 준다.</p>
 </div>
 <h3 id="csi">CSI 계산 예시<a class="headerlink" href="#csi" title="Permanent link">¶</a></h3>
-<p>아래는 5개 변수 모형에서 분기별 CSI를 산출한 예시다.</p>
+<p>아래는 개인 대출 5개 변수 모형에서 분기별 CSI를 산출한 예시다.</p>
 <table>
 <thead>
 <tr>
@@ -5232,7 +5282,7 @@
 </tr>
 <tr>
 <td><strong>X3</strong></td>
-<td><strong>부채비율 (DTI)</strong></td>
+<td><strong>DTI (총부채상환비율)</strong></td>
 <td><strong>0.14</strong></td>
 <td><strong>소폭 이동 — 원인 분석 필요</strong></td>
 </tr>
@@ -5252,27 +5302,28 @@
 </table>
 <div class="admonition warning">
 <p class="admonition-title">CSI 판정 기준</p>
-<p>CSI의 임계값은 PSI와 동일한 기준(0.10 / 0.25)을 적용하는 것이 일반적이다. 다만 변수 수가 많은 모형에서는 개별 CSI 임계값을 다소 보수적(예: 0.08)으로 설정하는 기관도 있다.</p>
+<p>CSI의 임계값은 PSI와 같은 기준(0.10 / 0.25)을 쓰는 것이 일반적이다. 다만 변수 수가 많은 모형에서는 개별 CSI 임계값을 더 보수적으로(예: 0.08) 잡는 기관도 있다.</p>
 </div>
 <h3 id="csi_1">CSI 상승 시 조치 흐름<a class="headerlink" href="#csi_1" title="Permanent link">¶</a></h3>
 <blockquote>
 <p><strong>CSI 임계값 초과</strong> →
-<strong>해당 변수의 bin별 비율 변화 확인</strong> →
+<strong>해당 변수의 구간별 비율 변화와 점수 이동 기여 확인</strong> →
 <strong>외부 요인(정책·경기·시스템) vs 내부 요인(데이터 오류) 구분</strong> →
 <strong>일시적 변동이면 모니터링 지속, 구조적 변동이면 리캘리브레이션/재개발 검토</strong></p>
 </blockquote>
 <hr>
 <h2 id="43">4.3 변별력 추이 모니터링<a class="headerlink" href="#43" title="Permanent link">¶</a></h2>
 <h3 id="ks-ar">분기별 KS · AR 추이 추적<a class="headerlink" href="#ks-ar" title="Permanent link">¶</a></h3>
-<p>변별력 지표는 <strong>개발 시점의 단일 값</strong>이 아니라, 운영 중 <strong>시계열로 추적</strong>해야 한다. 분기별(또는 월별)로 KS·AR을 산출하여 추이를 관찰한다.</p>
+<p>변별력 지표는 <strong>개발 시점의 단일 값</strong>이 아니라, 운영 중 <strong>시계열로 추적</strong>해야 한다. 분기별(또는 월별)로 KS·AR을 산출해 개발 시점 대비 하락폭을 본다. 하락폭의 판정 기준은 <a href="../oot-validation/">OOT 허용폭</a>과 같다.</p>
 <table>
 <thead>
 <tr>
 <th>시점</th>
-<th>KS</th>
-<th>AR (Gini)</th>
+<th>KS (%p)</th>
+<th>AR</th>
 <th>PSI</th>
-<th>비고</th>
+<th>개발 대비 KS</th>
+<th>판정 (4.5절 에스컬레이션)</th>
 </tr>
 </thead>
 <tbody>
@@ -5281,114 +5332,134 @@
 <td>38.2</td>
 <td>0.54</td>
 <td>—</td>
+<td>—</td>
 <td>기준 시점</td>
 </tr>
 <tr>
 <td>2023 Q2</td>
-<td>37.5</td>
-<td>0.53</td>
+<td>38.4</td>
+<td>0.54</td>
 <td>0.02</td>
+<td>+0.2</td>
 <td>안정</td>
 </tr>
 <tr>
 <td>2023 Q3</td>
-<td>36.8</td>
-<td>0.51</td>
+<td>37.0</td>
+<td>0.52</td>
 <td>0.04</td>
-<td>안정</td>
+<td>−1.2</td>
+<td>안정 (단일 분기 하락)</td>
 </tr>
 <tr>
 <td>2023 Q4</td>
-<td>35.1</td>
-<td>0.48</td>
+<td>35.8</td>
+<td>0.50</td>
 <td>0.07</td>
-<td>소폭 하락 — 모니터링 강화</td>
+<td>−2.4</td>
+<td><strong>Level 1 관찰</strong> — 2개 분기 연속 하락</td>
 </tr>
 <tr>
 <td>2024 Q1</td>
-<td>32.3</td>
-<td>0.44</td>
+<td>32.6</td>
+<td>0.46</td>
 <td>0.13</td>
-<td>하락 추세 확인 — 원인 분석 착수</td>
+<td>−5.6</td>
+<td><strong>Level 2 경고</strong> — 개발 대비 5%p 초과 하락</td>
 </tr>
 <tr>
 <td><strong>2024 Q2</strong></td>
-<td><strong>28.7</strong></td>
-<td><strong>0.38</strong></td>
+<td><strong>27.9</strong></td>
+<td><strong>0.39</strong></td>
 <td><strong>0.22</strong></td>
-<td><strong>리캘리브레이션/재개발 검토 착수</strong></td>
+<td><strong>−10.3</strong></td>
+<td><strong>Level 3 조치</strong> — 개발 대비 10%p 초과 하락</td>
 </tr>
 </tbody>
 </table>
 <div class="admonition tip">
 <p class="admonition-title">하락 추세 판독의 핵심</p>
-<p>단일 분기 하락은 계절성·일시적 변동일 수 있다. <strong>2~3개 분기 연속 하락</strong>이 확인되면 구조적 열화로 판단한다. 특히 PSI와 변별력이 <strong>동시에 악화</strong>되면 모집단 자체가 변했을 가능성이 높다.</p>
+<p>단일 분기 하락은 계절성·표본 변동일 수 있다. <strong>2~3개 분기 연속 하락</strong>이면 구조적 열화를 의심한다. PSI와 변별력이 <strong>동시에 악화</strong>되면 모집단 자체가 변했을 가능성이 높고, PSI는 그대로인데 변별력만 떨어지면 변수와 위험의 관계가 바뀌었을(개념 드리프트) 가능성을 본다.</p>
 </div>
-<h3 id="back-testing-pd-vs-pd">Back-testing — 예측 PD vs 실현 PD<a class="headerlink" href="#back-testing-pd-vs-pd" title="Permanent link">¶</a></h3>
-<p>Back-testing은 모형이 산출한 <strong>예측 부도율(PD)</strong>과 <strong>실제 관측 부도율</strong>이 일치하는지를 등급별로 검증하는 절차다. 변별력이 유지되더라도 예측 확률이 체계적으로 과소/과대 추정되면 의사결정에 왜곡이 발생한다.</p>
+<h3 id="back-testing-pd-vs">Back-testing — 예측 PD vs 실현 부도율<a class="headerlink" href="#back-testing-pd-vs" title="Permanent link">¶</a></h3>
+<p>Back-testing은 모형이 산출한 <strong>예측 PD</strong>와 <strong>실제 관측 부도율</strong>이 맞는지를 등급별로 검증하는 절차다. 변별력이 유지되더라도 예측 PD가 체계적으로 과소·과대 추정되면 의사결정이 왜곡된다.</p>
 <table>
 <thead>
 <tr>
 <th>등급</th>
+<th>표본 수</th>
 <th>예측 PD</th>
-<th>실현 PD</th>
-<th>차이</th>
+<th>실현 부도율</th>
+<th>기대 불량 / 관측 불량</th>
+<th>이항검정 p (단측)</th>
 <th>판정</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>AAA~AA</td>
+<td>1~2등급</td>
+<td>6,000</td>
 <td>0.3%</td>
-<td>0.4%</td>
-<td>+0.1%p</td>
+<td>0.40%</td>
+<td>18 / 24</td>
+<td>0.101</td>
 <td>허용 범위</td>
 </tr>
 <tr>
-<td>A</td>
+<td>3~4등급</td>
+<td>9,000</td>
 <td>0.8%</td>
-<td>1.1%</td>
-<td>+0.3%p</td>
-<td>허용 범위</td>
-</tr>
-<tr>
-<td>BBB</td>
-<td>2.5%</td>
-<td>3.8%</td>
-<td>+1.3%p</td>
+<td>1.10%</td>
+<td>72 / 99</td>
+<td>0.001</td>
 <td>과소 추정 경고</td>
 </tr>
 <tr>
-<td>BB</td>
-<td>5.0%</td>
-<td>8.2%</td>
-<td>+3.2%p</td>
+<td>5~6등급</td>
+<td>12,000</td>
+<td>2.5%</td>
+<td>3.80%</td>
+<td>300 / 456</td>
+<td>&lt; 0.001</td>
 <td>과소 추정 — 재보정 필요</td>
 </tr>
 <tr>
-<td>B 이하</td>
+<td>7~8등급</td>
+<td>8,000</td>
+<td>5.0%</td>
+<td>8.20%</td>
+<td>400 / 656</td>
+<td>&lt; 0.001</td>
+<td>과소 추정 — 재보정 필요</td>
+</tr>
+<tr>
+<td>9~10등급</td>
+<td>3,600</td>
 <td>12.0%</td>
-<td>15.5%</td>
-<td>+3.5%p</td>
+<td>15.50%</td>
+<td>432 / 558</td>
+<td>&lt; 0.001</td>
 <td>과소 추정 — 재보정 필요</td>
 </tr>
 </tbody>
 </table>
+<p>모든 등급에서 실현 부도율이 예측보다 높다 — 순서(변별력)는 맞지만 <strong>수준(캘리브레이션)</strong> 이 전체적으로 낮게 잡혀 있는 전형적인 모습이다. 이런 경우가 리캘리브레이션의 대표 사례다(4.4절).</p>
 <div class="admonition warning">
 <p class="admonition-title">Calibration 실패의 위험</p>
-<p>변별력(KS·AR)은 <strong>순서</strong>만 맞으면 되지만, Calibration은 <strong>수준</strong>이 맞아야 한다. 등급별 PD가 체계적으로 과소 추정되면: ① 충당금이 과소 적립되고, ② 금리가 과소 산정되며, ③ 규제자본이 부족해진다. Basel IRB 은행에서 Back-testing 실패는 <strong>자본 추가 적립(Capital Add-on)</strong>으로 직결될 수 있다.</p>
+<p>변별력(KS·AR)은 <strong>순서</strong>만 맞으면 되지만, Calibration은 <strong>수준</strong>이 맞아야 한다. 등급별 PD가 체계적으로 과소 추정되면 ① 충당금이 과소 적립되고, ② 금리가 낮게 책정되며, ③ 규제자본이 부족해진다. 내부등급법을 쓰는 은행이라면 감독당국이 보수적 조정이나 추가 자본을 요구할 수 있다(<a href="../regulatory-framework/">규제 프레임워크</a>).</p>
 </div>
 <div class="admonition tip">
-<p class="admonition-title">Binomial Test — 통계적 검정</p>
-<p>등급별 실현 PD가 예측 PD와 유의하게 다른지를 검정하는 데 이항검정(Binomial Test)을 사용한다. 등급 내 관측 수 <span class="arithmatex">\(n\)</span>, 예측 PD <span class="arithmatex">\(p_0\)</span>, 실현 부도 건수 <span class="arithmatex">\(k\)</span>에 대해:</p>
+<p class="admonition-title">이항검정(Binomial Test)</p>
+<p>등급별 실현 부도율이 예측 PD와 유의하게 다른지를 검정한다. 등급 내 관측 수 <span class="arithmatex">\(n\)</span>, 예측 PD <span class="arithmatex">\(p_0\)</span>, 관측 불량 수 <span class="arithmatex">\(k\)</span>에 대해</p>
 <ul>
-<li><strong>귀무가설:</strong> 실제 PD = <span class="arithmatex">\(p_0\)</span></li>
-<li><strong>검정:</strong> <span class="arithmatex">\(k \sim \text{Binomial}(n, p_0)\)</span>에서 관측된 <span class="arithmatex">\(k\)</span>의 p-value 산출</li>
-<li><strong>판정:</strong> p-value &lt; 0.05이면 해당 등급의 Calibration이 유의하게 벗어난 것</li>
+<li><strong>귀무가설:</strong> 실제 PD = <span class="arithmatex">\(p_0\)</span> / <strong>대립가설:</strong> 실제 PD &gt; <span class="arithmatex">\(p_0\)</span> (과소 추정 여부를 볼 때)</li>
+<li><strong>검정:</strong> <span class="arithmatex">\(k \sim \text{Binomial}(n, p_0)\)</span>에서 <span class="arithmatex">\(P(X \ge k)\)</span>를 p-value로 사용</li>
+<li><strong>판정:</strong> p-value &lt; 0.05이면 해당 등급의 PD가 유의하게 과소 추정된 것</li>
 </ul>
+<p>이항검정은 차주들의 부도가 서로 독립이라고 가정한다. 실제로는 경기 같은 공통 요인 때문에 부도가 같이 움직이므로(부도 상관), 이항검정은 "유의함"을 너무 자주 내는 경향이 있다. 그래서 실무에서는 여러 기간의 결과를 함께 보거나, 신뢰수준을 단계별로 나눈 신호등 방식을 함께 쓴다.</p>
 </div>
 <h3 id="vintage">Vintage 분석<a class="headerlink" href="#vintage" title="Permanent link">¶</a></h3>
-<p>Vintage 분석은 <strong>대출 실행 시점(Vintage)</strong>별로 성능을 비교하는 방법이다. 동일 모형이 적용되더라도 시점별로 성능이 다르게 나타날 수 있으며, 이는 모형의 문제인지 환경의 문제인지를 구분하는 데 핵심적이다.</p>
+<p>Vintage 분석은 <strong>대출 실행 시점(Vintage)</strong> 별로 성능을 비교하는 방법이다. 동일 모형이 적용되더라도 시점별로 성능이 다르게 나타날 수 있으며, 이는 모형의 문제인지 환경의 문제인지를 구분하는 데 핵심적이다.</p>
 <div class="admonition info">
 <p class="admonition-title">Vintage 분석의 활용</p>
 <ul>
@@ -5399,13 +5470,13 @@
 </div>
 <hr>
 <h2 id="44-vs">4.4 리캘리브레이션 vs 재개발 — 언제 무엇을 하는가<a class="headerlink" href="#44-vs" title="Permanent link">¶</a></h2>
-<p>모형 성능이 저하되었을 때, <strong>리캘리브레이션(Recalibration)</strong>으로 버틸 수 있는지 <strong>재개발(Redevelopment)</strong>이 필요한지는 실무에서 가장 어려운 판단 중 하나다.</p>
+<p>모형 성능이 저하되었을 때 <strong>리캘리브레이션(Recalibration)</strong> 으로 대응할 수 있는지 <strong>재개발(Redevelopment)</strong> 이 필요한지는 실무에서 가장 어려운 판단 중 하나다.</p>
 <h3 id="recalibration">리캘리브레이션 (Recalibration)<a class="headerlink" href="#recalibration" title="Permanent link">¶</a></h3>
-<p>기존 모형의 <strong>변수·구조는 유지</strong>하되, 계수(또는 스코어 매핑)만 재추정하여 <strong>예측 수준(Calibration)</strong>을 현실에 맞추는 작업이다.</p>
+<p>기존 모형의 <strong>변수·구간·계수 구조는 유지</strong>하고, 점수와 PD의 대응(또는 절편)만 다시 맞춰 <strong>예측 수준(Calibration)</strong> 을 현실에 맞추는 작업이다.</p>
 <div class="admonition success">
 <p class="admonition-title">리캘리브레이션이 적합한 경우</p>
 <ul>
-<li><strong>변별력(KS·AR)은 유지</strong>되지만 예측 PD가 실현 PD와 체계적으로 괴리</li>
+<li><strong>변별력(KS·AR)은 유지</strong>되지만 예측 PD가 실현 부도율과 체계적으로 괴리 (위 Back-testing 예시)</li>
 <li>PSI 소폭 이동(0.10~0.25), CSI는 대부분 변수 안정</li>
 <li>모형 구조(변수 선정, WoE 패턴)는 여전히 유효</li>
 <li>경기 국면 전환 등 <strong>수준(level) 변화</strong>가 주 원인</li>
@@ -5422,62 +5493,73 @@
 </thead>
 <tbody>
 <tr>
-<td><strong>Scaling 조정</strong></td>
-<td>Anchor Score, PDO 파라미터를 최신 데이터로 재추정</td>
-<td>점수 분포 수준만 이동한 경우</td>
+<td><strong>절편(Intercept) 재추정</strong></td>
+<td>계수 <span class="arithmatex">\(\beta_j\)</span>는 고정하고 <span class="arithmatex">\(\beta_0\)</span>만 최근 부도율에 맞춰 다시 추정</td>
+<td>전체 PD 수준이 위아래로 이동</td>
 </tr>
 <tr>
-<td><strong>절편(Intercept) 재추정</strong></td>
-<td>로지스틱 회귀의 <span class="arithmatex">\(\beta_0\)</span>만 최신 부도율에 맞춰 조정</td>
-<td>전체 PD 수준이 상하 이동</td>
+<td><strong>점수→PD 매핑 재추정</strong></td>
+<td>최근 데이터로 <span class="arithmatex">\(\text{logit}(\text{PD}) = a + b \times \text{Score}\)</span>를 다시 적합(기울기까지 조정)</td>
+<td>수준과 함께 점수 간격의 의미도 변한 경우</td>
 </tr>
 <tr>
 <td><strong>등급 경계 재설정</strong></td>
-<td>기존 점수 체계는 유지하되 등급 cutoff를 조정</td>
+<td>점수 체계는 유지하고 등급 Cut-off만 조정</td>
 <td>포트폴리오 구성 변화로 등급별 비율 재조정 필요</td>
 </tr>
 </tbody>
 </table>
+<p>Anchor Score·PDO는 점수 눈금을 정하는 <strong>정책값</strong>이라 데이터로 "재추정"하는 대상이 아니다. 점수 눈금을 그대로 두고 PD 대응만 바꾸는 것이 보통이며, 눈금을 바꾸면 기존 점수를 쓰는 모든 정책(승인 Cut-off, 금리표)을 함께 바꿔야 한다.</p>
 <h3 id="redevelopment">재개발 (Redevelopment)<a class="headerlink" href="#redevelopment" title="Permanent link">¶</a></h3>
 <p>변수 선정부터 모형 구조까지 <strong>처음부터 다시 개발</strong>하는 작업이다.</p>
 <div class="admonition danger">
 <p class="admonition-title">재개발이 필요한 경우</p>
 <ul>
-<li><strong>변별력 자체가 구조적으로 하락</strong> — KS·AR이 2~3개 분기 연속 하락, 회복 조짐 없음</li>
+<li><strong>변별력 자체가 구조적으로 하락</strong> — KS·AR이 개발 대비 허용폭을 넘어 하락하고 회복 조짐이 없음</li>
 <li>PSI &gt; 0.25 + 주요 변수 CSI 다수 임계값 초과</li>
-<li><strong>WoE 패턴 자체가 변질</strong> — 개발 당시 단조(Monotonic)였던 변수가 비단조로 전환</li>
-<li>새로운 데이터 소스 활용 가능 (비금융 대안정보, 텍스트 데이터 등)</li>
+<li><strong>WoE 패턴 자체가 변질</strong> — 개발 당시 단조였던 변수의 구간별 불량률이 비단조로 전환</li>
+<li>새로운 데이터 소스 활용 가능 (비금융 대안정보 등)</li>
 <li><strong>규제 요건</strong> — 감독당국이 모형 재개발을 권고 또는 요구</li>
 </ul>
 </div>
 <h3 id="_2">판단 프레임워크<a class="headerlink" href="#_2" title="Permanent link">¶</a></h3>
-<div class="highlight"><pre><span></span><code>                  ┌─────────────────────┐
-                  │  정기 모니터링 결과  │
-                  └──────────┬──────────┘
-                             │
-                  ┌──────────▼──────────┐
-                  │ 변별력(KS·AR) 하락? │
-                  └──────────┬──────────┘
-                        Yes  │  No → 모니터링 지속
-                  ┌──────────▼──────────┐
-                  │ PSI/CSI 임계값 초과? │
-                  └──────────┬──────────┘
-                        Yes  │  No → 일시적 변동 가능성
-                  ┌──────────▼──────────┐         → 1~2분기 추가 관찰
-                  │  WoE 패턴 유지?     │
-                  └──────────┬──────────┘
-                   Yes │          │ No
-                       ▼          ▼
-              리캘리브레이션    재개발
+<div class="highlight"><pre><span></span><code>                    ┌─────────────────────┐
+                    │  정기 모니터링 결과  │
+                    └──────────┬──────────┘
+                               │
+                    ┌──────────▼──────────┐
+                    │ 변별력(KS·AR) 하락?  │
+                    │ (OOT 허용폭 초과)    │
+                    └──────────┬──────────┘
+               No ─────────────┤ Yes
+               │               │
+   ┌───────────▼─────────┐  ┌──▼──────────────────────┐
+   │ Back-testing 실패?   │  │ 구간별 불량률(WoE 패턴) │
+   │ (예측 PD 체계적 괴리) │  │ 유지되는가?             │
+   └─────┬───────────┬───┘  └────┬──────────────┬─────┘
+       Yes           No         Yes             No
+         │           │           │               │
+   리캘리브레이션  모니터링     원인 분석 후      재개발
+                   지속       리캘리브레이션
+                              또는 1~2분기 추가 관찰
 </code></pre></div>
 <div class="admonition example">
 <p class="admonition-title">실무 참고 — 모형 운영 주기</p>
-<p>신용평가모형은 통상 <strong>2~3년 주기</strong>로 정기 재개발을 수행하는 것이 업계 일반적 관행이다. 그 사이 분기별 모니터링에서 성능 열화가 감지되면 리캘리브레이션으로 대응하고, 열화가 심각하면 정기 주기를 앞당겨 조기 재개발에 착수한다.</p>
-<p>국제 규제 기준(Basel IRB)에서도 최소 연 1회 이상 모형 성능을 검증하도록 요구하고 있다.</p>
+<p>신용평가모형은 수년 주기(흔히 2~3년)로 정기 재개발을 하는 것이 일반적이다. 그 사이 분기별 모니터링에서 성능 열화가 감지되면 리캘리브레이션으로 대응하고, 열화가 심각하면 정기 주기를 앞당겨 조기 재개발에 착수한다.</p>
+<p>Basel II는 등급별 실현 부도율과 추정 PD의 비교 분석을 <strong>적어도 연 1회</strong> 갱신하고(BCBS 128 문단 501), 내부감사 등 독립 기능이 등급 체계를 <strong>적어도 연 1회</strong> 검토하도록 요구한다(문단 443).</p>
+<p></p><div class="source-ref">출처: <a href="https://www.bis.org/publications/200606-standards-basel-ii-international-convergence-capital-measurement-and-capital-standards-revised-framework.pdf" target="_blank">BCBS, Basel II Comprehensive Version (2006), 문단 443·501</a></div><p></p>
 </div>
+<h3 id="_3">운영 이관 점검<a class="headerlink" href="#_3" title="Permanent link">¶</a></h3>
+<p>모형을 전산에 옮길 때 생기는 차이는 성능 저하처럼 보이기 쉬워, 이관 단계에서 먼저 막는다.</p>
+<ul>
+<li>구간 경계는 "이상 포함, 미만 미포함"처럼 한 규칙으로 통일하고, 특수값과 결측은 수치 판정보다 먼저 지정 구간으로 보낸다. 정의에 없는 값은 임의 구간에 넣지 말고 미배정으로 드러낸다.</li>
+<li>개발 때 적용한 상하단 절삭은 분석용 전처리이지 운영 로직이 아니다. 운영에는 원본값을 넣고 구간표로 판정한다.</li>
+<li>운영 소수 자릿수와 반올림 규칙은 명세에 정하고, 보고서 표시용 반올림 값을 운영 값으로 옮기지 않는다.</li>
+<li>운영 로직을 개발 코드와 따로 구현해 같은 입력에서 점수와 미산출 여부가 일치하는지 대조한다. 테스트 데이터는 전 구간, 경계값, 특수값, 결측을 모두 포함하고, 구간별 구성비를 개발 평점표와 맞춰 본다.</li>
+</ul>
 <hr>
 <h2 id="45">4.5 모니터링 거버넌스<a class="headerlink" href="#45" title="Permanent link">¶</a></h2>
-<h3 id="_3">보고 주기와 체계<a class="headerlink" href="#_3" title="Permanent link">¶</a></h3>
+<h3 id="_4">보고 주기와 체계<a class="headerlink" href="#_4" title="Permanent link">¶</a></h3>
 <table>
 <thead>
 <tr>
@@ -5497,13 +5579,13 @@
 <tr>
 <td><strong>분기</strong></td>
 <td>변수 안정성 + 변별력</td>
-<td>CSI, KS, AR, AUC</td>
+<td>CSI, 점수 이동 기여, KS, AR</td>
 <td>모형 운영팀 + 리스크 관리</td>
 </tr>
 <tr>
 <td><strong>반기</strong></td>
 <td>Calibration</td>
-<td>등급별 예측 PD vs 실현 PD</td>
+<td>등급별 예측 PD vs 실현 부도율</td>
 <td>리스크 관리 + 경영진</td>
 </tr>
 <tr>
@@ -5514,42 +5596,39 @@
 </tr>
 </tbody>
 </table>
-<h3 id="_4">임계값 위반 시 에스컬레이션<a class="headerlink" href="#_4" title="Permanent link">¶</a></h3>
+<h3 id="_5">임계값 위반 시 에스컬레이션<a class="headerlink" href="#_5" title="Permanent link">¶</a></h3>
 <div class="admonition warning">
 <p class="admonition-title">3단계 에스컬레이션</p>
 <p><strong>Level 1 — 관찰 (Watch)</strong></p>
 <ul>
-<li>조건: PSI 0.10~0.15, 또는 KS/AR 단일 분기 5%p 이내 하락</li>
-<li>조치: 모니터링 주기 강화(월간 → 격주), 원인 분석 착수</li>
+<li>조건: PSI 0.10~0.15, 또는 KS와 AR이 모두 직전 분기 대비 <strong>2개 분기 연속 하락</strong>(개발 대비 하락폭은 아직 허용폭 이내)</li>
+<li>조치: 모니터링 주기 강화(분기 → 월간), 원인 분석 착수</li>
 <li>보고: 모형 운영팀 내부</li>
 </ul>
 <p><strong>Level 2 — 경고 (Alert)</strong></p>
 <ul>
-<li>조건: PSI 0.15~0.25, 또는 KS/AR 2개 분기 연속 하락, 또는 주요 변수 CSI &gt; 0.10</li>
+<li>조건: PSI 0.15~0.25, 또는 개발 대비 KS 5~10%p (AR 0.05~0.10) 하락, 또는 주요 변수 CSI ≥ 0.10</li>
 <li>조치: 리캘리브레이션 검토, 심층 원인 분석, 대안 시나리오 수립</li>
 <li>보고: 리스크 관리 부서장</li>
 </ul>
 <p><strong>Level 3 — 조치 (Action)</strong></p>
 <ul>
-<li>조건: PSI &gt; 0.25, 또는 KS/AR 3개 분기 연속 하락, 또는 Back-testing 실패</li>
-<li>조치: 리캘리브레이션 즉시 시행 또는 재개발 착수</li>
-<li>보고: CRO / 경영진 보고, 감독당국 사전 협의(Basel IRB 은행)</li>
+<li>조건: PSI &gt; 0.25, 또는 개발 대비 KS 10%p 초과 (AR 0.10 초과) 하락, 또는 Back-testing에서 등급 PD의 과소 추정이 반복 확인</li>
+<li>조치: 리캘리브레이션 또는 재개발을 즉시 결정. PSI만 넘고 성능 지표가 유지되면, 분포 이동이 성능 저하로 이어졌는지 원인부터 확인한 뒤 정한다</li>
+<li>보고: CRO / 경영진 보고, 내부등급법 은행은 감독당국과 사전 협의</li>
 </ul>
+<p>하락폭 기준은 <a href="../oot-validation/">OOT 허용폭 정본</a>과 같다.</p>
 </div>
 <div class="admonition info">
 <p class="admonition-title">규제 요건 상세</p>
-<p>Basel IRB 검증 요건, SR 11-7 등 규제 프레임워크의 상세 내용은 <a href="../regulatory-framework/">규제 프레임워크</a>에서 다룬다.</p>
-</div>
-<div class="admonition info">
-<p class="admonition-title">다음 단계</p>
-<p>모니터링 체계가 갖춰지면, 모형 개발·검증·운영 전반에 걸친 <a href="../regulatory-framework/">규제 프레임워크</a>를 이해해야 한다.</p>
+<p>Basel IRB 검증 요건, 미국 모형리스크 관리 지침 등은 <a href="../regulatory-framework/">규제 프레임워크</a>에서 다룬다.</p>
 </div>
 <hr>
-<h2 id="_5">참고자료<a class="headerlink" href="#_5" title="Permanent link">¶</a></h2>
+<h2 id="_6">참고자료<a class="headerlink" href="#_6" title="Permanent link">¶</a></h2>
 <div class="admonition example">
-<p class="admonition-title">실무 벤치마크 — 신정원 검증위원회 보고서</p>
-<p>한국신용정보원(신정원)은 신용정보법 제26조의3에 따라 <strong>개인신용평가체계 검증위원회</strong>를 운영하며, CB사(NICE·KCB·서울평가정보·KoDATA)의 모형 성능을 반기 1회 정기 검증한 결과를 공개한다. 보고서에는 CB사별 AR·KS·PSI 실측치, 업권별 성능 차이, 전이행렬, 평가요소 활용비중 등이 포함되어 있어, 모니터링 지표의 <strong>실무 벤치마크</strong>로 참고할 수 있다.</p>
-<p></p><div class="source-ref">한국신용정보원, 개인신용평가체계 검증위원회 심의결과 — <a href="https://www.kcredit.or.kr:1441/">신정원 자료실</a></div><p></p>
+<p class="admonition-title">공개 벤치마크 — 개인신용평가체계 검증위원회 보고서</p>
+<p><strong>개인신용평가체계 검증위원회</strong>는 신용정보법 제26조의3에 근거해 종합신용정보집중기관(한국신용정보원)에 두는 위원회로, CB사 평가모형의 예측력·안정성 등을 심의하고 공개용 결과 보고서를 낸다. 2025년 상반기 보고서에 따르면 개인 CB 검증은 2020년 하반기 처음 시작해 반기 1회 수행하다가 2022년부터 매년 하반기에, 개인사업자 CB 검증은 2022년 상반기부터 매년 상반기에 수행한다. 보고서에는 회사별 개발 시점 대비 검증 시점의 AR·KS·PSI, 등급별 구성비 변동 등이 담겨 있어 모니터링 지표의 <strong>실무 벤치마크</strong>로 참고할 수 있다(<a href="../performance-ks-ar-gini/">벤치마크 표</a>).</p>
+<p></p><div class="source-ref">출처: 개인신용평가체계 검증위원회, <a href="https://www.bccard.com/down/company/bigdata/result_2025.pdf" target="_blank">「2025년 상반기 개인신용평가체계 검증위원회 검증결과 보고서」(공개용)</a>, <a href="https://www.kcredit.or.kr:1441/" target="_blank">한국신용정보원</a></div><p></p>
 </div>
 
 

@@ -1564,10 +1564,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
       
         <li class="md-nav__item">
-  <a href="#41-wald-test-bin" class="md-nav__link">
+  <a href="#41-wald" class="md-nav__link">
     <span class="md-ellipsis">
       
-        4.1 Wald Test — Bin별 유의성
+        4.1 Wald 검정 — 무엇을 검정할 것인가
       
     </span>
   </a>
@@ -1575,10 +1575,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#42-likelihood-ratio-test" class="md-nav__link">
+  <a href="#42-lrt" class="md-nav__link">
     <span class="md-ellipsis">
       
-        4.2 Likelihood Ratio Test — 변수 전체 유의성
+        4.2 우도비 검정(LRT) — 변수 전체 유의성
       
     </span>
   </a>
@@ -1586,10 +1586,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#43" class="md-nav__link">
+  <a href="#43-bin" class="md-nav__link">
     <span class="md-ellipsis">
       
-        4.3 단변량 로지스틱 회귀 결과 해석 매트릭스
+        4.3 비유의 Bin 처리 기준 (정본)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#44" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.4 단변량 로지스틱 회귀 결과 해석 매트릭스
       
     </span>
   </a>
@@ -5112,134 +5123,144 @@
 
 
 <h1 id="_1">유의성 검정<a class="headerlink" href="#_1" title="Permanent link">¶</a></h1>
-<h2 id="41-wald-test-bin">4.1 Wald Test — Bin별 유의성<a class="headerlink" href="#41-wald-test-bin" title="Permanent link">¶</a></h2>
-<p>각 Bin의 <span class="arithmatex">\(\hat{\beta}_j\)</span>가 0과 통계적으로 유의미하게 다른지 검정한다.</p>
-<div class="admonition note">
-<p class="admonition-title">Wald Test 귀무가설과 대립가설</p>
-<ul>
-<li><strong>귀무가설 <span class="arithmatex">\(H_0\)</span>:</strong> <span class="arithmatex">\(\beta_j = 0\)</span> — 해당 구간의 로그 오즈가 0이다 (불량과 우량이 1:1 비율)</li>
-<li><strong>대립가설 <span class="arithmatex">\(H_1\)</span>:</strong> <span class="arithmatex">\(\beta_j \neq 0\)</span> — 해당 구간의 로그 오즈가 0이 아니다 (구별력이 있다)</li>
-<li><strong>목적:</strong> 개별 Bin(구간) 하나하나에 대해 독립적으로 검정. 각 더미 계수가 <em>개별적으로</em> 유의한지 확인한다.</li>
-</ul>
-</div>
+<p>이 페이지는 <strong>비유의 Bin 처리 기준의 정본</strong>이다. Classing·단변량 LR·피드백 루프의 다른 페이지는 이 기준을 참조한다.</p>
+<h2 id="41-wald">4.1 Wald 검정 — 무엇을 검정할 것인가<a class="headerlink" href="#41-wald" title="Permanent link">¶</a></h2>
+<p>절편 없는 One-Hot 모형에서는 구간마다 계수 <span class="arithmatex">\(\hat\beta_i\)</span>와 표준오차가 나온다(<a href="../one-hot-no-intercept/">식 (2)</a>). Wald 통계량의 일반형은 다음과 같다.</p>
 <div class="arithmatex">\[
-W_j = \left(\frac{\hat{\beta}_j}{\widehat{SE}(\hat{\beta}_j)}\right)^2 \sim \chi^2(1) \quad \text{under } H_0: \beta_j = 0 \tag{5}
+W = \left(\frac{\hat\theta - \theta_0}{\widehat{SE}(\hat\theta)}\right)^2 \sim \chi^2(1) \quad \text{under } H_0: \theta = \theta_0 \tag{1}
 \]</div>
+<p>핵심은 <strong><span class="arithmatex">\(\theta\)</span>와 <span class="arithmatex">\(\theta_0\)</span>를 무엇으로 잡느냐</strong>다. 세 가지 선택지가 있다.</p>
 <table>
 <thead>
 <tr>
-<th>Bin</th>
-<th><span class="arithmatex">\(\hat{\beta}_j\)</span></th>
-<th><span class="arithmatex">\(\widehat{SE}\)</span></th>
-<th>Wald 통계량</th>
-<th>p-value</th>
-<th>판단</th>
+<th>검정</th>
+<th>귀무가설</th>
+<th>의미</th>
+<th>쓰임</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>1 (1억미만)</td>
-<td>+1.81</td>
-<td>0.21</td>
-<td>74.2</td>
-<td>&lt;0.001</td>
-<td>유의</td>
+<td><strong>(a) 기본 출력</strong></td>
+<td><span class="arithmatex">\(\beta_i = 0\)</span></td>
+<td>이 구간의 불량률이 50%</td>
+<td><strong>쓰지 않는다</strong> (불균형 표본에서 무의미)</td>
+</tr>
+<tr>
+<td><strong>(b) 평균 대비</strong></td>
+<td><span class="arithmatex">\(\beta_i = \ln(N_B/N_G)\)</span> ⇔ <span class="arithmatex">\(\text{WoE}_i = 0\)</span></td>
+<td>이 구간의 위험이 전체 평균과 같다</td>
+<td>보조 정보</td>
+</tr>
+<tr>
+<td><strong>(c) 인접 Bin 대비</strong></td>
+<td><span class="arithmatex">\(\beta_i = \beta_{i+1}\)</span></td>
+<td>이웃한 두 구간의 위험이 같다</td>
+<td><strong>합병 판단의 기준</strong></td>
+</tr>
+</tbody>
+</table>
+<p>(c)의 통계량은 <span class="arithmatex">\(\hat\theta = \hat\beta_i - \hat\beta_{i+1}\)</span>, <span class="arithmatex">\(\widehat{SE} = \sqrt{SE_i^2 + SE_{i+1}^2}\)</span>(두 구간은 서로 다른 고객이라 독립)로 계산한다. 이는 두 구간의 2×2 표에 대한 카이제곱 검정(ChiMerge의 검정)과 같은 가설을 보며, 대표본에서 거의 같은 값을 준다.</p>
+<h3 id="5-good-1000-bad-200">매출액 5구간에 적용 (Good 1,000 / Bad 200)<a class="headerlink" href="#5-good-1000-bad-200" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>Bin</th>
+<th><span class="arithmatex">\(\hat{\beta}_i\)</span></th>
+<th>SE</th>
+<th>(a) <span class="arithmatex">\(H_0:\beta_i=0\)</span> p</th>
+<th>(b) 평균 대비 p</th>
+<th>(c) 다음 Bin 대비: 차이 / p</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 (1억 미만)</td>
+<td>+0.182</td>
+<td>0.191</td>
+<td>0.341</td>
+<td>&lt; 0.001</td>
+<td>+1.281 / &lt; 0.001</td>
 </tr>
 <tr>
 <td>2 (1억~5억)</td>
-<td>+0.49</td>
-<td>0.18</td>
-<td>7.4</td>
-<td>0.007</td>
-<td>유의</td>
+<td>−1.099</td>
+<td>0.163</td>
+<td>&lt; 0.001</td>
+<td>0.002</td>
+<td>+0.511 / 0.032</td>
 </tr>
 <tr>
 <td>3 (5억~10억)</td>
-<td>−0.01</td>
-<td>0.17</td>
-<td>0.003</td>
-<td>0.954</td>
-<td>주의 — 아래 해설 참조</td>
+<td>−1.609</td>
+<td>0.173</td>
+<td>&lt; 0.001</td>
+<td>1.000</td>
+<td>+0.847 / 0.001</td>
 </tr>
 <tr>
 <td>4 (10억~50억)</td>
-<td>−0.84</td>
-<td>0.19</td>
-<td>19.6</td>
-<td>&lt;0.001</td>
-<td>유의</td>
+<td>−2.457</td>
+<td>0.190</td>
+<td>&lt; 0.001</td>
+<td>&lt; 0.001</td>
+<td>+0.069 / <strong>0.818</strong></td>
 </tr>
 <tr>
-<td>5 (50억초과)</td>
-<td>−0.90</td>
-<td>0.23</td>
-<td>15.3</td>
-<td>&lt;0.001</td>
-<td>유의</td>
+<td>5 (50억 초과)</td>
+<td>−2.526</td>
+<td>0.232</td>
+<td>&lt; 0.001</td>
+<td>&lt; 0.001</td>
+<td>—</td>
 </tr>
 </tbody>
 </table>
 <div class="admonition warning">
-<p class="admonition-title">Bin3 비유의 해석</p>
-<p>Bin3의 WoE = 0.00이고 p-value가 높다는 이유만으로 "합병을 권고"하는 것은 재검토가 필요하다.</p>
-<p><strong>Wald Test의 귀무가설(<span class="arithmatex">\(H_0: \beta_j = 0\)</span>)이 의미하는 것:</strong>
-"<span class="arithmatex">\(\beta_j = 0\)</span>"은 "해당 구간의 Bad/Good 비율이 1:1로 동일하다"는 의미다. WoE는 이와 달리 "모집단 평균 대비" 비율이므로, WoE = 0은 "<span class="arithmatex">\(\beta_j = \ln(N_B/N_G) \neq 0\)</span>"을 뜻하는 게 일반적이다.</p>
-<p><strong>Classing의 본질적 특성:</strong>
-5개 구간으로 나뉠 때, 가운데 구간(Bin3)은 자연스럽게 모집단 평균에 가까운 Bad Rate를 갖게 된다. 가운데 구간은 <span class="arithmatex">\(\ln(n_{B,i}/n_{G,i})\)</span>가 0에 수렴하는 것이 오히려 <strong>정상적인 Classing의 결과</strong>다.</p>
-<p><strong>단조성(Monotonicity) 기준의 우선순위:</strong>
-Bin3의 WoE가 <span class="arithmatex">\((-)\)</span>에서 <span class="arithmatex">\((+)\)</span>로 이어지는 단조 흐름 상에 0으로 위치한다면, 이는 Classing이 잘 된 것을 의미한다. WoE 순서가 <strong><span class="arithmatex">\((-) \to 0 \approx \to (+)\)</span></strong>로 단조성을 유지하는 한, 중간 구간의 p-value 수치만을 근거로 합병하는 것은 오히려 모형의 정보량(IV)을 훼손하는 결과를 낳는다.</p>
-<p><strong>결론:</strong> Bin3의 비유의는 "이 구간이 구별력을 잃었다"는 게 아니라, "이 구간의 Bad Rate가 모집단 전체 평균과 유사하다"는 사실을 통계적으로 재확인한 것이다. 단조성이 유지되고 변수 전체 LRT가 유의하다면, 합병 없이 Bin3를 유지하는 것이 더 바람직한 판단이다.</p>
+<p class="admonition-title">(a) 기본 출력이 틀린 답을 주는 이유</p>
+<p><span class="arithmatex">\(\beta_i = 0\)</span>은 "불량률 50%"다. 이 데이터의 전체 불량률은 16.7%이므로, (a)는 "이 구간이 50%와 다른가"를 묻는 셈이다. 그 결과 <strong>가장 위험한 Bin 1</strong>(불량률 54.5%)이 50%에 가까워 p = 0.341로 "비유의"가 되고, 나머지는 모두 "유의"가 된다. 통계 패키지 summary의 p-value를 그대로 쓰면 이런 결론이 나온다. (a)가 (b)와 같아지는 것은 Bad:Good = 1:1 균형 표본일 때뿐이다.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">(b) — 중간 구간이 평균과 같은 것은 정상이다</p>
+<p>Bin 3은 WoE = 0이라 (b)의 p = 1.000이다. 구간이 여러 개면 가운데 구간의 불량률이 전체 평균에 가까운 것이 자연스럽다. 이 구간을 "비유의"라는 이유로 합치면 단조 흐름의 중간 단계가 사라져 정보만 잃는다. (b)는 각 구간의 위험 수준을 설명하는 보조 정보로만 쓴다.</p>
+</div>
+<div class="admonition success">
+<p class="admonition-title">(c) — 합병 판단은 인접 Bin 차이로 한다</p>
+<p>Bin 4와 Bin 5는 불량률 7.9% vs 7.4%, 차이 검정 p = 0.818로 <strong>구분되지 않는다</strong>. 두 구간을 나눠 둘 통계적 근거가 없으므로 합병을 검토한다. 나머지 인접 쌍은 모두 p &lt; 0.05다. 합병 과정은 <a href="../feedback-loop/">Classing 피드백 루프</a>에서 이어진다.</p>
 </div>
 <hr>
-<h2 id="42-likelihood-ratio-test">4.2 Likelihood Ratio Test — 변수 전체 유의성<a class="headerlink" href="#42-likelihood-ratio-test" title="Permanent link">¶</a></h2>
-<p>변수 전체가 모형에 기여하는지를 검정한다. Null Model(절편만 있는 모형)과 Full Model(해당 변수 포함)의 Log-Likelihood를 비교한다.</p>
+<h2 id="42-lrt">4.2 우도비 검정(LRT) — 변수 전체 유의성<a class="headerlink" href="#42-lrt" title="Permanent link">¶</a></h2>
+<p>변수 전체가 위험을 구분하는지 검정한다. 절편만 있는 모형(Null)과 변수를 넣은 모형(Full)의 로그우도를 비교한다.</p>
 <div class="admonition note">
 <p class="admonition-title">LRT 귀무가설과 대립가설</p>
 <ul>
-<li><strong>귀무가설 <span class="arithmatex">\(H_0\)</span>:</strong> <span class="arithmatex">\(\beta_1 = \beta_2 = \cdots = \beta_k = 0\)</span> — 해당 변수의 모든 구간 계수가 동시에 0이다</li>
-<li><strong>대립가설 <span class="arithmatex">\(H_1\)</span>:</strong> 최소한 하나의 <span class="arithmatex">\(\beta_j \neq 0\)</span> — 이 변수가 부도 예측에 통계적으로 의미 있다</li>
-<li><strong>목적:</strong> 개별 Bin이 아닌 <em>변수 전체</em>의 기여도를 평가</li>
+<li><strong>귀무가설 <span class="arithmatex">\(H_0\)</span>:</strong> <span class="arithmatex">\(\beta_1 = \beta_2 = \cdots = \beta_k\)</span> — 모든 구간의 위험이 같다 (= 변수가 쓸모없다)</li>
+<li><strong>대립가설 <span class="arithmatex">\(H_1\)</span>:</strong> 적어도 두 구간의 위험이 다르다</li>
+<li>"모든 <span class="arithmatex">\(\beta_i = 0\)</span>"이 아니다. 그것은 "모든 구간의 불량률이 50%"라는 무의미한 가설이다.</li>
 </ul>
 </div>
 <div class="arithmatex">\[
-\text{LR} = -2[\ell(\text{Null}) - \ell(\text{Full})] \sim \chi^2(df) \tag{6}
+\text{LR} = -2\left[\ell(\text{Null}) - \ell(\text{Full})\right] \sim \chi^2(k-1) \tag{2}
 \]</div>
-<p><span class="arithmatex">\(df\)</span>: 추가된 파라미터 수 (No Intercept 모형의 경우 Bin 수와 동일)</p>
+<p>자유도는 <strong>추가된 모수의 수</strong>다. Full(절편 없는 One-Hot)은 모수 <span class="arithmatex">\(k\)</span>개, Null(절편만)은 1개이므로 <span class="arithmatex">\(df = k-1\)</span>이다. 절편 포함 <span class="arithmatex">\(k-1\)</span> 더미 모형으로 계산해도 같은 값이 나온다.</p>
+<p><strong>매출액 예시:</strong> <span class="arithmatex">\(\ell(\text{Full}) = -472.64\)</span>, <span class="arithmatex">\(\ell(\text{Null}) = -540.67\)</span> → LR = 136.07, df = 4, 임계값(5%) 9.49 → p &lt; 0.001. 변수는 유의하다.</p>
 <div class="admonition tip">
-<p class="admonition-title">LRT 구체 적용 예시 — 3개 구간을 가진 변수의 경우</p>
-<p>예를 들어 "업력" 변수를 3개 구간(Bin1: 3년 미만, Bin2: 3~10년, Bin3: 10년 초과)으로 나누었다고 하자.</p>
+<p class="admonition-title">LRT 적용 예시 — 3개 구간 변수</p>
+<p>"업력" 변수를 3개 구간(3년 미만, 3~10년, 10년 초과)으로 나누었다고 하자.</p>
 <ol>
-<li><strong>Null Model:</strong> 업력 변수를 아예 포함하지 않은 모형을 피팅 → <span class="arithmatex">\(\ell(\text{Null})\)</span> 산출</li>
-<li><strong>Full Model:</strong> 업력 변수의 3개 더미(<span class="arithmatex">\(D_1, D_2, D_3\)</span>)를 모두 포함한 모형을 피팅 → <span class="arithmatex">\(\ell(\text{Full})\)</span> 산출</li>
-<li><strong>검정:</strong> <span class="arithmatex">\(\text{LR} = -2[\ell(\text{Null}) - \ell(\text{Full})]\)</span>을 자유도 <span class="arithmatex">\(df = 3\)</span>인 카이제곱 분포와 비교</li>
+<li><strong>Null Model:</strong> 절편만 있는 모형 → <span class="arithmatex">\(\ell(\text{Null})\)</span></li>
+<li><strong>Full Model:</strong> 업력 3개 더미(절편 없음) 또는 2개 더미 + 절편 → <span class="arithmatex">\(\ell(\text{Full})\)</span></li>
+<li><strong>검정:</strong> <span class="arithmatex">\(\text{LR}\)</span>을 자유도 <span class="arithmatex">\(df = 3 - 1 = 2\)</span>인 카이제곱 분포와 비교. 5% 임계값은 <strong>5.99</strong></li>
 </ol>
-<p>LR 통계량이 <span class="arithmatex">\(\chi^2(3)\)</span>의 임계값(p=0.05 기준 약 7.81)을 초과하면 <span class="arithmatex">\(H_0\)</span>를 기각하고 업력 변수가 모형에 통계적으로 기여한다고 판단한다. <strong>개별 Bin의 Wald p-value가 일부 높더라도 LRT가 유의하면 변수 자체는 모형에 투입할 수 있다.</strong></p>
+<p>LR이 5.99를 넘으면 업력의 구간들이 위험을 구분한다고 판단한다.</p>
 </div>
-<h3 id="lrt">LRT 구현 코드<a class="headerlink" href="#lrt" title="Permanent link">¶</a></h3>
-<details class="example">
-<summary>Python — LRT 통계량 산출</summary>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">statsmodels.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sm</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">stats</span>
-
-<span class="c1"># Full Model: 해당 변수의 k개 더미 투입 (No Intercept)</span>
-<span class="n">full_model</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">Logit</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">dummies</span><span class="p">)</span>
-<span class="n">full_result</span> <span class="o">=</span> <span class="n">full_model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-
-<span class="c1"># Null Model: 절편만 포함 (변수 미투입)</span>
-<span class="n">null_model</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">Logit</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">y</span><span class="o">.</span><span class="n">index</span><span class="p">)))</span>
-<span class="n">null_result</span> <span class="o">=</span> <span class="n">null_model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-
-<span class="c1"># LRT 통계량 산출</span>
-<span class="n">lr_stat</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">null_result</span><span class="o">.</span><span class="n">llf</span> <span class="o">-</span> <span class="n">full_result</span><span class="o">.</span><span class="n">llf</span><span class="p">)</span>
-<span class="n">df_diff</span> <span class="o">=</span> <span class="n">dummies</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span>   <span class="c1"># Full df - Null df</span>
-<span class="n">p_value</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">chi2</span><span class="o">.</span><span class="n">sf</span><span class="p">(</span><span class="n">lr_stat</span><span class="p">,</span> <span class="n">df</span><span class="o">=</span><span class="n">df_diff</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"LRT: </span><span class="si">{</span><span class="n">lr_stat</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">, df=</span><span class="si">{</span><span class="n">df_diff</span><span class="si">}</span><span class="s2">, p=</span><span class="si">{</span><span class="n">p_value</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-</code></pre></div>
-</details>
 <div class="admonition warning">
-<p class="admonition-title">Null Model 정의 주의</p>
-<p>No Intercept 모형에서 LRT의 Null Model은 <strong>절편만 포함한 모형</strong>(변수 미투입)이다. "절편도 없는 빈 모형"이 아니다. Null Model의 절편은 전체 모집단의 log-odds <span class="arithmatex">\(\ln(N_B/N_G)\)</span>를 추정하며, LRT는 "변수를 추가함으로써 이 기본 수준 대비 얼마나 설명력이 향상되었는가"를 검정한다.</p>
+<p class="admonition-title">Null Model은 '절편만 있는 모형'</p>
+<p>LRT의 Null Model은 <strong>절편만 포함한 모형</strong>이다. "절편도 없는 빈 모형"(모든 고객 불량률 50%)이 아니다. Null Model의 절편은 전체 log-odds <span class="arithmatex">\(\ln(N_B/N_G)\)</span>를 추정하며, LRT는 "구간을 나눔으로써 이 평균 수준 대비 얼마나 설명력이 늘었는가"를 검정한다.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">WoE 치환 모형으로 LRT를 할 때</p>
+<p>WoE 변수 하나를 넣은 모형은 모수가 하나 늘어날 뿐이지만, WoE 값 자체가 같은 표본에서 <span class="arithmatex">\(k-1\)</span>개의 구간 정보를 써서 만들어졌다. LR 값은 One-Hot 모형과 같으므로 <strong>자유도도 <span class="arithmatex">\(k-1\)</span></strong> 로 잡아야 한다. 자유도 1로 검정하면 유의성이 과장된다.</p>
 </div>
 <h3 id="_2">검정 방법 비교<a class="headerlink" href="#_2" title="Permanent link">¶</a></h3>
 <table>
@@ -5247,89 +5268,140 @@ Bin3의 WoE가 <span class="arithmatex">\((-)\)</span>에서 <span class="arithm
 <tr>
 <th>검정</th>
 <th>비교 대상</th>
-<th>귀무가설</th>
+<th>귀무가설 예</th>
 <th>언제 사용</th>
 <th>특징</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Wald Test</strong></td>
-<td>개별 <span class="arithmatex">\(\hat{\beta}\)</span>의 SE 기반</td>
-<td><span class="arithmatex">\(\beta_j = 0\)</span> (개별 Bin)</td>
-<td>Bin별 유의성 (Classing 진단)</td>
-<td>빠르고 간편. 대용량 샘플에서 신뢰도 높음</td>
+<td><strong>Wald</strong></td>
+<td>추정치와 SE</td>
+<td>인접 Bin 동일 <span class="arithmatex">\(\beta_i = \beta_{i+1}\)</span></td>
+<td>구간 경계 진단</td>
+<td>한 번의 적합으로 계산. 대표본에서 신뢰도 높음</td>
 </tr>
 <tr>
 <td><strong>LRT</strong></td>
-<td>Null vs Full Log-Likelihood</td>
-<td><span class="arithmatex">\(\beta_1 = \cdots = \beta_k = 0\)</span> (변수 전체)</td>
+<td>Null vs Full 로그우도</td>
+<td>모든 구간 동일</td>
 <td>변수 전체 유의성</td>
-<td>Wald보다 정확. 소용량 샘플에서 권장</td>
+<td>Wald보다 소표본에서 안정적</td>
 </tr>
 <tr>
-<td><strong>Score Test</strong></td>
-<td>Null 모형에서의 Score 함수</td>
-<td>Null 모형 기반 동일</td>
-<td>LRT 대안 (계산 효율)</td>
-<td>LRT와 점근적으로 동일. 계산이 더 가벼움</td>
+<td><strong>Score</strong></td>
+<td>Null 모형에서의 기울기</td>
+<td>LRT와 같음</td>
+<td>변수 추가 여부를 빠르게 판단</td>
+<td>LRT와 점근적으로 동일, Full 모형을 적합하지 않아도 됨</td>
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p class="admonition-title">실무 기준값</p>
-<ul>
-<li>Bin별 Wald p-value: &lt; 0.05 (단조성 유지 구간은 관대하게 &lt; 0.10 적용 가능)</li>
-<li>변수 전체 LRT p-value: &lt; 0.05</li>
-<li>소용량 샘플(Bad &lt; 500건): Wald보다 LRT를 우선 사용</li>
-<li>p-value는 가이드라인일 뿐. 업무 중요도·IV·단조성과 함께 종합 판단</li>
-<li><strong>특히:</strong> 개별 Bin의 Wald p-value ≥ 0.05이더라도, 단조성이 유지되고 LRT가 유의하면 합병 없이 유지 가능</li>
-</ul>
-</div>
-<div class="admonition example">
-<p class="admonition-title">실무 참고: 단변량 로지스틱 회귀 유의성 기준</p>
-<p>전통 스코어카드 개발 실무에서는 단변량 로지스틱 회귀의 유의성 기준을 다음과 같이 적용하는 것이 일반적이다:</p>
-<ul>
-<li><strong>변수 전체 LRT p-value &lt; 0.05</strong>를 1차 스크리닝 기준으로 사용</li>
-<li>Bin별 Wald p-value는 <strong>0.05 ~ 0.10 사이</strong>를 허용 범위로 두되, 단조성 유지 여부를 우선 고려</li>
-<li>개별 변수의 통계적 유의성과 함께 <strong>업무적 설명력</strong>을 종합 판단</li>
-</ul>
-</div>
 <hr>
-<h2 id="43">4.3 단변량 로지스틱 회귀 결과 해석 매트릭스<a class="headerlink" href="#43" title="Permanent link">¶</a></h2>
+<h2 id="43-bin">4.3 비유의 Bin 처리 기준 (정본)<a class="headerlink" href="#43-bin" title="Permanent link">¶</a></h2>
 <table>
 <thead>
 <tr>
-<th><span class="arithmatex">\(\hat{\beta}\)</span> 방향</th>
-<th>p-value</th>
+<th>상황</th>
 <th>판단</th>
 <th>조치</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>WoE와 부호 반대 (<span class="arithmatex">\(\hat{\beta}&gt;0 \leftrightarrow \text{WoE}&lt;0\)</span>)</td>
-<td>&lt;0.05</td>
-<td>정상. Classing 우수</td>
+<td>변수 LRT 비유의 (p ≥ 0.05)</td>
+<td>변수가 위험을 구분하지 못함</td>
+<td>Classing 재설계 또는 변수 제거</td>
+</tr>
+<tr>
+<td>변수 LRT 유의 + 단조성 유지 + 개별 Bin이 평균과 구분 안 됨((b) 비유의)</td>
+<td>정상 (중간 구간)</td>
+<td><strong>유지</strong></td>
+</tr>
+<tr>
+<td>인접 Bin 차이 비유의((c) p ≥ 0.05)</td>
+<td>두 구간을 나눌 근거 없음</td>
+<td><strong>합병 검토</strong> → 합병 후 단조성·IV·LRT 재확인</td>
+</tr>
+<tr>
+<td>인접 Bin 차이 비유의이지만 업무상 필요한 경계</td>
+<td>업무 논리 예외</td>
+<td>유지 가능. 모형 문서에 예외로 명기하고 검증 표본에서 순서 유지 확인</td>
+</tr>
+<tr>
+<td>단조성 위반</td>
+<td>리스크 방향 불명확</td>
+<td>위반 구간 합병 (<a href="../../classing/decision-criteria/">의사결정 기준</a>)</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">실무 기준값</p>
+<ul>
+<li>변수 전체 LRT: p &lt; 0.05</li>
+<li>인접 Bin 차이: p &lt; 0.05이면 경계 유지. 표본이 매우 큰 경우(수십만 건)에는 미세한 차이도 유의해지므로, Delta WoE(경험칙 0.05~0.1)와 IV 손실을 함께 본다.</li>
+<li>p-value는 가이드라인이다. 업무 중요도·IV·단조성과 함께 종합 판단한다.</li>
+</ul>
+</div>
+<hr>
+<h2 id="44">4.4 단변량 로지스틱 회귀 결과 해석 매트릭스<a class="headerlink" href="#44" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>확인 항목</th>
+<th>결과</th>
+<th>판단</th>
+<th>조치</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="arithmatex">\(\hat\beta_i + \text{WoE}_i\)</span></td>
+<td>모든 구간에서 <span class="arithmatex">\(\ln(N_B/N_G)\)</span>로 같음</td>
+<td>계산 정상</td>
+<td>—</td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(\hat\beta_i + \text{WoE}_i\)</span></td>
+<td>구간마다 다름</td>
+<td><strong>집계·코딩 오류</strong> (Classing 문제 아님)</td>
+<td>Good/Bad 집계, 구간 매핑, 목표변수 정의 재확인</td>
+</tr>
+<tr>
+<td>변수 LRT</td>
+<td>p &lt; 0.05</td>
+<td>변수 유의</td>
+<td>다음 확인으로</td>
+</tr>
+<tr>
+<td>변수 LRT</td>
+<td>p ≥ 0.05</td>
+<td>변수 무의미</td>
+<td>Classing 재설계 또는 제거</td>
+</tr>
+<tr>
+<td>인접 Bin 차이</td>
+<td>모두 p &lt; 0.05</td>
+<td>Classing 양호</td>
 <td>유지</td>
 </tr>
 <tr>
-<td>WoE와 부호 반대</td>
-<td>≥0.05</td>
-<td>유의성 부족</td>
-<td>인접 Bin 합병 후 재검정</td>
+<td>인접 Bin 차이</td>
+<td>일부 p ≥ 0.05</td>
+<td>경계 근거 부족</td>
+<td>합병 후 재검정 (<a href="../feedback-loop/">피드백 루프</a>)</td>
 </tr>
 <tr>
-<td>WoE와 부호 동일 (<span class="arithmatex">\(\hat{\beta}&gt;0 \leftrightarrow \text{WoE}&gt;0\)</span>)</td>
-<td>어떤 값이든</td>
-<td>Classing 오류</td>
-<td>Classing 전면 재검토. 해당 변수 투입 금지</td>
+<td><span class="arithmatex">\(\hat\beta\)</span> 순서</td>
+<td>단조</td>
+<td>리스크 방향 명확</td>
+<td>유지</td>
 </tr>
 <tr>
-<td>WoE와 부호 반대이나 크기 차이 큼</td>
-<td>&lt;0.05</td>
-<td>과적합 또는 Data Leakage 의심</td>
-<td>샘플 안정성 재확인. 성과 기간·관찰 시점 재검토</td>
+<td><span class="arithmatex">\(\hat\beta\)</span> 순서</td>
+<td>비단조</td>
+<td>단조성 위반</td>
+<td>위반 구간 합병</td>
 </tr>
 </tbody>
 </table>

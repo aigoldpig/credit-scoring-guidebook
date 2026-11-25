@@ -1508,10 +1508,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
       
         <li class="md-nav__item">
-  <a href="#21-vs-one-hot-encoding" class="md-nav__link">
+  <a href="#21" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2.1 인코딩 방식 — 일반 더미처리 vs One-Hot Encoding
+        2.1 구간 변수를 회귀에 넣는 세 가지 방법
       
     </span>
   </a>
@@ -1522,7 +1522,18 @@
   <a href="#22-no-intercept" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2.2 No Intercept의 의미
+        2.2 No Intercept 모형의 식과 해
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#23-5-good-1000-bad-200" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 적합 결과 예시 (매출액 5구간, 원 표본 Good 1,000 / Bad 200)
       
     </span>
   </a>
@@ -5101,54 +5112,66 @@
 
 
 <h1 id="one-hot-encoding-no-intercept">One-Hot Encoding + No Intercept 회귀<a class="headerlink" href="#one-hot-encoding-no-intercept" title="Permanent link">¶</a></h1>
-<h2 id="21-vs-one-hot-encoding">2.1 인코딩 방식 — 일반 더미처리 vs One-Hot Encoding<a class="headerlink" href="#21-vs-one-hot-encoding" title="Permanent link">¶</a></h2>
-<p>범주형 변수(또는 구간으로 나뉜 연속형 변수)를 회귀모형에 투입하는 방식은 크게 두 가지다. 두 방식의 차이를 먼저 이해해야 No Intercept 방법론의 필요성이 명확해진다.</p>
+<h2 id="21">2.1 구간 변수를 회귀에 넣는 세 가지 방법<a class="headerlink" href="#21" title="Permanent link">¶</a></h2>
+<p>범주형 변수(또는 구간으로 나뉜 연속형 변수)를 로지스틱 회귀에 투입하는 방법은 세 가지다. 셋은 <strong>같은 적합도</strong>를 주지만 계수의 의미가 다르다.</p>
 <table>
 <thead>
 <tr>
 <th>구분</th>
-<th>일반 더미처리 (k−1 방식)</th>
-<th>One-Hot Encoding (k개 + No Intercept)</th>
+<th>① 일반 더미 (k−1 + 절편)</th>
+<th>② One-Hot (k개 + No Intercept)</th>
+<th>③ WoE 치환 (+ 절편)</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>더미 변수 수</strong></td>
-<td><span class="arithmatex">\(k-1\)</span>개 (1개를 기준 Baseline으로 제거)</td>
-<td><span class="arithmatex">\(k\)</span>개 (모든 구간에 더미 생성)</td>
+<td><strong>설명변수</strong></td>
+<td><span class="arithmatex">\(k-1\)</span>개 더미 (기준 구간 1개 제외)</td>
+<td><span class="arithmatex">\(k\)</span>개 더미 (모든 구간)</td>
+<td>WoE 값 1개</td>
 </tr>
 <tr>
-<td><strong>절편(Intercept)</strong></td>
-<td>반드시 포함 (Full-rank 유지를 위해 필수)</td>
-<td>제거 (No Intercept)</td>
+<td><strong>절편</strong></td>
+<td>포함</td>
+<td>제거</td>
+<td>포함</td>
 </tr>
 <tr>
-<td><strong>다중공선성</strong></td>
+<td><strong>Full-rank 여부</strong></td>
 <td><span class="arithmatex">\(k-1\)</span>개 + 절편 → Full-rank</td>
-<td><span class="arithmatex">\(k\)</span>개이지만 절편 없음 → Full-rank</td>
+<td><span class="arithmatex">\(k\)</span>개, 절편 없음 → Full-rank</td>
+<td>Full-rank</td>
 </tr>
 <tr>
-<td><strong><span class="arithmatex">\(\hat{\beta}\)</span> 해석</strong></td>
-<td>기준 구간 대비 <em>상대적</em> 로그 오즈 차이</td>
-<td>해당 구간 자체의 <em>절대적</em> 로그 오즈 추정</td>
+<td><strong>계수의 의미</strong></td>
+<td>기준 구간 대비 Bad log-odds <strong>차이</strong> <span class="arithmatex">\(\gamma_i\)</span></td>
+<td>구간 자체의 Bad log-odds <span class="arithmatex">\(\hat\beta_i\)</span></td>
+<td>WoE 1단위당 Bad log-odds 변화</td>
 </tr>
 <tr>
-<td><strong>WoE와 비교</strong></td>
-<td>직접 비교 불가 (기준값이 있어 스케일 다름)</td>
-<td>직접 비교 가능 (<span class="arithmatex">\(\hat{\beta}_j \approx -\text{WoE}_j\)</span>, <a href="../beta-woe-proof/">증명</a> 참조)</td>
+<td><strong>WoE와의 관계</strong></td>
+<td><span class="arithmatex">\(\gamma_i = -(\text{WoE}_i - \text{WoE}_{\text{기준}})\)</span></td>
+<td><span class="arithmatex">\(\hat{\beta}_i = -\text{WoE}_i + \ln(N_B/N_G)\)</span></td>
+<td><span class="arithmatex">\(\hat\beta = -1\)</span>, <span class="arithmatex">\(\hat\beta_0 = \ln(N_B/N_G)\)</span></td>
+</tr>
+<tr>
+<td><strong>주 용도</strong></td>
+<td>다변량 더미 모형</td>
+<td>단변량 구간별 검정</td>
+<td>스코어카드 본 모형</td>
 </tr>
 </tbody>
 </table>
+<p>세 관계식은 모두 근사가 아니라 <strong>정확히</strong> 성립한다(<a href="../beta-woe-proof/">증명</a>).</p>
 <div class="admonition tip">
-<p class="admonition-title">일반 더미처리(k−1)에서 절편이 반드시 필요한 이유</p>
-<p><span class="arithmatex">\(k\)</span>개 구간에 대해 <span class="arithmatex">\(k\)</span>개의 더미변수를 만들면, <strong>어느 고객이든 반드시 하나의 더미에만 해당</strong>되므로 <span class="arithmatex">\(D_1 + D_2 + \cdots + D_k = 1\)</span>이 항상 성립한다. 이는 절편 열(모든 원소가 1인 열)과 <strong>완벽한 선형 종속 관계</strong>를 만들어 설계 행렬(Design Matrix)이 Full-rank를 위반하게 된다.</p>
-<p>수학적으로 이 상태에서는 <span class="arithmatex">\((X^TX)^{-1}\)</span>이 존재하지 않아 회귀 계수를 유일하게 추정할 수 없다(Perfect Multicollinearity). 이를 해결하는 방법이 <strong>하나의 구간을 제거하여 <span class="arithmatex">\(k-1\)</span>개의 더미만 투입하는 것</strong>이다. 제거된 구간이 Baseline이 되며, 나머지 <span class="arithmatex">\(\hat{\beta}_j\)</span>는 Baseline 대비 로그 오즈의 상대적 차이를 의미한다.</p>
+<p class="admonition-title">일반 더미처리(k−1)에서 기준 구간을 빼는 이유</p>
+<p><span class="arithmatex">\(k\)</span>개 구간에 <span class="arithmatex">\(k\)</span>개의 더미를 만들면 <strong>모든 고객이 정확히 하나의 더미에만 해당</strong>하므로 <span class="arithmatex">\(D_1 + D_2 + \cdots + D_k = 1\)</span>이 항상 성립한다. 이는 절편 열(모든 원소가 1인 열)과 <strong>완전한 선형 종속</strong>이어서 설계 행렬(Design Matrix)이 Full-rank가 아니게 되고, 계수를 유일하게 추정할 수 없다(완전 다중공선성). 그래서 한 구간을 빼고 <span class="arithmatex">\(k-1\)</span>개만 넣는다. 빠진 구간이 기준(Baseline)이 되고, 나머지 계수 <span class="arithmatex">\(\gamma_i\)</span>는 기준 대비 Bad log-odds 차이가 된다.</p>
 </div>
 <div class="admonition tip">
-<p class="admonition-title">k−1 방식의 해석상 한계</p>
-<p>기준 구간을 Bin1(가장 불량률이 높은 구간)로 설정하면 <span class="arithmatex">\(\hat{\beta}_2, \hat{\beta}_3, \ldots\)</span>는 각각 "Bin1에 비해 얼마나 좋은가"를 나타낸다. 분석가 입장에서는 <strong>각 구간 자체의 절대적 부도 위험 수준을 직관적으로 파악하기 어렵고</strong>, WoE와 직접 비교도 불가능하다.</p>
+<p class="admonition-title">k−1 방식의 계수 부호</p>
+<p>기준 구간을 <strong>가장 위험한 구간</strong>(예: Bin 1)으로 두면, 나머지 구간은 기준보다 안전하므로 <span class="arithmatex">\(\gamma_i\)</span>는 <strong>음수</strong>가 정상이다(Bad log-odds가 기준보다 낮음). <span class="arithmatex">\(\gamma_i\)</span>가 양수면 "기준보다 더 위험한 구간"이라는 뜻이다. k−1 방식은 "각 구간 자체의 위험 수준"을 바로 보여주지 않으므로, 단변량 단계에서 구간별 위험을 한눈에 보기에는 ②가 편하다.</p>
 </div>
-<p>반면 <strong>One-Hot Encoding + No Intercept</strong> 방식은 절편을 제거함으로써 다중공선성 문제를 우회하면서 <span class="arithmatex">\(k\)</span>개 더미를 모두 사용한다. 이 경우 각 <span class="arithmatex">\(\hat{\beta}_j\)</span>는 해당 구간의 로그 오즈를 직접 추정하므로 WoE와 1:1 비교가 가능하다.</p>
+<p>반면 <strong>One-Hot Encoding + No Intercept</strong> 방식은 절편을 없애 다중공선성 문제를 피하면서 <span class="arithmatex">\(k\)</span>개 더미를 모두 쓴다. 이때 각 <span class="arithmatex">\(\hat{\beta}_i\)</span>는 해당 구간의 Bad log-odds를 직접 추정하므로, 구간별 위험 수준과 그 표준오차를 바로 읽을 수 있다.</p>
 <h3 id="5">설계 행렬 비교 (5개 구간 예시)<a class="headerlink" href="#5" title="Permanent link">¶</a></h3>
 <table>
 <thead>
@@ -5173,63 +5196,87 @@
 </table>
 <div class="admonition success">
 <p class="admonition-title">핵심 정리</p>
-<p>일반 더미처리(<span class="arithmatex">\(k-1\)</span> + 절편)와 One-Hot Encoding(No Intercept)은 모형의 <strong>적합도(Log-Likelihood, AIC 등)가 수학적으로 동일</strong>하다. 단, 후자는 각 <span class="arithmatex">\(\hat{\beta}_j\)</span>를 WoE와 직접 비교·검증할 수 있다는 해석상 이점 때문에 단변량 로지스틱 회귀에서 채택한다.</p>
+<p>①·②·③은 모두 구간마다 서로 다른 위험 수준을 허용하는 <strong>포화(saturated) 모형</strong>과 같은 적합값을 내므로, 로그우도(그리고 이를 쓰는 LRT)가 <strong>수학적으로 동일</strong>하다. ③은 모수가 2개뿐인데도 포화 모형과 같은 적합을 내는데, 이는 WoE 자체가 같은 데이터의 Bin별 log-odds로 만들어졌기 때문이다. 이 점이 아래 LRT 자유도 문제로 이어진다.</p>
 </div>
-<h2 id="22-no-intercept">2.2 No Intercept의 의미<a class="headerlink" href="#22-no-intercept" title="Permanent link">¶</a></h2>
-<p>One-Hot Encoding으로 변환된 더미변수들을 독립변수로, 절편 없이 로지스틱 회귀를 수행한다:</p>
+<h2 id="22-no-intercept">2.2 No Intercept 모형의 식과 해<a class="headerlink" href="#22-no-intercept" title="Permanent link">¶</a></h2>
+<p>One-Hot 더미를 설명변수로, 절편 없이 로지스틱 회귀를 수행한다(y=1=Bad).</p>
 <div class="arithmatex">\[
-\ln\!\left(\frac{p_i}{1-p_i}\right) = \hat{\beta}_1 D_{i1} + \hat{\beta}_2 D_{i2} + \hat{\beta}_3 D_{i3} + \hat{\beta}_4 D_{i4} + \hat{\beta}_5 D_{i5} \tag{1}
+\ln\!\left(\frac{p_j}{1-p_j}\right) = \beta_1 D_{j1} + \beta_2 D_{j2} + \beta_3 D_{j3} + \beta_4 D_{j4} + \beta_5 D_{j5} \tag{1}
 \]</div>
-<div class="admonition note">
-<p class="admonition-title">No Intercept의 효과</p>
-<p>일반적인 회귀에서 더미변수를 쓸 때는 하나를 기준(Reference)으로 제거하고 나머지 <span class="arithmatex">\(k-1\)</span>개만 투입한다(다중공선성 방지). 하지만 <strong>No Intercept 모형에서는 절편이 없으므로 모든 더미변수(<span class="arithmatex">\(k\)</span>개)를 투입</strong>할 수 있다. 이렇게 하면 각 <span class="arithmatex">\(\hat{\beta}_j\)</span>가 해당 Bin에 속하는 고객의 <strong>log-odds를 직접 추정</strong>하게 된다. 현재 y=1=Bad 설정에서 이 값은 WoE와 <strong>부호가 반대이고 크기가 대응</strong>한다(<span class="arithmatex">\(\hat{\beta}_j \approx -\text{WoE}_j\)</span>). 수학적 증명은 <a href="../beta-woe-proof/">다음 절</a>에서 다룬다.</p>
-</div>
-<h3 id="_1">구현 코드<a class="headerlink" href="#_1" title="Permanent link">¶</a></h3>
-<details class="example">
-<summary>Python — One-Hot + No Intercept 단변량 로지스틱 회귀</summary>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">statsmodels.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sm</span>
-
-<span class="c1"># 1) One-Hot 더미 생성 (k개, drop_first=False)</span>
-<span class="n">dummies</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">"bin"</span><span class="p">],</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">"bin"</span><span class="p">,</span> <span class="n">drop_first</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-
-<span class="c1"># 2) No Intercept 단변량 로지스틱 회귀</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">Logit</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">"bad_flag"</span><span class="p">],</span> <span class="n">dummies</span><span class="p">)</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
-
-<span class="c1"># 3) Bin별 Wald p-value 확인</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">pvalues</span><span class="p">)</span>
-
-<span class="c1"># 4) LRT: Null Model 대비</span>
-<span class="c1">#    Null deviance = -2 * log-likelihood(intercept only)</span>
-<span class="n">null_model</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">Logit</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">"bad_flag"</span><span class="p">],</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">))</span>
-<span class="n">null_result</span> <span class="o">=</span> <span class="n">null_model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-
-<span class="n">lr_stat</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">null_result</span><span class="o">.</span><span class="n">llf</span> <span class="o">-</span> <span class="n">result</span><span class="o">.</span><span class="n">llf</span><span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">stats</span>
-<span class="n">p_value</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">chi2</span><span class="o">.</span><span class="n">sf</span><span class="p">(</span><span class="n">lr_stat</span><span class="p">,</span> <span class="n">df</span><span class="o">=</span><span class="n">dummies</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"LRT statistic: </span><span class="si">{</span><span class="n">lr_stat</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">, p-value: </span><span class="si">{</span><span class="n">p_value</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-</code></pre></div>
-</details>
-<h3 id="5-balanced-sample-y1bad">실행 결과 예시 (매출액 5구간, Balanced Sample, y=1=Bad)<a class="headerlink" href="#5-balanced-sample-y1bad" title="Permanent link">¶</a></h3>
-<div class="highlight"><pre><span></span><code>                 coef    std err          z      P&gt;|z|
-bin_1          1.8100      0.210      8.619      0.000
-bin_2          0.4900      0.180      2.722      0.006
-bin_3         -0.0100      0.170     -0.059      0.953
-bin_4         -0.8400      0.190     -4.421      0.000
-bin_5         -0.9000      0.230     -3.913      0.000
-
-LRT statistic: 142.31, p-value: 0.0000
-</code></pre></div>
+<p>고객 <span class="arithmatex">\(j\)</span>는 하나의 더미에만 1이므로, 구간 <span class="arithmatex">\(i\)</span>에 속한 모든 고객의 예측 log-odds는 <span class="arithmatex">\(\beta_i\)</span> 하나로 같다. 최대우도추정의 해는 <strong>구간의 실제 Bad log-odds</strong>이다.</p>
+<div class="arithmatex">\[
+\hat\beta_i = \ln\!\left(\frac{n_{B,i}}{n_{G,i}}\right), \qquad \widehat{SE}(\hat\beta_i) = \sqrt{\frac{1}{n_{B,i}} + \frac{1}{n_{G,i}}} \tag{2}
+\]</div>
+<p>반복 계산이 필요 없는 닫힌 해이며, 유도는 <a href="../beta-woe-proof/">다음 절</a>에서 한다.</p>
+<h2 id="23-5-good-1000-bad-200">2.3 적합 결과 예시 (매출액 5구간, 원 표본 Good 1,000 / Bad 200)<a class="headerlink" href="#23-5-good-1000-bad-200" title="Permanent link">¶</a></h2>
+<p><a href="../../woe_iv/woe/">WoE 1.3절</a>의 데이터를 세 방식으로 적합한 결과다. 모든 값은 식 (2)와 원 건수로 계산했다.</p>
+<table>
+<thead>
+<tr>
+<th>Bin</th>
+<th>WoE</th>
+<th>② <span class="arithmatex">\(\hat\beta_i\)</span> (One-Hot)</th>
+<th>SE</th>
+<th>① <span class="arithmatex">\(\gamma_i\)</span> (k−1, Bin1 기준)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 (1억 미만)</td>
+<td>−1.792</td>
+<td>+0.182</td>
+<td>0.191</td>
+<td>(기준, 절편 = +0.182)</td>
+</tr>
+<tr>
+<td>2 (1억~5억)</td>
+<td>−0.511</td>
+<td>−1.099</td>
+<td>0.163</td>
+<td>−1.281</td>
+</tr>
+<tr>
+<td>3 (5억~10억)</td>
+<td>0.000</td>
+<td>−1.609</td>
+<td>0.173</td>
+<td>−1.792</td>
+</tr>
+<tr>
+<td>4 (10억~50억)</td>
+<td>+0.847</td>
+<td>−2.457</td>
+<td>0.190</td>
+<td>−2.639</td>
+</tr>
+<tr>
+<td>5 (50억 초과)</td>
+<td>+0.916</td>
+<td>−2.526</td>
+<td>0.232</td>
+<td>−2.708</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>③ WoE 치환 모형: <span class="arithmatex">\(\hat\beta = -1.000\)</span>, <span class="arithmatex">\(\hat\beta_0 = \ln(200/1000) = -1.609\)</span></li>
+<li>세 모형의 로그우도는 모두 −472.64, 절편만 있는 모형은 −540.67 → LRT = 136.07</li>
+</ul>
 <div class="admonition note">
 <p class="admonition-title">결과 해석</p>
 <ul>
-<li><code>coef</code> 열이 <span class="arithmatex">\(\hat{\beta}\)</span>이며, WoE 값(−1.79, −0.51, 0.00, +0.85, +0.92)과 <strong>부호가 반대이고 크기가 대응</strong>한다 → <span class="arithmatex">\(\hat{\beta} \approx -\text{WoE}\)</span></li>
-<li>불량률이 높은 Bin 1(54.5%)에서 β가 가장 크고(+1.81), 불량률이 낮은 Bin 5(7.4%)에서 β가 가장 작다(−0.90) → Bad odds 방향과 일치</li>
-<li><code>P&gt;|z|</code>가 Wald p-value. Bin 3만 0.953으로 비유의하지만 단조성 유지 구간이므로 허용</li>
-<li>LRT p-value &lt; 0.001로 변수 전체 유의성 확인</li>
+<li>②의 <span class="arithmatex">\(\hat\beta_i + \text{WoE}_i\)</span>는 모든 구간에서 −1.609로 같다. <strong>계산이 맞는지 확인하는 용도</strong>다.</li>
+<li>①의 <span class="arithmatex">\(\gamma_i\)</span>는 모두 음수다. 기준(최위험 구간)보다 안전하다는 정상 부호다.</li>
+<li>③의 <span class="arithmatex">\(\hat\beta = -1\)</span>은 Classing이 좋든 나쁘든 개발 표본에서는 항상 나온다. 진단 정보가 아니다.</li>
 </ul>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">WoE 치환 모형의 LRT 자유도</p>
+<p>③은 추정 모수가 하나(기울기)라서 자유도 1로 LRT를 계산하기 쉽다. 그러나 WoE 값 자체가 같은 표본의 Bin별 log-odds(<span class="arithmatex">\(k-1\)</span>개 자유 모수)로 만들어졌으므로, 올바른 자유도는 <strong><span class="arithmatex">\(k-1\)</span></strong> 이다. 자유도 1로 검정하면 유의성이 과장된다. 변수 유의성은 ①·②와 같은 LRT(자유도 <span class="arithmatex">\(k-1\)</span>)로 판단한다(<a href="../significance-test/">유의성 검정</a>).</p>
+</div>
+<div class="admonition info">
+<p class="admonition-title">균형 표본(Balanced Sampling)이면?</p>
+<p>개발 표본을 Bad:Good = 1:1로 맞추면 <span class="arithmatex">\(\ln(N_B/N_G) = 0\)</span>이 되어 <span class="arithmatex">\(\hat\beta_i = -\text{WoE}_i\)</span>가 그대로 성립한다. 위 데이터에서 Bad만 5배 추출(Bad 1,000)했다고 하면 <span class="arithmatex">\(\hat\beta\)</span> = (+1.792, +0.511, 0.000, −0.847, −0.916)이다. 이 경우 Bin 불량률은 85.7%, 62.5%, 50.0%, 30.0%, 28.6%로 바뀌므로, 원 표본의 불량률(54.5%, 25.0%, …)과 섞어 쓰면 안 된다. WoE는 Good·Bad 각각의 분포로 계산하므로 표본 비율이 바뀌어도 변하지 않는다.</p>
 </div>
 
 

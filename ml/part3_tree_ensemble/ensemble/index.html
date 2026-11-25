@@ -5169,12 +5169,12 @@
 <p class="admonition-title">설계 사상</p>
 <p>단일 트리는 비선형 패턴을 잘 잡지만, 학습 데이터가 조금만 바뀌면 트리 구조가 완전히 달라진다 — <strong>High Variance</strong> 문제다. Bagging(Breiman, 1996)은 이 약점에 대한 첫 번째 답이었다. "불안정한 트리를 여러 개 만들어 평균 내면, 개별 트리의 흔들림이 상쇄되지 않을까?"</p>
 <p>그런데 같은 데이터에서 Bootstrap하면 강한 변수가 매번 Root에 올라와서, 트리들이 서로 비슷해진다. 상관관계가 높은 트리들의 평균은 <strong>분산이 잘 줄지 않는다</strong>. Random Forest(Breiman, 2001)는 이 문제를 정면으로 해결했다 — 각 분기마다 변수를 <strong>랜덤하게 일부만</strong> 후보로 올려서, 트리마다 다른 시각을 갖도록 강제한다. 개별 트리는 최적이 아닐 수 있지만, 앙상블 전체는 더 다양해지고 더 강해진다.</p>
-<p>핵심 통찰은 이것이다: <strong>"너무 똑똑한 트리 하나보다, 적당히 멍청하지만 서로 다른 트리 수백 개의 평균이 낫다."</strong></p>
+<p>핵심 통찰은 이것이다: <strong>"학습 데이터에 딱 맞춘 트리 하나보다, 조금씩 다르게 자란 트리 수백 개의 평균이 더 안정적이다."</strong> 개별 트리는 train↔valid 격차가 큰 불안정한 학습기지만, 평균을 내면 그 흔들림이 상쇄된다.</p>
 </div>
 <hr>
 <h2 id="21">2.1 앙상블의 핵심 아이디어<a class="headerlink" href="#21" title="Permanent link">¶</a></h2>
 <p>단일 트리는 <strong>불안정(High Variance)</strong>하다. 학습 데이터가 조금만 바뀌면 트리 구조가 완전히 달라진다. 그렇다면 역으로 생각해보자 — <strong>불안정한 트리를 여러 개 만들어서 평균 내면?</strong></p>
-<p>이것이 앙상블의 핵심이다. 개별 모형은 멍청해도, 다수의 의견을 모으면 똑똑해진다.</p>
+<p>이것이 앙상블의 핵심이다. 개별 모형은 불안정해도, 다수의 예측을 모으면 안정적이 된다.</p>
 <div class="admonition info">
 <p class="admonition-title">Wisdom of Crowds (대중의 지혜)</p>
 <p>1906년 Francis Galton이 소의 무게 맞추기 대회를 관찰했다. 개별 참가자의 추정은 편차가 컸지만, 787명의 추정값 중앙값은 실제 무게와 거의 정확히 일치했다. 앙상블은 이 원리를 모형에 적용한 것이다.</p>
@@ -5230,7 +5230,7 @@ P(\text{특정 샘플이 한 번도 안 뽑힐 확률}) = \left(1 - \frac{1}{N}\
 <li>원본 데이터에서 Bootstrap 샘플 <span class="arithmatex">\(B\)</span>개를 생성</li>
 <li>각 Bootstrap 샘플로 독립적인 트리를 학습 (제약 없이 깊게)</li>
 <li>예측 시 <span class="arithmatex">\(B\)</span>개 트리의 결과를 집계:<ul>
-<li><strong>분류</strong>: 다수결 투표 (Majority Voting)</li>
+<li><strong>분류</strong>: 다수결 투표(hard voting) 또는 트리별 예측 확률의 평균(soft voting). 신용평가처럼 확률이 필요한 경우에는 확률 평균을 쓰며, scikit-learn도 확률 평균 방식이다.</li>
 <li><strong>회귀</strong>: 평균 (Average)</li>
 </ul>
 </li>
@@ -5328,11 +5328,12 @@ P(\text{특정 샘플이 한 번도 안 뽑힐 확률}) = \left(1 - \frac{1}{N}\
 <p><a class="glightbox" data-type="image" data-width="100%" data-height="auto" href="../images/rf_bias_variance.png" data-desc-position="bottom"><img alt="RF의 일반화 오차 분해" src="../images/rf_bias_variance.png"></a></p>
 <p>Random Forest의 일반화 오차는 다음과 같이 분해된다:</p>
 <ul>
-<li><strong>Bias</strong>: 단일 트리의 Bias와 동일 — 앙상블(평균)은 Bias를 바꾸지 않음</li>
-<li><strong>Variance</strong>: <span class="arithmatex">\(\rho\sigma^2 + \frac{1-\rho}{B}\sigma^2\)</span> — 트리 간 상관관계 <span class="arithmatex">\(\rho\)</span>가 작을수록, 트리 수 <span class="arithmatex">\(B\)</span>가 많을수록 줄어듦</li>
+<li><strong>Bias</strong>: 앙상블을 구성하는 <strong>무작위화된 개별 트리</strong>의 Bias와 같다 — 평균화 자체는 Bias를 바꾸지 않는다</li>
+<li><strong>Variance</strong>: <span class="arithmatex">\(\rho\sigma^2 + \frac{1-\rho}{B}\sigma^2\)</span> — 여기서 <span class="arithmatex">\(\sigma^2\)</span>도 무작위화된 개별 트리의 분산이다. 트리 간 상관관계 <span class="arithmatex">\(\rho\)</span>가 작을수록, 트리 수 <span class="arithmatex">\(B\)</span>가 많을수록 줄어든다</li>
 </ul>
+<p>두 문장을 구분해서 읽어야 한다. "평균화는 Bias를 바꾸지 않는다"는 것은 개별 트리와 앙상블을 비교한 말이다. 그런데 Feature Subsampling으로 무작위화된 트리는 매 분할에서 최선의 변수를 못 쓸 수 있으므로, 무작위화하지 않은 CART보다 Bias가 <strong>약간 크다</strong>. 즉 RF는 개별 트리의 Bias를 조금 올리는 대가로 <span class="arithmatex">\(\rho\)</span>를 크게 낮춰, 전체 오차를 줄인다.</p>
 <blockquote>
-<p>"Randomization은 Bias를 키우지만, Variance를 줄여 전체 오차를 감소시킨다." 핵심은 <strong>적당히 멍청한, 적당히 똑똑한 트리</strong>를 만드는 것이다. 이것이 Bias-Variance Tradeoff의 실전 적용이다.</p>
+<p>"Randomization은 Bias를 키우지만, Variance를 줄여 전체 오차를 감소시킨다." 핵심은 <span class="arithmatex">\(m\)</span>(후보 변수 수)을 조정해 <strong>Bias 증가보다 <span class="arithmatex">\(\rho\)</span> 감소 효과가 더 큰 지점</strong>을 찾는 것이다. 이것이 Bias-Variance Tradeoff의 실전 적용이다.</p>
 </blockquote>
 <div class="source-ref">Louppe, G. (2014). "Understanding Random Forests: From Theory to Practice." PhD thesis, University of Liège.</div>
 
@@ -5382,15 +5383,23 @@ P(\text{특정 샘플이 한 번도 안 뽑힐 확률}) = \left(1 - \frac{1}{N}\
 </table>
 <div class="admonition tip">
 <p class="admonition-title">RF의 실전 튜닝 팁</p>
-<p>RF는 다양한 하이퍼파라미터가 존재하지만, 다음 <strong>5가지 조합만으로 훌륭한 모형</strong>을 만들 수 있다:</p>
+<p>RF는 하이퍼파라미터가 많지만, 실무에서 손대는 것은 몇 개뿐이다.</p>
 <ol>
-<li><code>n_estimators</code> — 200개 이상 권장, 많을수록 안정적</li>
-<li><code>max_depth</code> (또는 <code>max_leaf_nodes</code>) — <strong>둘 중 하나만 선택</strong>. <code>max_depth</code>가 bias↑/variance↓이므로 권장. 3~8 범위</li>
-<li><code>max_features</code> — 적을수록 Variance ↓. 트리·depth가 많아질수록 영향력 감소</li>
-<li><code>max_samples</code> — Bootstrap 복원추출 크기. 작을수록 Variance↓이지만 성능 영향은 적음</li>
-<li>나머지(<code>min_samples_split</code> 등)는 기본값으로 충분</li>
+<li><code>n_estimators</code> — 200개 이상. RF는 트리를 늘려도 과적합되지 않으므로(Variance만 줄어든다), 성능이 평탄해지는 지점까지 늘리면 된다</li>
+<li><code>max_features</code> — 가장 중요한 파라미터. 줄이면 <span class="arithmatex">\(\rho\)</span>가 내려가지만 개별 트리의 Bias가 올라간다</li>
+<li>
+<ul>
+<li>Leaf에 Bad가 몇 건밖에 없으면 확률 추정이 0 또는 1 근처로 몰려 PD로 쓰기 어렵다 → <code>min_samples_leaf</code>로 Leaf당 최소 건수 확보</li>
+<li>수십만 건 데이터에서 무제한 트리는 메모리와 예측 시간이 크다</li>
+</ul>
+<p>트리 크기 제약(<code>min_samples_leaf</code>, <code>max_depth</code>, <code>max_leaf_nodes</code>) — <strong>이론상 RF의 기본은 제약 없이 깊게 키우는 것</strong>이다(2.2절). 다만 신용평가에서는 다음 이유로 제약을 거는 경우가 많다</p>
+<p>깊이를 제한할 때는 얕게(예: 3~5) 자르기보다 <code>min_samples_leaf</code>로 Leaf 크기를 보장하는 쪽이 RF의 원래 전략(Low Bias 트리의 평균)에 가깝다.</p>
+</li>
+<li>
+<p><code>max_samples</code> — 트리마다 뽑는 Bootstrap 표본 크기. 줄이면 트리 간 다양성은 늘지만 개별 트리가 약해진다. 대용량 데이터에서 학습 시간을 줄이는 용도로 주로 쓴다</p>
+</li>
 </ol>
-<p>Fine-tuning 단계에서 <code>min_samples_split</code>을 추가하면 정규화 효과가 생기므로, <code>max_depth</code>를 좀 더 키워서 적합해볼 수 있다.</p>
+<p>나머지(<code>min_samples_split</code> 등)는 기본값으로 충분한 경우가 많다.</p>
 </div>
 <hr>
 <h2 id="26-feature-importance">2.6 Feature Importance<a class="headerlink" href="#26-feature-importance" title="Permanent link">¶</a></h2>
@@ -5404,8 +5413,8 @@ P(\text{특정 샘플이 한 번도 안 뽑힐 확률}) = \left(1 - \frac{1}{N}\
 <h3 id="permutation-importance">Permutation Importance<a class="headerlink" href="#permutation-importance" title="Permanent link">¶</a></h3>
 <p>특정 변수의 값을 무작위로 섞은(permute) 후 성능 하락량을 측정.</p>
 <ul>
-<li>장점: MDI의 편향 문제 없음, OOB 또는 Validation 데이터에서 계산 가능</li>
-<li>단점: 계산 비용이 MDI보다 높음</li>
+<li>장점: MDI의 High Cardinality 편향이 없음, OOB 또는 Validation 데이터에서 계산 가능</li>
+<li>단점: 계산 비용이 MDI보다 높음. 또한 상관이 높은 변수에서는 한 변수만 섞으면 현실에 없는 조합(예: 소득은 높은데 납부 세액은 최저)이 만들어져, 모형이 학습하지 않은 영역에서 평가하게 된다(외삽). 이 문제는 <a href="../../appendix/correlation-interpretation/">부록 B: 변수 상관과 모형 해석</a>에서 다룬다</li>
 </ul>
 <div class="admonition warning">
 <p class="admonition-title">MDI의 함정</p>
@@ -5418,7 +5427,7 @@ P(\text{특정 샘플이 한 번도 안 뽑힐 확률}) = \left(1 - \frac{1}{N}\
 <li><strong>과적합에 강함</strong> — 트리를 깊게 키워도 앙상블 평균화가 Variance를 잡아줌</li>
 <li><strong>튜닝 부담 적음</strong> — 기본값으로도 안정적 성능</li>
 <li><strong>병렬 학습</strong> — 각 트리가 독립이므로 병렬 처리에 완벽히 적합</li>
-<li><strong>결측치/이상치 강건</strong> — 트리 기반 특성상 스케일링 불필요, 이상치에 덜 민감</li>
+<li><strong>스케일링 불필요·이상치 강건</strong> — 분할은 값의 순서만 보므로 단조 변환이나 극단값의 영향을 덜 받는다. 결측치는 구현마다 다르다(scikit-learn RF는 1.4부터 NaN 입력을 지원한다)</li>
 <li><strong>OOB로 자체 검증</strong> — 별도 Validation Set 없이 성능 추정 가능</li>
 </ul>
 <h3 id="_2">한계<a class="headerlink" href="#_2" title="Permanent link">¶</a></h3>
@@ -5426,6 +5435,7 @@ P(\text{특정 샘플이 한 번도 안 뽑힐 확률}) = \left(1 - \frac{1}{N}\
 <li><strong>편향 감소 능력 제한</strong> — Bagging은 Variance만 줄임. 개별 트리가 못 잡는 패턴은 평균 내도 못 잡음</li>
 <li><strong>예측력 한계</strong> — 동일 조건에서 잘 튜닝된 Boosting 대비 성능이 낮은 경우가 많음</li>
 <li><strong>메모리/속도</strong> — 수천 개의 깊은 트리를 메모리에 올려야 함</li>
+<li><strong>확률 보정(calibration)</strong> — 트리별 확률을 평균하므로 예측 확률이 0과 1 근처까지 잘 가지 않고 중간으로 몰리는 경향이 있다. 서열(KS, AR)은 좋아도 예측 확률을 그대로 PD로 쓰면 수준이 어긋날 수 있으므로, PD로 쓰려면 별도의 캘리브레이션을 거친다</li>
 </ul>
 <blockquote>
 <p>RF는 <strong>안정적이지만 천장이 있는</strong> 알고리즘이다. "더 높은 성능"을 원하면 Boosting으로 넘어가야 한다.</p>
@@ -5444,8 +5454,8 @@ P(\text{특정 샘플이 한 번도 안 뽑힐 확률}) = \left(1 - \frac{1}{N}\
 <tbody>
 <tr>
 <td><strong>역할</strong></td>
-<td>성능의 <strong>하한선(floor)</strong></td>
-<td>성능의 <strong>상한 근사치(ceiling proxy)</strong></td>
+<td>선형 기준선(floor)</td>
+<td>튜닝 없이 얻는 <strong>비선형 기준선</strong></td>
 </tr>
 <tr>
 <td><strong>특성</strong></td>
@@ -5455,17 +5465,17 @@ P(\text{특정 샘플이 한 번도 안 뽑힐 확률}) = \left(1 - \frac{1}{N}\
 <tr>
 <td><strong>튜닝 부담</strong></td>
 <td>거의 없음</td>
-<td>거의 없음 (기본값으로 충분)</td>
+<td>적음 (리프 최소 크기만 정하면 나머지는 기본값)</td>
 </tr>
 </tbody>
 </table>
-<p>RF가 상한 근사치 역할을 할 수 있는 이유는 앞서 본 장단점과 직결된다:</p>
+<p>RF가 "비선형으로 가면 대략 이 정도까지 오른다"는 기준선 역할을 할 수 있는 이유는 앞서 본 장단점과 직결된다. 잘 튜닝한 Boosting은 이 기준선을 넘는 경우가 많으므로, 진짜 상한이 아니라 <strong>튜닝 없이 확인하는 비선형 기준</strong>으로 읽어야 한다.</p>
 <ul>
-<li><strong>튜닝 없이도 안정적</strong> — <code>n_estimators=500</code>, 나머지 기본값만으로 합리적인 성능</li>
+<li><strong>튜닝 부담이 적음</strong> — <code>n_estimators=500</code>에 리프 최소 건수(<code>min_samples_leaf</code>)만 정하면, 나머지 기본값으로 합리적인 성능</li>
 <li><strong>비선형 포착</strong> — 트리 기반이므로 변수 간 상호작용과 비선형 패턴을 자연스럽게 학습</li>
-<li><strong>과적합에 강건</strong> — 깊은 트리를 평균화하므로, 별도 정규화 없이도 일반화 성능이 안정적</li>
+<li><strong>과적합에 비교적 강건</strong> — 깊은 트리를 평균화하므로 일반화 성능이 안정적이다. 다만 불량률이 낮은 신용 데이터에서 리프를 1건까지 키우는 완전 기본 설정은 학습셋을 외워 검증 성능이 LR보다 낮아질 수 있다(<a href="../../part1_overview/baseline_workflow/">기준선 예시</a>)</li>
 </ul>
-<p>이 두 baseline 사이의 성능 갭이 곧 <strong>해당 데이터에서 비선형성이 얼마나 존재하는지</strong>를 알려주는 지표다. 갭이 크면 Boosting 등 더 복잡한 모형의 투자 가치가 있고, 갭이 작으면 데이터 자체가 선형에 가까워 LR로도 충분할 수 있다.</p>
+<p>이 두 baseline 사이의 성능 갭이 곧 <strong>해당 데이터에서 비선형성이 얼마나 존재하는지</strong>를 알려주는 지표다. 갭이 크면 Boosting 등 더 복잡한 모형의 투자 가치가 있고, 갭이 작으면 적어도 이 표본에서는 LR로도 충분할 수 있다(데이터가 선형이라는 증명은 아니다).</p>
 <blockquote>
 <p>자세한 워크플로우는 <a href="../../part1_overview/baseline_workflow/">Baseline 워크플로우</a>에서 다룬다.</p>
 </blockquote>

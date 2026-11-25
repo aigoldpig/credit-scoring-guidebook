@@ -3296,6 +3296,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        참고 자료
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -5149,16 +5160,21 @@
 </tr>
 <tr>
 <td>Marginal IV</td>
-<td>Joint IV − 단변량 IV</td>
-<td><strong>조합으로 인한 추가 변별력</strong></td>
+<td>Joint IV(X1, X2) − IV(X1)</td>
+<td><strong>X1에 X2를 조합해서 얻는 추가 변별력</strong></td>
 </tr>
 </tbody>
 </table>
 <p>Marginal IV가 크다는 것은, X2가 X1과 결합했을 때 X1 단독 대비 <strong>추가 정보를 제공</strong>한다는 뜻이다.</p>
+<div class="admonition warning">
+<p class="admonition-title">Marginal IV는 칸 수가 많을수록 부풀려진다</p>
+<p>교차표는 X1의 구간을 더 잘게 나눈 것이므로, Joint IV는 이론적으로 IV(X1)보다 작아질 수 없다. 따라서 Marginal IV는 <strong>항상 0 이상</strong>이다. 게다가 표본에서 계산한 IV는 구간(칸)이 많고 칸당 건수가 적을수록 우연한 불량률 차이 때문에 커지는 편향이 있다. X1이 5구간, X2가 5구간이면 교차표는 25칸이 되므로, 아무 관계가 없는 X2를 붙여도 Marginal IV가 0보다 크게 나온다.</p>
+<p>그래서 Marginal IV는 절대값보다 <strong>상대 비교</strong>로 쓰고, 칸당 최소 건수(특히 Bad 건수)를 정해 두며, 필요하면 X2의 값을 무작위로 섞어 계산한 Marginal IV(순열 기준선)와 비교해 "우연으로도 이 정도는 나온다"는 수준을 확인한다.</p>
+</div>
 <p>Joint IV의 "추가 정보" 안에는 실제로 두 가지가 섞여 있다: <strong>(1)</strong> X2의 <strong>고유 main effect</strong>(X1이 못 잡는 별도 패턴)와, <strong>(2)</strong> X1 × X2의 <strong>순수 interaction</strong>(두 변수가 동시에 특정 조합일 때만 나타나는 효과). Joint IV는 이 둘을 구분하지 않고 총량만 측정하지만, 변수 탐색 단계에서는 총량만으로 충분하다 — <strong>"추가 정보가 있는가?"</strong>가 중요하지, 그것이 main인지 interaction인지는 변수 선정 시점에서는 부차적이다.</p>
 <div class="admonition info">
-<p class="admonition-title">EBM의 FAST 알고리즘과 동일한 사상</p>
-<p>EBM(GA²M)이 interaction 쌍을 찾을 때 사용하는 <strong>FAST 알고리즘</strong>(Lou et al., KDD 2013)은 Joint IV와 논리 구조가 거의 동일하다:</p>
+<p class="admonition-title">EBM의 FAST 알고리즘과 닮은 점, 다른 점</p>
+<p>EBM(GA²M)이 interaction 쌍을 찾을 때 사용하는 <strong>FAST 알고리즘</strong>(Lou et al., KDD 2013)도 "개별 효과를 먼저 보고, 그 위에 조합 효과를 측정"하는 2-stage 사상을 따른다는 점에서 Joint IV와 닮았다.</p>
 <table>
 <thead>
 <tr>
@@ -5171,21 +5187,21 @@
 <tr>
 <td><strong>1단계</strong></td>
 <td>단변량 IV로 변수 선정</td>
-<td>1-Depth GBM으로 main effect 학습</td>
+<td>모든 변수의 main effect를 가법 모형으로 먼저 학습</td>
 </tr>
 <tr>
 <td><strong>2단계</strong></td>
 <td>X1 × Xi의 Joint IV 계산</td>
-<td>잔차에서 모든 쌍에 2×2 격자 적합</td>
+<td>main effect 모형의 <strong>잔차</strong>에 각 쌍별로 2×2 격자 적합</td>
 </tr>
 <tr>
 <td><strong>3단계</strong></td>
 <td>Marginal IV가 큰 쌍 선정</td>
-<td>RSS 감소량이 큰 쌍 선정</td>
+<td>잔차 RSS 감소량이 큰 쌍 선정</td>
 </tr>
 </tbody>
 </table>
-<p>차이는 지표(IV vs RSS)와 자동화 수준뿐이다. 둘 다 <strong>"개별 효과를 먼저 확인하고, 그 위에 조합 효과를 측정"</strong>하는 2-stage 논리를 따른다.</p>
+<p>결정적인 차이가 있다. FAST는 <strong>모든 변수의 main effect를 제거한 잔차</strong>에서 측정하므로 순수 교호작용에 가까운 양을 본다. 반면 Joint IV의 추가분에는 아래 설명처럼 X2 자체의 main effect가 섞여 있다. Joint IV는 "추가 정보가 있는가"를 빠르게 보는 탐색 도구이고, 교호작용 자체를 분리하려면 FAST 같은 잔차 기반 접근이 필요하다.</p>
 </div>
 <h4 id="decision-tree">단일 Decision Tree로 조합을 찾으면 안 되는가<a class="headerlink" href="#decision-tree" title="Permanent link">¶</a></h4>
 <p>변수가 많을 때, 단일 decision tree(depth 3~4)를 적합하면 greedy search로 좋은 변수 쌍을 자동으로 찾아줄 것 같다. <strong>그러나 문제가 있다.</strong> 핵심 변수 X1의 main effect가 압도적으로 크면, 트리가 X1으로만 반복 분기한다:</p>
@@ -5196,7 +5212,7 @@
 └── X1 &gt; 50?
     └── ...
 </code></pre></div>
-<p>X1의 구간을 더 세밀하게 쪼개는 것이 RSS 감소가 가장 크기 때문이다. 이러면 X2, X3와의 interaction은 아예 나타나지 않는다. 또한, 트리에서 X1 다음에 X2가 분기된다고 해서 반드시 interaction은 아니다 — X2의 main effect가 강해서 <strong>어디서든</strong> 분기될 수 있다. 진짜 interaction은 "X1의 값에 따라 X2의 효과가 <strong>달라지는</strong> 것"인데, 단일 트리의 분기 구조만으로는 이 구분이 어렵다.</p>
+<p>X1의 구간을 더 세밀하게 쪼개는 것이 불순도(분류 트리라면 Gini·Entropy) 감소가 가장 크기 때문이다. 이러면 X2, X3와의 interaction은 아예 나타나지 않는다. 또한, 트리에서 X1 다음에 X2가 분기된다고 해서 반드시 interaction은 아니다 — X2의 main effect가 강해서 <strong>어디서든</strong> 분기될 수 있다. 진짜 interaction은 "X1의 값에 따라 X2의 효과가 <strong>달라지는</strong> 것"인데, 단일 트리의 분기 구조만으로는 이 구분이 어렵다.</p>
 <p>결론: 단일 트리는 main effect와 interaction을 구분하지 못한다. 이 구분을 하려면 Joint IV(= 조합 효과에서 개별 효과를 빼는 것)나 잔차 기반 접근(= main effect를 먼저 제거하고 남은 것을 보는 것)이 필요하다.</p>
 <h3 id="feature-importance-split">Feature Importance (Split 기반)<a class="headerlink" href="#feature-importance-split" title="Permanent link">¶</a></h3>
 <p>트리 앙상블이 학습 과정에서 자연스럽게 산출하는 변수 중요도다.</p>
@@ -5223,8 +5239,8 @@
 </tbody>
 </table>
 <div class="admonition warning">
-<p class="admonition-title">Split count의 함정</p>
-<p>카디널리티가 높은 변수(예: 우편번호)는 분할 후보가 많아서 <strong>split 횟수가 부풀려진다</strong>. Gain 기반 중요도가 더 신뢰할 수 있으며, SHAP 기반 중요도가 가장 정확하다.</p>
+<p class="admonition-title">Split 기반 중요도의 함정</p>
+<p>카디널리티가 높은 변수(예: 우편번호, 고유값이 많은 금액 변수)는 분할 후보가 많아서 <strong>split 횟수가 부풀려진다</strong>. Gain 기반 중요도도 이 편향에서 자유롭지 않다. 후보가 많을수록 우연히 큰 gain을 내는 분할을 찾을 가능성이 커지기 때문이다(Strobl et al., 2007). 또 split 기반 중요도는 <strong>학습셋</strong>에서 계산되므로 과적합된 분할의 gain도 그대로 반영된다. 그래서 split 기반 중요도는 1차 참고로만 쓰고, 검증셋 기반 지표(Permutation)나 SHAP과 교차 확인한다.</p>
 </div>
 <h3 id="permutation-importance">Permutation Importance<a class="headerlink" href="#permutation-importance" title="Permanent link">¶</a></h3>
 <p>변수의 값을 <strong>무작위로 섞은 뒤</strong> 성능이 얼마나 떨어지는지로 중요도를 측정한다.</p>
@@ -5237,32 +5253,63 @@
 </thead>
 <tbody>
 <tr>
-<td>모형에 의존하지 않음 (model-agnostic)</td>
-<td>상관된 변수가 있으면 중요도가 분산됨</td>
+<td>어떤 모형에도 적용 가능 (model-agnostic)</td>
+<td>상관된 변수 중 하나만 섞으면 현실에 없는 조합(예: 고소득인데 소득 관련 다른 변수는 저소득 수준)이 만들어져 결과가 왜곡될 수 있음</td>
 </tr>
 <tr>
-<td>과적합에 강건 (Validation 데이터 사용)</td>
+<td>검증셋에서 계산하면 과적합된 분할의 영향을 덜 받음</td>
 <td>변수 수 × 반복 횟수만큼 연산 필요</td>
 </tr>
 <tr>
-<td>해석이 직관적</td>
-<td>변수 간 교호작용을 개별 변수에 귀속시킴</td>
+<td>해석이 직관적 ("이 변수를 망가뜨리면 AR이 얼마나 떨어지나")</td>
+<td>교호작용 효과가 관련된 각 변수의 중요도에 중복 반영됨</td>
 </tr>
 </tbody>
 </table>
 <h3 id="shap">SHAP 기반 피처 선택<a class="headerlink" href="#shap" title="Permanent link">¶</a></h3>
-<p><a href="../../part4_interpretation/interpretability/">SHAP</a>의 평균 절대값 <span class="arithmatex">\(\text{mean}(|\text{SHAP}_j|)\)</span>으로 변수 중요도를 측정한다.</p>
-<p>SHAP 기반 중요도는 Split Importance, Permutation Importance보다 <strong>이론적으로 가장 정확</strong>하다. Shapley value의 공정한 기여도 분배 성질에 의해, 변수 간 상관관계와 교호작용을 올바르게 처리한다.</p>
+<p><a href="../../part4_interpretation/interpretability/">SHAP</a>의 평균 절대값 <span class="arithmatex">\(\text{mean}(|\phi_j|)\)</span>으로 변수 중요도를 측정한다.</p>
+<p>SHAP 기반 중요도는 개별 예측의 기여도를 공리적으로 분배한 값을 모은 것이라, 방향(+/−)과 개인별 분포까지 볼 수 있다는 장점이 있다. 그러나 다른 중요도 지표와 마찬가지로 <strong>학습된 모형이 무엇을 썼는지</strong>를 설명할 뿐, 데이터 속 변수의 "진짜 중요도"를 알려주지는 않는다. 모형이 한 번도 분할에 쓰지 않은 변수는 TreeSHAP 값이 모든 관측치에서 정확히 0이다. 상관이 높은 변수들 사이에서 SHAP 값이 어떻게 나뉘는지는 모형이 그 변수들을 어떻게 나눠 썼는지, 그리고 SHAP의 기댓값을 어떤 방식으로 계산하는지에 따라 달라진다. 이 문제는 <a href="../../appendix/correlation-interpretation/">부록 B. 변수 상관과 모형 해석</a>에서 다룬다.</p>
 <div class="admonition tip">
 <p class="admonition-title">실무에서의 피처 선택 전략</p>
 <p>하나의 방법에 의존하기보다, <strong>여러 방법의 결과를 종합</strong>하는 것이 안전하다.</p>
 <ol>
-<li><strong>1차 스크리닝</strong>: Gain 기반 Feature Importance로 중요도 하위 변수 제거</li>
-<li><strong>2차 검증</strong>: Permutation Importance로 교차 확인</li>
+<li><strong>1차 스크리닝</strong>: Gain 기반 Feature Importance나 SHAP 중요도로 하위 변수 후보 표시</li>
+<li><strong>2차 검증</strong>: 검증셋 Permutation Importance로 교차 확인 (상관 변수는 그룹 단위로 섞어 보기)</li>
 <li><strong>최종 해석</strong>: SHAP Summary Plot으로 선택된 변수의 방향성·패턴 검증</li>
 <li><strong>도메인 판단</strong>: 통계적으로 유의하더라도 비즈니스 로직에 반하는 변수는 제외</li>
 </ol>
 </div>
+<h3 id="boruta">Boruta — "무작위 변수보다 나은가"를 묻는 방법<a class="headerlink" href="#boruta" title="Permanent link">¶</a></h3>
+<p>Boruta(Kursa &amp; Rudnicki, <em>Journal of Statistical Software</em>, 2010)는 중요도의 <strong>기준선</strong>을 데이터에서 직접 만드는 변수 선택 방법이다.</p>
+<ol>
+<li>각 원래 변수를 복사한 뒤 값을 무작위로 섞은 <strong>그림자 변수(shadow feature)</strong>를 만든다. 그림자 변수는 원래 변수와 분포는 같지만 타겟과의 관계는 끊겨 있다.</li>
+<li>원래 변수와 그림자 변수를 함께 넣어 Random Forest(또는 다른 트리 앙상블)를 적합하고 중요도를 계산한다.</li>
+<li>각 원래 변수의 중요도가 <strong>그림자 변수 중 최댓값</strong>보다 높은지 기록한다.</li>
+<li>이를 여러 번 반복해, 그림자 최댓값을 통계적으로 유의하게 이기는 변수는 <strong>확정(Confirmed)</strong>, 유의하게 지는 변수는 <strong>기각(Rejected)</strong>, 판정이 안 나는 변수는 <strong>보류(Tentative)</strong>로 분류한다.</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>장점</th>
+<th>한계</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>"중요도 몇 이상이면 남긴다" 같은 임의 기준 없이, 무작위 변수라는 객관적 기준선을 쓴다</td>
+<td>반복 적합이 필요해 연산 비용이 크다</td>
+</tr>
+<tr>
+<td>약하지만 실제로 관계가 있는 변수까지 모두 찾는 <strong>all-relevant</strong> 방식이다</td>
+<td>중복 변수(상관 높은 변수 쌍)를 둘 다 확정하는 경향이 있어, 변수 수를 줄이는 목적에는 상관 정리가 별도로 필요하다</td>
+</tr>
+<tr>
+<td>모형 중요도의 우연한 변동을 반복으로 걸러 낸다</td>
+<td>내부 중요도 지표(예: split 기반)의 편향을 그대로 물려받는다</td>
+</tr>
+</tbody>
+</table>
+<p>신용평가에서는 수백 개 후보 변수 중 <strong>명백히 무의미한 변수를 걸러 내는 1차 필터</strong>로 쓰기 좋다. 최종 변수 수를 줄이는 일은 아래의 하위 제거 시뮬레이션과 도메인 판단으로 마무리한다.</p>
 <h3 id="0">중요도가 0인 변수의 원인<a class="headerlink" href="#0" title="Permanent link">¶</a></h3>
 <p>Global Feature Importance — TreeSHAP의 <span class="arithmatex">\(\text{mean}(|\phi_j|)\)</span>, Permutation Importance, Split 기반 Gain — 에서 중요도가 <strong>정확히 0</strong>으로 나오는 변수가 있다. 이런 변수는 세 가지 원인으로 분류된다.</p>
 <table>
@@ -5282,12 +5329,12 @@
 <tr>
 <td><strong>다중공선성 (Redundancy)</strong></td>
 <td>더 나은 상관 변수에 밀려서 선택되지 못한 변수. 단독으로는 유의미하지만 상위 변수가 이미 같은 정보를 흡수</td>
-<td>DTI와 상관계수 0.95인 부채비율 변형 변수</td>
+<td>DSR과 상관계수 0.95인 DSR 변형 변수(기준월만 다른 DSR 등)</td>
 </tr>
 <tr>
-<td><strong>Regularization 효과</strong></td>
-<td><code>colsample_bytree</code>, <code>max_features</code> 등 서브샘플링으로 반복적으로 후보에서 제외되어, 약한 변수가 기회를 얻지 못함</td>
-<td>수백 개 변수 중 경쟁에서 탈락한 약한 변수</td>
+<td><strong>분할 문턱에 걸림</strong></td>
+<td>분할 이득이 최소 기준(<code>gamma</code>, 최소 분할 이득)을 넘지 못하거나, 분할 후 리프가 최소 건수·최소 hessian 합(<code>min_child_weight</code>) 기준을 채우지 못해 한 번도 채택되지 않음. 트리 수가 적거나 학습률이 작아 학습이 일찍 끝나도 약한 변수까지 차례가 오지 않음</td>
+<td>수백 개 변수 중 효과가 아주 작은 변수</td>
 </tr>
 </tbody>
 </table>
@@ -5295,6 +5342,7 @@
 <p class="admonition-title">0 = 쓰레기가 아닐 수 있다</p>
 <p>두 번째 원인(다중공선성)이 실무에서 특히 중요하다. A 변수와 B 변수의 상관이 매우 높을 때, 모든 split에서 A가 미세하게 더 나으면 B의 importance는 0에 수렴한다. 그러나 <strong>A를 제거하면 B가 그 역할을 대체</strong>한다. 이런 변수를 "무의미"로 판단하면 안 된다.</p>
 <p>중요도 0인 변수를 제거할 때는, 단순히 importance 값만 볼 것이 아니라 <strong>상관 변수 그룹 내에서의 역할</strong>을 함께 확인하는 것이 안전하다.</p>
+<p>참고로 <code>colsample_bytree</code>(XGBoost)나 <code>max_features</code>(Random Forest) 같은 <strong>변수 서브샘플링은 오히려 약한 변수에 기회를 준다</strong>. 강한 변수가 후보에서 빠진 트리에서는 그다음 변수가 선택되기 때문이다. 서브샘플링을 켜면 상관 변수들 사이에 중요도가 나뉘어 퍼지는 경향이 생긴다.</p>
 </div>
 <h3 id="_3">중요도 기반 변수 제거 전략<a class="headerlink" href="#_3" title="Permanent link">¶</a></h3>
 <p>실무에서는 단변량 분석과 ML 기반 중요도를 <strong>2단계로 결합</strong>하여 변수를 정리한다.</p>
@@ -5304,24 +5352,24 @@
 <p class="admonition-title">전통 스코어카드 변수 선정과의 차이</p>
 <p>1단계 스크리닝 자체는 전통 스코어카드와 크게 다르지 않다 — IV 기준으로 변별력을 보고, PSI로 안정성을 체크하는 흐름은 동일하다. 다만 두 가지 점에서 <strong>에너지 배분이 달라진다.</strong></p>
 <ul>
-<li><strong>상관분석을 느슨하게 해도 된다</strong>: 로지스틱 회귀에서는 다중공선성이 β 추정을 불안정하게 만들므로 상관이 높은 변수를 엄격히 걸러야 했다(<a href="../../../scorecard/part4_modeling/multivariate-regression/">Part 4 참조</a>). 트리 앙상블은 상관된 변수를 투입해도 β 왜곡 같은 문제가 없으므로, "일단 넣고 모형이 알아서 선택하게" 하는 전략이 가능하다.</li>
+<li><strong>성능만 보면 상관분석을 느슨하게 해도 된다</strong>: 로지스틱 회귀에서는 다중공선성이 β 추정을 불안정하게 만들므로 상관이 높은 변수를 엄격히 걸러야 했다(<a href="../../../scorecard/part4_modeling/multivariate-regression/">Part 4 참조</a>). 트리 앙상블은 상관된 변수를 투입해도 예측 성능이 크게 흔들리지 않으므로, "일단 넣고 모형이 알아서 선택하게" 하는 전략이 가능하다. <strong>단, 해석은 다르다.</strong> 상관된 변수들이 함께 들어가면 어느 변수에 기여도가 몰릴지가 학습마다 달라지고, 한 변수의 SHAP 방향이 상식과 반대로 보이는 일도 생긴다. 해석과 설명이 필요한 모형이라면 상관 변수 정리를 생략하지 않는 편이 낫다(<a href="../../appendix/correlation-interpretation/">부록 B. 변수 상관과 모형 해석</a>).</li>
 <li><strong>WoE 변환에 시간을 쏟지 않는다</strong>: 전통 스코어카드에서 가장 노동 집약적인 단계가 Fine/Coarse Classing → WoE 변환이었다. ML에서는 이 과정이 구조적으로 불필요하므로, 1단계에서는 IV 등으로 <strong>변별력만 빠르게 확인</strong>하고 넘어간다.</li>
 </ul>
 </div>
 <p><strong>2단계 — ML Importance 기반 하위 제거 시뮬레이션</strong></p>
-<p>1단계를 통과한 변수로 ML 모형을 학습한 뒤, <strong>중요도 하위 n%를 제거하면서 성능 변화를 관찰</strong>한다. SHAP 기반 중요도로 변수를 정렬하고, 하위부터 순차적으로 제거하면서 AUC 변화를 추적하는 방식이다.</p>
-<p>전형적인 결과 패턴:</p>
-<div class="highlight"><pre><span></span><code>Drop  0% → 150개 변수, AUC=0.7823
-Drop  1% → 149개 변수, AUC=0.7823   ← 변화 없음
-Drop  5% → 143개 변수, AUC=0.7821   ← 거의 동일
-Drop 10% → 135개 변수, AUC=0.7818   ← 미미한 하락
-Drop 15% → 128개 변수, AUC=0.7805   ← 하락 시작
-Drop 20% → 120개 변수, AUC=0.7780   ← 유의미한 하락
+<p>1단계를 통과한 변수로 ML 모형을 학습한 뒤, <strong>중요도 하위 n%를 제거하면서 성능 변화를 관찰</strong>한다. 학습셋에서 계산한 SHAP 기반 중요도로 변수를 정렬하고, 하위부터 순차적으로 제거해 재학습하면서 <strong>검증셋</strong> AR(필요하면 KS도)의 변화를 추적하는 방식이다. 이 과정 자체가 검증셋을 여러 번 보는 선택 과정이므로, 최종 성능은 별도 Test/OOT에서 확인한다.</p>
+<p>전형적인 결과 패턴(시뮬레이션 참조값):</p>
+<div class="highlight"><pre><span></span><code>Drop  0% → 150개 변수, 검증 AR=0.5646
+Drop  1% → 149개 변수, 검증 AR=0.5646   ← 변화 없음
+Drop  5% → 143개 변수, 검증 AR=0.5642   ← 거의 동일
+Drop 10% → 135개 변수, 검증 AR=0.5636   ← 미미한 하락
+Drop 15% → 128개 변수, 검증 AR=0.5610   ← 하락 시작
+Drop 20% → 120개 변수, 검증 AR=0.5560   ← 유의미한 하락
 </code></pre></div>
-<p>이 결과에서 <strong>성능 하락이 시작되는 지점 직전</strong>이 최적 제거 비율이 된다. 위 예시에서는 하위 10%까지는 제거해도 무방하다고 판단할 수 있다.</p>
+<p>이 결과에서 <strong>성능 하락이 시작되는 지점 직전</strong>이 최적 제거 비율이 된다. 위 예시에서는 하위 10%까지는 제거해도 무방하다고 판단할 수 있다. 0.001 수준의 차이는 데이터 분할이나 시드만 바꿔도 생기는 변동일 수 있으므로, 가능하면 여러 시드나 CV로 변동 폭을 함께 본다.</p>
 <div class="admonition tip">
 <p class="admonition-title">변수를 줄이는 것의 실무적 가치</p>
-<p>AUC가 동일하다면, 변수가 적은 모형이 <strong>항상</strong> 우월하다.</p>
+<p>검증 성능(KS·AR)이 사실상 같다면, 변수가 적은 모형이 <strong>거의 항상</strong> 낫다.</p>
 <ul>
 <li><strong>운영 비용 절감</strong>: 모형에 투입되는 변수 수 = 데이터 파이프라인에서 관리해야 할 변수 수</li>
 <li><strong>모니터링 부담 감소</strong>: 변수별 PSI 모니터링, 결측률 관리 등의 부담이 줄어든다</li>
@@ -5334,37 +5382,45 @@ Drop 20% → 120개 변수, AUC=0.7780   ← 유의미한 하락
 <thead>
 <tr>
 <th>지표</th>
+<th>무엇을 재는가</th>
 <th>중요도 0의 의미</th>
-<th>다중공선성 영향</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><strong>Split Gain</strong></td>
-<td>단 한 번도 split에 사용 안 됨</td>
-<td>심함 — 상관 변수 중 하나만 선택, 나머지는 0</td>
+<td>학습 중 그 변수의 분할이 줄인 손실의 합 (학습셋 기준)</td>
+<td>한 번도 split에 사용되지 않음</td>
 </tr>
 <tr>
 <td><strong>Permutation Importance</strong></td>
-<td>섞어도 성능 변화 없음</td>
-<td>중간 — 상관 변수끼리 중요도를 <strong>나눠 가짐</strong> (둘 다 낮게 나옴)</td>
+<td>그 변수를 섞었을 때 성능(예: 검증 AR)이 떨어지는 정도</td>
+<td>섞어도 모형 성능이 변하지 않음</td>
 </tr>
 <tr>
 <td><strong>SHAP <span class="arithmatex">\(\text{mean}(\|\phi_j\|)\)</span></strong></td>
-<td>어떤 예측에도 기여하지 않음</td>
-<td>가장 정확 — Shapley value의 공정 분배 성질로 교호작용·상관관계를 이론적으로 올바르게 처리</td>
+<td>개별 예측에 대한 그 변수의 기여 크기의 평균</td>
+<td>어떤 예측에도 기여하지 않음 (TreeSHAP에서는 분할에 한 번도 안 쓰인 변수)</td>
 </tr>
 </tbody>
 </table>
+<p>세 지표 모두 <strong>학습된 모형이 그 변수를 얼마나 썼는가</strong>를 잰다. 데이터 속에서 변수가 타겟과 얼마나 관련 있는지를 재는 지표가 아니다. 상관이 높은 변수 A, B가 있을 때 결과는 "모형이 A와 B를 어떻게 나눠 썼는가"에 따라 갈린다.</p>
 <div class="admonition example">
-<p class="admonition-title">같은 변수, 다른 결과</p>
-<p>A, B 두 변수의 상관이 매우 높을 때:</p>
+<p class="admonition-title">같은 데이터, 모형의 사용 방식에 따라 다른 결과</p>
+<p>A와 B의 상관이 매우 높다고 하자.</p>
+<p><strong>경우 1 — 모형이 A만 쓴 경우</strong> (부스팅에서 모든 분할마다 A가 미세하게 더 나아 B가 한 번도 선택되지 않음)</p>
 <ul>
-<li><strong>Split Gain</strong>: A=높음, B=0 (승자 독식)</li>
-<li><strong>Permutation</strong>: A=중간, B=중간 (둘 다 섞어도 나머지가 보상 → 개별 중요도 희석)</li>
-<li><strong>SHAP</strong>: A=높음, B=높음 (둘 다 실제 기여를 공정하게 반영)</li>
+<li><strong>Split Gain</strong>: A = 높음, B = 0</li>
+<li><strong>Permutation</strong>: A = 높음, B = 0 (모형이 B를 쓰지 않으므로 B를 섞어도 예측이 그대로)</li>
+<li><strong>SHAP</strong>: A = 높음, B = 0 (TreeSHAP에서 모형이 쓰지 않은 변수의 기여는 정확히 0)</li>
 </ul>
-<p>따라서 Split Importance에서 0이라고 바로 제거하면, 실제로는 유의미한 변수를 놓칠 수 있다. <strong>SHAP 기반 중요도를 우선 기준으로 사용</strong>하고, Split/Permutation은 교차 확인용으로 활용하는 것이 안전하다.</p>
+<p><strong>경우 2 — 모형이 A와 B를 나눠 쓴 경우</strong> (Random Forest의 변수 서브샘플링 등)</p>
+<ul>
+<li><strong>Split Gain</strong>: A·B 모두 중간 (분할을 나눠 가짐)</li>
+<li><strong>Permutation</strong>: A·B 모두 낮을 수 있음 (하나를 섞어도 다른 하나가 상당 부분을 보상)</li>
+<li><strong>SHAP</strong>: A·B 모두 중간 (기여가 두 변수에 나뉨)</li>
+</ul>
+<p>어느 경우든 "B의 중요도가 낮다 = B가 정보가 없다"는 결론은 틀릴 수 있다. A를 빼고 재학습하면 B가 그 역할을 대신한다. 따라서 중요도가 낮은 변수를 지울 때는 <strong>상관 변수 그룹 단위로</strong> 판단하고, 그룹을 통째로 빼거나 섞어 보는 방식(그룹 Permutation)으로 그룹의 정보량을 확인하는 것이 안전하다. 상관 변수와 SHAP의 관계는 <a href="../../appendix/correlation-interpretation/">부록 B</a>에서 자세히 다룬다.</p>
 </div>
 <hr>
 <h2 id="72-interaction-feature-engineering">7.2 파생변수 생성 (Interaction Feature Engineering)<a class="headerlink" href="#72-interaction-feature-engineering" title="Permanent link">¶</a></h2>
@@ -5387,25 +5443,26 @@ Drop 20% → 120개 변수, AUC=0.7780   ← 유의미한 하락
 </thead>
 <tbody>
 <tr>
-<td><strong>카드사용 비중</strong></td>
-<td>카드사용금액 / 총 출금금액 × 100</td>
+<td><strong>현금서비스 비중</strong></td>
+<td>현금서비스 이용액 / 카드 총 이용액 × 100</td>
 <td style="text-align: center;">0~100%</td>
-<td>지출 중 카드 의존도</td>
+<td>카드 이용 중 단기 유동성 의존도</td>
 </tr>
 <tr>
 <td><strong>이용률</strong> (Utilization)</td>
 <td>카드 사용액 / 한도 × 100</td>
-<td style="text-align: center;">0~100%</td>
+<td style="text-align: center;">0~100% (한도 초과 시 100% 초과 가능)</td>
 <td>신용 여력 소진 정도</td>
 </tr>
 <tr>
-<td><strong>DTI</strong> (Debt-to-Income)</td>
-<td>총 부채 / 연 소득 × 100</td>
+<td><strong>DSR</strong> (총부채원리금상환비율)</td>
+<td>모든 대출의 연간 원리금 상환액 / 연 소득 × 100</td>
 <td style="text-align: center;">0~∞</td>
-<td>상환 부담 대비 능력</td>
+<td>소득 대비 상환 부담</td>
 </tr>
 </tbody>
 </table>
+<p>DTI(총부채상환비율)는 주택담보대출 원리금 상환액에 기타 대출의 <strong>이자</strong> 상환액만 더해 연 소득으로 나눈 값이고, DSR은 모든 대출의 <strong>원리금</strong>을 반영한다. "총부채 / 연 소득"은 DTI가 아니라 소득 대비 부채 잔액 배수(LTI 성격)다. 같은 "부채 부담" 변수라도 정의가 다르면 분포와 의미가 달라지므로, 파생변수 명세서에 산식을 정확히 남겨야 한다.</p>
 <h4 id="2">(2) 증감률<a class="headerlink" href="#2" title="Permanent link">¶</a></h4>
 <p>과거 대비 현재의 변화율을 측정하는 변수다.</p>
 <div class="arithmatex">\[
@@ -5450,7 +5507,7 @@ Drop 20% → 120개 변수, AUC=0.7780   ← 유의미한 하락
 <tr>
 <td><strong>분모 = 0, 분자 = 0</strong></td>
 <td>작년 사용액 0, 올해 사용액 0</td>
-<td>증감률 = <strong>0%</strong> (변화 없음)</td>
+<td>0%(변화 없음)로 두기 쉽지만 상품 미사용 상태라 0% 변화와 의미가 다르다. <strong>별도 특수값</strong>으로 두고 귀속 구간은 실측 불량률로 정한다</td>
 </tr>
 <tr>
 <td><strong>분모 = 0, 분자 &gt; 0</strong></td>
@@ -5595,6 +5652,12 @@ Drop 20% → 120개 변수, AUC=0.7780   ← 유의미한 하락
 </ul>
 <p>결국 "좋은 변수가 좋은 모형을 만든다"의 전제에는 <strong>"쓸 수 있는 변수"의 물리적 한계</strong>도 포함된다.</p>
 </div>
+<h2 id="_7">참고 자료<a class="headerlink" href="#_7" title="Permanent link">¶</a></h2>
+<ul>
+<li>Strobl, Boulesteix, Zeileis &amp; Hothorn, "Bias in random forest variable importance measures", <em>BMC Bioinformatics</em>, 2007.</li>
+<li>Kursa &amp; Rudnicki, "Feature Selection with the Boruta Package", <em>Journal of Statistical Software</em>, 2010.</li>
+<li>Lou, Caruana, Gehrke &amp; Hooker, "Accurate Intelligible Models with Pairwise Interactions", <em>KDD</em>, 2013. — FAST 알고리즘</li>
+</ul>
 <div class="admonition tip">
 <p class="admonition-title">다음 섹션</p>
 <p>변수 처리 방법을 이해했으니, 다음으로 <a href="../../part2_neural_net/">뉴럴넷</a>에서 신경망의 기초와 로지스틱 회귀와의 관계를 살펴본다.</p>

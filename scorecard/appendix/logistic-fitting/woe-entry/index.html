@@ -2469,7 +2469,7 @@
   <a href="#11" class="md-nav__link">
     <span class="md-ellipsis">
       
-        1.1 수리적 구조 및 점수 변환
+        1.1 수리적 구조
       
     </span>
   </a>
@@ -2480,7 +2480,18 @@
   <a href="#12" class="md-nav__link">
     <span class="md-ellipsis">
       
-        1.2 기준점 설정: 평행이동
+        1.2 부분점수 변환
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3 기준점 설정: 평행이동
       
     </span>
   </a>
@@ -5101,27 +5112,98 @@
 
 
 <h1 id="woe">WoE 직접 투입<a class="headerlink" href="#woe" title="Permanent link">¶</a></h1>
-<h2 id="11">1.1 수리적 구조 및 점수 변환<a class="headerlink" href="#11" title="Permanent link">¶</a></h2>
-<p>각 관측치의 구간에 해당하는 WoE 값을 연속형 숫자로 투입한다.</p>
+<h2 id="11">1.1 수리적 구조<a class="headerlink" href="#11" title="Permanent link">¶</a></h2>
+<p>각 관측치를 소속 구간의 WoE 값(연속형 숫자)으로 치환해 Bad logit 회귀에 투입한다.</p>
 <div class="arithmatex">\[
-\text{logit}(p_i) = \beta_0 + \sum_{j=1}^{k} \beta_j \cdot \text{WoE}_{ij} \tag{A.1}
+\text{logit}(p_i) = \ln\frac{p_i}{1-p_i} = \beta_0 + \sum_{j=1}^{k} \beta_j \cdot \text{WoE}_{ij}, \qquad p_i = P(\text{Bad}) \tag{1}
 \]</div>
-<p>변수 <span class="arithmatex">\(j\)</span>의 구간 <span class="arithmatex">\(b\)</span>에 대한 스코어카드 부분점수는 단일 <span class="arithmatex">\(\beta_j\)</span>에서 파생된다.</p>
-<div class="arithmatex">\[
-\text{부분점수}_{jb} = -B \cdot \beta_j \cdot \text{WoE}_{jb}, \quad B = \frac{\text{PDO}}{\ln 2} \tag{A.2}
-\]</div>
-<div class="admonition note">
-<p class="admonition-title">특성</p>
-<p>WoE 값의 크기 차이가 그대로 점수 차이로 반영된다. 어떤 구간의 WoE가 다른 구간보다 2배 높으면 기여 점수도 정확히 2배다. 이는 WoE 값의 순서와 간격을 모형이 신뢰한다는 의미이므로, <strong>구간화 단조성 조건이 충족되어야</strong> 결과가 의미 있다.</p>
-</div>
+<p>WoE는 <span class="arithmatex">\(\ln(\%\text{Good}/\%\text{Bad})\)</span>이므로 우량 구간일수록 크다. 우량할수록 Bad 로짓은 작아져야 하므로 <strong>정상 부호는 <span class="arithmatex">\(\beta_j &lt; 0\)</span></strong> 이다.</p>
+<h3 id="hatbeta-1">단변량에서는 <span class="arithmatex">\(\hat\beta = -1\)</span>이 정확히 성립한다<a class="headerlink" href="#hatbeta-1" title="Permanent link">¶</a></h3>
+<p>WoE 변수 하나만 넣고 적합하면 <span class="arithmatex">\(\hat\beta_1 = -1\)</span>, <span class="arithmatex">\(\hat\beta_0 = \ln(N_B/N_G)\)</span>가 <strong>정확히</strong> 나온다(근사나 수렴 결과가 아니다). 각 구간에서 <span class="arithmatex">\(\ln(n_{B,i}/n_{G,i}) = \ln(N_B/N_G) - \text{WoE}_i\)</span>가 항등식으로 성립하므로, 이 모형은 구간별 실제 불량률을 그대로 재현하는 포화 모형과 같기 때문이다. 증명은 본문 <a href="../../../part3_variable_selection/univariate_lr/beta-woe-proof/">β와 WoE의 관계</a>를 참조한다.</p>
+<h3 id="beta-1">다변량에서는 <span class="arithmatex">\(|\beta|\)</span>가 1보다 작아지는 것이 일반적이다<a class="headerlink" href="#beta-1" title="Permanent link">¶</a></h3>
+<p>다변량에서는 변수들이 서로 일부 같은 정보를 담고 있다(공선성). 각 변수의 WoE는 "다른 변수를 고려하지 않은" 단변량 효과이므로, 함께 넣으면 겹치는 부분만큼 각 계수가 줄어든다. 그래서 <span class="arithmatex">\(\beta_j\)</span>는 대체로 −0.3 ~ −1.0 사이에 놓인다. <span class="arithmatex">\(|\beta_j| &gt; 1\)</span>은 억제효과(suppressor)나 공선성을 의심할 신호이고, <span class="arithmatex">\(\beta_j\)</span>가 <strong>양(+)으로 바뀌면 부호 역전</strong>이다(본문 <a href="../../../part4_modeling/multivariate-regression/">다변량 회귀</a>).</p>
+<h3 id="_1">이 방식이 가정하는 것 — 선형성<a class="headerlink" href="#_1" title="Permanent link">¶</a></h3>
+<p>WoE 방식은 <strong>변수 <span class="arithmatex">\(j\)</span>의 구간 간 로짓 차이가 단변량 WoE 차이에 비례한다</strong>고 가정한다. 다변량에서 조정되는 것은 비례상수 <span class="arithmatex">\(\beta_j\)</span> 하나뿐이다. 원 변수가 비단조(U자형 등)여도 WoE 값의 순서가 곧 위험 순서이므로 이 가정과 충돌하지 않는다. 즉 단조성은 수학적 필수 조건이 아니라 <strong>점수를 설명하기 위한 업무·규제 요건</strong>이며 별도로 점검한다. 비례 가정이 깨지는 상황(다른 변수를 통제하면 특정 구간만 효과가 달라지는 경우)은 <a href="../woe-dummy-deep-dive/">심층 비교 1.3절</a>에서 다룬다.</p>
 <hr>
-<h2 id="12">1.2 기준점 설정: 평행이동<a class="headerlink" href="#12" title="Permanent link">¶</a></h2>
-<p>더미 변수 방식에서는 기준 범주의 더미 벡터가 <span class="arithmatex">\([0, \dots, 0]\)</span>이므로, 해당 구간의 효과가 절편에 흡수되어 <strong>자동으로 부분점수 = 0인 기준점</strong>이 만들어진다(<a href="../">두 방식 비교</a> 참조).</p>
-<p>WoE 방식은 연속형 수치를 그대로 투입하므로 이런 자연 기준점이 없다. 대신, 기준으로 삼을 구간의 WoE 값(<span class="arithmatex">\(\text{WoE}_{j,\text{ref}}\)</span>)만큼 전체를 <strong>평행이동</strong>하여 사후적으로 기준점을 설정한다.</p>
+<h2 id="12">1.2 부분점수 변환<a class="headerlink" href="#12" title="Permanent link">¶</a></h2>
+<p>본문 Part 5의 점수 체계(Good Odds)는 계수를 다시 적합하지 않고 <span class="arithmatex">\(\ln(\text{Good Odds}) = -\text{logit}_{\text{Bad}}\)</span>로 바꿔 쓴다. 따라서 변수 <span class="arithmatex">\(j\)</span>의 구간 <span class="arithmatex">\(b\)</span>에 대한 부분점수는 다음과 같다.</p>
 <div class="arithmatex">\[
-\text{조정점수}_{jb} = -B \cdot \beta_j \cdot (\text{WoE}_{jb} - \text{WoE}_{j,\text{ref}}) \tag{A.3}
+\text{부분점수}_{jb} = -B \cdot \beta_j \cdot \text{WoE}_{jb}, \qquad B = \frac{\text{PDO}}{\ln 2} \tag{2}
 \]</div>
-<p>평행이동한 값(<span class="arithmatex">\(B \cdot \beta_j \cdot \text{WoE}_{j,\text{ref}}\)</span>)은 절편에 흡수시켜 총점을 유지한다. 이렇게 하면 더미 방식과 동일한 "기준 구간 = 0점" 구조가 된다. 즉 <strong>두 방식은 표현 형식의 차이이며, 동일한 스코어카드 구조로 변환 가능</strong>하다.</p>
+<p><span class="arithmatex">\(\beta_j &lt; 0\)</span>이므로 WoE &gt; 0인 우량 구간은 가점, WoE &lt; 0인 불량 구간은 감점이 된다. 절편에서 나오는 상수(<span class="arithmatex">\(-B\beta_0\)</span>)와 기준점수는 점수 상수항으로 따로 모으거나 변수별로 균등 배분한다.</p>
+<h3 id="dsr-pdo-20-b-2885-beta-080">수치 예시 — DSR 변수 (PDO = 20, <span class="arithmatex">\(B = 28.85\)</span>, 다변량 <span class="arithmatex">\(\beta = -0.80\)</span>)<a class="headerlink" href="#dsr-pdo-20-b-2885-beta-080" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>구간</th>
+<th style="text-align: right;">WoE</th>
+<th style="text-align: right;">로짓 기여 <span class="arithmatex">\(\beta\cdot\text{WoE}\)</span></th>
+<th style="text-align: right;">부분점수 <span class="arithmatex">\(-B\beta\,\text{WoE}\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>&lt; 30% (안전)</td>
+<td style="text-align: right;">+0.62</td>
+<td style="text-align: right;">−0.496</td>
+<td style="text-align: right;"><strong>+14.3</strong></td>
+</tr>
+<tr>
+<td>30~70%</td>
+<td style="text-align: right;">−0.08</td>
+<td style="text-align: right;">+0.064</td>
+<td style="text-align: right;"><strong>−1.8</strong></td>
+</tr>
+<tr>
+<td>≥ 70% (최위험)</td>
+<td style="text-align: right;">−0.95</td>
+<td style="text-align: right;">+0.760</td>
+<td style="text-align: right;"><strong>−21.9</strong></td>
+</tr>
+</tbody>
+</table>
+<p>WoE의 크기 비율이 그대로 점수 비율이 된다. 예를 들어 최위험 구간의 감점(−21.9)과 안전 구간의 가점(+14.3)의 비율은 WoE 비율 <span class="arithmatex">\(-0.95 : 0.62\)</span>와 같다. 이것이 1.1절의 선형성 가정이 점수에 나타나는 모습이다.</p>
+<hr>
+<h2 id="13">1.3 기준점 설정: 평행이동<a class="headerlink" href="#13" title="Permanent link">¶</a></h2>
+<p>더미 변수 방식에서는 기준 범주의 더미 벡터가 <span class="arithmatex">\([0, \dots, 0]\)</span>이므로 해당 구간의 효과가 절편에 흡수되어 <strong>자동으로 부분점수 = 0인 기준점</strong>이 생긴다(<a href="../">두 방식 비교</a> 참조).</p>
+<p>WoE 방식은 WoE = 0인 지점이 "모집단 평균 위험"일 뿐 실제 구간과 일치하지 않는다. 대신 기준으로 삼을 구간의 WoE(<span class="arithmatex">\(\text{WoE}_{j,\text{ref}}\)</span>)만큼 전체를 <strong>평행이동</strong>해 사후적으로 기준점을 만든다.</p>
+<div class="arithmatex">\[
+\text{조정점수}_{jb} = -B \cdot \beta_j \cdot (\text{WoE}_{jb} - \text{WoE}_{j,\text{ref}}) \tag{3}
+\]</div>
+<p>식 (3)은 변수 <span class="arithmatex">\(j\)</span>의 모든 구간 점수에 <span class="arithmatex">\(B\beta_j\text{WoE}_{j,\text{ref}}\)</span>를 더한 것과 같다. 총점이 바뀌지 않으려면 그만큼을 <strong>점수 상수항</strong>에서 빼야 한다.</p>
+<div class="arithmatex">\[
+A' = A - \sum_{j} B\,\beta_j\,\text{WoE}_{j,\text{ref}} \tag{4}
+\]</div>
+<p>여기서 <span class="arithmatex">\(A\)</span>는 평행이동 전 점수 상수항(기준점수와 절편 몫의 합)이다. 회귀 절편 <span class="arithmatex">\(\beta_0\)</span> 자체를 다시 추정하는 것이 아니라, <strong>점수표의 상수 배분만</strong> 바뀐다.</p>
+<p>위 DSR 예시에서 최위험 구간(≥70%)을 기준으로 잡으면 <span class="arithmatex">\(B\beta\,\text{WoE}_{\text{ref}} = 28.85 \times (-0.80) \times (-0.95) = +21.9\)</span>이다.</p>
+<table>
+<thead>
+<tr>
+<th>구간</th>
+<th style="text-align: right;">원래 부분점수</th>
+<th style="text-align: right;">조정점수 (식 3)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>&lt; 30%</td>
+<td style="text-align: right;">+14.3</td>
+<td style="text-align: right;"><strong>+36.2</strong></td>
+</tr>
+<tr>
+<td>30~70%</td>
+<td style="text-align: right;">−1.8</td>
+<td style="text-align: right;"><strong>+20.1</strong></td>
+</tr>
+<tr>
+<td>≥ 70%</td>
+<td style="text-align: right;">−21.9</td>
+<td style="text-align: right;"><strong>0</strong> (기준)</td>
+</tr>
+</tbody>
+</table>
+<p>모든 구간이 21.9점씩 올라갔으므로 상수항을 21.9점 내리면(식 4) 모든 차주의 총점은 그대로다. 이렇게 하면 더미 방식과 같은 "기준 구간 = 0점" 구조가 된다. 즉 <strong>기준점의 위치는 표현 형식의 차이일 뿐 예측에는 영향이 없다</strong>. 다변량 일반 증명은 <a href="../woe-dummy-deep-dive/">심층 비교 4절</a>에서 다룬다.</p>
+<div class="source-ref">예시 수치는 가상 값이며, 점수는 \(B = 20/\ln 2 = 28.854\)로 직접 계산했다.</div>
 
 
 

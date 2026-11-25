@@ -5168,18 +5168,20 @@
 XAI는 이 두 가지를 모두 포괄하는 상위 개념이다.</p>
 </div>
 <h3 id="_2">모형 복잡도와 해석 가능성의 트레이드오프<a class="headerlink" href="#_2" title="Permanent link">¶</a></h3>
-<div class="highlight"><pre><span></span><code>해석 가능성  높음 ◀━━━━━━━━━━━━━━━━━━━━━━━━━━▶ 낮음
-                │          │            │           │
-            선형 회귀    의사결정나무    Random     Deep
-            스코어카드                  Forest     Learning
-                │          │            │           │
-예측 성능    낮음 ◀━━━━━━━━━━━━━━━━━━━━━━━━━━▶ 높음
+<div class="highlight"><pre><span></span><code>해석 가능성  높음 ◀━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━▶ 낮음
+                │            │            │              │
+            스코어카드     얕은 트리     GA²M·EBM       깊은 GBM
+            (LR + WoE)   (depth 2~3)  1-Depth GBM    Random Forest
+                                                     Deep Learning
 </code></pre></div>
-<p>전통 스코어카드(로지스틱 회귀)는 <strong>Interpretable by design</strong>이다. 반면 트리 앙상블이나 딥러닝은 성능은 높지만 자체 해석이 어려워, <strong>XAI 기법이 필수</strong>가 된다.</p>
+<p>흔히 해석 가능성과 성능이 반비례한다고 그리지만, tabular 신용 데이터에서는 이 관계가 생각보다 느슨하다. 같은 tabular 데이터에서 딥러닝이 GBM보다 성능이 높다는 보장은 없고(<a href="../../part3_tree_ensemble/xgb_lgbm/">XGBoost와 LightGBM</a> 참조), 구조를 제약한 모형(GA²M, 단조·교호작용 제약 GBM)이 제약 없는 모형과 큰 차이 없는 성능을 내는 경우도 많다. Rudin(2019)은 고위험 의사결정에서 이 트레이드오프를 당연시하지 말고, 처음부터 해석 가능한 모형을 우선 검토하라고 주장한다.</p>
+<p>전통 스코어카드(로지스틱 회귀)는 <strong>Interpretable by design</strong>이다. 반면 깊은 트리 앙상블이나 딥러닝은 구조 자체로는 사람이 읽기 어려워, <strong>XAI 기법</strong>으로 설명을 보완해야 한다.</p>
+<div class="source-ref">Rudin, C. (2019). "Stop explaining black box machine learning models for high stakes decisions and use interpretable models instead." <em>Nature Machine Intelligence</em>, 1, 206-215.</div>
+
 <hr>
 <h2 id="12">1.2 왜 해석이 필요한가<a class="headerlink" href="#12" title="Permanent link">¶</a></h2>
 <p>전통 로지스틱 회귀 스코어카드는 태생적으로 해석이 쉽다. 각 변수의 WoE × β가 곧 점수이고, 점수표 한 장으로 "왜 이 고객이 이 등급인지" 설명할 수 있다.</p>
-<p>트리 앙상블(XGBoost, LightGBM)은 수백~수천 개의 트리를 합산한 결과이므로, <strong>모형 내부를 직접 들여다보는 것이 불가능</strong>하다. 그러나 해석의 필요성은 사라지지 않는다.</p>
+<p>트리 앙상블(XGBoost, LightGBM)은 수백~수천 개의 트리를 합산한 결과이므로, <strong>사람이 트리를 하나씩 읽어서 모형을 이해하기는 어렵다</strong>. 그러나 해석의 필요성은 사라지지 않는다. 이 섹션의 나머지 페이지는 그 방법 — 사후 설명(SHAP), 구조 제약(1-Depth GBM, EBM), 함수 분해(fANOVA) — 을 다룬다.</p>
 <table>
 <thead>
 <tr>
@@ -5235,30 +5237,28 @@ XAI는 이 두 가지를 모두 포괄하는 상위 개념이다.</p>
 </tr>
 <tr>
 <td><strong>대표 도구</strong></td>
-<td>Feature Importance, PDP, Surrogate, mean(|SHAP|)</td>
+<td>Feature Importance, PDP, ALE, Surrogate, mean(|SHAP|)</td>
 <td>ICE, LIME, SHAP Waterfall</td>
 </tr>
 </tbody>
 </table>
 <p>신용평가에서는 두 축이 모두 필요하다. <strong>Global 해석</strong>은 "이 모형이 합리적인 패턴을 학습했는가"를 검증하고, <strong>Local 해석</strong>은 "이 고객이 거절된 이유"를 설명한다.</p>
 <hr>
-<div class="admonition info">
-<p class="admonition-title">Global 해석 — 모형 전체의 행동을 이해한다</p>
+<h3 id="global">Global 해석 — 모형 전체의 행동을 이해한다<a class="headerlink" href="#global" title="Permanent link">¶</a></h3>
 <p>모형이 <strong>전체적으로</strong> 어떤 변수를 중요하게 보고, 어떤 패턴을 학습했는지 파악한다.</p>
-</div>
 <h4 id="feature-importance-split-gain">Feature Importance (Split / Gain)<a class="headerlink" href="#feature-importance-split-gain" title="Permanent link">¶</a></h4>
 <p>트리 앙상블에 내장된 가장 기본적인 변수 중요도 지표다.</p>
 <ul>
 <li><strong>Split Importance</strong>: 각 변수가 트리 분할에 사용된 <strong>횟수</strong></li>
-<li><strong>Gain Importance</strong>: 각 변수가 분할 시 획득한 <strong>불순도 감소(gain)의 합</strong></li>
+<li><strong>Gain Importance</strong>: 각 변수로 분할할 때 얻은 <strong>손실 감소량(gain)</strong>. 라이브러리마다 합계인지 평균인지가 다르다. 예를 들어 XGBoost의 <code>gain</code>은 분할 1회당 평균이고 합계는 <code>total_gain</code>이며, LightGBM의 <code>gain</code>은 합계다</li>
 </ul>
-<p>Gain이 더 정보적이지만, 카디널리티가 높은 변수(범주 수가 많은 변수)에 편향되는 경향이 있다. 빠른 개요용으로 유용하나, 변수의 <strong>방향(양/음)</strong>이나 효과 크기를 알 수 없다는 한계가 있다.</p>
+<p>Gain이 더 정보적이지만, 두 지표 모두 분할 후보가 많은 변수(연속형, 범주 수가 많은 변수)에 편향되는 경향이 있다. 빠른 개요용으로 유용하나, 변수의 <strong>방향(양/음)</strong>이나 효과 크기를 알 수 없다는 한계가 있다.</p>
 <h4 id="permutation-importance">Permutation Importance<a class="headerlink" href="#permutation-importance" title="Permanent link">¶</a></h4>
 <p>변수 하나의 값을 무작위로 셔플한 뒤, 모형 성능(KS, AR 등)의 <strong>하락 폭</strong>으로 중요도를 측정하는 방법이다.</p>
 <ul>
 <li><strong>Model-agnostic</strong>: 어떤 모형에든 적용 가능</li>
 <li>Feature Importance와 달리 <strong>모형 성능 기준</strong>이므로, 실제 예측에 대한 기여를 더 직접적으로 반영</li>
-<li>변수 간 상관이 높으면 중요도가 분산되는 문제가 있다</li>
+<li>변수 간 상관이 높으면 문제가 생긴다. 한 변수만 섞으면 현실에 없는 조합이 만들어져 모형이 학습하지 않은 영역에서 평가되고(외삽), 상관된 변수끼리 중요도가 나뉘어 각각 작게 보이기도 한다. 상관 변수 해석은 <a href="../../appendix/correlation-interpretation/">부록 B: 변수 상관과 모형 해석</a>에서 다룬다</li>
 </ul>
 <div class="source-ref">
 출처: Breiman, L. (2001). "Random Forests." <em>Machine Learning</em>, 45:5-32. Permutation Importance 개념을 최초로 제안.
@@ -5278,39 +5278,52 @@ XAI는 이 두 가지를 모두 포괄하는 상위 개념이다.</p>
 </ul>
 <div class="admonition example">
 <p class="admonition-title">신용평가 예시</p>
-<p>"부채비율(DTI)"의 PDP를 그리면, DTI가 증가함에 따라 예측 부도 확률이 어떻게 변하는지 평균적 경향을 볼 수 있다. DTI 40%까지는 완만하게 증가하다가 60%를 넘으면 급격히 상승하는 패턴이 보인다면, 모형이 합리적인 관계를 학습했다고 판단할 수 있다.</p>
+<p>"총부채상환비율(DTI)"의 PDP를 그리면, DTI가 증가함에 따라 예측 부도 확률이 어떻게 변하는지 평균적 경향을 볼 수 있다. DTI 40%까지는 완만하게 증가하다가 60%를 넘으면 급격히 상승하는 패턴이 보인다면, 모형이 합리적인 관계를 학습했다고 판단할 수 있다.</p>
 </div>
 <figure>
-  <a class="glightbox" data-type="image" data-width="100%" data-height="auto" href="../images/pdp_dti.png" data-desc-position="bottom"><img alt="PDP — 부채비율(DTI)이 부도 확률에 미치는 평균적 영향" src="../images/pdp_dti.png" width="720"></a>
+  <a class="glightbox" data-type="image" data-width="100%" data-height="auto" href="../images/pdp_dti.png" data-desc-position="bottom"><img alt="PDP — 총부채상환비율(DTI)이 부도 확률에 미치는 평균적 영향" src="../images/pdp_dti.png" width="720"></a>
 <br>
-<figcaption>DTI 40%까지는 완만하게 증가하다가 60%를 넘으면 급격히 상승하는 전형적인 PDP 패턴. 파란 음영은 95% 신뢰 구간, 하단 rug plot은 DTI 분포를 나타낸다.</figcaption>
+<figcaption>DTI 40%까지는 완만하게 증가하다가 60%를 넘으면 급격히 상승하는 전형적인 PDP 패턴(가상 예시). 파란 음영은 불확실성 구간, 하단 rug plot은 DTI 분포를 나타낸다.</figcaption>
 </figure>
 <p><strong>PDP의 한계:</strong></p>
 <ul>
-<li><strong>변수 간 상호작용을 무시</strong>: 다른 변수를 고정한 상태의 평균이므로, 교호작용 효과가 상쇄됨</li>
+<li><strong>변수 간 상호작용을 무시</strong>: 모든 샘플에 대한 평균이므로, 집단마다 방향이 다른 교호작용 효과가 평균에서 상쇄될 수 있음</li>
 <li><strong>상관된 변수 문제</strong>: DTI와 소득이 강하게 상관되어 있을 때, DTI를 극단값으로 설정하면서 소득은 원본 그대로 유지하는 비현실적 조합이 발생</li>
 </ul>
+<h4 id="ale-accumulated-local-effects">ALE (Accumulated Local Effects)<a class="headerlink" href="#ale-accumulated-local-effects" title="Permanent link">¶</a></h4>
+<p>PDP의 상관 변수 문제를 줄이기 위해 제안된 방법이다(Apley &amp; Zhu, 2020). PDP가 "모든 샘플의 DTI를 60%로 바꿔 놓고 평균"을 낸다면, ALE는 <strong>실제로 DTI가 60% 근처인 샘플들만 골라</strong>, DTI를 그 구간 안에서 조금 움직였을 때 예측이 얼마나 변하는지(국소 변화량)를 구한 뒤 구간을 따라 누적한다.</p>
+<ul>
+<li>각 구간에서 그 구간에 실제로 있는 샘플만 쓰므로, "고소득자에게 DTI 90%를 대입하는" 식의 비현실적 조합을 피한다</li>
+<li>국소 변화량을 누적하므로, 상관된 다른 변수의 효과가 섞여 들어오는 것도 줄어든다</li>
+<li>대신 구간을 나누는 방식에 결과가 민감하고, 해석이 "평균 예측값"이 아니라 "기준 대비 누적 변화량"이라는 점에 익숙해져야 한다</li>
+</ul>
+<p>신용 변수는 소득·부채·한도처럼 서로 상관된 경우가 많으므로, PDP와 ALE를 함께 그려 모양이 크게 다르면 상관 때문에 PDP가 왜곡되었는지 의심해 본다.</p>
+<div class="source-ref">
+출처: Apley, D. W. &amp; Zhu, J. (2020). "Visualizing the effects of predictor variables in black box supervised learning models." <em>Journal of the Royal Statistical Society: Series B</em>, 82(4), 1059-1086.
+</div>
+
 <h4 id="surrogate-model">Surrogate Model (대리 모형)<a class="headerlink" href="#surrogate-model" title="Permanent link">¶</a></h4>
-<p>블랙박스 ML 모형의 예측값을 종속변수로 놓고, <strong>해석 가능한 모형(로지스틱 회귀 등)으로 근사</strong>하여 설명하는 전략이다. ML의 성능은 유지하면서, 설명은 전통적 스코어카드 형태로 제공한다.</p>
+<p>블랙박스 ML 모형의 예측값을 종속변수로 놓고, <strong>해석 가능한 모형으로 근사</strong>하여 설명하는 전략이다. ML의 성능은 유지하면서, 설명은 전통적 스코어카드 형태로 제공한다.</p>
+<p>여기서 종속변수는 부도 여부(0/1)가 아니라 <strong>ML 모형이 산출한 스코어(또는 log-odds), 즉 연속형 값</strong>이다. 따라서 대리 모형은 로지스틱 회귀가 아니라 <strong>선형회귀(OLS)</strong>이고, 근사의 충실도(fidelity)는 <span class="arithmatex">\(R^2\)</span>로 잰다.</p>
 <blockquote>
-<p><strong>ML 모형 학습</strong> → <strong><span class="arithmatex">\(\hat{p}\)</span> 산출</strong> → <strong>스코어 변환</strong> → <strong>스코어를 종속변수로 LR 적합</strong> → <strong>스코어카드 생성</strong></p>
+<p><strong>ML 모형 학습</strong> → <strong>스코어(log-odds) 산출</strong> → <strong>WoE 변환된 변수로 스코어를 선형회귀</strong> → <strong>회귀계수로 스코어카드 생성</strong></p>
 </blockquote>
 <figure>
   <a class="glightbox" data-type="image" data-width="100%" data-height="auto" href="../images/surrogate_boundary.png" data-desc-position="bottom"><img alt="Surrogate 근사 한계" src="../images/surrogate_boundary.png" width="680"></a>
 <br>
-<figcaption>XGBoost는 비선형 결정 경계를 포착하지만, Surrogate LR은 직선 하나로만 근사한다. 두 경계 사이의 괴리가 곧 낮은 R²의 원인이다.</figcaption>
+<figcaption>원 변수에 선형 대리 모형을 적합하면 경계가 직선 하나로 제한된다. WoE로 변환하면 변수별로 계단 모양까지는 표현할 수 있지만, 여전히 변수별 효과의 합(가법 구조)이라 오른쪽처럼 교호작용이 만든 굴곡은 재현하지 못한다. 원 모형(왼쪽) 경계의 굴곡과 대리 모형 사이의 괴리가 곧 낮은 R²의 원인이다.</figcaption>
 </figure>
-<p>대리 모형의 <span class="arithmatex">\(R^2\)</span>가 낮은 것은 결함이 아니라 <strong>구조적 한계</strong>다. XGBoost가 잡아내는 비선형 교호작용과 고차 분기 효과를 가법 선형 구조로 재현하는 것은 원리적으로 불가능하기 때문이다.</p>
+<p>대리 모형의 <span class="arithmatex">\(R^2\)</span>가 낮은 것은 결함이 아니라 <strong>구조적 한계</strong>다. XGBoost가 잡아내는 교호작용과 고차 분기 효과를 변수별 효과의 합(가법 구조)으로 재현하는 것은 원리적으로 불가능하기 때문이다.</p>
 <div class="arithmatex">\[
 \underbrace{\text{Score}_{\text{ML}}}_{\text{비선형 + 교호작용}} \approx \underbrace{\beta_0 + \sum_j \beta_j \cdot \text{WoE}_j}_{\text{가법 선형 구조}} + \underbrace{\epsilon}_{\text{설명 불가 잔차}}
 \]</div>
-<p>이 접근에 대해서는 <strong>찬반 논쟁</strong>이 있다. 규제 프레임워크(SR 11-7, EBA 가이드라인)에 부합하는 익숙한 포맷이라는 장점이 있지만, Sudjianto &amp; Zhang (2021, Wells Fargo)은 본질적 딜레마를 지적한다 — 대리 모형이 원래 모형을 <strong>잘 근사하면</strong> "그냥 그 모형을 쓰면 되고", <strong>못 근사하면</strong> 설명이 misleading이 된다. 이들은 대안으로 <strong>내재적으로 해석 가능한 ML</strong>(1-Depth GBM, EBM 등)을 옹호한다.</p>
+<p>이 접근에 대해서는 <strong>찬반 논쟁</strong>이 있다. 감독기관과 검증 부서에 익숙한 스코어카드 포맷으로 설명할 수 있다는 장점이 있지만, 본질적인 딜레마가 있다 — 대리 모형이 원래 모형을 <strong>잘 근사하면</strong> "그냥 대리 모형을 쓰면 되고", <strong>못 근사하면</strong> 설명이 원래 모형의 실제 작동과 달라 오해를 낳는다. Rudin(2019)과 Sudjianto &amp; Zhang(2021) 등은 이런 이유로 사후 근사 대신 <strong>처음부터 해석 가능하게 설계한 ML</strong>(가법 모형, 제약 GBM 등)을 옹호한다.</p>
 <div class="admonition note">
 <p class="admonition-title">참고 자료</p>
 <ul>
 <li><strong><a href="https://www.sciencedirect.com/science/article/abs/pii/S0377221721005695">Dumitrescu et al. (2022, EJOR)</a></strong> — PLTR: 트리 규칙 + 페널티 LR 하이브리드</li>
 <li><strong><a href="https://www.semanticscholar.org/paper/Designing-Inherently-Interpretable-Machine-Learning-Sudjianto-Zhang/90409ae91767248e9ea88b7d6ab44e18f0e1a9be">Sudjianto &amp; Zhang (2021)</a></strong> — 내재적 해석 가능 ML 옹호 (Wells Fargo)</li>
-<li><strong><a href="https://github.com/deburky/boosting-scorecards">xbooster</a></strong> — XGBoost 리프 노드 → 스코어카드 포인트 직접 변환</li>
+<li><strong><a href="https://github.com/xRiskLab/xBooster">xBooster</a></strong> — 부스팅 모형의 리프 값을 스코어카드 포인트로 변환</li>
 </ul>
 </div>
 <h4 id="meanshap">mean(|SHAP|)<a class="headerlink" href="#meanshap" title="Permanent link">¶</a></h4>
@@ -5322,16 +5335,13 @@ XAI는 이 두 가지를 모두 포괄하는 상위 개념이다.</p>
 <figure>
   <a class="glightbox" data-type="image" data-width="100%" data-height="auto" href="../images/shap_bar_global.png" data-desc-position="bottom"><img alt="SHAP Bar Plot — mean(|SHAP|)" src="../images/shap_bar_global.png" width="560"></a>
 <br>
-<figcaption>mean(|SHAP|) Bar Plot — California Housing 데이터 예시. 변수별 |SHAP value|의 평균을 내림차순으로 정렬한 것으로, Global 변수 중요도의 가장 기본적인 시각화다.<br>
-  <span style="font-size:0.85em; color:#888;">출처: <a href="https://github.com/shap/shap" target="_blank">SHAP GitHub</a> (MIT License)</span></figcaption>
+<figcaption>mean(|SHAP|) Bar Plot — 가상 신용 데이터 예시. 변수별 |SHAP value|의 평균을 내림차순으로 정렬한 것으로, Global 변수 중요도의 가장 기본적인 시각화다. 데이터와 모형 설명은 SHAP 이론 2.4절 참조.</figcaption>
 </figure>
 <hr>
-<div class="admonition info">
-<p class="admonition-title">Local 해석 — 개별 예측을 설명한다</p>
+<h3 id="local">Local 해석 — 개별 예측을 설명한다<a class="headerlink" href="#local" title="Permanent link">¶</a></h3>
 <p><strong>특정 고객 한 명</strong>의 예측이 왜 이 값인지, 어떤 변수가 기여했는지 설명한다.</p>
-</div>
 <h4 id="ice-individual-conditional-expectation">ICE (Individual Conditional Expectation)<a class="headerlink" href="#ice-individual-conditional-expectation" title="Permanent link">¶</a></h4>
-<p>PDP의 <strong>개별 버전</strong>이다. PDP가 전체 샘플의 평균 효과를 하나의 곡선으로 보여준다면, ICE는 <strong>각 샘플의 개별 곡선</strong>을 모두 그린다. PDP 곡선 위에 ICE를 겹쳐 그리면, 변수 효과의 이질성(heterogeneity)을 시각적으로 확인할 수 있다 — ICE 곡선들이 서로 교차하면 <strong>교호작용이 존재한다는 신호</strong>다.</p>
+<p>PDP의 <strong>개별 버전</strong>이다. PDP가 전체 샘플의 평균 효과를 하나의 곡선으로 보여준다면, ICE는 <strong>각 샘플의 개별 곡선</strong>을 모두 그린다. PDP 곡선 위에 ICE를 겹쳐 그리면, 변수 효과의 이질성(heterogeneity)을 시각적으로 확인할 수 있다 — 교호작용이 없다면 모든 ICE 곡선은 높이만 다르고 <strong>모양이 같은 평행 곡선</strong>이 된다. 곡선들이 평행하지 않고 기울기가 서로 다르거나 교차하면 <strong>교호작용이 존재한다는 신호</strong>다.</p>
 <div class="source-ref">
 출처: Goldstein, A., Kapelner, A., Bleich, J., and Pitkin, E. (2015). "Peeking Inside the Black Box." <em>JCGS</em>, 24(1):44-65.
 </div>
@@ -5344,27 +5354,48 @@ XAI는 이 두 가지를 모두 포괄하는 상위 개념이다.</p>
 </div>
 
 <h4 id="shap-waterfall">SHAP Waterfall<a class="headerlink" href="#shap-waterfall" title="Permanent link">¶</a></h4>
-<p>개별 차주의 예측을 <strong>base value</strong>(전체 평균)에서 시작하여, 각 변수의 기여를 순차적으로 누적하는 시각화다. 하나의 예측이 "왜 이 값인지"를 변수별로 분해하여 보여주므로, <strong>거절 사유 설명</strong>에 가장 직관적인 도구다.</p>
+<p>개별 차주의 예측을 <strong>base value</strong>(전체 평균)에서 시작하여, 각 변수의 기여를 순차적으로 누적하는 시각화다. 하나의 예측이 "왜 이 값인지"를 변수별로 분해하여 보여주므로, <strong>거절 사유 설명</strong>에 가장 직관적인 도구로 꼽힌다. 다만 같은 값이라도 차주마다 기여가 달라지는 점 때문에 실제 심사 현장에 쓰기는 쉽지 않다(<a href="../shap_in_practice/">SHAP 실무 활용</a>).</p>
 <div class="admonition tip">
 <p class="admonition-title">SHAP 시각화 상세</p>
-<p>Waterfall Plot의 실제 예시와 함께, Bar Plot · Beeswarm · Force Plot · Dependence Plot 등 SHAP의 주요 시각화를 <a href="../shap_theory/#24-shap-시각화">SHAP 이론 — 2.4 SHAP 시각화</a>에서 상세히 다룬다.</p>
+<p>Waterfall Plot의 실제 예시와 함께, Bar Plot · Beeswarm · Force Plot · Dependence Plot 등 SHAP의 주요 시각화를 <a href="../shap_theory/#24-shap">SHAP 이론 — 2.4 SHAP 시각화</a>에서 상세히 다룬다.</p>
 </div>
 <hr>
 <h2 id="14-ml">1.4 해석 가능한 ML 모형의 실무적 조건<a class="headerlink" href="#14-ml" title="Permanent link">¶</a></h2>
 <h3 id="_3">두 가지 활용 경로<a class="headerlink" href="#_3" title="Permanent link">¶</a></h3>
 <p>머신러닝 모형을 신용평가에 도입할 때, 해석 요구 수준에 따라 경로가 갈린다.</p>
 <p><strong>경로 1 — 성능 극대화 (전략모형)</strong></p>
-<p>비선형성을 충분히 반영한 모형(예: max depth 7 이상의 GBM)은 KS, AR 등 변별력 지표가 극대화된다. 이 모형은 기존 스코어카드 위에 얹어서 승인/거절 경계를 보정하는 <strong>override 용도</strong>로 활용할 수 있다. 개별 변수의 효과를 설명할 필요 없이, "이 고객의 최종 스코어가 몇 점인가"만 중요한 맥락이다. 이 경우에도 SHAP value를 통한 <strong>local interpretation은 가능</strong>하므로, 거절 사유 제공 등 규제 대응에 활용할 수 있다.</p>
+<p>비선형성을 충분히 반영한 모형(예: 깊은 GBM)은 KS, AR 등 변별력 지표를 최대한 끌어올릴 수 있다. 이 모형은 기존 스코어카드 위에 얹어서 승인/거절 경계를 보정하는 <strong>override 용도</strong>로 활용할 수 있다. 개별 변수의 효과를 설명할 필요 없이, "이 고객의 최종 스코어가 몇 점인가"가 중요한 맥락이다. 이 경우에도 SHAP value로 개별 예측을 분해하는 <strong>local 설명은 가능</strong>하다. 다만 같은 변수·같은 값이라도 고객마다 기여도가 달라지는 한계가 있어, 거절 사유로 쓰려면 그 한계를 감안한 설명 체계가 필요하다(<a href="../shap_in_practice/">ML 해석을 고민한 기록</a> 참조).</p>
 <p><strong>경로 2 — 해석 충실 (평점모형)</strong></p>
-<p>모형의 <strong>global structure</strong> — 각 변수의 효과 방향, 교호작용의 존재와 크기 — 를 사람이 직접 검토하고 납득할 수 있어야 하는 경우다. 심사역이 shape function을 보고 "이 변수는 이런 방향으로 작용한다"고 확인할 수 있어야 한다. 이 경우 아래 세 가지 조건이 필요하다.</p>
+<p>모형의 <strong>global structure</strong> — 각 변수의 효과 방향, 교호작용의 존재와 크기 — 를 사람이 직접 검토하고 납득할 수 있어야 하는 경우다. 심사역이 shape function을 보고 "이 변수는 이런 방향으로 작용한다"고 확인할 수 있어야 한다.</p>
+<p>여기서 구분할 것이 있다. <strong>"이론적으로 분해할 수 있다"와 "사람이 읽을 수 있다"는 다르다.</strong> 어떤 트리 모형이든 수학적으로는 주효과와 교호작용으로 분해할 수 있지만(<a href="../fanova_concepts/">fANOVA 개념과 Purification</a>), 분해 결과가 수십 구간짜리 곡선과 수백 장의 heatmap이라면 사람이 검토할 수 없다. 사람이 읽을 수 있는 해석이 되려면 다음 세 조건이 필요하다. <strong>이 가이드북의 해석 가능 조건은 이 절을 기준으로 한다.</strong></p>
+<table>
+<thead>
+<tr>
+<th>조건</th>
+<th>기준</th>
+<th>학습 단계에서 강제하는 방법</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. 교호작용 차수</td>
+<td><strong>≤ 2-way</strong></td>
+<td><code>max_depth=2</code>, 교호작용 제약, 또는 GA²M 구조(EBM)</td>
+</tr>
+<tr>
+<td>2. 방향</td>
+<td><strong>단조</strong></td>
+<td>단조 제약(변수별 +1/−1)</td>
+</tr>
+<tr>
+<td>3. 점수표 환산</td>
+<td><strong>변수별, 쌍별 점수표로 풀어 쓸 수 있음</strong></td>
+<td>구간별 상수 구조(트리) 유지, Purification으로 주효과와 2-way 항을 분리하고 분해 잔차가 없는지 확인</td>
+</tr>
+</tbody>
+</table>
 <div class="admonition info">
-<p class="admonition-title">조건 1 — 변수당 bin 수를 제한한다 (≤ 5)</p>
-<p>bin이 많아질수록 interaction heatmap의 셀 수가 폭발하여 사람이 패턴을 읽을 수 없다.</p>
-</div>
-<p>각 feature를 <strong>5개 이하</strong>의 구간으로 binning해야 한다.</p>
-<p>왜 5개인가? 2차 교호작용을 고려하면 답이 나온다. 변수 2개가 각각 5구간이면, interaction heatmap은 5×5 = 25칸이다. 25칸 정도면 사람이 패턴을 눈으로 읽을 수 있다. 10구간이면 100칸, 20구간이면 400칸 — 이론적으로는 purification이 되지만, <strong>사람이 heatmap 한 장을 보고 패턴을 파악하기란 사실상 불가능</strong>하다.</p>
-<div class="admonition info">
-<p class="admonition-title">조건 2 — 교호작용을 2차원으로 한정한다</p>
+<p class="admonition-title">조건 1 — 교호작용을 2차원으로 한정한다</p>
 <p>2-way까지는 heatmap 한 장으로 보여줄 수 있지만, 3-way부터는 불가능하다.</p>
 </div>
 <p>interaction term의 차수를 <strong>최대 2-way</strong>로 제한해야 한다.</p>
@@ -5384,19 +5415,27 @@ XAI는 이 두 가지를 모두 포괄하는 상위 개념이다.</p>
 </figure>
 <p>EBM(GA²M)이 의도적으로 2-way까지만 허용하는 것도 이 이유다.</p>
 <div class="admonition info">
-<p class="admonition-title">조건 3 — 단조성 (Monotonicity)</p>
+<p class="admonition-title">조건 2 — 단조성 (Monotonicity)</p>
 <p>비단조 패턴이 과적합인지 실제인지 판단하기 어렵다. 단조 제약으로 해석력과 안정성을 확보한다.</p>
 </div>
-<p>트리가 자유롭게 학습하면 "소득 3,000만 이하에서는 부도율 증가, 3,000~5,000만에서 감소, 5,000만 이상에서 다시 증가" 같은 비단조 패턴이 나올 수 있다. 이것이 과적합인지 실제 패턴인지를 심사역이 판단해야 하는데, bin이 많아질수록 비단조 패턴의 가짓수가 폭발한다.</p>
-<p><code>monotone_constraints</code> 파라미터로 단조 제약을 거는 것은 해석력과 안정성을 동시에 확보하는 방법이다. 상세는 <a href="../depth1_gbm/">1-Depth GBM 스코어카드</a>를 참조한다.</p>
+<p>트리가 자유롭게 학습하면 "소득 3,000만 이하에서는 부도율 증가, 3,000~5,000만에서 감소, 5,000만 이상에서 다시 증가" 같은 비단조 패턴이 나올 수 있다. 이것이 과적합인지 실제 패턴인지를 심사역이 판단해야 하는데, 구간이 많아질수록 비단조 패턴의 가짓수가 폭발한다.</p>
+<p>단조 제약을 거는 것은 해석력과 안정성을 동시에 확보하는 방법이다. 제약이 트리 학습 중에 어떻게 작동하는지는 <a href="../../part3_tree_ensemble/boosting_advanced/">Boosting 심화</a>에서, 1-Depth GBM에 적용하는 예는 <a href="../depth1_gbm/">1-Depth GBM 스코어카드</a>에서 다룬다.</p>
+<div class="admonition info">
+<p class="admonition-title">조건 3 — 점수표로 풀어 쓸 수 있어야 한다</p>
+<p>해석의 최종 산출물은 심사역이 읽는 점수표다.</p>
+</div>
+<p>주효과는 변수별 구간 점수로, 허용한 2-way 교호작용은 쌍별 표로 옮겨 적을 수 있어야 하고, 이 표들을 더한 값이 모형의 예측과 같아야 한다(분해 잔차 없음). 수학적으로 분해할 수 있어도 표로 옮겨 적을 수 없거나 더해서 예측이 재현되지 않으면, 이 가이드북에서는 해석 가능 모형으로 보지 않는다.</p>
+<div class="admonition note">
+<p class="admonition-title">변수당 구간 수는 운영 평점표의 실무 관행이다</p>
+<p>변수당 구간을 5개 안팎으로 두는 것은 해석 가능 조건이 아니라 운영 평점표의 실무 관행이다(스코어카드의 구간 수 기준은 <a href="../../../scorecard/part3_variable_selection/classing/decision-criteria/">의사결정 기준 종합</a>). 구간이 적으면 평점표와 2-way 표(5×5 = 25칸)가 한눈에 들어오고 운영도 안정적이지만, 외부 규정이나 문헌이 정한 기준은 아니다. 깊이 1에 단조 제약을 건 모형처럼 변수당 구간이 그보다 많아도 점수표로 풀어 쓸 수 있으면 해석 가능하다. 다만 구간이 많을수록 데이터의 우연한 굴곡까지 계단으로 새겨지기 쉬우므로, 운영 평점표로 옮길 때 인접 구간을 정리할지 함께 판단한다.</p>
+</div>
 <h3 id="_4">왜 트리 모형인가<a class="headerlink" href="#_4" title="Permanent link">¶</a></h3>
-<p>이 세 조건을 거치면, 신용평가에서 <strong>트리 기반 모형을 선호할 수밖에 없는 이유</strong>가 명확해진다:</p>
+<p>이 세 조건을 놓고 보면, 신용평가에서 <strong>트리 기반 모형이 유리한 이유</strong>가 보인다.</p>
 <ul>
-<li><strong>해석의 용이성</strong>: shape function, feature importance, interaction heatmap 등 해석 도구가 자연스럽게 따라온다</li>
-<li><strong>Post-hoc 처리의 간결함</strong>: 트리의 leaf를 bin으로 취급해서 텐서를 만들고, 가중평균을 빼는 것만으로 fANOVA 분해(purification)가 완성된다</li>
-<li><strong>자동 구간화</strong>: 연속 변수를 discretize하는 과정을 트리가 자동으로 해주므로, 별도의 binning 없이 바로 purification에 넘길 수 있다</li>
+<li><strong>조건을 학습 단계에서 강제하기 쉽다</strong>: 깊이 제한(교호작용 차수), 교호작용 제약(허용 조합), 단조 제약(방향)이 주요 라이브러리에 모두 내장되어 있다</li>
+<li><strong>함수가 이미 구간별 상수다</strong>: 트리 앙상블의 예측 함수는 각 변수의 분할점들로 나뉜 격자 위에서 상수이므로, 그 격자를 그대로 텐서로 만들어 fANOVA 분해(purification)를 적용할 수 있다. 신경망 같은 연속 함수는 먼저 구간별 상수로 근사하는 단계가 필요하다</li>
 </ul>
-<p>신경망이나 다른 비선형 모형에서 같은 수준의 post-hoc 해석을 하려면, 먼저 함수를 piecewise-constant로 근사하는 추가 단계가 필요하다. 트리는 이것이 <strong>구조적으로 이미 되어 있다.</strong></p>
+<p>다만 <strong>제약 없는 트리의 자동 구간화가 곧 읽을 수 있는 점수표가 되지는 않는다.</strong> 제약 없이 학습한 트리 앙상블은 한 변수에 수십 개의 분할점을 만들 수 있고, 교호작용 차수도 제한되지 않아 그 격자를 그대로 분해하면 고차 항과 수백 칸짜리 heatmap이 나온다. 조건 1과 2를 학습 단계에서 걸어야 하고, 운영 평점표의 구간 수 관행에 맞추려면 변수를 미리 구간화해 넣거나 히스토그램 bin 수를 제한해 분할점 후보를 줄인다. Purification도 "가중평균을 한 번 빼는" 작업이 아니라, 모든 하위 차수 항에 대해 평균이 0이 될 때까지 반복하는 절차다(<a href="../../appendix/shap-fanova/">부록 A</a> 참조).</p>
 <div class="admonition tip">
 <p class="admonition-title">다음 페이지</p>
 <p><a href="../shap_theory/">SHAP 이론</a> --- Shapley Value의 수학적 배경과 TreeSHAP 알고리즘을 다룬다.</p>

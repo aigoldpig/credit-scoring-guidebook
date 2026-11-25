@@ -4643,10 +4643,65 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
       
         <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
+  <a href="#51" class="md-nav__link">
     <span class="md-ellipsis">
       
-        다룰 내용
+        5.1 먼저 질문을 정한다
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#52" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 양쪽 결과를 비교한다
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#53-cross-covariance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 Cross-covariance를 진단한다
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#54-ebm-purification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.4 EBM과 Purification
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#55" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.5 단조 제약을 활용한다
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#56" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.6 신용평가에서의 실무 권장
       
     </span>
   </a>
@@ -5091,53 +5146,124 @@
 
 <h1 id="5">5. 실무 권장 — 상관 변수 해석 전략<a class="headerlink" href="#5" title="Permanent link">¶</a></h1>
 <blockquote>
-<p>이론적 완벽함은 없다. 실무에서는 어떻게 대응해야 하는가?</p>
+<p>이론적으로 완벽한 방법은 없다. 실무에서는 질문을 먼저 정하고, 방법을 명시하고, 두 방향의 결과를 비교하는 것이 현실적인 대응이다.</p>
 </blockquote>
-<div class="admonition warning">
-<p class="admonition-title">작성 중</p>
-<p>이 페이지는 현재 작성 중이며, 내용이 추가·변경될 수 있습니다.</p>
-</div>
-<h2 id="_1">다룰 내용<a class="headerlink" href="#_1" title="Permanent link">¶</a></h2>
-<h3 id="51">5.1 양쪽 결과를 비교하라<a class="headerlink" href="#51" title="Permanent link">¶</a></h3>
+<p>1~4절의 내용을 신용평가 모형 해석 실무의 절차로 정리한다.</p>
+<hr>
+<h2 id="51">5.1 먼저 질문을 정한다<a class="headerlink" href="#51" title="Permanent link">¶</a></h2>
+<p>상관이 있는 데이터에서는 하나의 숫자로 "모형에 충실"과 "데이터에 충실"을 동시에 만족할 수 없다(<a href="../observational-vs-interventional/">1절</a>). 따라서 해석을 시작하기 전에 <strong>무엇을 묻는지</strong> 정해야 한다.</p>
+<table>
+<thead>
+<tr>
+<th>질문</th>
+<th>성격</th>
+<th>적합한 방법</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>모형이 어떤 변수를 쓰고, 각 변수에 어떤 방향·크기로 반응하는가? (모형검증, 효과 방향 점검, 거절 사유)</td>
+<td>모형에 충실</td>
+<td>interventional SHAP, product measure fANOVA, ALE</td>
+</tr>
+<tr>
+<td>모형 입력에서 변수 하나만 바꾸면 점수가 얼마나 변하는가? (what-if)</td>
+<td>모형에 충실</td>
+<td>interventional SHAP, PDP·ICE (외삽 구간 주의)</td>
+</tr>
+<tr>
+<td>이 값을 가진 고객군은 실제로 어떤 점수를 받는가? (고객군·포트폴리오 설명)</td>
+<td>데이터에 충실</td>
+<td>observational 기대값(M-plot), 구간별 평균 예측</td>
+</tr>
+<tr>
+<td>데이터가 있는 영역에서 효과를 주효과·교호작용으로 나누면?</td>
+<td>데이터 분포 반영</td>
+<td>joint measure fANOVA (반복 centering) + 교차공분산 보고</td>
+</tr>
+</tbody>
+</table>
+<p>주의할 점이 하나 있다. "변수 하나만 바꾸면"이라는 what-if는 <strong>모형의 반응</strong>이지 현실의 인과효과가 아니다. 현실에서는 업권별 대출 건수를 하나 바꾸면 전체 대출 건수도 함께 바뀌듯이, 변수 하나만 독립적으로 움직이는 일은 드물다. interventional 결과를 고객에게 "이것만 바꾸면 점수가 오른다"는 식으로 그대로 안내해서는 안 된다.</p>
+<h2 id="52">5.2 양쪽 결과를 비교한다<a class="headerlink" href="#52" title="Permanent link">¶</a></h2>
+<p>상관이 강한 변수군이 있는 모형이라면, 하나의 방법만 보지 말고 <strong>두 방향의 결과를 함께 계산해 비교</strong>한다.</p>
 <ul>
-<li>Observational(A-1/B-1)과 Interventional(A-2/B-2) 모두 계산</li>
-<li>두 결과가 유사하면: 변수 상관이 해석에 크게 영향을 주지 않음 → 안심</li>
-<li>두 결과가 크게 다르면: 해당 변수군의 상관이 해석을 왜곡하고 있음 → 주의 필요</li>
-<li>우리 실험에서 변수 순위 Top 10은 대부분 유사, 미세 차이만 존재</li>
+<li>SHAP: interventional(배경 데이터 지정) 값과, 상관을 반영하는 observational 값(조건부 기대값의 근사)을 함께 계산한다. path-dependent TreeSHAP은 상관을 트리 구조에 따라 일부만 반영하므로 observational 값을 대신하지 못한다는 점에 유의한다(<a href="../shap-two-modes/">3절</a>).</li>
+<li>fANOVA: product measure와 joint measure로 각각 분해한다. joint measure는 반복 centering으로 구하고, 조건부 평균을 재귀 공식에 그대로 넣는 방식은 쓰지 않는다(<a href="../joint-vs-product/">2절</a>).</li>
 </ul>
-<h3 id="52-cross-covariance">5.2 Cross-Covariance 진단<a class="headerlink" href="#52-cross-covariance" title="Permanent link">¶</a></h3>
+<p>비교 결과는 이렇게 읽는다.</p>
 <ul>
-<li>전체 분산 대비 Cross-cov 비율 확인 (우리 모형: 48~52%)</li>
-<li>쌍별 Cov(f_i, f_j) Top 20 확인 → 어떤 변수 쌍이 해석을 흐리는지 식별</li>
-<li>상관이 높은 변수 쌍: 합산 효과로 보거나, 대표 변수 1개로 해석</li>
+<li><strong>두 결과가 비슷하면</strong>: 그 변수의 해석은 상관 구조에 크게 흔들리지 않는다. 어느 쪽을 보고해도 결론이 같다.</li>
+<li><strong>두 결과가 크게 다르면</strong>: 그 변수가 다른 변수와 효과를 나눠 갖고 있다는 신호다. <a href="../shap-two-modes/">3절</a>의 예시에서 카드론의 SHAP 값은 가치함수에 따라 0.325~0.850으로 갈렸다. 이런 변수는 개별 값보다 <strong>상관된 변수군 단위</strong>로 해석하는 것이 안전하다.</li>
 </ul>
-<h3 id="53-ebm-purification">5.3 EBM과 Purification<a class="headerlink" href="#53-ebm-purification" title="Permanent link">¶</a></h3>
+<p>과거 개발했던 XGBoost 기반 신용평가모형에서는 두 측도의 상위 변수 중요도 순위가 대체로 비슷했고, 차이는 상관이 강한 일부 변수에 집중되었다. 즉, 전체 그림은 유지되지만 <strong>개별 변수의 몫</strong>은 측도에 따라 달라질 수 있다.</p>
+<h2 id="53-cross-covariance">5.3 Cross-covariance를 진단한다<a class="headerlink" href="#53-cross-covariance" title="Permanent link">¶</a></h2>
+<p>fANOVA로 분산 분해를 보고할 때는 교차공분산 항을 함께 계산한다.</p>
+<ol>
+<li><strong>전체 비중 확인</strong>: 데이터 분포 위에서 <span class="arithmatex">\(\sum_{S \neq V} \text{Cov}(f_S, f_V)\)</span>가 총 분산에서 차지하는 비중을 본다. 과거 개발했던 XGBoost 기반 신용평가모형에서는 이 비중이 전체 분산의 상당 부분을 차지했다(<a href="../joint-vs-product/">2절</a>). 이 항을 빼고 "주효과 몇 %, 교호작용 몇 %"만 보고하면 분산의 큰 몫이 설명에서 사라진다.</li>
+<li><strong>쌍별 공분산 상위 목록</strong>: <span class="arithmatex">\(\text{Cov}(f_i, f_j)\)</span>가 큰 변수 쌍을 정렬해, 어떤 변수들이 효과를 나눠 갖고 있는지 확인한다. 대개 같은 신용 행태를 다른 각도에서 잰 변수들(업권별·기간별 대출 건수, 한도 대비 사용률과 잔액 등)이 상위에 온다.</li>
+<li><strong>변수군 단위로 해석</strong>: 공분산이 큰 변수들은 효과를 개별로 해석하지 말고 <strong>합산 효과</strong>(군에 속한 성분 또는 SHAP 값의 합)로 보거나, 대표 변수 하나를 남기고 나머지를 모형에서 빼는 것을 검토한다. 군 단위 합은 군 내부에서 몫을 어떻게 나누는지에 덜 민감하다.</li>
+</ol>
+<h2 id="54-ebm-purification">5.4 EBM과 Purification<a class="headerlink" href="#54-ebm-purification" title="Permanent link">¶</a></h2>
+<p>교호작용이 있는 모형을 해석 가능한 형태로 유지하려면, 학습 단계와 사후 단계를 함께 쓴다.</p>
 <ul>
-<li>EBM (Lou et al., 2012, 2013): 학습 구조 자체가 main + 2-way 분리</li>
-<li>InterpretML <code>purify()</code>: 학습 후 사후 정제</li>
-<li>Lengerich et al. (2020): purification이 부호 반전을 방지한 COMPAS 사례</li>
-<li>가이드북 부록 A-3 <a href="../../shap-fanova/purification/">Purification</a>과 연결</li>
+<li><strong>학습 단계</strong>: EBM(Lou, Caruana &amp; Gehrke, 2012; Lou et al., 2013)은 주효과를 먼저 학습한 뒤 교호작용 쌍을 잔차에 학습하는 2단계 구조로, 주효과가 교호작용으로 새어 나가는 것을 줄인다. 자세한 내용은 <a href="../../../part4_interpretation/ebm/">EBM (GA²M)</a>을 참고한다.</li>
+<li><strong>사후 단계</strong>: 학습이 끝난 모형에 purification을 적용해 fANOVA 정준형으로 옮긴다. 공개 구현으로 InterpretML의 purification 유틸리티(<code>interpret.utils.purify</code>)가 있다. 원리와 수렴 성질은 <a href="../../shap-fanova/purification/">부록 A 3절 Purification</a>에서 다뤘다.</li>
+<li><strong>가중 선택을 명시</strong>: purification 결과는 가중(측도)에 따라 달라진다. Lengerich et al. (2020, 6.1절)의 COMPAS 실험에서도, purification 여부와 가중 선택에 따라 main effect의 크기가 크게 달라지고 때로는 부호까지 달라졌다. 보고서에는 어떤 가중(uniform, empirical, Laplace)을 썼는지 반드시 적는다.</li>
 </ul>
-<h3 id="54-monotone-constraints">5.4 단조성 제약 (Monotone Constraints)<a class="headerlink" href="#54-monotone-constraints" title="Permanent link">¶</a></h3>
+<h2 id="55">5.5 단조 제약을 활용한다<a class="headerlink" href="#55" title="Permanent link">¶</a></h2>
+<p>단조 제약(monotone constraint)은 상관 문제를 직접 해결하지는 않지만, 해석의 안정성을 높인다. 학습 시 어떤 변수에 단조 제약을 걸면, <strong>다른 변수의 값을 어떻게 고정하든</strong> 그 변수에 대해 모형 출력이 단조가 된다. 그 결과:</p>
 <ul>
-<li>상관 문제와 직접 관련은 아니지만, 해석 안정성에 기여</li>
-<li>단조 제약 걸면 shape function이 단조 → 상관에 의한 비직관적 패턴 방지</li>
-<li>가이드북 Part 4 해석 가능성 3대 조건과 연결: bin 5개 이하, 2-way, 단조성</li>
+<li><strong>product measure fANOVA의 주효과, PDP, ALE</strong>: 단조 함수들의 평균(또는 단조 증가분의 누적)이므로 <strong>반드시 단조</strong>다.</li>
+<li><strong>joint measure fANOVA의 주효과, observational 기대값</strong>: 상관된 변수의 효과가 섞이므로 단조가 <strong>보장되지 않는다.</strong></li>
+<li><strong>SHAP 값</strong>: 교호작용의 몫과 다른 변수와의 상관이 섞이므로, 같은 변수의 SHAP 값을 변수 값 순으로 늘어놓아도 단조가 <strong>보장되지 않는다.</strong></li>
 </ul>
-<h3 id="55">5.5 신용평가에서의 실무 권장<a class="headerlink" href="#55" title="Permanent link">¶</a></h3>
-<ul>
-<li>규제 관점: "모형이 어떤 변수를 쓰는가" → Observational이 적합</li>
-<li>인과 관점: "변수 하나를 바꾸면 스코어가 얼마나 변하는가" → Interventional이 적합</li>
-<li>현업 설명 시: 둘의 차이를 인지하고, 해석 목적을 명시할 것</li>
-<li><strong>모형검증 보고서</strong>에는 두 방식의 결과를 병기하는 것을 권장</li>
-</ul>
+<p>즉 단조 제약 모형이라면, 효과 방향을 점검할 때는 단조성이 보장되는 interventional 계열의 결과를 기준으로 삼는 것이 일관적이다. 이 가이드북이 해석 가능한 ML의 조건으로 제시하는 "교호작용 2-way 이하, 단조 제약, 점수표 환산 가능"(<a href="../../../part4_interpretation/interpretability/">해석 가능성</a>)은 이런 점검을 가능하게 하는 최소 조건이기도 하다.</p>
+<h2 id="56">5.6 신용평가에서의 실무 권장<a class="headerlink" href="#56" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>상황</th>
+<th>권장</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>모형검증 — 모형이 어떤 변수를 쓰고 어떤 방향으로 반응하는가</strong></td>
+<td>interventional SHAP 또는 product measure fANOVA를 기준으로 한다. observational 방식은 모형이 쓰지 않는 변수에도 기여를 배분하므로(<a href="../independence-extrapolation/">4절</a>), "모형이 이 변수를 쓴다"는 판단의 근거로 쓰지 않는다.</td>
+</tr>
+<tr>
+<td><strong>거절 사유 등 개별 고객 설명</strong></td>
+<td>interventional SHAP을 기본으로 하되, 배경 데이터(학습 데이터 표본 등)를 명시한다. path-dependent TreeSHAP을 쓴다면 트리 구조에 따라 상관된 변수 간 몫이 달라질 수 있음을 인지한다. 상관이 강한 변수군은 군 단위로 설명하는 것을 검토한다.</td>
+</tr>
+<tr>
+<td><strong>고객군·포트폴리오 설명</strong></td>
+<td>observational 기대값(구간별 실제 평균 예측)을 쓴다. 이것은 "모형의 반응"이 아니라 "데이터에서 관찰되는 점수 분포"임을 명시한다.</td>
+</tr>
+<tr>
+<td><strong>효과 곡선 보고</strong></td>
+<td>상관이 강한 변수는 PDP 대신 ALE를 함께 제시하거나, PDP를 데이터 밀도가 있는 구간으로 한정한다.</td>
+</tr>
+<tr>
+<td><strong>분산 분해 보고</strong></td>
+<td>측도(product/joint)를 명시하고, 교차공분산 항을 함께 보고한다.</td>
+</tr>
+<tr>
+<td><strong>문서화</strong></td>
+<td>모형검증 문서에 사용한 가치함수·배경 데이터·측도·가중을 적고, 두 방식의 결과가 크게 다른 변수는 병기한다.</td>
+</tr>
+</tbody>
+</table>
+<p>어느 경우든 핵심은 같다. <strong>"이 변수의 효과"는 측도를 정해야 비로소 정의된다.</strong> 측도를 명시하지 않은 해석 결과는 재현할 수도, 검증할 수도 없다.</p>
 <hr>
 <div class="source-ref">
 <p><strong>참고</strong></p>
 <ul>
-<li>Lou et al. (2013). <em>Accurate Intelligible Models with Pairwise Interactions.</em> KDD</li>
-<li>Lengerich et al. (2020). <em>Purifying Interaction Effects with the Functional ANOVA.</em> AISTATS</li>
-<li>Covert, Lundberg, Lee (2020). <em>Understanding Global Feature Contributions With Additive Importance Measures.</em> NeurIPS</li>
+<li>Lou, Caruana, Gehrke (2012). <a href="https://doi.org/10.1145/2339530.2339556">Intelligible models for classification and regression</a>. KDD</li>
+<li>Lou, Caruana, Gehrke, Hooker (2013). <a href="https://doi.org/10.1145/2487575.2487579">Accurate intelligible models with pairwise interactions</a>. KDD</li>
+<li>Lengerich, Tan, Chang, Hooker, Caruana (2020). <a href="https://proceedings.mlr.press/v108/lengerich20a.html">Purifying Interaction Effects with the Functional ANOVA</a>. AISTATS</li>
+<li>Chen, Janizek, Lundberg, Lee (2020). <a href="https://arxiv.org/abs/2006.16234">True to the Model or True to the Data?</a> arXiv:2006.16234</li>
+<li>Apley, Zhu (2020). <a href="https://doi.org/10.1111/rssb.12377">Visualizing the effects of predictor variables in black box supervised learning models</a>. <em>JRSS-B</em> 82(4)</li>
+<li><a href="https://interpret.ml/docs/python/api/purify.html">InterpretML purify API</a></li>
 </ul>
 </div>
 

@@ -2720,7 +2720,7 @@
   <a href="#21-5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2.1 5가지 효과
+        2.1 변환의 5가지 효과
       
     </span>
   </a>
@@ -5111,114 +5111,84 @@
 
 
 
-<h1 id="_1">미니모델링의 실증적 근거와 비율별 변환 특성<a class="headerlink" href="#_1" title="Permanent link">¶</a></h1>
-<h2 id="21-5">2.1 5가지 효과<a class="headerlink" href="#21-5" title="Permanent link">¶</a></h2>
+<h1 id="_1">미니모델링의 효과와 비율별 변환 특성<a class="headerlink" href="#_1" title="Permanent link">¶</a></h1>
+<h2 id="21-5">2.1 변환의 5가지 효과<a class="headerlink" href="#21-5" title="Permanent link">¶</a></h2>
 <h3 id="1">효과 1 — 비선형성 포착<a class="headerlink" href="#1" title="Permanent link">¶</a></h3>
-<p>재무비율의 원시 수준(raw level)을 그대로 선형 모형에 투입하면, 비율과 부도 간의 체감·체증적 관계가 무시된다. 미니모델링은 이 관계를 데이터로부터 직접 추정하여, 비율의 특정 구간에서 급격한 위험 변화가 발생하는 <strong>임계 영역(threshold region)</strong>을 정확히 반영한다.</p>
+<p>재무비율의 원시 값(raw level)을 그대로 선형 모형에 넣으면 비율과 부도 사이의 체감·체증 관계가 무시된다. 미니모델링은 이 관계를 데이터에서 직접 추정해, 특정 구간에서 위험이 급변하는 <strong>임계 영역(threshold region)</strong> 을 곡선에 반영한다.</p>
 <h3 id="2-normalization">효과 2 — 입력 정규화(Normalization)<a class="headerlink" href="#2-normalization" title="Permanent link">¶</a></h3>
-<p>서로 다른 단위와 분포를 가진 재무비율들(예: ROA는 −20%~+30%, 부채비율은 0%~500%)이 모두 <strong>0~1 범위의 부도확률</strong>로 변환된다. 이후 다변량 프로빗 모형에서 각 변수의 기여를 직접 비교할 수 있게 된다.</p>
+<p>단위와 분포가 서로 다른 재무비율들(예: ROA는 −20%~+30%, 부채비율은 0%~500%)이 모두 <strong>0~1 범위의 부도확률</strong>이라는 같은 척도로 바뀐다. 그래서 다변량 프로빗 모형에서 각 변수의 계수를 "부도확률 1%p 변화당 기여"라는 같은 단위로 비교할 수 있다.</p>
 <h3 id="3-outlier-control">효과 3 — 이상치 통제(Outlier Control)<a class="headerlink" href="#3-outlier-control" title="Permanent link">¶</a></h3>
-<p>극단적 재무비율(예: 자본잠식 기업의 음수 자기자본비율)이 모형 전체를 왜곡하는 문제를 원천적으로 차단한다. <strong>백분위 변환 + LOWESS</strong>의 조합은 극단값이 smoothing 곡선 위에서 자연스럽게 수렴하도록 만든다.</p>
+<p>극단적 재무비율(예: 자본잠식 기업의 음수 자기자본비율, 매출이 거의 없는 기업의 비정상적 회전율)이 모형 전체를 끌고 가는 문제를 줄인다. 백분위 변환에서 극단값은 0 또는 100 근처로 눌리고, LOWESS는 그 위치의 이웃 평균 수준으로 평활하므로 하나의 극단값이 곡선을 크게 휘게 하지 못한다.</p>
 <h3 id="4">효과 4 — 한계효과 모니터링<a class="headerlink" href="#4" title="Permanent link">¶</a></h3>
-<p>각 비율의 변환곡선을 독립적으로 관찰함으로써, 특정 비율이 부도 예측에 기여하는 방식을 투명하게 파악할 수 있다. 이는 <strong>모형 검증(validation)</strong>과 <strong>감독당국 설명(regulatory explanation)</strong> 양 측면에서 핵심 이점이다.</p>
+<p>비율별 변환곡선을 따로 그려 볼 수 있으므로, 각 비율이 부도 예측에 기여하는 방식을 투명하게 파악할 수 있다. 이는 <strong>모형 검증</strong>과 <strong>감독당국 설명</strong> 양쪽에서 이점이다.</p>
 <h3 id="5-out-of-sample-robustness">효과 5 — 표본 외 강건성(Out-of-Sample Robustness)<a class="headerlink" href="#5-out-of-sample-robustness" title="Permanent link">¶</a></h3>
-<p>Falkenstein et al.(2000)의 Compustat 데이터 검증에서, 다양한 변환 방식을 비교한 결과가 보고되었다. 모든 비교 모형은 1995년 이전에 추정되어 표본 외 검증 조건을 충족했다.</p>
+<p>비모수 변환은 함수 형태를 미리 정하지 않으므로 표본 내 적합만 좋고 표본 외에서 무너지는 것 아니냐는 우려가 있다. 실제로는 대역폭을 적절히 잡으면 곡선이 구간별 우연한 변동을 걸러내므로(→ <a href="../intuition/">직관적 이해 4.5절</a>) 표본 외에서도 형태가 유지되는 경우가 많다. RiskCalc 공개 방법론 문서는 입력 비율의 세심한 변환이 모형 예측력의 상당 부분을 차지한다고 서술한다(Falkenstein, Boral &amp; Carty, 2000). 다만 표본 외 성과는 데이터마다 다르므로, 변환 방식별로 walk-forward 검증 결과를 직접 비교해 확인해야 한다(<a href="../application/">실무 활용 5.4절</a>).</p>
+<div class="admonition tip">
+<p class="admonition-title">소매 CSS 실무자를 위한 대응</p>
+<p>이 논점은 소매 CSS에서 "원시 비율 투입 vs WoE 변환 투입"과 본질적으로 같다. WoE 변환도 비모수적 단변량 위험 변환의 일종이며, 구간화를 통해 이상치와 비선형성을 함께 처리한다.</p>
+</div>
+<hr>
+<h2 id="22">2.2 재무비율 범주별 변환 특성<a class="headerlink" href="#22" title="Permanent link">¶</a></h2>
+<p>기업 신용평가에서는 재무비율을 보통 수익성, 레버리지, 유동성, 활동성, 규모, 부채상환능력, 성장성 등의 범주로 나눈다. 범주마다 부도확률과의 관계 형태가 다르다.</p>
+<p><a class="glightbox" data-type="image" data-width="100%" data-height="auto" href="../images/ratio_transform_curves.png" data-desc-position="bottom"><img alt="재무비율 범주별 변환곡선" src="../images/ratio_transform_curves.png"></a></p>
+<p>위 그림은 범주별 변환곡선의 <strong>전형적인 형태</strong>를 개념적으로 그린 가상 곡선이다. 가로축은 해당 비율의 백분위, 세로축은 단변량 부도확률이다. 실제 곡선의 수준과 모양은 포트폴리오마다 다르다.</p>
 <table>
 <thead>
 <tr>
-<th>변환 방식</th>
-<th>방법</th>
-<th style="text-align: center;">표본 내 성능</th>
-<th style="text-align: center;">표본 외 강건성</th>
+<th>범주</th>
+<th>대표 비율 예시</th>
+<th>전형적인 변환 형태</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>백분위(Percentile)</td>
-<td>비율의 순위를 0~1로 변환</td>
-<td style="text-align: center;">중간</td>
-<td style="text-align: center;">중간</td>
+<td><strong>수익성</strong></td>
+<td>ROA, 영업이익률</td>
+<td>하향. 고수익 구간에서 기울기가 완만해진다(체감적 위험 감소)</td>
 </tr>
 <tr>
-<td>백분위 + 제곱</td>
-<td>순위 + 순위²</td>
-<td style="text-align: center;">높음 (표본 내 거의 최적)</td>
-<td style="text-align: center;">상대적 열위</td>
+<td><strong>레버리지</strong></td>
+<td>부채비율, 총부채/총자산</td>
+<td>상향(단조 증가). 고레버리지 구간에서 기울기가 가팔라진다</td>
 </tr>
 <tr>
-<td>비율 수준 절단</td>
-<td>2%/98% 지점에서 winsorize</td>
-<td style="text-align: center;">중간</td>
-<td style="text-align: center;">중간</td>
+<td><strong>유동성</strong></td>
+<td>현금·유가증권/총자산</td>
+<td>하향. 일정 수준 이상에서는 평탄해진다</td>
 </tr>
 <tr>
-<td><strong>단변량 부도빈도 변환 (미니모델링)</strong></td>
-<td><strong>LOWESS 등 비모수 추정</strong></td>
-<td style="text-align: center;"><strong>높음</strong></td>
-<td style="text-align: center;"><strong>유의하게 우월</strong></td>
+<td><strong>활동성</strong></td>
+<td>재고자산/매출</td>
+<td><strong>비단조(U자형) 가능</strong>. 산업별 차이가 크다</td>
+</tr>
+<tr>
+<td><strong>규모</strong></td>
+<td>실질 총자산</td>
+<td>하향. 규모가 클수록 부도 위험이 낮다</td>
+</tr>
+<tr>
+<td><strong>부채상환능력</strong></td>
+<td>이자보상배율</td>
+<td>급격히 하향한 뒤 평탄해진다. 임계 수준 아래에서 위험이 급증한다</td>
+</tr>
+<tr>
+<td><strong>성장성</strong></td>
+<td>매출 증가율</td>
+<td>양 극단(급감·급증)이 모두 위험할 수 있다</td>
 </tr>
 </tbody>
 </table>
-<div class="source-ref">출처: Falkenstein et al. (2000), "RiskCalc for Private Companies: Moody's Default Model"</div>
-
-<div class="admonition tip">
-<p class="admonition-title">소매 CSS 실무자를 위한 대응</p>
-<p>위 비교는 소매 CSS에서 "원시 비율 투입 vs WoE 변환 투입"의 성능 차이와 본질적으로 같은 논점이다. WoE 변환도 비모수적 단변량 부도빈도 변환의 일종이며, 구간화(classing)를 통해 이상치와 비선형성을 동시에 처리한다.</p>
+<div class="admonition note">
+<p class="admonition-title">비율의 방향은 정의에 따라 바뀐다</p>
+<p>같은 범주라도 비율의 분자·분모 정의에 따라 방향이 반대가 된다. 예를 들어 레버리지 범주라도 "자기자본/총자산"이나 "이익잉여금/유동부채"처럼 <strong>클수록 건전한</strong> 비율은 하향 곡선이 정상이다. 변수마다 "클수록 위험한가, 안전한가"를 먼저 정의해 두고(2.3절의 expected direction), 곡선을 그 기준으로 검증한다.</p>
 </div>
-<hr>
-<h2 id="22">2.2 재무비율 범주별 변환 특성<a class="headerlink" href="#22" title="Permanent link">¶</a></h2>
-<p>RiskCalc 모델은 재무비율을 수익성, 레버리지, 유동성, 활동성, 규모, 부채상환능력 등의 범주로 구분하며, 각 범주의 비율은 부도확률과 서로 다른 형태의 비선형 관계를 보인다.</p>
-<p><a class="glightbox" data-type="image" data-width="100%" data-height="auto" href="../images/ratio_transform_curves.png" data-desc-position="bottom"><img alt="재무비율 범주별 변환곡선" src="../images/ratio_transform_curves.png"></a></p>
-<p>위 그림은 각 범주별 LOWESS 변환곡선의 전형적인 형태를 개념적으로 보여준다. 가로축은 해당 비율의 백분위, 세로축은 단변량 부도확률 추정값이다.</p>
-<div class="grid cards">
-<ul>
-<li>
-<p>📈 <strong>수익성 (Profitability)</strong></p>
-<hr>
-<p>ROA (Net Income / Assets), Operating Profit / Sales</p>
-<p><em>변환 특성:</em> 하향 기울기, 높은 수익성 구간에서 기울기 완만해짐 → <strong>체감적 위험 감소</strong></p>
-</li>
-<li>
-<p>⚖️ <strong>레버리지 (Leverage)</strong></p>
-<hr>
-<p>Liabilities / Assets, Retained Earnings / Current Liabilities</p>
-<p><em>변환 특성:</em> 상향 기울기(단조 증가), 고레버리지 구간에서 <strong>기울기 급경사</strong></p>
-</li>
-<li>
-<p>💧 <strong>유동성 (Liquidity)</strong></p>
-<hr>
-<p>Cash &amp; Marketable Securities / Assets</p>
-<p><em>변환 특성:</em> 하향 기울기, 일정 수준 이상에서 <strong>평탄화</strong></p>
-</li>
-<li>
-<p>🔄 <strong>활동성 (Activity)</strong></p>
-<hr>
-<p>Inventory / Sales, Change in AR Turnover, Current Liabilities / Sales</p>
-<p><em>변환 특성:</em> <strong>비단조(non-monotonic)</strong> 가능, 산업별 차이 큼</p>
-</li>
-<li>
-<p>🏢 <strong>규모 (Size)</strong></p>
-<hr>
-<p>Real Total Assets (실질 총자산)</p>
-<p><em>변환 특성:</em> 하향 기울기 — <strong>대기업일수록 부도 위험 낮음</strong></p>
-</li>
-<li>
-<p>🛡️ <strong>부채상환능력 (Debt Coverage)</strong></p>
-<hr>
-<p>Cash Flow / Interest Expense, Change in ROA</p>
-<p><em>변환 특성:</em> <strong>급격한 하향 후 평탄화</strong> — 임계 수준 하회 시 위험 급증</p>
-</li>
-</ul>
-</div>
-<div class="source-ref">출처: RiskCalc v3.1 USA (Dwyer et al., 2004), RiskCalc 4.0 France (Moody's Analytics, 2015)</div>
-
 <div class="admonition note">
 <p class="admonition-title">비단조 변환의 의미</p>
-<p>활동성 비율의 비단조(non-monotonic) 패턴은 특히 주목할 만하다. 예를 들어, 재고/매출 비율이 너무 낮으면 공급 부족 위험, 너무 높으면 재고 부실 위험이 있어 <strong>U자형 관계</strong>가 나타날 수 있다. 이런 패턴은 선형 모형이나 단조 WoE로는 포착이 불가능하며, LOWESS의 비모수적 유연성이 빛을 발하는 영역이다.</p>
+<p>활동성 비율의 비단조 패턴은 특히 주목할 만하다. 예를 들어 재고/매출 비율이 너무 낮으면 공급·영업 기반이 약하다는 신호일 수 있고, 너무 높으면 재고 부실 위험이 있어 <strong>U자형 관계</strong>가 나타날 수 있다. 이런 패턴은 선형 모형이나 단조 제약을 건 구간화로는 표현할 수 없으며, LOWESS의 비모수적 유연성이 장점이 되는 영역이다.</p>
 </div>
 <hr>
 <h2 id="23-vs">2.3 단조성을 보장하지 않는다 — 의도된 비단조 vs 잡음 역전<a class="headerlink" href="#23-vs" title="Permanent link">¶</a></h2>
-<p>LOWESS의 <strong>비모수적 유연성</strong>은 양날의 검이다. 활동성 비율처럼 진짜 U자형 관계가 있다면 그것을 반영해주지만, <strong>데이터의 우연한 변동까지 그대로 따라가</strong> 단조였어야 할 변수에서도 작은 역전(reversal)을 만들어낼 수 있다.</p>
+<p>LOWESS의 <strong>비모수적 유연성</strong>은 양날의 검이다. 활동성 비율처럼 진짜 U자형 관계가 있으면 그대로 반영하지만, <strong>데이터의 우연한 변동까지 따라가</strong> 단조였어야 할 변수에서도 작은 역전(reversal)을 만들 수 있다.</p>
 <h3 id="_2">두 종류의 단조성 위반을 구별해야 한다<a class="headerlink" href="#_2" title="Permanent link">¶</a></h3>
 <table>
 <thead>
@@ -5236,40 +5206,45 @@
 </tr>
 <tr>
 <td><strong>잡음으로서의 역전</strong></td>
-<td>tail 구간의 관측치 부족, bad 표본 희소</td>
+<td>꼬리 구간의 관측치 부족, Bad 표본 희소</td>
 <td><strong>제거 또는 평탄화</strong></td>
 </tr>
 </tbody>
 </table>
-<p>차이를 구분하는 핵심은 <strong>expected direction</strong>이다. 변수마다 경제 논리상 기대되는 방향을 사전에 정의해두어야 한다 — 부채비율은 증가, 수익성은 감소, 활동성은 비단조 가능 등.</p>
+<p>둘을 구분하는 핵심은 <strong>기대 방향(expected direction)</strong> 이다. 변수마다 경제 논리상 기대되는 방향을 사전에 정의해 둔다 — 부채비율은 증가, 수익성은 감소, 활동성은 비단조 가능 등.</p>
 <h3 id="_3">단조성 진단 항목<a class="headerlink" href="#_3" title="Permanent link">¶</a></h3>
-<p>LOWESS 곡선을 그린 뒤 다음을 점검한다:</p>
+<p>LOWESS 곡선을 그린 뒤 다음을 점검한다.</p>
 <ul>
-<li><strong>위반 횟수(violation count)</strong>: expected direction과 어긋나는 구간 수</li>
-<li><strong>최대 역전 폭(max reversal size)</strong>: 단일 구간에서 <span class="arithmatex">\(T(x_{j+1}) - T(x_j)\)</span>가 반대 방향으로 가장 크게 튄 크기</li>
+<li><strong>위반 횟수(violation count)</strong>: 기대 방향과 어긋나는 구간 수</li>
+<li><strong>최대 역전 폭(max reversal size)</strong>: 이웃한 평가점 사이 <span class="arithmatex">\(T(x_{j+1}) - T(x_j)\)</span>가 반대 방향으로 가장 크게 튄 크기</li>
 <li><strong>누적 역전 폭(total reversal size)</strong>: 모든 위반의 합</li>
-<li><strong>tail jump</strong>: 양 끝 구간에서의 급격한 점프 — 관측치 부족의 가장 흔한 증상</li>
-<li><strong>경제적 설명 가능성</strong>: 위반 구간이 사후적으로 산업 사이클, 회계 이슈 등으로 설명되는지</li>
+<li><strong>꼬리 점프(tail jump)</strong>: 양 끝 구간에서의 급격한 점프 — 관측치 부족의 가장 흔한 증상</li>
+<li><strong>경제적 설명 가능성</strong>: 위반 구간이 산업 사이클, 회계 이슈 등으로 설명되는지</li>
 </ul>
 <h3 id="4_1">처리 정책의 4단계<a class="headerlink" href="#4_1" title="Permanent link">¶</a></h3>
-<p>위반이 잡음으로 판정되면, 가벼운 순서부터 점진적으로 적용한다:</p>
+<p>위반이 잡음으로 판정되면 가벼운 순서부터 적용한다.</p>
 <ol>
 <li><strong>허용 + 기록</strong> — 위반 폭이 무의미하게 작으면 그대로 두고 검증 보고서에 기록</li>
-<li><strong>bandwidth 확대</strong> — <span class="arithmatex">\(f\)</span>를 키워 smoothing을 더 강하게 → tail 잡음 흡수</li>
-<li><strong>구간 수 축소</strong> — percentile 구간을 더 굵게 잡아 표본 부족 자체를 해소</li>
-<li><strong>Isotonic regression 후처리</strong> — 위 셋으로 안 풀리면 단조 보정을 강제 적용</li>
+<li><strong>대역폭 확대</strong> — <span class="arithmatex">\(f\)</span>를 키워 평활을 강하게 → 꼬리 잡음 흡수</li>
+<li><strong>구간 수 축소</strong> — 백분위 구간을 굵게 잡아 구간당 표본 부족 자체를 해소. 단, 구간 정의가 바뀌면 lookup table 좌표도 바뀌므로 이전 버전 곡선과의 비교 방법을 함께 정한다</li>
+<li><strong>Isotonic regression 후처리</strong> — 위 셋으로 해결되지 않으면 단조 보정을 강제 적용</li>
 </ol>
 <div class="admonition tip">
-<p class="admonition-title">단조 보정이 필요한 경우의 적용 순서</p>
-<p>단조 후처리를 적용한다면 <strong>순서가 중요하다</strong>. 권장 순서는 다음과 같다:</p>
+<p class="admonition-title">단조 보정을 적용할 때의 순서와 이유</p>
+<p>권장 순서는 다음과 같다.</p>
 <div class="arithmatex">\[
-\text{LOWESS } \hat{y} \;\rightarrow\; \text{clip}([0,1]) \;\rightarrow\; \text{monotonic projection} \;\rightarrow\; \text{final clip}
+\text{LOWESS } \hat{y} \;\rightarrow\; \text{clip}([p_{\min}, p_{\max}]) \;\rightarrow\; \text{가중 isotonic 회귀} \tag{1}
 \]</div>
-<p>먼저 cap으로 확률 범위를 잡고, 그 위에서 단조 투영을 수행한 뒤, 투영 결과가 다시 <span class="arithmatex">\([0, 1]\)</span>을 벗어났을 가능성에 대비해 한 번 더 clip을 거는 방식이다. 순서를 바꾸면 — 예를 들어 단조 투영을 먼저 하고 clip을 나중에 하면 — clip이 단조성을 깰 수 있어 의미가 없어진다.</p>
+<ul>
+<li><strong>clip을 먼저 하는 이유</strong>: Isotonic 회귀(PAVA 알고리즘)는 순서가 어긋난 이웃 값들을 <strong>평균으로 합쳐</strong> 단조로 만든다. 범위를 벗어난 값(예: 꼬리의 음수 추정값)이 남아 있으면 이 평균을 끌어내려 주변 정상 구간까지 왜곡한다. 그래서 확률 범위로 먼저 잘라 둔다.</li>
+<li><strong>isotonic 후 다시 clip할 필요는 없다</strong>: Isotonic 회귀의 결과는 입력값들의 가중평균이므로 입력의 최솟값~최댓값 범위를 벗어나지 않는다. clip된 입력이면 결과도 이미 범위 안이다.</li>
+<li><strong>순서를 바꿔도 단조성은 깨지지 않는다</strong>: clip은 단조 비감소 함수이므로 단조 수열에 적용해도 순서가 유지된다. 순서가 중요한 이유는 단조성이 아니라 위의 <strong>평균 왜곡</strong> 때문이다.</li>
+<li><strong>가중치</strong>: Isotonic 회귀에는 구간 표본 수 <span class="arithmatex">\(n_{\text{obs}}\)</span>를 가중치로 준다. 표본이 많은 구간의 추정값이 덜 움직여야 하기 때문이다.</li>
+</ul>
 </div>
 <div class="admonition warning">
 <p class="admonition-title">투명성 원칙과의 연결</p>
-<p><a href="../riskcalc/">RiskCalc 사상 절</a>에서 다룬 Moody's의 <strong>투명성(transparency) 원칙</strong> — <em>"레버리지가 증가했는데 부도 위험이 감소하는 것은 직관에 반한다"</em> — 이 바로 단조성 검증을 요구하는 근거다. 비모수의 유연성은 사상의 일관성과 충돌할 수 있고, 이 충돌을 다루는 방법이 위 4단계 정책이다. 결국 미니모델링은 <strong>데이터에 맡길 부분과 사상으로 통제할 부분을 명시적으로 분리</strong>하는 작업이다.</p>
+<p><a href="../riskcalc/">RiskCalc 사상 절</a>에서 다룬 <strong>투명성 원칙</strong> — "레버리지가 증가했는데 부도 위험이 감소하는 것은 직관에 반한다" — 이 단조성 검증을 요구하는 근거다. 비모수의 유연성은 이 원칙과 충돌할 수 있고, 그 충돌을 다루는 방법이 위 4단계 정책이다. 결국 미니모델링은 <strong>데이터에 맡길 부분과 사전 원칙으로 통제할 부분을 명시적으로 나누는</strong> 작업이다.</p>
 </div>
 
 

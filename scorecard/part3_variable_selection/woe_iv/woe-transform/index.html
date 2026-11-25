@@ -1366,7 +1366,7 @@
   <a href="#23-woe" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2.3 WoE 변환이 선형성 가정을 자동으로 충족시키는 이유
+        2.3 WoE 변환과 선형성 가정 — 단변량에서는 자동으로 성립한다
       
     </span>
   </a>
@@ -5113,13 +5113,13 @@
 
 <h1 id="x-woe">X → WoE 공간 변환<a class="headerlink" href="#x-woe" title="Permanent link">¶</a></h1>
 <h2 id="21">2.1 두 공간의 차이<a class="headerlink" href="#21" title="Permanent link">¶</a></h2>
-<p>연속형 <span class="arithmatex">\(x\)</span>(매출액, 억원)는 불균일하게 분포된 원래 공간에 있다. WoE 변환은 이 공간을 <strong>log-odds 단위의 균일한 변별력 공간</strong>으로 재배열한다.</p>
+<p>연속형 <span class="arithmatex">\(x\)</span>(매출액, 억원)는 불균일하게 분포된 원래 공간에 있다. WoE 변환은 각 값을 그 구간의 <strong>log-odds 수준</strong>으로 바꿔, 축의 거리가 "위험 차이"를 뜻하도록 공간을 재배열한다.</p>
 <div class="grid">
 <p><a class="glightbox" data-type="image" data-width="100%" data-height="auto" href="../images/x_space_scatter.png" data-desc-position="bottom"><img alt="X 공간 — 원래 매출액 값" src="../images/x_space_scatter.png"></a></p>
 <p><a class="glightbox" data-type="image" data-width="100%" data-height="auto" href="../images/woe_space_scatter.png" data-desc-position="bottom"><img alt="WoE 공간 — 변환 후" src="../images/woe_space_scatter.png"></a></p>
 </div>
 <blockquote>
-<p><strong>X 공간: 불균일 간격</strong> ⟶ <strong>WoE 공간: 균일 변별력 간격</strong></p>
+<p><strong>X 공간: 금액 단위 간격</strong> ⟶ <strong>WoE 공간: log-odds(위험) 단위 간격</strong></p>
 </blockquote>
 <div class="admonition note">
 <p class="admonition-title">핵심 직관</p>
@@ -5207,13 +5207,13 @@
 <td>1개 변수 (단일 연속형)</td>
 </tr>
 <tr>
-<td><strong>변수 간 순서 정보</strong></td>
-<td>없음 (Bin 간 관계 모름)</td>
+<td><strong>Bin 간 순서 정보</strong></td>
+<td>없음 (Bin 간 관계를 모형이 따로 추정)</td>
 <td>있음 (WoE가 크면 더 우량)</td>
 </tr>
 <tr>
 <td><strong>로지스틱 회귀 해석</strong></td>
-<td>각 Bin별 계수 5개 필요</td>
+<td>Bin별 계수 필요 (절편 포함 시 기준 Bin을 뺀 4개, 절편 제외 시 5개)</td>
 <td>계수 1개로 해석 가능</td>
 </tr>
 </tbody>
@@ -5264,23 +5264,28 @@
 <div class="arithmatex">\[
 \ln\!\left(\frac{p}{1-p}\right) = \beta_0 + \underbrace{\beta_{\text{매출액}} \times \mathbf{0.85}}_{\text{WoE 단일 계수}} + \cdots
 \]</div>
+<p><span class="arithmatex">\(p\)</span> = 불량 확률(Bad logit)이고 WoE가 클수록 우량이므로, 정상적인 <span class="arithmatex">\(\beta_{\text{매출액}}\)</span>은 <strong>음수</strong>다(단변량에서는 정확히 −1).</p>
 </div>
 <div class="admonition success">
 <p class="admonition-title">결론</p>
 <p>X → WoE 변환은 연속형 변수를 <strong>"Bin의 변별력 크기"라는 하나의 숫자</strong>로 표현한다. Dummy처럼 여러 열로 분해하지 않으며, Bin 간의 서열(위험도 순서)이 WoE 값의 크고 작음으로 자동 반영된다.</p>
 </div>
 <hr>
-<h2 id="23-woe">2.3 WoE 변환이 선형성 가정을 자동으로 충족시키는 이유<a class="headerlink" href="#23-woe" title="Permanent link">¶</a></h2>
+<h2 id="23-woe">2.3 WoE 변환과 선형성 가정 — 단변량에서는 자동으로 성립한다<a class="headerlink" href="#23-woe" title="Permanent link">¶</a></h2>
 <p>로지스틱 회귀는 <strong>logit(p)과 독립변수 X 사이의 선형 관계</strong>를 가정한다. 원래 매출액 같은 연속형 변수는 logit과의 관계가 비선형일 수 있어, 이 가정이 위반될 위험이 있다.</p>
-<p>WoE 변환은 이 문제를 구조적으로 해결한다:</p>
+<p>WoE 변환은 이 문제를 <strong>변수 하나만 볼 때는</strong> 구조적으로 해결한다.</p>
 <ol>
-<li>WoE 자체가 <strong>log-odds 단위</strong>(= logit과 동일한 스케일)로 정의되어 있다</li>
-<li>WoE를 독립변수로 투입하면, logit과 독립변수가 <strong>같은 척도</strong>에 있으므로 선형 관계가 자동으로 성립</li>
-<li><a href="../../univariate_lr/beta-woe-proof/">β ≈ −WoE 증명</a>에서 보듯이, y=1=Bad에서 WoE 치환 후 단일 변수 회귀를 수행하면 <span class="arithmatex">\(\hat{\beta} \to -1\)</span>로 수렴 — WoE가 증가하면 Bad log-odds가 감소하는 1:1 역비례 관계임을 의미</li>
+<li>WoE 자체가 <strong>log-odds 단위</strong>(logit과 같은 척도)로 정의되어 있다. 각 Bin의 Bad logit은 정확히 <span class="arithmatex">\(-\text{WoE}_i + \ln(N_B/N_G)\)</span>이다.</li>
+<li>따라서 WoE를 독립변수로 넣으면 Bin별 실제 logit이 <strong>기울기 −1인 직선 위에 정확히 놓인다</strong>. 선형 관계가 자동으로 성립한다.</li>
+<li><a href="../../univariate_lr/beta-woe-proof/">β = −WoE 관계 증명</a>에서 보듯이, y=1=Bad에서 WoE 치환 후 단변량 회귀를 하면 <span class="arithmatex">\(\hat{\beta} = -1\)</span>, <span class="arithmatex">\(\hat{\beta}_0 = \ln(N_B/N_G)\)</span>가 <strong>정확히</strong>(근사가 아니라 닫힌 해로) 나온다.</li>
 </ol>
+<div class="admonition warning">
+<p class="admonition-title">다변량·검증 표본에서는 보장되지 않는다</p>
+<p>위 성질은 개발 표본에서 변수 하나만 적합할 때의 이야기다. 여러 WoE 변수를 함께 넣으면 변수 간 상관 때문에 β가 −1에서 벗어나고(<a href="../../../part4_modeling/multivariate-regression/">다변량 회귀</a>), 검증 표본에서는 Bin별 실제 logit이 직선에서 벗어날 수 있다. 그래서 "WoE를 썼으니 선형성은 끝났다"가 아니라, 다변량 β와 검증 표본에서의 관계를 따로 점검해야 한다.</p>
+</div>
 <div class="admonition note">
 <p class="admonition-title">원래 X를 직접 투입하면?</p>
-<p>매출액(원래 값)을 WoE 변환 없이 직접 로지스틱 회귀에 투입하면, 매출액 1억 → 2억의 logit 변화와 10억 → 20억의 logit 변화가 동일하다고 가정하게 된다. 이는 비현실적이다. WoE 변환은 이러한 <strong>비선형적 리스크 구조를 선형 공간으로 재매핑</strong>하는 역할을 한다.</p>
+<p>매출액(원래 값)을 WoE 변환 없이 그대로 로지스틱 회귀에 넣으면, <strong>같은 금액 차이에는 같은 logit 변화</strong>가 생긴다고 가정하게 된다. 즉 매출액 1억 → 2억의 변화와 49억 → 50억의 변화가 위험에 똑같은 영향을 준다고 보는 셈이다. 실제로는 소규모 구간의 1억 차이가 대규모 구간의 1억 차이보다 훨씬 큰 의미를 갖는다(위 표에서 1억 미만 → 1억~5억 사이 WoE가 1.28 오르지만, 10억~50억 → 50억 초과 사이는 0.07 오른다). WoE 변환은 이런 <strong>비선형적 리스크 구조를 선형 공간으로 재매핑</strong>한다.</p>
 </div>
 
 

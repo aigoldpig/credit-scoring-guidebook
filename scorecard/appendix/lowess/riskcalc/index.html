@@ -5102,63 +5102,64 @@
 
 <h1 id="riskcalc">RiskCalc 프로세스와 미니모델링의 사상<a class="headerlink" href="#riskcalc" title="Permanent link">¶</a></h1>
 <h2 id="11-riskcalc">1.1 RiskCalc에서의 변환 구조<a class="headerlink" href="#11-riskcalc" title="Permanent link">¶</a></h2>
-<p>RiskCalc에서 미니모델링은 단일 재무비율 <span class="arithmatex">\(x\)</span>를 단변량 부도확률 <span class="arithmatex">\(T(x)\)</span>로 변환하는 과정이다:</p>
+<p>미니모델링은 단일 재무비율 <span class="arithmatex">\(x\)</span>를 단변량 부도확률 <span class="arithmatex">\(T(x)\)</span>로 바꾸는 과정이다.</p>
 <div class="arithmatex">\[
-T(x) = \Pr(\text{default} \mid x) \tag{B.4}
+T(x) = \Pr(\text{default} \mid x) \tag{1}
 \]</div>
-<p>즉, 재무비율 <span class="arithmatex">\(x\)</span>만을 단독으로 사용했을 때의 부도확률 추정값이다. 이 변환은 LOWESS 등 비모수 기법으로 <strong>경험적으로</strong> 추정된다.</p>
-<h3 id="riskcalc-40">변환의 구체적 절차 (RiskCalc 4.0 기준)<a class="headerlink" href="#riskcalc-40" title="Permanent link">¶</a></h3>
-<p>RiskCalc 4.0 France 방법론 문서에 상세히 기술된 절차에 따르면:</p>
+<p>즉 재무비율 <span class="arithmatex">\(x\)</span> 하나만 썼을 때의 부도확률 추정값이다. 이 변환은 함수 형태를 미리 정하지 않고 LOWESS 같은 비모수 기법으로 <strong>데이터에서 직접</strong> 추정한다.</p>
+<h3 id="_1">변환의 구체적 절차<a class="headerlink" href="#_1" title="Permanent link">¶</a></h3>
+<p>이 부록은 다음 절차로 변환을 정리한다.</p>
 <ol>
-<li><strong>변수 선정</strong> 후 각 변수를 <strong>예비적 단변량 EDF 값</strong>으로 변환한다</li>
-<li>변환 그래프의 <strong>가로축</strong>은 해당 비율의 <strong>백분위 점수(percentile score)</strong></li>
-<li><strong>세로축</strong>은 그 비율 단독의 <strong>부도확률</strong></li>
-<li>백분위 점수란 데이터베이스에서 해당 기업보다 낮은 비율을 가진 기업의 비중</li>
+<li><strong>변수 선정</strong> 후 각 변수를 <strong>단변량 부도확률(예비 EDF)</strong> 로 변환한다.</li>
+<li>변환 곡선의 <strong>가로축</strong>은 해당 비율의 <strong>백분위(percentile)</strong> 다.</li>
+<li><strong>세로축</strong>은 그 비율만으로 추정한 <strong>부도확률</strong>이다.</li>
+<li>백분위는 기준 모집단에서 해당 기업보다 비율이 낮은 기업의 비중이다.</li>
 </ol>
 <div class="admonition success">
 <p class="admonition-title">변환곡선의 해석</p>
-<p>변환 곡선의 <strong>기울기가 가파르면</strong> 비율의 작은 변화가 EDF에 큰 영향을 미치고, <strong>평탄하면</strong> 영향이 작다. 이것이 미니모델링의 핵심 산출물이다.</p>
+<p>변환 곡선의 <strong>기울기가 가파르면</strong> 비율의 작은 변화가 부도확률에 큰 영향을 미치고, <strong>평탄하면</strong> 영향이 작다. 이 곡선이 미니모델링의 핵심 산출물이다.</p>
 </div>
 <h3 id="percentile">왜 백분위(Percentile) 변환을 먼저 하는가<a class="headerlink" href="#percentile" title="Permanent link">¶</a></h3>
-<p>원시 비율값은 산업, 규모, 회계기준에 따라 분포가 극단적으로 다르다. 백분위 변환은 이질적인 비율값들을 <strong>0~100의 균일 척도로 정규화</strong>하여, 이후 LOWESS가 안정적으로 작동할 수 있는 기반을 만든다. 이것은 단순 순위변환이 아니라 <strong>모집단 대비 상대적 위치</strong>를 반영하는 방식이다.</p>
+<p>원시 비율값은 산업·규모·회계기준에 따라 분포가 크게 다르고, 꼬리가 길어 극단값이 많다. 백분위 변환은 이런 비율들을 <strong>0~100의 균일 척도</strong>로 바꿔, 이후 LOWESS의 이웃 선택(백분위 거리)이 안정적으로 작동하게 한다. 극단값도 백분위 0 또는 100 근처로 눌리므로 영향력이 제한된다. 단순한 순위 번호가 아니라 <strong>기준 모집단 안에서의 상대 위치</strong>라는 점이 중요하다.</p>
 <div class="admonition example">
-<p class="admonition-title">예시 — 같은 부채비율 50%, 산업이 다르면 의미가 다르다</p>
-<p>가상의 두 산업 모집단을 비교해보자. 두 산업 모두 부채비율의 분포가 다르고, 같은 raw 50%가 산업 안에서 차지하는 위치도 다르다.</p>
+<p class="admonition-title">예시 — 같은 부채비율 50%, 산업이 다르면 위치가 다르다</p>
+<p>가상의 두 산업 모집단을 비교해 보자.</p>
 <table>
 <thead>
 <tr>
 <th>산업</th>
-<th style="text-align: center;">부채비율 분포 (5/50/95 percentile)</th>
-<th style="text-align: center;">raw 50%의 산업 내 percentile</th>
+<th style="text-align: center;">부채비율 분포 (5 / 50 / 95 백분위)</th>
+<th style="text-align: center;">raw 50%의 산업 내 백분위</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>제조업</strong> (자산 회전이 빠른 업종)</td>
-<td style="text-align: center;">20% / 40% / 80%</td>
-<td style="text-align: center;">약 65 (높은 편)</td>
+<td><strong>제조업</strong></td>
+<td style="text-align: center;">20% / 75% / 200%</td>
+<td style="text-align: center;">약 30 (낮은 편)</td>
 </tr>
 <tr>
-<td><strong>부동산임대업</strong> (자본구조가 무거운 업종)</td>
-<td style="text-align: center;">60% / 120% / 250%</td>
-<td style="text-align: center;">약 12 (낮은 편)</td>
+<td><strong>부동산임대업</strong> (자본구조상 부채가 많은 업종)</td>
+<td style="text-align: center;">60% / 150% / 400%</td>
+<td style="text-align: center;">5 미만 (매우 낮은 편)</td>
 </tr>
 </tbody>
 </table>
-<p>raw 부채비율 50%인 같은 차주라도, 제조업 안에서는 <strong>상위 35% 부도위험권</strong>에, 부동산업 안에서는 <strong>하위 12% 안전권</strong>에 위치한다. raw 비율을 그대로 다변량 모형에 넣으면 이 산업별 의미 차이가 사라지고, 부채비율 50%가 어느 산업이든 같은 위험으로 취급되는 왜곡이 발생한다.</p>
-<p>백분위 변환은 이 산업·규모 효과를 <strong>각 산업 분포 <span class="arithmatex">\(F_X^{\text{ind}}\)</span> 안에서 흡수</strong>한 뒤 LOWESS에 넘긴다. 그 결과 LOWESS가 학습하는 곡선은 "<strong>산업 정규화된 percentile 위치</strong>가 부도확률에 미치는 영향"이 되며, raw 비율의 산업별 편차에 휘둘리지 않는다.</p>
+<p>부채비율 50%는 제조업 안에서는 중앙값(75%)보다 낮은 <strong>백분위 약 30</strong>이다. 부동산임대업에서는 하위 5% 경계(60%)보다도 낮으므로 <strong>백분위 5 미만</strong>이다. 같은 raw 50%라도 산업 안에서의 위치가 전혀 다르다. 이 제조업 사례가 이 부록 전체의 연속 예시(제조업 외감기업 A, 백분위 30)다.</p>
 <div class="highlight"><pre><span></span><code>raw 부채비율 50%
     │
-    ├─ (제조업 분포 F_X 적용) ──→ percentile 65
+    ├─ (제조업 분포 F_X 적용) ──→ 백분위 약 30
     │
-    └─ (부동산업 분포 F_X 적용) ─→ percentile 12
-
-각 percentile이 LOWESS 변환곡선에 들어가 서로 다른 T(x)를 반환
+    └─ (부동산임대업 분포 F_X 적용) ─→ 백분위 5 미만
 </code></pre></div>
-<p><a href="../intuition/">직관적 이해 페이지</a>의 "운영 lookup이 raw 비율 → <span class="arithmatex">\(T\)</span> 단일 매핑으로 합성된다"는 함의가 여기서 분명해진다 — 산업·규모별로 분포 <span class="arithmatex">\(F_X\)</span>가 다르므로, <strong>합성된 lookup도 산업별로 별도</strong>로 빌드된다. RiskCalc가 25개 지역·산업별 모델을 운영하는 구조적 이유가 이것이다.</p>
+<p>백분위를 <strong>산업별 분포</strong> <span class="arithmatex">\(F_X^{\text{ind}}\)</span>로 계산하면 LOWESS가 학습하는 곡선은 "산업 안에서의 상대 위치가 부도확률에 미치는 영향"이 되어, raw 비율의 산업 간 수준 차이에 휘둘리지 않는다. 이 경우 <a href="../intuition/">직관적 이해</a>에서 다루는 "raw 비율 → <span class="arithmatex">\(T\)</span>" 합성 lookup도 산업별로 따로 만들어진다.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">산업별 백분위의 대가</p>
+<p>산업 안에서 백분위를 매기면 <strong>산업 간 실제 위험 차이까지 지워질 수 있다.</strong> 예를 들어 부채비율이 구조적으로 높고 실제 부도율도 높은 업종이 있다면, 산업 내 백분위로는 그 업종의 높은 위험이 드러나지 않는다. 그래서 백분위를 산업별로 쓸 때는 다변량 단계에서 산업 효과(업종 더미, 산업 조정 등)를 별도로 반영해야 한다. 전체 모집단 기준 백분위를 쓰고 산업 효과를 모형에서 따로 다루는 설계도 가능하며, 어느 쪽이든 선택 근거를 문서화한다.</p>
 </div>
 <h3 id="x">구간의 대표값 — x좌표를 어떻게 잡을 것인가<a class="headerlink" href="#x" title="Permanent link">¶</a></h3>
-<p>백분위 변환 이후 구간을 정의하면, 각 구간은 percentile 축 위에서 <strong>하나의 폭</strong>으로 존재한다(예: 78%~80%). LOWESS는 연속적인 <span class="arithmatex">\(x\)</span> 좌표 위에서 작동하므로, 구간을 점 하나로 대표할 <span class="arithmatex">\(x\)</span>값이 필요하다. 후보는 세 가지다.</p>
+<p>백분위 변환 이후 구간을 정의하면, 각 구간은 백분위 축 위에서 <strong>폭</strong>을 가진다(예: 28~32). LOWESS는 연속적인 <span class="arithmatex">\(x\)</span> 좌표 위에서 작동하므로 구간을 점 하나로 대표할 <span class="arithmatex">\(x\)</span>값이 필요하다. 후보는 세 가지다.</p>
 <table>
 <thead>
 <tr>
@@ -5175,40 +5176,40 @@ T(x) = \Pr(\text{default} \mid x) \tag{B.4}
 </tr>
 <tr>
 <td><strong>관측치 평균</strong> <span class="arithmatex">\(p_{\text{mean}}\)</span></td>
-<td>구간 내 관측치의 percentile 평균</td>
-<td>구간 내 분포가 한쪽으로 쏠려 있을 때 그 쏠림을 반영</td>
+<td>구간 내 관측치의 백분위 평균</td>
+<td>구간 내 분포가 한쪽으로 쏠리면 그 쏠림을 반영</td>
 </tr>
 <tr>
 <td><strong>관측치 중앙값</strong> <span class="arithmatex">\(p_{\text{median}}\)</span></td>
-<td>구간 내 관측치의 percentile 중앙값</td>
+<td>구간 내 관측치의 백분위 중앙값</td>
 <td>평균보다 이상치에 강건</td>
 </tr>
 </tbody>
 </table>
-<p>실무 권장은 <strong><span class="arithmatex">\(p_{\text{mid}}\)</span>를 기본</strong>으로 채택하는 것이다. 이유는 두 가지다 — (1) 구간 경계만으로 결정되므로 데이터가 바뀌어도 lookup table의 <span class="arithmatex">\(x\)</span> 좌표가 흔들리지 않아 운영·감사가 용이하고, (2) 차후 walk-forward 검증에서 시간 단면 간 곡선을 비교할 때 좌표 일관성이 유지된다. 다만 진단 목적으로 <span class="arithmatex">\(p_{\text{mean}}\)</span>, <span class="arithmatex">\(p_{\text{median}}\)</span>을 함께 기록해두면, 구간 내 쏠림이 큰 경우 좌표 선택이 곡선 형태에 미치는 영향을 사후 점검할 수 있다.</p>
+<p>실무에서는 <strong><span class="arithmatex">\(p_{\text{mid}}\)</span>를 기본</strong>으로 권한다. (1) 구간 경계만으로 결정되므로 데이터가 바뀌어도 lookup table의 <span class="arithmatex">\(x\)</span> 좌표가 흔들리지 않아 운영·감사가 쉽고, (2) 재추정 시점마다 곡선을 비교할 때 좌표가 일관된다. 이 부록의 예시도 폭 4인 구간의 중점(2, 6, …, 98)을 쓴다. 진단 목적으로 <span class="arithmatex">\(p_{\text{mean}}\)</span>, <span class="arithmatex">\(p_{\text{median}}\)</span>을 함께 기록해 두면 구간 내 쏠림이 클 때 좌표 선택이 곡선에 주는 영향을 점검할 수 있다.</p>
+<div class="admonition note">
+<p class="admonition-title">Walk-forward 검증</p>
+<p>이후 페이지에 나오는 walk-forward 검증은 "어떤 시점까지의 데이터로 모형(곡선)을 만들고, 그 다음 기간에서 성과를 확인한 뒤, 기준 시점을 앞으로 옮겨 반복하는" 시간 순서 검증이다. 과거 데이터로 미래를 예측하는 실제 운영 상황을 흉내 내므로, 무작위 분할 검증보다 시간 안정성을 더 엄격하게 본다.</p>
+</div>
 <hr>
 <h2 id="12">1.2 사상(思想): 왜 비모수적 변환인가<a class="headerlink" href="#12" title="Permanent link">¶</a></h2>
-<p>미니모델링이라는 접근법의 기저에는 세 가지 핵심 사상이 있다.</p>
+<p>미니모델링이라는 접근법의 바탕에는 세 가지 생각이 있다.</p>
 <h3 id="1">사상 1 — 재무비율과 부도 간 관계는 본질적으로 비선형이다<a class="headerlink" href="#1" title="Permanent link">¶</a></h3>
-<p>부채비율이 30%에서 40%로 증가할 때의 부도 위험 변화와, 80%에서 90%로 증가할 때의 변화는 같지 않다. 수익성이 마이너스에서 0으로 전환될 때의 위험 감소와, 10%에서 20%로 개선될 때의 감소도 동일하지 않다.</p>
-<p>이런 비선형성을 <strong>선형 모형이나 2차항(quadratic term) 추가로는 충분히 포착할 수 없다</strong>.</p>
-<div class="admonition quote">
-<p class="admonition-title">Moody's의 견해</p>
-<p>Moody's RiskCalc v3.1 기술 문서에서는 이 비선형 관계를 단순히 2차항을 포함시키는 것으로 쉽게 포착할 수 없다고 명시하고 있다. 실제로 Falkenstein et al.(2000)의 실증 분석에서, 단변량 부도빈도 변환을 사용한 RiskCalc 방식이 백분위 변환이나 비율 수준 절단(truncation) 방식보다 <strong>표본 외(out-of-sample) 강건성에서 유의하게 우월</strong>했다.</p>
-</div>
+<p>부채비율이 30%에서 40%로 오를 때의 위험 변화와 80%에서 90%로 오를 때의 변화는 같지 않다. 수익성이 마이너스에서 0으로 바뀔 때의 위험 감소와 10%에서 20%로 개선될 때의 감소도 다르다.</p>
+<p>이런 비선형성은 선형 모형으로는 포착되지 않고, 2차항을 추가해도 "한쪽 끝에서 급변하고 반대쪽에서는 평탄한" 형태를 충분히 표현하기 어렵다. 2차 함수는 꼭짓점을 기준으로 좌우 대칭이고 양 끝으로 갈수록 무한히 커지기 때문이다. 비모수 변환은 이런 형태 제약 없이 데이터가 보여주는 곡선을 그대로 쓴다.</p>
 <h3 id="2">사상 2 — 비선형성을 포착하되 투명성을 유지해야 한다<a class="headerlink" href="#2" title="Permanent link">¶</a></h3>
-<p>신경망(neural network)이나 회귀트리(regression tree)도 비선형성을 포착할 수 있다. 그러나 Moody's는 입력 변수의 변화가 산출에 어떤 영향을 미치는지 사용자가 <strong>명확히 이해할 수 있어야 한다</strong>는 <strong>투명성(transparency)</strong> 원칙을 고수한다.</p>
+<p>신경망이나 회귀트리도 비선형성을 포착할 수 있다. 그러나 신용평가 모형은 입력 변수의 변화가 산출에 어떤 영향을 미치는지 사용자가 <strong>명확히 이해할 수 있어야 한다</strong>는 <strong>투명성(transparency)</strong> 요구를 받는다.</p>
 <div class="admonition warning">
 <p class="admonition-title">투명성 원칙</p>
-<p>RiskCalc v3.1 문서에 따르면, Moody's는 입력 변수의 변화가 왜 EDF의 변화를 초래했는지가 사용자에게 명확한 모형을 "투명한(transparent)" 모형으로 정의한다. 예컨대 <strong>레버리지가 증가했는데 부도 위험이 감소하는 것은 직관에 반하며</strong>, 단조 증가(monotonically increasing) 변환을 검증함으로써 이런 비합리적 결과를 사전에 차단할 수 있다.</p>
+<p>입력 변수의 변화가 왜 부도확률의 변화를 일으켰는지 사용자가 이해할 수 있어야 한다. 예컨대 <strong>레버리지가 증가했는데 부도 위험이 감소하는 것은 직관에 반하며</strong>, 변환곡선이 기대 방향(레버리지라면 단조 증가)을 따르는지 검증함으로써 이런 비합리적 결과를 사전에 걸러낼 수 있다.</p>
 </div>
-<p>미니모델링은 이 두 요구 — <strong>비선형성 포착</strong>과 <strong>투명성</strong> — 의 균형점이다. 각 비율별 변환곡선을 개별적으로 시각화·검증할 수 있으므로, 블랙박스 모형과 달리 <strong>모형의 경제적 합리성을 항목 단위로 확인</strong> 가능하다.</p>
+<p>미니모델링은 이 두 요구 — <strong>비선형성 포착</strong>과 <strong>투명성</strong> — 의 균형점이다. 비율별 변환곡선을 하나씩 그려 검증할 수 있으므로, 블랙박스 모형과 달리 <strong>모형의 경제적 합리성을 항목 단위로 확인</strong>할 수 있다.</p>
 <h3 id="3-parsimony">사상 3 — 간결성(Parsimony) 우선<a class="headerlink" href="#3-parsimony" title="Permanent link">¶</a></h3>
-<p>Moody's는 모형의 크기를 작게 유지하고, 단변량 및 다변량 맥락에서 통계적 예측력을 입증할 수 없는 변수는 포함시키지 않는 것을 원칙으로 삼는다.</p>
-<p>RiskCalc 초기 모형은 <strong>17개 기본 입력에서 도출된 10개 재무비율</strong>만으로 구성되었다. 이 간결함의 기반이 미니모델링 — <strong>적은 수의 변수로부터 최대한의 정보를 추출하는 변환</strong> — 에 있다.</p>
+<p>모형의 크기를 작게 유지하고, 단변량과 다변량 양쪽에서 예측력을 입증하지 못한 변수는 넣지 않는다.</p>
+<p>RiskCalc의 초기 미국 비상장기업 모형은 <strong>17개 기본 재무 항목에서 계산한 10개 재무비율·지표</strong>로 구성되었다(Falkenstein, Boral &amp; Carty, 2000). 적은 변수로 성능을 내는 바탕에는 각 변수에서 최대한의 정보를 끌어내는 변환이 있다.</p>
 <div class="admonition tip">
 <p class="admonition-title">소매 CSS와의 대응</p>
-<p>본 가이드북의 단변량 로지스틱 회귀 섹션에서 다룬 소매 방식도 같은 사상을 공유한다. WoE 변환이 비선형성을 포착하고, 변환곡선(WoE 패턴)으로 투명성을 확보하며, IV 기반 변수 선별로 간결성을 유지한다. LOWESS와 WoE는 기법은 다르지만 <strong>철학적 뿌리가 같다</strong>.</p>
+<p>본문 <a href="../../../part3_variable_selection/univariate_lr/">단변량 로지스틱 회귀</a>에서 다룬 소매 방식도 같은 생각을 공유한다. WoE 변환이 비선형성을 포착하고, 변환 패턴(구간별 WoE)으로 투명성을 확보하며, IV 기반 변수 선별로 간결성을 유지한다. LOWESS와 WoE는 기법은 다르지만 <strong>철학적 뿌리가 같다</strong>.</p>
 </div>
 
 
