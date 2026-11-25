@@ -13,8 +13,8 @@ title: 개요
 | 1 | [왜 ML인가](why_ml.md) | 전통 스코어카드의 한계, ML의 해법, 트리 앙상블이 tabular에 강한 이유, 규제 환경 |
 | 2 | [Bias-Variance Tradeoff](bias_variance.md) | EPE 분해, 멍청한/똑똑한 모형, 모형 복잡도와 Tradeoff |
 | 3 | [정규화 — Ridge · Lasso · Shrinkage](regularization.md) | L1/L2 정규화, Elastic Net, Shrinkage Path, 트리·뉴럴넷 확장 |
-| 4 | [Baseline 워크플로우](baseline_workflow.md) | LR·RF로 성능 하한/상한 파악, 비선형성 진단 |
-| 5 | [데이터 분리 전략](data_splitting.md) | OOS/Hold-out/CV 구조, 층화추출, Bias-Variance 진단, OOT |
+| 4 | [Baseline 워크플로우](baseline_workflow.md) | 원시 LR·WoE LR·RF·GBM 기준선, 격차로 비선형·교호작용 진단 |
+| 5 | [데이터 분리 전략](data_splitting.md) | Dev/Holdout/OOT 구조, 고객 단위 분할, 층화추출, CV, Bias-Variance 진단 |
 | 6 | [피처 전처리](feature_preprocessing.md) | 전통 vs 트리 비교, 스케일링 불필요 이유, 범주형 인코딩, 결측치, 이상치 |
 | 7 | [피처 선택 · 파생변수](feature_selection.md) | Feature Importance, Permutation, SHAP, Boruta, 도메인 기반 파생변수 |
 

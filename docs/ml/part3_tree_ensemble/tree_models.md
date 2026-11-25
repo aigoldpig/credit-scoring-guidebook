@@ -9,7 +9,7 @@
 
 ## 1.1 CART (Classification And Regression Trees)
 
-Decision Tree 알고리즘 중 가장 대표적인 것이 **CART**다. Leo Breiman이 1984년에 제안했으며, 이후 Bagging, Random Forest, Boosting 등 모든 트리 기반 앙상블의 기초가 된다.
+Decision Tree 알고리즘 중 가장 대표적인 것이 **CART**다. Breiman, Friedman, Olshen, Stone이 1984년 같은 이름의 책에서 체계화했으며, 이후 Bagging, Random Forest, Boosting 등 모든 트리 기반 앙상블의 기초가 된다.
 
 ### 트리의 구조
 
@@ -73,9 +73,10 @@ $$
 |---|---|---|
 | **범위** (이진) | 0 ~ 0.5 | 0 ~ 1.0 |
 | **계산** | 곱셈만 | 로그 연산 포함 |
-| **XGBoost/LightGBM 기본값** | - | - |
 | **scikit-learn 기본값** | Gini | - |
 | **실무 차이** | 거의 없음 | 거의 없음 |
+
+XGBoost·LightGBM 같은 부스팅 라이브러리는 Gini도 Entropy도 쓰지 않는다. 손실 함수의 gradient·hessian으로 계산한 **손실 감소량(Gain)**으로 분할을 고른다. 이 Gain의 정확한 형태는 [XGBoost와 LightGBM](xgb_lgbm.md)의 식 (5)에서 다룬다.
 
 아래 그림에서 세 지표를 비교하면, Gini와 Entropy가 거의 같은 형태임을 확인할 수 있다.
 
@@ -135,7 +136,7 @@ $$
 분할 후 좌/우 자식의 가중 MSE 합이 최소가 되는 (변수, 분할점)을 선택한다.
 
 !!! info "Boosting에서의 Regression Tree"
-    이후 다룰 Gradient Boosting에서는, 분류 문제임에도 **Regression Tree**를 사용한다. Boosting은 각 라운드에서 **잔차(residual)**를 예측하는데, 잔차는 연속값이기 때문이다. 이 점을 미리 알아두면 GBM 이해가 훨씬 수월하다.
+    이후 다룰 Gradient Boosting에서는, 분류 문제임에도 **Regression Tree**를 사용한다. Boosting은 각 라운드에서 손실 함수의 음의 기울기, 즉 **의사 잔차(pseudo-residual)**를 예측하는데, 이 값은 연속값이기 때문이다. 이 점을 미리 알아두면 GBM 이해가 훨씬 수월하다.
 
 ---
 
@@ -157,7 +158,7 @@ $$
 
 <figure markdown="span">
   ![Pre-Pruning: max_depth에 따른 결정 경계 변화](images/pre_pruning_boundaries.png)
-  <figcaption>max_depth가 너무 작으면 Underfitting, 제약이 없으면 Overfitting. 적절한 깊이 제한이 일반화 성능을 높인다. 합성 데이터(make_moons)로 시각화.</figcaption>
+  <figcaption>max_depth=1(Stump)은 Train·Test 모두 낮은 Underfitting, 제약 없는 트리는 Train 100%이지만 Test가 오히려 떨어지는 Overfitting이다. 적절한 깊이(여기서는 4)에서 Test 성능이 가장 높다. 합성 데이터(make_moons, 학습 300건·평가 5,000건)로 시각화.</figcaption>
 </figure>
 
 ### Post-Pruning (사후 가지치기)
@@ -183,7 +184,9 @@ $$
 </figure>
 
 !!! tip "Pre vs Post Pruning"
-    실무에서는 **Pre-Pruning이 압도적으로 많이 사용**된다. 특히 앙상블(RF, XGBoost, LightGBM)에서는 `max_depth`, `min_samples_leaf` 등 Pre-Pruning 파라미터가 핵심 튜닝 대상이다. Post-Pruning은 단일 트리에서 주로 쓰이며, 앙상블에서는 거의 사용하지 않는다.
+    실무에서는 **Pre-Pruning이 압도적으로 많이 사용**된다. 특히 앙상블(RF, XGBoost, LightGBM)에서는 `max_depth`, `min_samples_leaf` 등 Pre-Pruning 파라미터가 핵심 튜닝 대상이다. Cost Complexity Pruning 같은 고전적 Post-Pruning은 주로 단일 트리에서 쓴다.
+
+    예외적으로 XGBoost의 `gamma`(최소 손실 감소량)는 두 성격을 함께 가진다. 2.0부터 기본값인 `hist` 방식에서는 Gain이 \(\gamma\)보다 작은 분할을 **성장 도중에 만들지 않는** 사전 기준으로 작동한다. 반면 `exact` 방식에서는 트리를 `max_depth`까지 키운 뒤 Gain이 \(\gamma\)보다 작은 분할을 아래에서부터 **잘라내는** prune 단계가 붙는다. 상세는 [XGBoost와 LightGBM](xgb_lgbm.md)에서 다룬다.
 
 아래 그림은 트리 깊이에 따른 과적합 양상을 보여준다. Train Error는 깊이가 깊어질수록 계속 감소하지만, Test Error는 일정 깊이 이후 오히려 증가한다.
 
@@ -225,11 +228,13 @@ if 연체일수 > 90:
     else:
         → 심사역 검토 (Bad Rate 35%)
 else:
-    if 소득 < 1500만원 and 신용카드_이용건수 == 0:
+    if 소득 < 1500만원:
         → 추가 서류 요청
     else:
         → 스코어카드 심사 진행
 ```
+
+`max_depth=2`이므로 각 경로에는 조건이 최대 2개만 붙는다. "소득이 낮고 **동시에** 카드 이용이 없음"처럼 조건을 하나 더 붙이면 depth 3 트리가 된다.
 
 이러한 룰은 감사(audit) 시 "왜 이 고객을 거절했는가"를 **한 줄로** 설명할 수 있다. XGBoost 500그루의 앙상블로는 이것이 불가능하다.
 
@@ -251,7 +256,7 @@ else:
 
 !!! tip "룰 vs 모형의 역할 분담"
     - **룰**: 극단적 고위험/저위험 고객을 빠르게 걸러냄. 해석 가능성과 감사 추적(audit trail)이 핵심.
-    - **모형(스코어카드/ML)**: 나머지 "회색 지대" 고객의 리스크를 정밀하게 서열화. 성능(KS/Gini)이 핵심.
+    - **모형(스코어카드/ML)**: 나머지 "회색 지대" 고객의 리스크를 정밀하게 서열화. 변별력(KS, AR)이 핵심.
 
     둘은 **경쟁이 아니라 보완** 관계다. 단일 트리의 한계(성능 부족)는 모형이 보완하고, 모형의 한계(해석 어려움)는 룰이 보완한다.
 
@@ -280,7 +285,7 @@ CHAID(Chi-squared Automatic Interaction Detector)는 이 용도에 특화된 트
     | **정지 조건** | Pre/Post Pruning | 유의하지 않으면 자동 정지 |
     | **주 용도** | 예측 모형, 앙상블 기초 | **세분화**, 탐색적 분석 |
 
-    세분화 목적에서는 CHAID의 다진 분할이 더 자연스러운 경우가 많다 — "지역"이라는 변수를 이진 분할하면 {서울 vs 나머지}처럼 인위적으로 나눠야 하지만, CHAID는 {수도권, 광역시, 기타}처럼 의미 있는 그룹을 직접 만들 수 있다.
+    세분화 목적에서는 CHAID의 다진 분할이 더 자연스러운 경우가 많다. CART도 범주형 변수는 {서울, 경기} vs {나머지}처럼 범주의 임의 부분집합으로 이진 분할할 수 있지만, 한 번에 두 그룹만 만들 수 있다. 세 그룹 이상이 필요하면 이진 분할을 여러 단계 반복해야 하므로 트리가 깊어진다. CHAID는 {수도권, 광역시, 기타}처럼 의미 있는 다수 그룹을 한 번의 분할로 만든다.
 
 !!! tip "다음 섹션"
     단일 트리의 한계를 극복하기 위해, 다음에서는 여러 트리를 결합하는 [앙상블 기법](ensemble.md) — Bagging(Random Forest)과 Boosting의 원리를 학습한다.

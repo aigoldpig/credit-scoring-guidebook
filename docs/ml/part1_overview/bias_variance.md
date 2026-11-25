@@ -10,7 +10,7 @@
 
 ## 2.2 예측 오차의 분해
 
-모형 \(\hat{f}(x)\)가 참 함수 \(f(x)\)를 추정할 때, 새로운 데이터에 대한 기대 예측 오차(Expected Prediction Error)는 세 가지 성분으로 분해된다.
+모형 \(\hat{f}(x)\)가 참 함수 \(f(x)\)를 추정한다고 하자. 관측값이 \(y = f(x) + \epsilon\)(\(\mathrm{E}[\epsilon]=0\), \(\mathrm{Var}[\epsilon]=\sigma^2_\epsilon\))이고 손실을 **제곱오차**로 잡으면, 한 점 \(x\)에서의 기대 예측 오차(Expected Prediction Error)는 세 가지 성분으로 분해된다. 여기서 기댓값은 "학습 데이터를 새로 뽑아 모형을 다시 적합하는 일"을 반복했을 때의 평균이다.
 
 $$
 \text{EPE}(x) = \underbrace{\text{Bias}^2[\hat{f}(x)]}_{\text{편향}^2} + \underbrace{\text{Var}[\hat{f}(x)]}_{\text{분산}} + \underbrace{\sigma^2_\epsilon}_{\text{노이즈}}
@@ -24,7 +24,10 @@ $$
 | **Noise** (\(\sigma^2_\epsilon\)) | 데이터 자체에 내재된 **불가피한 오차** | 바람 같은 외부 요인, 모형으로 줄일 수 없음 |
 
 !!! info "핵심 직관"
-    Noise는 어떤 모형을 쓰든 줄일 수 없다. 따라서 모형이 통제할 수 있는 것은 오직 **Bias**와 **Variance** 뿐이다 — 그리고 이 둘은 서로 반대 방향으로 움직인다.
+    Noise는 어떤 모형을 쓰든 줄일 수 없다. 따라서 모형이 통제할 수 있는 것은 오직 **Bias**와 **Variance** 뿐이다. 그리고 모형 복잡도를 바꾸면 이 둘은 대체로 서로 반대 방향으로 움직인다.
+
+!!! note "분류 문제에서는?"
+    식 (1)의 깔끔한 세 항 분해는 제곱오차 손실에서 성립한다. 신용평가처럼 Good/Bad를 맞히는 분류 문제에서 쓰는 log-loss나 0-1 손실에서는 같은 형태로 깔끔하게 분해되지 않는다(0-1 손실에서는 Bias와 Variance가 서로 상쇄되기도 한다). 그래도 "너무 단순하면 체계적으로 틀리고, 너무 복잡하면 학습 데이터에 따라 흔들린다"는 직관은 그대로 유효하므로, 이 가이드북은 이 직관을 모형 설계의 기준으로 쓴다.
 
 ![Bias-Variance 과녁 비유](images/bias_variance_dartboard.png)
 
@@ -32,14 +35,18 @@ $$
 
 ## 2.3 멍청한 모형과 똑똑한 모형
 
-위 과녁 그림의 4사분면을 보자. **똑똑한 모형은 우하단 딱 하나뿐**이다. 나머지 셋은 멍청한 이유만 다를 뿐, 실전에서 못 쓰는 건 똑같다.
+위 과녁 그림의 4사분면을 보자. 과녁의 점 하나는 서로 다른 학습 데이터로 적합한 모형 하나의 예측이다. **똑똑한 모형은 우하단 딱 하나뿐**이다. 나머지 셋은 멍청한 이유만 다를 뿐, 실전에서 못 쓰는 건 똑같다.
 
 ### 멍청한 모형 ① — High Bias, Low Variance
 
 모형이 너무 단순해서 데이터의 패턴을 **제대로 학습하지 못하는** 상태다.
 
-- Tree Ensemble에서 `max_depth=1` (stump) — 한 번의 split으로 뭘 배우겠는가
+- **단일** 결정 트리에서 `max_depth=1` (stump) — 한 번의 split으로 뭘 배우겠는가
+- 부스팅 라운드를 너무 적게 돌려 학습이 덜 끝난 앙상블
 - Train 성능 자체가 낮음 → Valid/Test도 당연히 낮음
+
+!!! note "stump 하나와 stump 수백 개는 다르다"
+    stump **하나**는 멍청한 모형이지만, stump를 부스팅으로 수백 개 쌓으면 변수별 비선형 효과를 모두 더한 가법 모형(GAM)이 되어 이야기가 달라진다. 이 구조는 [1-Depth GBM 스코어카드](../part4_interpretation/depth1_gbm.md)에서 다룬다.
 - **Train ≈ Valid ≈ Test, 그런데 셋 다 나쁨**
 
 $$
@@ -50,7 +57,7 @@ $$
     연체 이력, 부채비율, 소득 수준 등 수십 개 변수가 있는데 depth=1 트리 하나로 Good/Bad를 가르려는 상황. "연체 있다/없다" 한 가지 기준만으로 전체 포트폴리오를 나누는 셈이다. 나머지 변수의 정보는 전부 무시된다.
 
 !!! tip "개선 방향: 복잡도를 올린다"
-    - `max_depth` 증가, `n_estimators` 증가, `learning_rate` 하향 + 라운드 증가
+    - `max_depth` 증가, 부스팅 라운드(`n_estimators`) 증가, 라운드가 제한된 상황이라면 `learning_rate` 상향
     - 변수 추가 또는 피처 엔지니어링으로 정보량 확대
     - 핵심: **모형에게 배울 기회를 더 준다**
 
@@ -70,7 +77,8 @@ $$
     학습 데이터에서 "A지역, 30대, 특정 직군"인 차주 5명이 우연히 전부 Bad였다. 과적합 모형은 이 패턴을 그대로 외워서, 같은 조건의 새로운 차주를 무조건 Bad로 예측한다. 그러나 이건 5명의 우연일 뿐, 모집단의 패턴이 아니다.
 
 !!! tip "개선 방향: 복잡도를 낮추고 제약을 건다"
-    - `max_depth` 제한, `min_samples_leaf` 증가, Early Stopping 적용
+    - `max_depth` 제한, `min_samples_leaf` 증가, Early Stopping으로 적정 라운드 수 탐색
+    - `learning_rate`를 낮추고 그만큼 라운드를 늘려, 트리 하나하나의 기여를 작게(shrinkage)
     - 정규화 강화: `reg_alpha`, `reg_lambda` 증가
     - `subsample`, `colsample_bytree`로 학습 데이터/변수에 랜덤성 부여
     - 핵심: **모형이 외우지 못하게 방해한다**
@@ -127,13 +135,13 @@ $$
 
 ![Bias-Variance Tradeoff U자 곡선](images/bias_variance_tradeoff.png)
 
-왼쪽 영역은 Bias가 지배하고(Underfitting, 멍청한 모형), 오른쪽 영역은 Variance가 지배한다(Overfitting, 과적합 모형). **Total Error의 U자 바닥이 최적 복잡도**이며, 우리가 찾는 "똑똑한 모형"이 여기에 있다.
+왼쪽 영역은 Bias가 지배하고(Underfitting, 멍청한 모형 ①), 오른쪽 영역은 Variance가 지배한다(Overfitting, 멍청한 모형 ②). **Total Error의 U자 바닥이 최적 복잡도**이며, 우리가 찾는 "똑똑한 모형"이 여기에 있다. 실무에서는 참 함수를 모르므로 이 곡선을 직접 그릴 수 없고, 학습셋과 검증셋 성능을 비교해 지금 어느 쪽에 있는지 진단한다([데이터 분리 전략](data_splitting.md)의 진단표 참조).
 
 ### 트리 구조로 보는 복잡도의 차이
 
 Decision Tree에서 복잡도는 곧 **트리의 깊이(depth)**와 **리프 노드 수**다. 같은 데이터에 대해 복잡도를 달리 하면 트리 구조가 극적으로 달라진다.
 
-**Underfitting — `max_depth=1` (Stump)**
+**Underfitting — 단일 트리 `max_depth=1` (Stump)**
 
 ```
          [연체 여부]

@@ -14,9 +14,12 @@ title: "SHAP과 Functional ANOVA"
 | 섹션 | 제목 | 내용 |
 |------|------|------|
 | 1 | [왜 분해가 필요한가 — Non-identifiability 문제](non-identifiability.md) | 제약 없는 분해의 비유일성, Boolean 예시, 실무 위험 |
-| 2 | [Functional ANOVA — 함수의 직교 분해](functional-anova.md) | fANOVA 정의, Zero Means · Orthogonality · Integrate-to-Zero 제약 |
-| 3 | [Purification — 트리 모형의 사후 정제](purification.md) | Mass-Moving 알고리즘, 수렴 보장, California Housing · COMPAS 사례 |
-| 4 | [SHAP vs fANOVA — 무엇이 다른가](shap-vs-fanova.md) | 분배 vs 분리, 교호작용 처리 차이, 분포 의존성, 실무 적용 |
+| 2 | [Functional ANOVA — 함수의 직교 분해](functional-anova.md) | fANOVA 정의, 유일성을 보장하는 Integrate-to-Zero 조건, 그 결과인 Zero Means · Orthogonality · Variance Decomposition |
+| 3 | [Purification — 트리 모형의 사후 정제](purification.md) | 트리 앙상블의 텐서 변환, Mass-Moving 알고리즘, 수렴 속도, 가중(측도) 선택, California Housing · COMPAS 사례 |
+| 4 | [SHAP vs fANOVA — 무엇이 다른가](shap-vs-fanova.md) | 분배 vs 분리, SHAP과 fANOVA의 정확한 관계식, SHAP interaction value, 분포 의존성, 실무 적용 |
+
+!!! warning "측도 가정"
+    이 부록의 수식과 예시는 기본적으로 **변수 독립(product measure)**을 전제로 한다. 신용평가 변수처럼 상관이 강할 때 무엇이 달라지는지는 [부록 B: 변수 상관과 모형 해석](../correlation-interpretation/index.md)에서 다룬다.
 
 ---
 
@@ -24,6 +27,8 @@ title: "SHAP과 Functional ANOVA"
 **참고 문헌**
 
 - Lengerich, Tan, Chang, Hooker, Caruana (2020). [Purifying Interaction Effects with the Functional ANOVA](https://proceedings.mlr.press/v108/lengerich20a.html) (AISTATS)
-- Hooker (2004, 2007). Functional ANOVA를 ML 해석에 적용한 논문
+- Hooker (2004). [Discovering additive structure in black box functions](https://doi.org/10.1145/1014052.1014122) (KDD)
+- Hooker (2007). [Generalized Functional ANOVA Diagnostics for High-Dimensional Functions of Dependent Variables](https://doi.org/10.1198/106186007X237892) (*JCGS* 16(3))
 - Lundberg & Lee (2017). [A Unified Approach to Interpreting Model Predictions](https://arxiv.org/abs/1705.07874) (NeurIPS)
+- Lundberg et al. (2020). [From local explanations to global understanding with explainable AI for trees](https://doi.org/10.1038/s42256-019-0138-9) (*Nature Machine Intelligence* 2)
 </div>

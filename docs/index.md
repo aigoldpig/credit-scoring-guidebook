@@ -74,7 +74,7 @@ CB정보와 대안정보 기반의 신용평가모형 개발을 진행하고 있
 <div class="card" markdown>
 <span class="card-part">⑤ 스코어카드</span>
 <div class="card-title"><a href="scorecard/part5_scorecard/">변환 · 검증 · 모니터링 · 규제</a></div>
-<div class="card-desc">스코어카드 변환·등급화, KS·AR·Gini 성능 평가, OOT 검증, PSI·CSI 모니터링과 리캘리브레이션, SR 11-7·Basel·금감원 규제 프레임워크</div>
+<div class="card-desc">스코어카드 변환·등급화, KS·AR·Gini 성능 평가, OOT 검증, PSI·CSI 모니터링과 리캘리브레이션, SR 26-2·Basel·금감원 규제 프레임워크</div>
 </div>
 
 <div class="card" markdown>
@@ -115,13 +115,13 @@ CB정보와 대안정보 기반의 신용평가모형 개발을 진행하고 있
 <div class="card card--ml" markdown>
 <span class="card-part">⑤ 모델 검증</span>
 <div class="card-title"><a href="ml/part5_validation/">성능 지표 · OOT · 규제 프레임워크</a></div>
-<div class="card-desc">AUC/KS/Gini, OOT 검증, PSI/CSI 모니터링, SR 11-7, EU AI Act, 한국 금융 AI 가이드라인</div>
+<div class="card-desc">KS/AR(Gini), OOT 검증, PSI/CSI 모니터링, SR 26-2, EU AI Act, 한국 금융 AI 가이드라인</div>
 </div>
 
 <div class="card card--ml" markdown>
 <span class="card-part">부록</span>
 <div class="card-title"><a href="ml/appendix/">보충 자료</a></div>
-<div class="card-desc">A. SHAP과 fANOVA 심화, B. 변수 상관과 모형 해석 (Joint vs Product Measure), C. 해석 가능한 ML 실험 설계</div>
+<div class="card-desc">A. SHAP과 fANOVA 심화, B. 변수 상관과 모형 해석 (Joint vs Product Measure)</div>
 </div>
 
 <div class="card-section-header">

@@ -3,9 +3,9 @@
 !!! quote "설계 사상"
     Bagging과 Random Forest는 **"다양한 트리들의 평균"**으로 Variance를 잡는 전략이었다. Boosting은 완전히 다른 질문에서 출발한다 — **"아주 약한 학습기(weak learner)를 순서대로 쌓으면, 결국 강한 학습기가 될 수 있을까?"**
 
-    1990년대 초 Kearns & Valiant가 이 질문을 이론적으로 제기했고, Freund & Schapire(1997)의 AdaBoost가 첫 실용적 답을 내놓았다. 핵심은 **"이전 모형이 틀린 샘플에 가중치를 올려서, 다음 모형이 그 실수를 집중적으로 보정한다"**는 것이다.
+    1988~89년 Kearns & Valiant가 이 질문(약한 학습 가능성과 강한 학습 가능성은 같은가)을 이론적으로 제기했고, Schapire(1990)가 처음으로 "가능하다"는 것을 증명했다. 이어 Freund & Schapire(1997)의 AdaBoost가 첫 실용적 알고리즘이 되었다. 핵심은 **"이전 모형이 틀린 샘플에 가중치를 올려서, 다음 모형이 그 실수를 집중적으로 보정한다"**는 것이다.
 
-    Bagging이 "다양한 멍청한 트리의 평균"이라면, Boosting은 **"멍청한 트리를 하나씩 쌓아 점점 똑똑하게 만드는 과정"**이다. 전자는 Variance를 줄이고, 후자는 Bias를 줄인다. 접근 방향이 정반대지만, 둘 다 Bias-Variance Tradeoff를 다루는 방법이다.
+    Bagging이 "흔들림이 큰(High Variance) 깊은 트리들의 평균"이라면, Boosting은 **"너무 단순해서 혼자서는 패턴을 못 잡는(High Bias) 얕은 트리를 하나씩 쌓아 점점 똑똑하게 만드는 과정"**이다. 전자는 Variance를 줄이고, 후자는 Bias를 줄인다. 접근 방향이 정반대지만, 둘 다 Bias-Variance Tradeoff를 다루는 방법이다.
 
 ---
 
@@ -22,7 +22,7 @@ Bagging이 "여러 트리를 독립적으로 만들어 평균 내는" 전략이�
 | Bias-Variance | Variance ↓ | **Bias ↓** |
 | 과적합 위험 | 낮음 | 상대적으로 높음 (제어 필요) |
 
-Bagging은 멍청하지 않은 트리들의 평균으로 흔들림을 잡았고, Boosting은 멍청한 트리들을 하나씩 쌓아 점점 똑똑하게 만든다.
+Bagging은 Bias는 낮지만 흔들리는 트리들을 평균해 흔들림을 잡았고, Boosting은 혼자서는 너무 단순한(멍청한) 트리들을 하나씩 쌓아 점점 똑똑하게 만든다.
 
 ---
 
@@ -39,6 +39,8 @@ Freund & Schapire (1997)가 제안한 최초의 실용적 Boosting 알고리즘�
 5. 이를 \(T\)회 반복
 
 ### 수식
+
+AdaBoost는 레이블을 \(y_i \in \{-1, +1\}\)로 코딩한다(Bad = +1, Good = −1). 4.5절의 Log Loss에서는 \(y_i \in \{0, 1\}\)을 쓰므로, 두 절의 레이블 표기가 다르다는 점에 주의한다. 약한 학습기의 출력도 \(h_t(x) \in \{-1, +1\}\)이다.
 
 \(t\)번째 학습기의 가중 오류율:
 
@@ -70,6 +72,7 @@ $$
 
 - 틀린 샘플: \(y_i \cdot h_t(x_i) < 0\) → 가중치 증가
 - 맞힌 샘플: \(y_i \cdot h_t(x_i) > 0\) → 가중치 감소
+- 갱신 후에는 전체 가중치의 합이 1이 되도록 정규화한다(\(w_i^{(t+1)} \leftarrow w_i^{(t+1)} / \sum_k w_k^{(t+1)}\))
 
 최종 예측:
 
@@ -114,7 +117,7 @@ $$
 
 <div class="source-ref">Hastie, Tibshirani & Friedman (2009). "The Elements of Statistical Learning" Figure 10.4 스타일 재구성</div>
 
-Exponential Loss는 margin이 음수일 때 **기하급수적으로** 증가한다. 이는 AdaBoost가 이상치(outlier)에 민감한 이유다. Log Loss는 선형적으로 증가하여 이상치에 더 강건하며, 이것이 실무에서 GBM(Log Loss)이 AdaBoost(Exp Loss)를 대체한 핵심 이유이기도 하다.
+Exponential Loss는 margin이 음수일 때 **기하급수적으로** 증가한다. 이는 AdaBoost가 이상치(outlier)나 레이블 오류에 민감한 이유다. Log Loss는 음의 margin 쪽에서 선형적으로 증가하여 이상치에 더 강건하다. 또한 Log Loss를 최소화한 모형의 출력은 그대로 **log-odds**로 해석되어 확률(PD)로 바로 변환할 수 있다. 이 두 가지가 신용평가에서 GBM(Log Loss)이 AdaBoost(Exp Loss)를 대체한 핵심 이유다.
 
 ---
 
@@ -143,9 +146,11 @@ $$
 **초기화:**
 
 $$
-F_0(x) = \arg\min_c \sum_{i=1}^{N} L(y_i, c) = \bar{y}
+F_0(x) = \arg\min_c \sum_{i=1}^{N} L(y_i, c)
 \tag{5}
 $$
+
+MSE 손실이면 이 최솟값은 표본 평균 \(\bar{y}\)다. 분류(Log Loss)에서는 4.5절에서 보듯 평균 불량률의 log-odds가 된다.
 
 **\(t = 1, 2, \ldots, T\) 반복:**
 
@@ -176,13 +181,12 @@ F_T(x) = F_0(x) + \eta \sum_{t=1}^{T} h_t(x)
 \tag{8}
 $$
 
-- \(\eta\)가 작으면: 한 번에 조금씩 보정 → 더 많은 라운드 필요하지만 **과적합에 강함**
+- \(\eta\)가 작으면: 한 번에 조금씩 보정 → 더 많은 라운드가 필요하지만 과적합 시점이 늦춰진다
 - \(\eta\)가 크면: 한 번에 크게 보정 → 빠르지만 **과적합 위험**
-- 실무 범위: \(\eta = 0.001 \sim 0.1\), \(T = 500 \sim 10{,}000\) (XGBoost 기본값은 0.3)
-- 저자 선호: \(\eta = 10^{-4} \sim 10^{-3}\)으로 극도로 작게 설정하고, 트리를 더 많이 생성하는 방식을 선호한다. 각 트리의 기여를 최소화하면 과적합에 훨씬 강건해진다.
+- 권장 범위와 저자 선호값은 [하이퍼파라미터 튜닝](hyperparameter_tuning.md)의 학습률 표에 한 곳으로 정리했다 (참고로 XGBoost 기본값은 0.3, LightGBM 기본값은 0.1이다)
 
 !!! tip "Learning Rate와 n_estimators의 트레이드오프"
-    \(\eta\)를 줄이면 \(T\)를 늘려야 동일 성능에 도달한다. 일반적으로 **\(\eta\)를 작게, \(T\)를 크게** 설정하는 것이 성능이 좋다. 대신 학습 시간이 길어진다. 이것이 "Graduate Student Descent" — 사람이 노가다로 최적점을 찾는 — 영역이기도 하다.
+    \(\eta\)를 줄이면 \(T\)를 늘려야 동일 성능에 도달한다. 식 (8)에서 보듯 각 트리의 보정량이 \(\eta\)에 비례하므로, \(\eta\)를 줄인 만큼 트리 수가 크게 늘어난다. 일반적으로 **\(\eta\)를 작게, \(T\)를 크게** 설정하는 것이 성능이 좋지만, 학습 시간이 그만큼 길어진다.
 
 ![Learning Rate에 따른 GBM 수렴 패턴](images/learning_rate_effect.png)
 
@@ -221,8 +225,30 @@ $$
 
 다음 트리는 이 잔차를 타겟으로 학습하여, 현재 모형이 틀리고 있는 방향을 보정한다.
 
+### 초기값과 Leaf 값
+
+Regression GBM과 달리, 분류 GBM에는 두 가지가 추가로 필요하다.
+
+**초기값** — 식 (5)를 Log Loss로 풀면 전체 평균 불량률 \(\bar{p}\)의 log-odds가 나온다.
+
+$$
+F_0 = \ln\frac{\bar{p}}{1-\bar{p}}
+\tag{11}
+$$
+
+불량률이 3%라면 \(F_0 = \ln(0.03/0.97) \approx -3.48\)에서 출발한다.
+
+**Leaf 값** — 트리 구조는 의사 잔차 \(r_i\)에 맞춰 정하지만, 각 Leaf의 출력값은 잔차의 평균이 아니다. Log Loss는 제곱오차가 아니므로, Friedman(2001)은 Leaf \(j\)마다 손실을 직접 줄이는 값을 **Newton-Raphson 한 스텝**으로 구한다.
+
+$$
+\gamma_j = \frac{\sum_{i \in R_j} (y_i - p_i)}{\sum_{i \in R_j} p_i(1-p_i)}
+\tag{12}
+$$
+
+분자는 gradient(잔차)의 합, 분모는 hessian \(p_i(1-p_i)\)의 합이다. Friedman의 원 논문은 \(y \in \{-1,+1\}\) 코딩으로 같은 식을 \(\sum \tilde{y}_i / \sum |\tilde{y}_i|(2-|\tilde{y}_i|)\) 형태로 쓴다. 즉 **고전 GBM도 Leaf 값에는 이미 2차 미분(hessian)을 쓴다.** 다음 장의 XGBoost는 여기서 한 걸음 더 나아가, Leaf 값뿐 아니라 **분할 기준(트리 구조)** 자체를 gradient와 hessian으로 정한다.
+
 !!! info "로지스틱 회귀와의 연결"
-    Part 2에서 다룬 로지스틱 회귀도 Log Loss를 최소화한다. 차이는 **가설 공간**이다. 로지스틱 회귀는 \(F(x) = \beta_0 + \beta^\top x\) (선형)으로 제한하지만, GBM은 \(F(x) = \sum h_t(x)\) (트리의 합)으로 비선형 패턴까지 포착한다.
+    [로지스틱 회귀](../part2_neural_net/lr_as_nn.md)도 Log Loss를 최소화한다. 차이는 **가설 공간**이다. 로지스틱 회귀는 \(F(x) = \beta_0 + \beta^\top x\) (선형)으로 제한하지만, GBM은 \(F(x) = \sum h_t(x)\) (트리의 합)으로 비선형 패턴까지 포착한다.
 
 !!! tip "다음 섹션"
     Gradient Boosting의 기초를 이해했으니, 다음에서는 [Boosting 심화](boosting_advanced.md)에서 GBM의 Bias-Variance 관점과 트리 깊이가 교호작용에 미치는 영향을 학습한다.

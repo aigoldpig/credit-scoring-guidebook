@@ -16,7 +16,7 @@ title: 트리 앙상블
 | 2 | [앙상블 -- Bagging과 RF](ensemble.md) | Bootstrap, OOB, Feature Subsampling이 Variance를 어떻게 줄이는가? |
 | 3 | [트리에서의 Bias-Variance](bias_variance_trees.md) | 하이퍼파라미터별로 Bias-Variance에 미치는 영향은? |
 | 4 | [Boosting 기초](boosting_fundamentals.md) | AdaBoost에서 Gradient Boosting까지, 순차 학습의 핵심 아이디어는? |
-| 5 | [Boosting 심화](boosting_advanced.md) | GBM의 B-V 관점, 트리 깊이와 교호작용의 관계는? |
+| 5 | [Boosting 심화](boosting_advanced.md) | 트리 깊이·샘플링·단조/교호작용 제약·Early Stopping은 각각 무엇을 제한하는가? |
 | 6 | [XGBoost와 LightGBM](xgb_lgbm.md) | 정규화 목적함수, Histogram, GOSS, EFB 등 알고리즘 혁신은? |
 | 7 | [하이퍼파라미터 튜닝](hyperparameter_tuning.md) | 핵심 파라미터, 단계적 튜닝 전략, Optuna 활용법은? |
 

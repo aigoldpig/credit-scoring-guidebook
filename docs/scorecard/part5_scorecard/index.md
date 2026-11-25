@@ -6,7 +6,7 @@
 
 > **① 스코어카드 변환 (Anchor Score + PDO)** →
 > **② 등급 설계 (Rating Grade)** →
-> **③ 성능 평가 (KS · AR · Gini · PSI)** →
+> **③ 성능 평가 (KS · AR · PSI)** →
 > **④ OOT 검증** →
 > **⑤ 모니터링과 운영 (CSI · Back-testing · 리캘리브레이션)** →
 > **⑥ 규제 프레임워크**
@@ -16,10 +16,10 @@
 | 섹션 | 제목 | 핵심 질문 |
 |------|------|-----------|
 | 1 | [스코어카드 변환 & 등급화](scorecard-and-rating.md) | 회귀계수를 점수로 변환하고 등급을 설계하는 방법은? |
-| 2 | [성능 평가 (KS·AR·Gini)](performance-ks-ar-gini.md) | KS, AR, Gini, PSI로 모형을 어떻게 검증하는가? |
-| 3 | [OOT 검증](oot-validation.md) | 미래 데이터에서도 모형이 유효한지 어떻게 확인하는가? |
+| 2 | [성능 평가 (KS·AR)](performance-ks-ar-gini.md) | KS, AR(= Gini), PSI로 모형을 어떻게 검증하는가? 벤치마크는? |
+| 3 | [OOT 검증](oot-validation.md) | 미래 데이터에서도 모형이 유효한지 어떻게 확인하는가? 허용폭은? |
 | 4 | [모형 모니터링과 운영](monitoring-and-operations.md) | 배포 후 성능 열화를 어떻게 감지하고 대응하는가? |
-| 5 | [규제 프레임워크](regulatory-framework.md) | SR 11-7, Basel IRB, 국내 규제의 요구사항은? |
+| 5 | [규제 프레임워크](regulatory-framework.md) | 미국 모형리스크 지침, Basel IRB, 국내 규제의 요구사항은? |
 
 !!! info "Odds 방향: Good Odds"
-    스코어카드 변환부터는 **Good Odds** \((1-p)/p\)를 사용한다. 점수가 높을수록 우량 고객임을 의미하도록 설계하기 위함이다.
+    스코어카드 변환부터는 **Good Odds** \((1-p)/p\)를 사용한다. 점수가 높을수록 우량 고객임을 의미하도록 설계하기 위함이다. 계수는 다시 적합하지 않는다 — Part 4의 Bad logit 계수(음수)를 그대로 쓰고 \(\ln(\text{Good Odds}) = -\text{logit}_{\text{Bad}}\)로 부호만 뒤집는다.

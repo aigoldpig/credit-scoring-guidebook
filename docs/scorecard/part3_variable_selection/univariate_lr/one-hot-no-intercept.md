@@ -1,26 +1,27 @@
 # One-Hot Encoding + No Intercept 회귀
 
-## 2.1 인코딩 방식 — 일반 더미처리 vs One-Hot Encoding
+## 2.1 구간 변수를 회귀에 넣는 세 가지 방법
 
-범주형 변수(또는 구간으로 나뉜 연속형 변수)를 회귀모형에 투입하는 방식은 크게 두 가지다. 두 방식의 차이를 먼저 이해해야 No Intercept 방법론의 필요성이 명확해진다.
+범주형 변수(또는 구간으로 나뉜 연속형 변수)를 로지스틱 회귀에 투입하는 방법은 세 가지다. 셋은 **같은 적합도**를 주지만 계수의 의미가 다르다.
 
-| 구분 | 일반 더미처리 (k−1 방식) | One-Hot Encoding (k개 + No Intercept) |
-|------|----------------------|-------------------------------------|
-| **더미 변수 수** | \(k-1\)개 (1개를 기준 Baseline으로 제거) | \(k\)개 (모든 구간에 더미 생성) |
-| **절편(Intercept)** | 반드시 포함 (Full-rank 유지를 위해 필수) | 제거 (No Intercept) |
-| **다중공선성** | \(k-1\)개 + 절편 → Full-rank | \(k\)개이지만 절편 없음 → Full-rank |
-| **\(\hat{\beta}\) 해석** | 기준 구간 대비 *상대적* 로그 오즈 차이 | 해당 구간 자체의 *절대적* 로그 오즈 추정 |
-| **WoE와 비교** | 직접 비교 불가 (기준값이 있어 스케일 다름) | 직접 비교 가능 (\(\hat{\beta}_j \approx -\text{WoE}_j\), [증명](beta-woe-proof.md) 참조) |
+| 구분 | ① 일반 더미 (k−1 + 절편) | ② One-Hot (k개 + No Intercept) | ③ WoE 치환 (+ 절편) |
+|------|----------------------|-------------------------------------|------------------|
+| **설명변수** | \(k-1\)개 더미 (기준 구간 1개 제외) | \(k\)개 더미 (모든 구간) | WoE 값 1개 |
+| **절편** | 포함 | 제거 | 포함 |
+| **Full-rank 여부** | \(k-1\)개 + 절편 → Full-rank | \(k\)개, 절편 없음 → Full-rank | Full-rank |
+| **계수의 의미** | 기준 구간 대비 Bad log-odds **차이** \(\gamma_i\) | 구간 자체의 Bad log-odds \(\hat\beta_i\) | WoE 1단위당 Bad log-odds 변화 |
+| **WoE와의 관계** | \(\gamma_i = -(\text{WoE}_i - \text{WoE}_{\text{기준}})\) | \(\hat{\beta}_i = -\text{WoE}_i + \ln(N_B/N_G)\) | \(\hat\beta = -1\), \(\hat\beta_0 = \ln(N_B/N_G)\) |
+| **주 용도** | 다변량 더미 모형 | 단변량 구간별 검정 | 스코어카드 본 모형 |
 
-!!! tip "일반 더미처리(k−1)에서 절편이 반드시 필요한 이유"
-    \(k\)개 구간에 대해 \(k\)개의 더미변수를 만들면, **어느 고객이든 반드시 하나의 더미에만 해당**되므로 \(D_1 + D_2 + \cdots + D_k = 1\)이 항상 성립한다. 이는 절편 열(모든 원소가 1인 열)과 **완벽한 선형 종속 관계**를 만들어 설계 행렬(Design Matrix)이 Full-rank를 위반하게 된다.
+세 관계식은 모두 근사가 아니라 **정확히** 성립한다([증명](beta-woe-proof.md)).
 
-    수학적으로 이 상태에서는 \((X^TX)^{-1}\)이 존재하지 않아 회귀 계수를 유일하게 추정할 수 없다(Perfect Multicollinearity). 이를 해결하는 방법이 **하나의 구간을 제거하여 \(k-1\)개의 더미만 투입하는 것**이다. 제거된 구간이 Baseline이 되며, 나머지 \(\hat{\beta}_j\)는 Baseline 대비 로그 오즈의 상대적 차이를 의미한다.
+!!! tip "일반 더미처리(k−1)에서 기준 구간을 빼는 이유"
+    \(k\)개 구간에 \(k\)개의 더미를 만들면 **모든 고객이 정확히 하나의 더미에만 해당**하므로 \(D_1 + D_2 + \cdots + D_k = 1\)이 항상 성립한다. 이는 절편 열(모든 원소가 1인 열)과 **완전한 선형 종속**이어서 설계 행렬(Design Matrix)이 Full-rank가 아니게 되고, 계수를 유일하게 추정할 수 없다(완전 다중공선성). 그래서 한 구간을 빼고 \(k-1\)개만 넣는다. 빠진 구간이 기준(Baseline)이 되고, 나머지 계수 \(\gamma_i\)는 기준 대비 Bad log-odds 차이가 된다.
 
-!!! tip "k−1 방식의 해석상 한계"
-    기준 구간을 Bin1(가장 불량률이 높은 구간)로 설정하면 \(\hat{\beta}_2, \hat{\beta}_3, \ldots\)는 각각 "Bin1에 비해 얼마나 좋은가"를 나타낸다. 분석가 입장에서는 **각 구간 자체의 절대적 부도 위험 수준을 직관적으로 파악하기 어렵고**, WoE와 직접 비교도 불가능하다.
+!!! tip "k−1 방식의 계수 부호"
+    기준 구간을 **가장 위험한 구간**(예: Bin 1)으로 두면, 나머지 구간은 기준보다 안전하므로 \(\gamma_i\)는 **음수**가 정상이다(Bad log-odds가 기준보다 낮음). \(\gamma_i\)가 양수면 "기준보다 더 위험한 구간"이라는 뜻이다. k−1 방식은 "각 구간 자체의 위험 수준"을 바로 보여주지 않으므로, 단변량 단계에서 구간별 위험을 한눈에 보기에는 ②가 편하다.
 
-반면 **One-Hot Encoding + No Intercept** 방식은 절편을 제거함으로써 다중공선성 문제를 우회하면서 \(k\)개 더미를 모두 사용한다. 이 경우 각 \(\hat{\beta}_j\)는 해당 구간의 로그 오즈를 직접 추정하므로 WoE와 1:1 비교가 가능하다.
+반면 **One-Hot Encoding + No Intercept** 방식은 절편을 없애 다중공선성 문제를 피하면서 \(k\)개 더미를 모두 쓴다. 이때 각 \(\hat{\beta}_i\)는 해당 구간의 Bad log-odds를 직접 추정하므로, 구간별 위험 수준과 그 표준오차를 바로 읽을 수 있다.
 
 ### 설계 행렬 비교 (5개 구간 예시)
 
@@ -47,64 +48,46 @@
 </table>
 
 !!! success "핵심 정리"
-    일반 더미처리(\(k-1\) + 절편)와 One-Hot Encoding(No Intercept)은 모형의 **적합도(Log-Likelihood, AIC 등)가 수학적으로 동일**하다. 단, 후자는 각 \(\hat{\beta}_j\)를 WoE와 직접 비교·검증할 수 있다는 해석상 이점 때문에 단변량 로지스틱 회귀에서 채택한다.
+    ①·②·③은 모두 구간마다 서로 다른 위험 수준을 허용하는 **포화(saturated) 모형**과 같은 적합값을 내므로, 로그우도(그리고 이를 쓰는 LRT)가 **수학적으로 동일**하다. ③은 모수가 2개뿐인데도 포화 모형과 같은 적합을 내는데, 이는 WoE 자체가 같은 데이터의 Bin별 log-odds로 만들어졌기 때문이다. 이 점이 아래 LRT 자유도 문제로 이어진다.
 
-## 2.2 No Intercept의 의미
+## 2.2 No Intercept 모형의 식과 해
 
-One-Hot Encoding으로 변환된 더미변수들을 독립변수로, 절편 없이 로지스틱 회귀를 수행한다:
+One-Hot 더미를 설명변수로, 절편 없이 로지스틱 회귀를 수행한다(y=1=Bad).
 
 $$
-\ln\!\left(\frac{p_i}{1-p_i}\right) = \hat{\beta}_1 D_{i1} + \hat{\beta}_2 D_{i2} + \hat{\beta}_3 D_{i3} + \hat{\beta}_4 D_{i4} + \hat{\beta}_5 D_{i5} \tag{1}
+\ln\!\left(\frac{p_j}{1-p_j}\right) = \beta_1 D_{j1} + \beta_2 D_{j2} + \beta_3 D_{j3} + \beta_4 D_{j4} + \beta_5 D_{j5} \tag{1}
 $$
 
-!!! note "No Intercept의 효과"
-    일반적인 회귀에서 더미변수를 쓸 때는 하나를 기준(Reference)으로 제거하고 나머지 \(k-1\)개만 투입한다(다중공선성 방지). 하지만 **No Intercept 모형에서는 절편이 없으므로 모든 더미변수(\(k\)개)를 투입**할 수 있다. 이렇게 하면 각 \(\hat{\beta}_j\)가 해당 Bin에 속하는 고객의 **log-odds를 직접 추정**하게 된다. 현재 y=1=Bad 설정에서 이 값은 WoE와 **부호가 반대이고 크기가 대응**한다(\(\hat{\beta}_j \approx -\text{WoE}_j\)). 수학적 증명은 [다음 절](beta-woe-proof.md)에서 다룬다.
+고객 \(j\)는 하나의 더미에만 1이므로, 구간 \(i\)에 속한 모든 고객의 예측 log-odds는 \(\beta_i\) 하나로 같다. 최대우도추정의 해는 **구간의 실제 Bad log-odds**이다.
 
-### 구현 코드
+$$
+\hat\beta_i = \ln\!\left(\frac{n_{B,i}}{n_{G,i}}\right), \qquad \widehat{SE}(\hat\beta_i) = \sqrt{\frac{1}{n_{B,i}} + \frac{1}{n_{G,i}}} \tag{2}
+$$
 
-??? example "Python — One-Hot + No Intercept 단변량 로지스틱 회귀"
+반복 계산이 필요 없는 닫힌 해이며, 유도는 [다음 절](beta-woe-proof.md)에서 한다.
 
-    ```python
-    import pandas as pd
-    import statsmodels.api as sm
+## 2.3 적합 결과 예시 (매출액 5구간, 원 표본 Good 1,000 / Bad 200)
 
-    # 1) One-Hot 더미 생성 (k개, drop_first=False)
-    dummies = pd.get_dummies(df["bin"], prefix="bin", drop_first=False)
+[WoE 1.3절](../woe_iv/woe.md)의 데이터를 세 방식으로 적합한 결과다. 모든 값은 식 (2)와 원 건수로 계산했다.
 
-    # 2) No Intercept 단변량 로지스틱 회귀
-    model = sm.Logit(df["bad_flag"], dummies)
-    result = model.fit(disp=False)
-    print(result.summary())
+| Bin | WoE | ② \(\hat\beta_i\) (One-Hot) | SE | ① \(\gamma_i\) (k−1, Bin1 기준) |
+|-----|-----|---------------------------|------|-------------------------|
+| 1 (1억 미만) | −1.792 | +0.182 | 0.191 | (기준, 절편 = +0.182) |
+| 2 (1억~5억) | −0.511 | −1.099 | 0.163 | −1.281 |
+| 3 (5억~10억) | 0.000 | −1.609 | 0.173 | −1.792 |
+| 4 (10억~50억) | +0.847 | −2.457 | 0.190 | −2.639 |
+| 5 (50억 초과) | +0.916 | −2.526 | 0.232 | −2.708 |
 
-    # 3) Bin별 Wald p-value 확인
-    print(result.pvalues)
-
-    # 4) LRT: Null Model 대비
-    #    Null deviance = -2 * log-likelihood(intercept only)
-    null_model = sm.Logit(df["bad_flag"], pd.Series(1, index=df.index))
-    null_result = null_model.fit(disp=False)
-
-    lr_stat = -2 * (null_result.llf - result.llf)
-    from scipy import stats
-    p_value = stats.chi2.sf(lr_stat, df=dummies.shape[1])
-    print(f"LRT statistic: {lr_stat:.2f}, p-value: {p_value:.4f}")
-    ```
-
-### 실행 결과 예시 (매출액 5구간, Balanced Sample, y=1=Bad)
-
-```
-                 coef    std err          z      P>|z|
-bin_1          1.8100      0.210      8.619      0.000
-bin_2          0.4900      0.180      2.722      0.006
-bin_3         -0.0100      0.170     -0.059      0.953
-bin_4         -0.8400      0.190     -4.421      0.000
-bin_5         -0.9000      0.230     -3.913      0.000
-
-LRT statistic: 142.31, p-value: 0.0000
-```
+- ③ WoE 치환 모형: \(\hat\beta = -1.000\), \(\hat\beta_0 = \ln(200/1000) = -1.609\)
+- 세 모형의 로그우도는 모두 −472.64, 절편만 있는 모형은 −540.67 → LRT = 136.07
 
 !!! note "결과 해석"
-    - `coef` 열이 \(\hat{\beta}\)이며, WoE 값(−1.79, −0.51, 0.00, +0.85, +0.92)과 **부호가 반대이고 크기가 대응**한다 → \(\hat{\beta} \approx -\text{WoE}\)
-    - 불량률이 높은 Bin 1(54.5%)에서 β가 가장 크고(+1.81), 불량률이 낮은 Bin 5(7.4%)에서 β가 가장 작다(−0.90) → Bad odds 방향과 일치
-    - `P>|z|`가 Wald p-value. Bin 3만 0.953으로 비유의하지만 단조성 유지 구간이므로 허용
-    - LRT p-value < 0.001로 변수 전체 유의성 확인
+    - ②의 \(\hat\beta_i + \text{WoE}_i\)는 모든 구간에서 −1.609로 같다. **계산이 맞는지 확인하는 용도**다.
+    - ①의 \(\gamma_i\)는 모두 음수다. 기준(최위험 구간)보다 안전하다는 정상 부호다.
+    - ③의 \(\hat\beta = -1\)은 Classing이 좋든 나쁘든 개발 표본에서는 항상 나온다. 진단 정보가 아니다.
+
+!!! warning "WoE 치환 모형의 LRT 자유도"
+    ③은 추정 모수가 하나(기울기)라서 자유도 1로 LRT를 계산하기 쉽다. 그러나 WoE 값 자체가 같은 표본의 Bin별 log-odds(\(k-1\)개 자유 모수)로 만들어졌으므로, 올바른 자유도는 **\(k-1\)** 이다. 자유도 1로 검정하면 유의성이 과장된다. 변수 유의성은 ①·②와 같은 LRT(자유도 \(k-1\))로 판단한다([유의성 검정](significance-test.md)).
+
+!!! info "균형 표본(Balanced Sampling)이면?"
+    개발 표본을 Bad:Good = 1:1로 맞추면 \(\ln(N_B/N_G) = 0\)이 되어 \(\hat\beta_i = -\text{WoE}_i\)가 그대로 성립한다. 위 데이터에서 Bad만 5배 추출(Bad 1,000)했다고 하면 \(\hat\beta\) = (+1.792, +0.511, 0.000, −0.847, −0.916)이다. 이 경우 Bin 불량률은 85.7%, 62.5%, 50.0%, 30.0%, 28.6%로 바뀌므로, 원 표본의 불량률(54.5%, 25.0%, …)과 섞어 쓰면 안 된다. WoE는 Good·Bad 각각의 분포로 계산하므로 표본 비율이 바뀌어도 변하지 않는다.

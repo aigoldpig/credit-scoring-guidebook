@@ -1,129 +1,118 @@
-# β ≈ −WoE: 수학적 증명
+# β = −WoE + 상수: 수학적 증명
 
-## 3.1 증명
+## 3.1 증명 — 절편 없는 One-Hot 모형
 
-!!! note "No Intercept 로지스틱 회귀에서 \(\hat{\beta}_i \approx -\text{WoE}_i\)가 되는 이유"
+!!! note "왜 부호가 반대인가"
+    Part 1~4는 **y = 1 = Bad(불량)** 로 적합하므로, 회귀가 추정하는 것은 Bad log-odds \(\ln(P_B/P_G)\)다. 반면 WoE는 \(\ln(\%\text{Good}/\%\text{Bad})\)로 우량할수록 커진다. **두 지표의 방향이 반대**이므로 부호가 뒤집히는 것은 오류가 아니라 정의의 차이다. 이 가이드북은 이 규약을 일관되게 쓴다: WoE 변수의 정상 계수는 음수다.
 
-    현재 Part 1~4에서는 **y = 1 = Bad(불량)**으로 정의하고 있으므로, 로지스틱 회귀의 log-odds는 Bad Odds \(\ln(P_B/P_G)\)이다. 반면 WoE는 업계 표준에 따라 \(\ln(\%\text{Good}/\%\text{Bad})\)로 정의한다. **두 지표의 방향이 반대**이므로 부호가 뒤집히는 것은 오류가 아니라 정의의 차이다.
+기호: 구간 \(i\)의 정상·불량 건수 \(n_{G,i}, n_{B,i}\), 구간 건수 \(n_i = n_{G,i} + n_{B,i}\), 전체 정상·불량 \(N_G, N_B\).
 
-> 식 (1)은 [WoE 정의](../woe_iv/woe.md)를 참조한다.
+**Step 1 — 로그우도와 score equation**
 
-**Step 1 — 구간 \(i\)의 실제 Log-Odds (Bad Odds)**
-
-$$
-\text{(실제 log-odds)}_i = \ln\!\left(\frac{n_{B,i}/n_i}{n_{G,i}/n_i}\right) = \ln\!\left(\frac{n_{B,i}}{n_{G,i}}\right) \tag{2}
-$$
-
-**Step 2 — WoE 정의 전개**
+절편 없는 One-Hot 모형에서 구간 \(i\)의 모든 고객은 같은 예측 확률 \(p_i = 1/(1+e^{-\beta_i})\)를 갖는다. 로그우도는 구간별로 분리된다.
 
 $$
-\text{WoE}_i = \ln\!\left(\frac{n_{G,i}/N_G}{n_{B,i}/N_B}\right) = \ln\!\left(\frac{n_{G,i}}{n_{B,i}}\right) + \ln\!\left(\frac{N_B}{N_G}\right) \tag{3}
+\ell(\beta_1,\ldots,\beta_k) = \sum_{i=1}^{k}\Big[\, n_{B,i}\ln p_i + n_{G,i}\ln(1-p_i) \,\Big] \tag{1}
 $$
 
-WoE의 핵심 항인 \(\ln(n_{G,i}/n_{B,i})\)는 Step 1의 log-odds \(\ln(n_{B,i}/n_{G,i})\)와 **부호가 반대**임에 주목하자:
+\(\partial p_i/\partial\beta_i = p_i(1-p_i)\)를 이용해 \(\beta_i\)로 미분하면(score equation)
 
 $$
-\ln\!\left(\frac{n_{G,i}}{n_{B,i}}\right) = -\ln\!\left(\frac{n_{B,i}}{n_{G,i}}\right)
+\frac{\partial \ell}{\partial \beta_i} = n_{B,i}(1-p_i) - n_{G,i}\,p_i = n_{B,i} - n_i\,p_i = 0 \tag{2}
 $$
 
-**Step 3 — \(\hat{\beta}_i\)에 대해 정리**
+**Step 2 — 닫힌 해**
 
-Step 2를 log-odds 기준으로 재배열하면:
-
-$$
-\ln\!\left(\frac{n_{B,i}}{n_{G,i}}\right) = -\text{WoE}_i + \ln\!\left(\frac{N_B}{N_G}\right)
-$$
-
-따라서:
+식 (2)에서 \(\hat p_i = n_{B,i}/n_i\), 즉 **예측 확률 = 구간의 실제 불량률**이다. 이를 log-odds로 바꾸면
 
 $$
-\hat{\beta}_i = \text{(실제 log-odds)}_i = -\text{WoE}_i + \ln\!\left(\frac{N_B}{N_G}\right) \tag{4}
+\hat\beta_i = \ln\!\left(\frac{\hat p_i}{1-\hat p_i}\right) = \ln\!\left(\frac{n_{B,i}}{n_{G,i}}\right) \tag{3}
+$$
+
+로그우도는 각 \(\beta_i\)에 대해 오목하므로 이 해가 유일한 최대점이다(단, \(n_{B,i}\)나 \(n_{G,i}\)가 0이면 해가 무한대로 발산한다 — Bad 0건 Bin을 허용하지 않는 이유).
+
+**Step 3 — WoE와 연결**
+
+WoE 정의를 전개하면
+
+$$
+\text{WoE}_i = \ln\!\left(\frac{n_{G,i}/N_G}{n_{B,i}/N_B}\right) = -\ln\!\left(\frac{n_{B,i}}{n_{G,i}}\right) + \ln\!\left(\frac{N_B}{N_G}\right)
+$$
+
+이므로, 식 (3)과 합치면
+
+$$
+\boxed{\;\hat{\beta}_i = -\text{WoE}_i + \ln\!\left(\frac{N_B}{N_G}\right)\;} \tag{4}
 $$
 
 !!! success "결론"
-    No Intercept 모형(y=1=Bad)에서 각 Bin의 회귀계수는 \(\hat{\beta}_i = -\text{WoE}_i + \ln(N_B/N_G)\)이다. 전체 모집단 log-odds \(\ln(N_B/N_G)\)는 상수이므로, **\(\hat{\beta}_i\)와 \(\text{WoE}_i\)는 부호가 반대이고 상수 차이만큼 평행 이동한 관계**다. 구간 간 상대적 크기와 순서(단조성)는 완전히 보존된다.
+    절편 없는 One-Hot 모형(y=1=Bad)의 구간 계수는 \(\hat{\beta}_i = -\text{WoE}_i + \ln(N_B/N_G)\)로 **정확히** 결정된다. 반복 계산의 수렴 결과가 아니라 대수적 항등식이다. \(\ln(N_B/N_G)\)는 모든 구간에 공통인 상수이므로, \(\hat{\beta}_i\)와 \(\text{WoE}_i\)는 **부호가 반대이고 상수만큼 평행 이동한 관계**다.
+
+### 두 지표의 기준점
+
+- **\(\hat{\beta}_i\)의 기준점(0):** "이 구간의 불량과 정상이 1:1" (불량률 50%)
+- **WoE의 기준점(0):** "이 구간의 Bad/Good 비율이 전체 평균과 같음"
+
+그래서 상수 \(\ln(N_B/N_G)\)(전체 Bad log-odds)만큼 차이가 난다. 이 차이가 [유의성 검정](significance-test.md)에서 Wald 검정의 귀무가설을 고를 때 중요해진다.
+
+### 수치로 확인 — 매출액 5구간 (Good 1,000 / Bad 200)
+
+\(\ln(N_B/N_G) = \ln(200/1000) = -1.609\)
+
+| Bin | 불량률 | \(\text{WoE}_i\) | \(-\text{WoE}_i\) | \(\hat{\beta}_i = \ln(n_{B,i}/n_{G,i})\) | \(\hat\beta_i + \text{WoE}_i\) |
+|-----|------|------|------|------|------|
+| 1 (1억 미만) | 54.5% | −1.792 | +1.792 | ln(60/50) = **+0.182** | −1.609 |
+| 2 (1억~5억) | 25.0% | −0.511 | +0.511 | ln(50/150) = **−1.099** | −1.609 |
+| 3 (5억~10억) | 16.7% | 0.000 | 0.000 | ln(40/200) = **−1.609** | −1.609 |
+| 4 (10억~50억) | 7.9% | +0.847 | −0.847 | ln(30/350) = **−2.457** | −1.609 |
+| 5 (50억 초과) | 7.4% | +0.916 | −0.916 | ln(20/250) = **−2.526** | −1.609 |
+
+- WoE가 가장 낮은 Bin 1에서 \(\hat\beta\)가 가장 크다(Bad log-odds 최고). 불량률이 50%를 넘으므로 \(\hat\beta\)는 양수다.
+- 불량률이 50% 미만인 구간은 \(\hat\beta\)가 음수다. 그래서 **WoE가 음수인데 \(\hat\beta\)도 음수**인 구간(Bin 2)이 정상적으로 생긴다. "β와 WoE의 부호가 같으면 오류"라는 판정은 틀린 규칙이다.
+- 마지막 열이 모두 같다는 것이 식 (4)의 내용이다.
+
+![단변량에서 β는 항상 기울기 −1 직선 위에 놓인다](images/beta_vs_woe_diagnostic.png)
+
+!!! info "균형 표본에서는 상수가 사라진다"
+    개발 표본을 Bad:Good = 1:1로 맞추면 \(\ln(N_B/N_G) = 0\)이므로 \(\hat\beta_i = -\text{WoE}_i\)가 그대로 성립한다. 교재에서 "β ≈ −WoE"라고 쓰는 것은 대개 이 경우다. 불균형 표본에서는 상수만큼 평행 이동한다.
 
 ---
 
-### 왜 β와 WoE의 실제 수치가 다른가?
+## 3.2 WoE 치환 모형 — \(\hat\beta = -1\)도 정확히 성립한다
 
-!!! tip "부호 반전 + 상수항(모집단 로그 오즈) 때문"
-    위 Step 3의 결론을 다시 보면:
+연속형 변수 \(X\)를 구간의 WoE 값으로 바꾼 변수 \(X_{\text{WoE}}\)를 만들어 **절편을 포함한** 로지스틱 회귀를 하면
 
-    $$\hat{\beta}_i = -\text{WoE}_i + \underbrace{\ln\!\left(\frac{N_B}{N_G}\right)}_{\text{전체 모집단 Bad 로그 오즈 (상수)}}$$
+$$
+\ln\!\left(\frac{P(\text{Bad})}{P(\text{Good})}\right) = \beta_0 + \beta \cdot X_{\text{WoE}} \tag{5}
+$$
 
-    이 식은 두 가지를 보여준다:
+\(\beta_0 = \ln(N_B/N_G)\), \(\beta = -1\)을 넣으면 각 구간의 예측 log-odds가 \(-\text{WoE}_i + \ln(N_B/N_G)\), 즉 식 (4)의 포화 모형 해와 **완전히 같아진다**. 포화 모형의 로그우도는 구간 단위 모형이 도달할 수 있는 최대값이므로, 이 점이 식 (5)의 최대우도해다.
 
-    1. **부호가 반대다** — WoE는 Good 집중도(\(\ln(\%G/\%B)\)), β는 Bad log-odds(\(\ln(P_B/P_G)\))를 측정하므로 방향이 반대다.
-    2. **상수 차이가 있다** — 데이터 전체의 Bad/Good 비율인 \(\ln(N_B/N_G)\)만큼 평행 이동한다.
+$$
+\hat\beta = -1, \qquad \hat\beta_0 = \ln\!\left(\frac{N_B}{N_G}\right) \quad \text{(정확히)} \tag{6}
+$$
 
-    두 지표의 **기준점(Reference Point)**이 다르기 때문이다:
+직관적으로는, WoE가 1 증가하면 Bad log-odds가 정확히 1 감소하도록 WoE가 **만들어져 있기** 때문이다.
 
-    - **\(\hat{\beta}_i\)의 기준점:** "불량과 우량이 1:1로 같은 상태 (로그 오즈 = 0)"
-    - **WoE의 기준점:** "이 구간의 Good/Bad 비율이 전체 모집단 평균과 같은 상태 (WoE = 0)"
-
-### 수치 예시로 확인
-
-전체 모집단에서 \(N_B = 500\)건, \(N_G = 4500\)건이라 하면:
-
-$$\ln\!\left(\frac{N_B}{N_G}\right) = \ln\!\left(\frac{500}{4500}\right) = \ln(0.111) \approx -2.20$$
-
-그러면 \(\hat{\beta}_i = -\text{WoE}_i + (-2.20)\)이므로:
-
-| Bin | \(\text{WoE}_i\) (집계값) | \(-\text{WoE}_i\) | 상수 \(\ln(N_B/N_G)\) | \(\hat{\beta}_i = -\text{WoE}_i + (-2.20)\) |
-|-----|------|------|------|------|
-| Bin 1 (고위험) | −1.80 | +1.80 | −2.20 | **−0.40** |
-| Bin 3 (중간) | 0.00 | 0.00 | −2.20 | **−2.20** |
-| Bin 5 (저위험) | +0.92 | −0.92 | −2.20 | **−3.12** |
-
-- WoE가 **음수**(Bad 집중)인 Bin 1에서 β는 **0에 가장 가까운** 값(−0.40) → Bad odds가 가장 높음 ✓
-- WoE가 **양수**(Good 집중)인 Bin 5에서 β는 **가장 큰 음수**(−3.12) → Bad odds가 가장 낮음 ✓
-- 모든 구간에서 β와 WoE의 **순서(단조성)가 정확히 반대로 보존**됨을 확인할 수 있다.
-
-!!! note "실무적 시사점"
-    y=1=Bad 모형에서 \(\hat{\beta}\)와 WoE는 **부호가 반대**이고, 구간 간 **상대적 크기 차이의 절댓값이 동일**하다. 검증 시 확인할 점은: (1) β와 WoE의 부호가 반대인가, (2) 구간 간 β 차이가 WoE 차이와 비례하는가이다. 모형 피팅 후 두 값을 비교하여 Classing의 통계적 타당성을 검증하는 것이 단변량 로지스틱 회귀의 핵심 목적이다.
+!!! info "Part 5 예고 — Good Odds로 볼 때는 +1"
+    [Part 5 스코어카드](../../part5_scorecard/scorecard-and-rating.md)는 계수를 다시 적합하지 않는다. 같은 계수를 쓰고 \(\ln(\text{Good Odds}) = -\text{logit}_{\text{Bad}}\)로 부호만 뒤집는다. 그래서 Good log-odds 기준으로 보면 WoE의 기울기는 +1이 된다. 교재에서 흔히 "WoE 치환 시 β = 1"이라고 설명하는 것은 y=1=Good으로 적합한 경우다.
 
 ---
 
-## 3.2 β̂ 와 WoE 비교 — 실제 산출 예시
+## 3.3 그렇다면 β와 WoE의 비교는 어디에 쓰는가
 
-!!! info "Balanced Sample에서의 비교 (y=1=Bad)"
-    아래 예시는 **개발 샘플이 Bad/Good 1:1로 균형 조정(Balanced Sampling)된 경우**의 결과다. 균형 샘플에서는 \(\ln(N_B/N_G) \approx 0\)이므로 3.1절의 상수 이동량이 사실상 소멸하여 \(\hat{\beta}_i \approx -\text{WoE}_i\)가 성립한다. 실무에서는 Bad 비율이 낮은 원본 데이터(Unbalanced)를 사용할 경우 3.1절처럼 상수만큼 추가 차이가 발생하지만, 구간 간 **상대적 크기와 순서는 동일**하게 보존된다.
+식 (4)·(6)은 Classing이 좋든 나쁘든 개발 표본에서 **항상** 성립한다. 따라서 단변량 단계의 "β ≈ −WoE 확인"은 진단이 아니라 **계산 검증(sanity check)** 이다 — 어긋나면 집계·조인·코딩 오류를 의심한다.
 
-| Bin | 구간 | 불량률 | WoE (집계값) | \(\hat{\beta}\) (회귀 추정) | \(\hat{\beta} + \text{WoE}\) | 해석 |
-|-----|------|--------|-----------|---------|------|------|
-| 1 | 1억 미만 | 54.5% | −1.79 | +1.81 | +0.02 | 불량률 최고 → WoE 최저, β 최고 |
-| 2 | 1억~5억 | 25.0% | −0.51 | +0.49 | −0.02 | 부호 반대, 크기 일치 |
-| 3 | 5억~10억 | 16.7% | 0.00 | −0.01 | −0.01 | 불량률 ≈ 전체 평균 → WoE ≈ 0 |
-| 4 | 10억~50억 | 7.9% | +0.85 | −0.84 | +0.01 | 부호 반대, 크기 일치 |
-| 5 | 50억 초과 | 7.4% | +0.92 | −0.90 | +0.02 | 불량률 최저 → WoE 최고, β 최저 |
+β와 WoE의 관계가 실제 진단 정보가 되는 곳은 두 군데다.
 
-미세한 차이는 MLE 최적화 수렴 과정에서 발생하는 수치적 오차다. \(\hat{\beta}_i + \text{WoE}_i \approx 0\)이므로, 실질적으로 \(\hat{\beta}_i \approx -\text{WoE}_i\)가 성립함을 확인할 수 있다.
+| 상황 | 확인 방법 | 정상 | 이상 신호 |
+|------|---------|------|---------|
+| **다변량 모형** | Full Model의 WoE 변수 계수 | −1 ~ 0 사이의 음수(다른 변수와 정보를 나눔) | 양수(부호 역전), 또는 \(\lvert\beta\rvert > 1\)(억제효과·공선성 의심) — [다변량 회귀](../../part4_modeling/multivariate-regression.md) |
+| **검증(OOT) 표본** | 개발 표본의 WoE를 OOT 표본에 적용한 뒤 단변량 재적합 | \(\hat\beta\)가 −1 근처, Bin별 실제 log-odds가 직선 근처 | \(\lvert\hat\beta\rvert\)가 크게 줄어듦(WoE 패턴 약화), 특정 Bin이 직선에서 크게 이탈 |
 
-![WoE vs Beta 진단 — y=1=Bad에서 점들이 β = −WoE 선 위에 위치하면 정상](images/beta_vs_woe_diagnostic.png)
+!!! note "Two Approaches 정리"
 
----
-
-### WoE 치환 방식과의 관계
-
-!!! tip "연속형 변수 X를 WoE로 치환하면 β → −1로 수렴하는 이유 (y=1=Bad)"
-    연속형 변수 \(X\)를 각 구간의 WoE 값으로 치환한 새로운 변수 \(X_{\text{WoE}}\)를 만들어 **절편 포함(No Intercept 아님)** 로지스틱 회귀를 수행하면:
-
-    $$\ln\!\left(\frac{P(\text{Bad})}{P(\text{Good})}\right) = \alpha + \beta \cdot X_{\text{WoE},i}$$
-
-    이때 이론적으로 \(\hat{\beta} \to -1\)에 수렴하고, \(\hat{\alpha} \to \ln(N_B/N_G)\)가 된다.
-
-    **이유:** WoE가 양수인 구간(Good 집중)에서는 Bad 확률이 낮아야 하므로 Bad log-odds가 감소해야 한다. 즉 WoE가 1 단위 증가하면 Bad log-odds는 1만큼 **감소**한다 → 기울기 \(\beta = -1\).
-
-!!! info "Part 5 예고 — y=1=Good 전환 시 β → +1"
-    [Part 5(스코어카드)](../../part5_scorecard/scorecard-and-rating.md)에서 y = 1 = Good으로 전환하면, log-odds가 \(\ln(P_G/P_B)\)로 바뀐다. 이때 WoE와 log-odds의 방향이 일치하므로 \(\hat{\beta} \to +1\)이 된다. 이것이 교과서에서 흔히 "WoE 치환 시 β → 1"이라고 설명하는 결과다.
-
-!!! note "Two Approaches: 사실상 같은 말"
-    아래 두 방법은 서로 다른 방식으로 수행되지만, WoE가 모형 내에서 어떻게 작동하는지를 검증한다는 동일한 본질을 갖는다.
-
-    | 방법 | 설계 | 결과 (y=1=Bad) | 의미 |
+    | 방법 | 설계 | 개발 표본 결과 (y=1=Bad) | 쓰임 |
     |------|------|------|------|
-    | **1. One-Hot + No Intercept** | \(k\)개 더미, 절편 제거 | \(\hat{\beta}_j \approx -\text{WoE}_j\) (각 구간별) | 모형이 스스로 각 구간의 리스크를 탐색하여 WoE와 크기가 같고 부호가 반대인 값을 도출함을 확인 |
-    | **2. WoE 치환 + Intercept 포함** | \(X_{\text{WoE}}\) 단일 변수, 절편 포함 | \(\hat{\beta} \to -1\) (전체 변수에 대해) | WoE로 집계된 구간별 리스크가 로지스틱 모형의 선형 가정과 정확히 일치함을 확인 |
-
-    (1)은 "구간별 WoE가 통계적으로 유의한가"를 검증하고, (2)는 "WoE 구조 전체가 모형에서 비례적으로 작동하는가"를 검증한다. 둘 다 WoE의 타당성을 확인하는 작업이며, 두 결과가 모두 성립할 때 Classing이 통계적으로 건전하다고 판단할 수 있다.
+    | **One-Hot + No Intercept** | \(k\)개 더미, 절편 제거 | \(\hat{\beta}_i = -\text{WoE}_i + \ln(N_B/N_G)\) (정확) | 구간별 SE → 인접 Bin 차이 검정 |
+    | **WoE 치환 + Intercept** | \(X_{\text{WoE}}\) 단일 변수, 절편 포함 | \(\hat{\beta} = -1\) (정확) | 본 모형의 입력 형태. 진단은 다변량·OOT에서 |

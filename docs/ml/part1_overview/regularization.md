@@ -31,7 +31,12 @@ $$
 - **페널티 \(P(\boldsymbol{\beta})\)**: 계수가 커지면 벌칙을 부과 (복잡도 제한)
 - **\(\lambda\)**: 두 항의 균형을 조절하는 **정규화 강도** 하이퍼파라미터
 
-\(\lambda = 0\)이면 OLS와 동일하고, \(\lambda \to \infty\)이면 모든 계수가 0으로 수렴한다.
+\(\lambda = 0\)이면 정규화 없는 적합(OLS 또는 MLE)과 동일하고, \(\lambda \to \infty\)이면 모든 계수가 0으로 수렴한다.
+
+!!! warning "정규화의 전제: 변수 표준화와 절편 제외"
+    페널티 \(P(\boldsymbol{\beta})\)는 계수의 **크기**에 벌칙을 준다. 그런데 계수의 크기는 변수의 단위에 따라 달라진다. 소득을 "원" 단위로 넣으면 계수가 아주 작아 페널티를 거의 받지 않고, "억 원" 단위로 넣으면 계수가 커져 강하게 수축된다. 같은 정보인데 단위 선택이 결과를 바꾸는 것이다. 그래서 Ridge·Lasso를 적용하기 전에는 연속형 변수를 **표준화**(평균 0, 표준편차 1)하는 것이 원칙이다. 또 절편 \(\beta_0\)은 전체 불량률 수준을 맞추는 항이므로 페널티 대상에서 **제외**한다.
+
+    WoE로 변환한 스코어카드 설계행렬은 모든 변수가 같은 로그 오즈 척도에 있으므로 별도 표준화 없이도 페널티가 비교적 공정하게 작동한다.
 
 !!! info "Bias-Variance 관점"
     페널티를 부과하면 Bias가 약간 늘어나는 대신 Variance가 크게 줄어든다. 직전 장에서 다룬 Bias-Variance Tradeoff의 **Sweet Spot**을 찾는 가장 수학적인 도구가 바로 정규화다.
@@ -109,19 +114,21 @@ $$
 $$
 
 - \(q = 1\)이면 Lasso, \(q = 2\)이면 Ridge
-- 정규화 강도 \(\lambda\)는 제약의 크기 \(t\)와 역수 관계
+- 정규화 강도 \(\lambda\)와 제약의 크기 \(t\)는 일대일로 대응한다. \(\lambda\)가 커질수록 \(t\)는 작아진다(단조 감소 관계이며, 단순한 역수 관계는 아니다)
 
 <figure markdown="span">
   ![L1 vs L2 정규화의 기하학적 해석](images/l1_l2_contour.png)
-  <figcaption>Ridge(L2)의 제약 영역은 원, Lasso(L1)의 제약 영역은 다이아몬드 형태다. 손실 함수의 등고선이 L1의 꼭짓점에서 접하면 해당 축의 계수가 정확히 0이 된다. Hastie et al. (2009) <em>The Elements of Statistical Learning</em> Figure 3.11에서 영감을 받아 재구성.</figcaption>
+  <figcaption>Ridge(L2)의 제약 영역은 원, Lasso(L1)의 제약 영역은 다이아몬드 형태다. 두 패널은 같은 손실 함수(빨간 타원 등고선)를 쓰며, 굵은 등고선이 제약 영역에 처음 닿는 점이 해다. 해는 수치 최적화로 계산했다. 같은 손실에서 Lasso 해는 꼭짓점 \((t, 0)\)에 놓여 \(\beta_2 = 0\)이 되고, Ridge 해는 두 계수가 모두 0이 아니다. Hastie et al. (2009) <em>The Elements of Statistical Learning</em> Figure 3.11에서 영감을 받아 재구성.</figcaption>
 </figure>
 
 **왜 다이아몬드의 꼭짓점에서 접하는가?**
 
 2차원에서 생각하면:
 
-- **L2 (원)**: 등고선(타원)이 원의 **어디서든** 접할 수 있다. 축 위에서 접할 특별한 이유가 없으므로 두 계수 모두 0이 아닌 값을 가진다.
-- **L1 (다이아몬드)**: 꼭짓점이 축 위에 돌출되어 있다. 등고선이 접하는 지점이 이 꼭짓점일 가능성이 높고, 꼭짓점에서는 한 축의 좌표가 정확히 0이다.
+- **L2 (원)**: 원의 경계는 매끄러워서, 등고선(타원)이 원과 접하는 점은 타원의 모양과 위치에 따라 원 위 어디든 될 수 있다. 축 위에서 접할 특별한 이유가 없으므로 대부분 두 계수 모두 0이 아닌 값을 가진다.
+- **L1 (다이아몬드)**: 꼭짓점이 축 위에 뾰족하게 돌출되어 있다. 꼭짓점에서는 접할 수 있는 등고선의 방향 범위(법선 방향의 범위)가 넓어서, 상당히 많은 타원 모양·위치에 대해 해가 꼭짓점에 떨어진다. 꼭짓점에서는 한 축의 좌표가 정확히 0이다.
+
+꼭짓점에 반드시 떨어지는 것은 아니다. 타원의 방향에 따라 Lasso 해도 다이아몬드의 변 위에 놓여 두 계수가 모두 살아남을 수 있다. "Lasso는 0을 만들 **기회**가 구조적으로 많다"가 정확한 표현이다.
 
 고차원에서는 이 효과가 더 극적이다 — 변수가 많을수록 더 많은 축의 꼭짓점에서 접하게 되어, Lasso가 자동으로 많은 변수를 제거한다.
 
@@ -151,15 +158,15 @@ $$
 
 <figure markdown="span">
   ![Ridge vs Lasso 계수 경로](images/coefficient_path.png)
-  <figcaption>λ가 증가하면 Ridge는 모든 계수를 서서히 0에 수렴시키고, Lasso는 일부 계수를 특정 λ에서 정확히 0으로 만든다. 합성 데이터로 시각화.</figcaption>
+  <figcaption>λ가 증가하면 Ridge는 모든 계수를 서서히 0에 접근시키고, Lasso는 계수를 하나씩 정확히 0으로 만들다가 λ_max 이상에서 모두 0으로 만든다. 표준화한 합성 데이터(β₁과 β₂는 서로 상관)로 시각화.</figcaption>
 </figure>
 
 | | Ridge (L2) | Lasso (L1) |
 |---|---|---|
 | **\(\lambda \to 0\)** | OLS와 동일 | OLS와 동일 |
-| **\(\lambda\) 증가** | 모든 계수가 서서히 감소 | 영향력 작은 계수부터 순차적으로 0이 됨 |
-| **\(\lambda \to \infty\)** | 모든 계수 → 0 (수렴) | 모든 계수 = 0 (특정 \(\lambda\)에서 갑자기) |
-| **경로 형태** | 부드러운 곡선 | 꺾이는 지점(kink)이 있는 경로 |
+| **\(\lambda\) 증가** | 모든 계수가 서서히 감소 (상관된 변수는 부호가 바뀌기도 함) | 영향력 작은 계수부터 순차적으로 정확히 0이 됨 |
+| **큰 \(\lambda\)** | 모든 계수 → 0 (점근적으로 접근, 정확히 0은 아님) | 유한한 값 \(\lambda_{\max}\) 이상에서 모든 계수 = 0 |
+| **경로 형태** | 부드러운 곡선 | 꺾이는 지점(kink)이 있는 경로 (λ 선형 척도에서 구간별 직선) |
 
 ---
 
@@ -177,17 +184,20 @@ L_{\text{reg}} = L_{\text{data}} + \frac{\lambda}{2} \sum_{l} \|\mathbf{W}^{[l]}
 $$
 
 - \(\|\mathbf{W}^{[l]}\|_F^2\): \(l\)번째 층 가중치 행렬의 Frobenius 노름 제곱 (= 모든 원소의 제곱합)
-- 경사하강법에서 가중치 업데이트 시 \(\mathbf{W} \leftarrow (1 - \alpha\lambda)\mathbf{W} - \alpha \nabla L\) 형태가 되어, 매 스텝마다 가중치가 **약간씩 감소(decay)**한다
+- 학습률을 \(\eta\)라 하면, 경사하강법의 가중치 업데이트가 \(\mathbf{W} \leftarrow (1 - \eta\lambda)\mathbf{W} - \eta \nabla L_{\text{data}}\) 형태가 되어, 매 스텝마다 가중치가 **약간씩 감소(decay)**한다
+- 이 등가성은 일반 경사하강법(SGD)에서 성립한다. Adam처럼 파라미터별로 보폭을 조절하는 옵티마이저에서는 손실에 L2 항을 더하는 것과 가중치를 직접 줄이는 것이 같지 않아, 둘을 분리한 AdamW(Loshchilov & Hutter, ICLR 2019)가 쓰인다
 
-!!! note "뉴럴넷의 다른 정규화 기법들"
+!!! note "뉴럴넷의 다른 과적합 방지 기법들"
     뉴럴넷에서는 L2 외에도 과적합을 막는 다양한 기법이 쓰인다.
 
     | 기법 | 원리 |
     |------|------|
     | **Dropout** | 학습 시 뉴런을 랜덤하게 비활성화 → 특정 뉴런에 의존 방지 |
     | **Early Stopping** | Validation 성능이 악화되면 학습 중단 |
-    | **Batch Normalization** | 층별 입력을 정규화하여 내부 공변량 이동 완화 |
+    | **Batch Normalization** | 층별 입력의 분포를 표준화(normalization)해 학습을 안정시킴. 미니배치 통계에서 오는 잡음이 부수적으로 정규화(regularization) 효과를 낸다 |
     | **Data Augmentation** | 학습 데이터를 변형하여 다양성 확보 (이미지 분야) |
+
+    한국어 "정규화"는 regularization(과적합 억제)과 normalization(값의 척도 맞추기)을 모두 가리키므로 혼동하기 쉽다. 이 페이지의 "정규화"는 regularization이다. Batch Normalization은 처음에 "내부 공변량 이동(internal covariate shift)을 줄인다"는 설명으로 제안되었으나, 이후 연구(Santurkar et al., NeurIPS 2018)는 손실 지형을 매끄럽게 만드는 효과가 더 본질적이라고 반론했다.
 
     이 중 **Early Stopping**은 암묵적으로 L2 정규화와 유사한 효과를 낸다(Goodfellow et al., 2016, Ch.7). 학습 초기에는 모든 가중치가 0 근처에서 출발하므로, 학습을 일찍 멈추면 가중치가 크게 벗어나지 못한다 — Ridge가 계수를 0 방향으로 끌어당기는 것과 동일한 효과다.
 
@@ -220,9 +230,12 @@ $$
 | Stepwise로 변수 제거 | Lasso (L1) | 불필요한 변수를 제거하여 모형 단순화 |
 | 상관 높은 변수 수동 제거 | Ridge (L2) | 다중공선성 완화 |
 | WoE 구간 병합 (Coarse Classing) | (트리의 Pruning) | 과도한 세분화 방지 |
-| 변수 수 20개 내외 관행 | \(\lambda\) 튜닝 | 모형 복잡도 제한 |
+| 변수 수 10~20개 관행 | \(\lambda\) 튜닝 | 모형 복잡도 제한 |
 
 ML에서는 이 과정을 \(\lambda\) 하나로 **자동화**한다. Cross-Validation으로 최적 \(\lambda\)를 찾으면, 어떤 변수를 남기고 얼마나 수축할지를 데이터가 결정한다.
+
+!!! note "WoE 스코어카드에 페널티를 걸면"
+    WoE 로지스틱 회귀에도 L1/L2 페널티를 적용할 수 있다. 이 가이드북의 WoE 정의(\(\ln(\%\text{Good}/\%\text{Bad})\))와 Bad logit 체계에서 WoE 변수의 정상 계수는 \(\beta < 0\)이다. 페널티는 계수를 0 쪽으로 끌어당길 뿐이므로 \(|\beta|\)가 작아지고, Lasso라면 일부 변수의 \(\beta\)가 정확히 0이 되어 빠진다. 다만 통계 패키지에 따라 로지스틱 회귀에 L2 페널티가 **기본값으로 켜져 있는** 경우가 있어, 의도하지 않은 수축이 계수와 배점에 섞일 수 있다. 스코어카드 계수를 해석·검정할 때는 페널티 적용 여부를 반드시 확인해야 한다.
 
 ---
 
@@ -233,6 +246,8 @@ ML에서는 이 과정을 \(\lambda\) 하나로 **자동화**한다. Cross-Valid
 - Hoerl & Kennard, "Ridge Regression: Biased Estimation for Nonorthogonal Problems", *Technometrics*, 1970. — Ridge 원논문
 - Zou & Hastie, "Regularization and Variable Selection via the Elastic Net", *JRSS-B*, 2005. — Elastic Net 원논문
 - Goodfellow, Bengio & Courville, *Deep Learning*, MIT Press, 2016. — Chapter 7 (Regularization for Deep Learning)
+- Loshchilov & Hutter, "Decoupled Weight Decay Regularization", *ICLR*, 2019. — AdamW
+- Santurkar et al., "How Does Batch Normalization Help Optimization?", *NeurIPS*, 2018.
 
 !!! tip "다음 섹션"
     정규화의 이론을 잡았으니, 다음으로 [Baseline 워크플로우](baseline_workflow.md)에서 실제 모형 적합의 첫 단계를 다룬다.

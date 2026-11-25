@@ -21,4 +21,4 @@ title: WoE / IV
 | 2 | [X → WoE 공간 변환](woe-transform.md) | 원래 X 공간과 WoE 공간은 어떻게 다르며, Dummy 대비 장점은? |
 | 3 | [IV: 정의·산출·변수 선택](iv.md) | IV는 어떻게 산출하며, 변수 선택 기준은 무엇인가? |
 
-WoE/IV로 변수를 선별한 뒤에는 [단변량 로지스틱 회귀](../univariate_lr/index.md)에서 각 Bin의 통계적 유의성을 검정하고 Classing 품질을 진단한다.
+WoE/IV로 변수를 선별한 뒤에는 [단변량 로지스틱 회귀](../univariate_lr/index.md)에서 변수와 인접 Bin 차이의 통계적 유의성을 검정하고 Classing 품질을 진단한다.
