@@ -5170,7 +5170,7 @@ XAI는 이 두 가지를 모두 포괄하는 상위 개념이다.</p>
 <h3 id="_2">모형 복잡도와 해석 가능성의 트레이드오프<a class="headerlink" href="#_2" title="Permanent link">¶</a></h3>
 <div class="highlight"><pre><span></span><code>해석 가능성  높음 ◀━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━▶ 낮음
                 │            │            │              │
-            스코어카드     얕은 트리     GA²M·EBM       깊은 GBM
+            스코어카드     단일 트리     GA²M·EBM       깊은 GBM
             (LR + WoE)   (depth 2~3)  1-Depth GBM    Random Forest
                                                      Deep Learning
 </code></pre></div>
@@ -5380,11 +5380,11 @@ XAI는 이 두 가지를 모두 포괄하는 상위 개념이다.</p>
 <tr>
 <td>1. 교호작용 차수</td>
 <td><strong>≤ 2-way</strong></td>
-<td><code>max_depth=2</code>, 교호작용 제약, 또는 GA²M 구조(EBM)</td>
+<td><code>max_depth=2</code>, 교호작용 제약(허용 묶음을 모두 두 변수 쌍으로 지정), 또는 GA²M 구조(EBM)</td>
 </tr>
 <tr>
 <td>2. 방향</td>
-<td><strong>단조</strong></td>
+<td><strong>단조</strong> — 모형 예측(= 주효과와 쌍별 표의 합)이 변수마다 한 방향</td>
 <td>단조 제약(변수별 +1/−1)</td>
 </tr>
 <tr>
@@ -5406,7 +5406,7 @@ XAI는 이 두 가지를 모두 포괄하는 상위 개념이다.</p>
 <figure>
   <a class="glightbox" data-type="image" data-width="100%" data-height="auto" href="../../appendix/shap-fanova/images/interaction_2way.png" data-desc-position="bottom"><img alt="2-way interaction heatmap" src="../../appendix/shap-fanova/images/interaction_2way.png" width="780"></a>
 <br>
-<figcaption>2-way interaction은 heatmap 한 장으로 패턴이 보인다. 왼쪽(depth-2)은 9칸으로 명쾌하지만, 오른쪽(depth-5+)은 42칸으로 비단조 구간이 발생하며 해석이 어려워진다.</figcaption>
+<figcaption>2-way까지는 heatmap 한 장으로 볼 수 있다. 두 그림 모두 주효과와 교호작용을 더한 값, 즉 고객이 실제로 받는 효과다(가상 예시). 왼쪽은 깊이 2에 단조 제약을 건 모형으로, 9칸 모두 소득이 높을수록·DTI가 낮을수록 위험이 낮다. 오른쪽은 단조 제약 없이 깊게 학습한 모형으로, 분할 경계가 쌓여 42칸이 되고 원으로 표시한 칸에서는 방향이 뒤집힌다. 단조 제약을 걸면 깊은 모형도 방향은 뒤집히지 않지만, 칸이 많아 검토하기 어려운 문제는 남는다.</figcaption>
 </figure>
 <figure>
   <a class="glightbox" data-type="image" data-width="100%" data-height="auto" href="../../appendix/shap-fanova/images/interaction_3way_cube.png" data-desc-position="bottom"><img alt="3-way interaction cube" src="../../appendix/shap-fanova/images/interaction_3way_cube.png" width="480"></a>
@@ -5418,17 +5418,160 @@ XAI는 이 두 가지를 모두 포괄하는 상위 개념이다.</p>
 <p class="admonition-title">조건 2 — 단조성 (Monotonicity)</p>
 <p>비단조 패턴이 과적합인지 실제인지 판단하기 어렵다. 단조 제약으로 해석력과 안정성을 확보한다.</p>
 </div>
-<p>트리가 자유롭게 학습하면 "소득 3,000만 이하에서는 부도율 증가, 3,000~5,000만에서 감소, 5,000만 이상에서 다시 증가" 같은 비단조 패턴이 나올 수 있다. 이것이 과적합인지 실제 패턴인지를 심사역이 판단해야 하는데, 구간이 많아질수록 비단조 패턴의 가짓수가 폭발한다.</p>
-<p>단조 제약을 거는 것은 해석력과 안정성을 동시에 확보하는 방법이다. 제약이 트리 학습 중에 어떻게 작동하는지는 <a href="../../part3_tree_ensemble/boosting_advanced/">Boosting 심화</a>에서, 1-Depth GBM에 적용하는 예는 <a href="../depth1_gbm/">1-Depth GBM 스코어카드</a>에서 다룬다.</p>
+<p>단조 제약 없이 트리가 자유롭게 학습하면 "소득 3,000만 이하에서는 부도율 증가, 3,000~5,000만에서 감소, 5,000만 이상에서 다시 증가" 같은 비단조 패턴이 나올 수 있다. 이것이 과적합인지 실제 패턴인지를 심사역이 판단해야 하는데, 구간이 많아질수록 비단조 패턴의 가짓수가 폭발한다.</p>
+<p>단조 제약을 거는 것은 해석력과 안정성을 동시에 확보하는 방법이다. 제약은 방향을 거스르는 분할을 학습 중에 막으므로, 다른 변수 값이 무엇이든 모형 예측은 지정한 방향을 지킨다. 제약이 트리 학습 중에 어떻게 작동하는지는 <a href="../../part3_tree_ensemble/boosting_advanced/">Boosting 심화</a>에서, 1-Depth GBM에 적용하는 예는 <a href="../depth1_gbm/">1-Depth GBM 스코어카드</a>에서 다룬다. 제약이 무엇까지 지켜 주고 무엇은 지켜 주지 못하는지는 아래 <a href="#monotone-guarantee">단조 제약은 어디까지 지켜 주나</a>에서 정리한다.</p>
 <div class="admonition info">
 <p class="admonition-title">조건 3 — 점수표로 풀어 쓸 수 있어야 한다</p>
 <p>해석의 최종 산출물은 심사역이 읽는 점수표다.</p>
 </div>
-<p>주효과는 변수별 구간 점수로, 허용한 2-way 교호작용은 쌍별 표로 옮겨 적을 수 있어야 하고, 이 표들을 더한 값이 모형의 예측과 같아야 한다(분해 잔차 없음). 수학적으로 분해할 수 있어도 표로 옮겨 적을 수 없거나 더해서 예측이 재현되지 않으면, 이 가이드북에서는 해석 가능 모형으로 보지 않는다.</p>
+<p>주효과는 변수별 구간 점수로, 허용한 2-way 교호작용은 쌍별 표로 옮겨 적을 수 있어야 하고, 이 표들을 더한 값이 모형의 예측과 같아야 한다(분해 잔차 없음). 수학적으로 분해할 수 있어도 표로 옮겨 적을 수 없거나 더해서 예측이 재현되지 않으면, 이 가이드북에서는 해석 가능 모형으로 보지 않는다. 깊은 모형을 분해한 뒤 주효과와 일부 2-way 표만 골라 적는 것은 모형의 요약이지 점수표가 아니다(이유는 아래 예시).</p>
 <div class="admonition note">
 <p class="admonition-title">변수당 구간 수는 운영 평점표의 실무 관행이다</p>
-<p>변수당 구간을 5개 안팎으로 두는 것은 해석 가능 조건이 아니라 운영 평점표의 실무 관행이다(스코어카드의 구간 수 기준은 <a href="../../../scorecard/part3_variable_selection/classing/decision-criteria/">의사결정 기준 종합</a>). 구간이 적으면 평점표와 2-way 표(5×5 = 25칸)가 한눈에 들어오고 운영도 안정적이지만, 외부 규정이나 문헌이 정한 기준은 아니다. 깊이 1에 단조 제약을 건 모형처럼 변수당 구간이 그보다 많아도 점수표로 풀어 쓸 수 있으면 해석 가능하다. 다만 구간이 많을수록 데이터의 우연한 굴곡까지 계단으로 새겨지기 쉬우므로, 운영 평점표로 옮길 때 인접 구간을 정리할지 함께 판단한다.</p>
+<p>변수당 구간을 5개 안팎으로 두는 것은 해석 가능 조건이 아니라 운영 평점표의 실무 관행이다(스코어카드의 구간 수 기준은 <a href="../../../scorecard/part3_variable_selection/classing/decision-criteria/">의사결정 기준 종합</a>). 구간이 적으면 평점표와 2-way 표(5×5 = 25칸)가 한눈에 들어오고 운영도 안정적이지만, 외부 규정이나 문헌이 정한 기준은 아니다. 깊이 1에 단조 제약을 건 모형처럼 변수당 구간이 그보다 많아도 점수표로 풀어 쓸 수 있으면 해석 가능하다. 다만 구간이 많을수록 계단 높이가 데이터의 우연한 차이를 따라 들쭉날쭉해지기 쉬우므로(단조 제약 아래에서 방향이 뒤집히지는 않는다), 운영 평점표로 옮길 때 인접 구간을 정리할지 함께 판단한다.</p>
+<p><strong>2-way를 허용하면 구간 수는 안정성의 문제가 된다.</strong> 두 변수의 구간 수가 곧 2-way 표의 칸 수이고, 칸이 많을수록 칸당 건수가 줄어 값이 불안정해진다. 2-way 표를 쓰는 모형에서는 구간 수와 칸당 최소 건수(리프 최소 가중 등)를 함께 통제한다.</p>
 </div>
+<h3 id="monotone-guarantee">단조 제약은 어디까지 지켜 주나<a class="headerlink" href="#monotone-guarantee" title="Permanent link">¶</a></h3>
+<p>단조 제약을 걸었는데 표에서 방향이 거꾸로 보이는 경우가 있다. 대부분은 표를 잘못 읽은 것이고, 일부는 점수표로 옮기는 과정에서 실제로 깨진 것이다. 세 단계로 나눠 보면 구분된다.</p>
+<table>
+<thead>
+<tr>
+<th>단계</th>
+<th>단조성</th>
+<th>이유</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>① 학습된 모형</td>
+<td><strong>보장된다</strong></td>
+<td>XGBoost·LightGBM의 단조 제약은 방향을 거스르는 분할을 학습 중에 막는다. 다른 변수 값이 무엇이든, 트리가 얼마나 깊든 모형 예측은 지정한 방향을 지킨다. 표본이 적은 칸은 뒤집히는 대신 평평해진다</td>
+</tr>
+<tr>
+<td>② 분해한 표를 읽을 때</td>
+<td>교호작용 표 <strong>하나만 보면 +와 −가 섞인다 (정상)</strong></td>
+<td>교호작용 표는 주효과에 더하는 보정값이라 행·열 평균이 0이 되도록 만들어진다. 그래서 방향은 교호작용 표 단독이 아니라 <strong>주효과와 더한 표</strong>로 읽는다</td>
+</tr>
+<tr>
+<td>③ 점수표로 옮길 때</td>
+<td><strong>조건부</strong></td>
+<td>깊이 2 모형을 변수별 독립(product) 가중으로 분해하면, 표를 모두 더하든 일부 쌍만 남기든 방향이 유지된다. 아래 세 경우에는 깨질 수 있다</td>
+</tr>
+</tbody>
+</table>
+<p>방향이 깨질 수 있는 경우는 다음과 같다.</p>
+<ul>
+<li><strong>깊이 3 이상 모형을 2-way 표로 줄일 때</strong>: 세 변수 이상이 함께 만든 항을 버리면 예측이 재현되지 않고, 단조 제약을 걸었어도 일부 칸의 방향이 뒤집힌다(아래 예시). 2-way 점수표가 필요하면 처음부터 깊이 2나 쌍 단위 교호작용 제약으로 학습한다.</li>
+<li><strong>데이터 분포(joint) 가중으로 분해할 때</strong>: 가중이 변수 값마다 달라져 방향이 유지된다는 보장이 없다. 독립 가중은 방향을 보장하는 대신 데이터에 거의 없는 조합도 같은 무게로 평균에 넣는다. 두 가중의 차이는 <a href="../../appendix/correlation-interpretation/joint-vs-product/">부록 B</a>에서 다룬다.</li>
+<li><strong>항마다 점수를 따로 반올림할 때</strong>: 차이가 작은 구간에서 반올림 오차가 쌓여 방향이 뒤집힐 수 있다. 반올림한 최종 점수표로 방향을 다시 확인한다.</li>
+</ul>
+<div class="admonition example">
+<p class="admonition-title">예시 — 점수표로 정리했더니 방향이 뒤집혔다 (가상 예시)</p>
+<p>변수는 세 개이고, 각각 두 구간뿐이다.</p>
+<ul>
+<li><strong>연체 경험 여부(Y/N)</strong>: 연체 경험이 있으면(Y) 없을 때(N)보다 위험이 같거나 커야 한다는 단조 제약을 걸었다.</li>
+<li><strong>부채</strong>: 적음 / 많음</li>
+<li><strong>소득</strong>: 높음 / 낮음</li>
+</ul>
+<p>깊이 3 모형을 학습한 결과, 고객 유형별 <strong>위험도</strong>(불량 log-odds, 클수록 위험)는 다음과 같다.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">부채</th>
+<th style="text-align: center;">소득</th>
+<th style="text-align: center;">연체 N</th>
+<th style="text-align: center;">연체 Y</th>
+<th style="text-align: center;">차이 (Y − N)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">적음</td>
+<td style="text-align: center;">높음</td>
+<td style="text-align: center;">1.0</td>
+<td style="text-align: center;">1.2</td>
+<td style="text-align: center;">+0.2</td>
+</tr>
+<tr>
+<td style="text-align: center;">적음</td>
+<td style="text-align: center;">낮음</td>
+<td style="text-align: center;">2.0</td>
+<td style="text-align: center;">2.2</td>
+<td style="text-align: center;">+0.2</td>
+</tr>
+<tr>
+<td style="text-align: center;">많음</td>
+<td style="text-align: center;">높음</td>
+<td style="text-align: center;">2.5</td>
+<td style="text-align: center;">2.7</td>
+<td style="text-align: center;">+0.2</td>
+</tr>
+<tr>
+<td style="text-align: center;">많음</td>
+<td style="text-align: center;">낮음</td>
+<td style="text-align: center;">3.5</td>
+<td style="text-align: center;">4.9</td>
+<td style="text-align: center;"><strong>+1.4</strong></td>
+</tr>
+</tbody>
+</table>
+<p>네 유형 모두 연체 경험이 있으면 위험이 오르므로(차이가 모두 +), 모형은 단조 제약을 지킨다. 연체가 위험을 올리는 정도는 <strong>부채가 많고 소득도 낮은 고객</strong>에게서 특히 크다(+1.4).</p>
+<p>이제 심사역에게 보여 주려고 이 모형을 점수표로 정리한다. 점수표는 변수별 표와 두 변수 조합 표까지만 적을 수 있으므로, "연체 경험이 Y일 때 N보다 위험이 얼마나 오르나"를 세 조각으로 나눠 적는다.</p>
+<ul>
+<li><strong>연체 기본 가산</strong>: 네 유형 차이의 평균 <span class="arithmatex">\((0.2 + 0.2 + 0.2 + 1.4)/4 =\)</span> <strong>+0.5</strong></li>
+<li><strong>부채에 따른 가감</strong>(연체 × 부채 표): 부채가 많은 두 유형의 평균 <span class="arithmatex">\((0.2 + 1.4)/2 = 0.8\)</span>은 기본보다 0.3 크고, 부채가 적은 두 유형의 평균 0.2는 0.3 작다. 그래서 부채 많음 <strong>+0.3</strong>, 부채 적음 <strong>−0.3</strong></li>
+<li><strong>소득에 따른 가감</strong>(연체 × 소득 표): 같은 계산으로 소득 낮음 <strong>+0.3</strong>, 소득 높음 <strong>−0.3</strong></li>
+</ul>
+<p>이 점수표로 "연체 Y − N"을 다시 계산하면 다음과 같다.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">부채</th>
+<th style="text-align: center;">소득</th>
+<th style="text-align: center;">모형</th>
+<th style="text-align: center;">점수표</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">적음</td>
+<td style="text-align: center;">높음</td>
+<td style="text-align: center;">+0.2</td>
+<td style="text-align: center;">0.5 − 0.3 − 0.3 = <strong>−0.1</strong> ❌</td>
+</tr>
+<tr>
+<td style="text-align: center;">적음</td>
+<td style="text-align: center;">낮음</td>
+<td style="text-align: center;">+0.2</td>
+<td style="text-align: center;">0.5 − 0.3 + 0.3 = +0.5</td>
+</tr>
+<tr>
+<td style="text-align: center;">많음</td>
+<td style="text-align: center;">높음</td>
+<td style="text-align: center;">+0.2</td>
+<td style="text-align: center;">0.5 + 0.3 − 0.3 = +0.5</td>
+</tr>
+<tr>
+<td style="text-align: center;">많음</td>
+<td style="text-align: center;">낮음</td>
+<td style="text-align: center;">+1.4</td>
+<td style="text-align: center;">0.5 + 0.3 + 0.3 = +1.1</td>
+</tr>
+</tbody>
+</table>
+<p>부채가 적고 소득이 높은 고객은 <strong>점수표상 연체 경험이 Y이면 N일 때보다 위험이 0.1 내려간다.</strong> 모형은 +0.2인데 점수표만 방향이 뒤집혔다.</p>
+<p><strong>원인</strong>: 모형에서 연체가 위험을 크게 올리는 경우는 "부채가 많으면서 소득도 낮은" 한 유형뿐이다. 두 변수 조합까지만 적는 점수표는 이 효과를 부채에 따른 가감(+0.3)과 소득에 따른 가감(+0.3)으로 나누어 표현할 수밖에 없다. 가감은 평균이 0이 되도록 정하므로, 부채가 적은 쪽과 소득이 높은 쪽에는 각각 −0.3이 붙는다. 부채가 적고 소득도 높은 고객에게는 이 −0.3이 두 번 더해져 결과가 음수가 된다. 이를 바로잡으려면 연체·부채·소득을 <strong>함께 보는 표</strong>가 있어야 하지만, 두 변수 조합까지만 적는 점수표에는 그런 표를 둘 수 없다.</p>
+<p><strong>깊이 2 모형이라면</strong>: 처음부터 두 변수가 함께 만드는 효과까지만 학습하므로, 세 가지가 동시에 맞물린 효과가 생기지 않는다. 그래서 점수표로 옮겨도 이렇게 뒤집히지 않는다(독립 가중으로 분해하고 반올림하기 전 기준, 아래 증명).</p>
+<p>연체 건수(0건, 1건, 2건 이상)처럼 구간이 더 많은 변수라면 인접한 두 구간마다(0건→1건, 1건→2건 이상) 같은 비교가 생기고, 그중 어느 단계에서든 같은 이유로 뒤집힐 수 있다.</p>
+</div>
+<details class="note">
+<summary>깊이 2에서 방향이 유지되는 이유 (증명)</summary>
+<p>깊이 2 모형에는 세 변수 이상의 항이 없으므로, <span class="arithmatex">\(x_1\)</span>을 한 단계 올릴 때의 증가분은 상대 변수별 조각의 합으로 갈라진다.</p>
+<div class="arithmatex">\[\Delta f = d + \sum_j D_j(x_j)\]</div>
+<p><span class="arithmatex">\(d\)</span>는 주효과의 증가분, <span class="arithmatex">\(D_j\)</span>는 <span class="arithmatex">\(x_1\times x_j\)</span> 표의 증가분이며 <span class="arithmatex">\(x_j\)</span> 하나에만 의존한다. 독립 가중으로 분해하면 교호작용 표는 상대 변수 방향 평균이 0이므로 <span class="arithmatex">\(\mathbb{E}[D_j]=0\)</span>, 따라서 <span class="arithmatex">\(\min D_j \le 0\)</span>이다.</p>
+<p>단조 제약은 모든 조합에서 <span class="arithmatex">\(\Delta f \ge 0\)</span>을 보장한다. 각 <span class="arithmatex">\(D_j\)</span>가 자기 변수에만 의존하므로 모든 <span class="arithmatex">\(D_j\)</span>가 동시에 최솟값을 갖는 조합도 그 안에 있고, <span class="arithmatex">\(d + \sum_j \min D_j \ge 0\)</span>이다. 일부 쌍 <span class="arithmatex">\(J\)</span>만 남긴 점수표는</p>
+<div class="arithmatex">\[d + \sum_{j\in J} D_j(x_j) \;\ge\; d + \sum_{j\in J}\min D_j \;\ge\; d + \sum_{\text{모든 } j}\min D_j \;\ge\; 0\]</div>
+<p>이므로 방향을 지킨다. 깊이 3 이상에서는 <span class="arithmatex">\(D_{23}(x_2, x_3)\)</span>처럼 두 변수에 함께 의존하는 조각이 생겨 "각자 최솟값을 따로 고르는" 단계가 성립하지 않는다. 위 예시가 그 경우다.</p>
+</details>
 <h3 id="_4">왜 트리 모형인가<a class="headerlink" href="#_4" title="Permanent link">¶</a></h3>
 <p>이 세 조건을 놓고 보면, 신용평가에서 <strong>트리 기반 모형이 유리한 이유</strong>가 보인다.</p>
 <ul>

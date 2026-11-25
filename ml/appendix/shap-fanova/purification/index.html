@@ -5845,6 +5845,7 @@ T_{12} = \begin{pmatrix} 2.5 &amp; -2.5 \\ -2.5 &amp; 2.5 \end{pmatrix}
 </tbody>
 </table>
 <p>원논문의 순수 교호작용 정의(Definition 1)는 데이터의 실제 분포 <span class="arithmatex">\(p(x)\)</span>를 가중으로 쓰는 것이며, 이는 상관된 변수에 대한 일반화 fANOVA(Hooker, 2007)에 해당한다. 반대로 <a href="../functional-anova/">2절</a>의 깔끔한 성질들 — 모든 component 간 직교, 분산 분해 — 은 product measure에서만 그대로 성립한다. 결국 empirical 가중으로 purification하면, 그 결과를 데이터 분포 위에서 분산 분해할 때 component 간 교차공분산이 남는다. 측도 선택에 따라 무엇이 달라지는지는 <a href="../../correlation-interpretation/joint-vs-product/">부록 B 2절</a>에서 수치 예시로 정리한다.</p>
+<p>단조 제약을 건 모형이라면 가중 선택은 방향에도 영향을 준다. Uniform(product) 가중으로 정제한 주효과와 '주효과 + 교호작용' 표는 제약 방향을 그대로 따르지만, empirical(결합 분포) 가중은 그런 보장이 없다(<a href="../../../part4_interpretation/interpretability/#monotone-guarantee">단조 제약은 어디까지 지켜 주나</a>).</p>
 <hr>
 <h2 id="purification_2">Purification이 실제로 무엇을 바꾸는가 — 실증 사례<a class="headerlink" href="#purification_2" title="Permanent link">¶</a></h2>
 <p>위의 숫자 예시는 원리를 보여주기 위한 것이었다. 실제 데이터에서도 이 정도의 차이가 발생할까? Lengerich et al. (2020, 6절)은 여러 공개 데이터셋에서 purification 전후로 <strong>해석이 크게 달라지는</strong> 사례를 보고했다. 여기서는 그중 두 가지를 원논문의 서술에 맞춰 소개한다.</p>
@@ -5893,7 +5894,7 @@ T_{12} = \begin{pmatrix} 2.5 &amp; -2.5 \\ -2.5 &amp; 2.5 \end{pmatrix}
 <tr>
 <td>XGB depth-2 이상</td>
 <td>자동 생성, 분리 설계 없음</td>
-<td><strong>매우 큼</strong> — main effect 부호까지 변할 수 있음</td>
+<td><strong>매우 큼</strong> — 학습된 그대로의 분해와 비교하면 main effect 부호까지 변할 수 있음(단조 제약 + product 가중으로 정제한 주효과는 제약 방향을 따른다)</td>
 </tr>
 <tr>
 <td>GA<span class="arithmatex">\(^2\)</span>M (EBM)</td>

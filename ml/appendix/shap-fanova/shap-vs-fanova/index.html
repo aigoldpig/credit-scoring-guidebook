@@ -5246,14 +5246,14 @@
 </blockquote>
 <p>이 질문에 SHAP으로 답하면:</p>
 <ul>
-<li>소득의 SHAP 값에 교호작용 기여분이 섞여 있으므로, 특정 구간에서 <strong>비단조적 패턴</strong>이 나타날 수 있다</li>
+<li>소득의 SHAP 값에 교호작용 기여분이 섞여 있으므로, 여러 고객의 SHAP 값을 소득 순으로 늘어놓으면 특정 구간에서 <strong>비단조적 패턴</strong>이 나타날 수 있다</li>
 <li>이것이 소득 자체의 비단조성인지, 다른 변수와의 교호작용 때문인지 변수별 SHAP 값만으로는 <strong>구분하기 어렵다</strong></li>
 <li>분해 방식에 따라 주효과의 부호까지 달라질 수 있다는 점은 실제 데이터에서도 확인되었다. Lengerich et al. (2020, 6.1절)의 COMPAS 실험에서, 교호작용 없이 학습한 XGBoost의 주효과 다수가 GAM이나 purification을 거친 모형들의 주효과와 반대 부호였다(<a href="../purification/">3절</a> 참조)</li>
 </ul>
 <p>fANOVA(+ purification)로 답하면:</p>
 <ul>
 <li>주효과 <span class="arithmatex">\(f_1(X_1)\)</span>은 소득만의 효과로 분리되어 있으므로, 단조성 여부를 <strong>직접</strong> 확인할 수 있다</li>
-<li>비단조적 패턴이 있다면 그것은 교호작용이 아니라 <strong>소득 자체의 비선형성</strong>이다</li>
+<li>product measure로 분해한 주효과에 비단조 구간이 있다면, 그것은 교호작용 탓이 아니라 모형이 소득에 반응하는 방식 자체다</li>
 <li>모형 학습 시 소득에 단조 제약을 걸었다면, product measure로 구한 주효과는 단조 함수들의 평균이므로 <strong>반드시 단조</strong>다. 반면 상관을 반영한 joint measure의 주효과나 SHAP 값은 단조 제약 모형에서도 단조가 보장되지 않는다(<a href="../../correlation-interpretation/practical-guide/">부록 B 5절</a>)</li>
 </ul>
 <h2 id="_3">공통 한계 — 분포 선택이 해석을 바꾼다<a class="headerlink" href="#_3" title="Permanent link">¶</a></h2>
@@ -5343,7 +5343,7 @@
 </tr>
 </tbody>
 </table>
-<p>교호작용을 변수에 나눠줄 필요 없이, <strong>별도의 설명 항목으로 그대로 제시</strong>하면 된다. <span class="arithmatex">\(f_{12}\)</span>는 2차원 heatmap으로 시각화도 가능하다. 이 방식은 SHAP보다 <strong>더 정직한 설명</strong>이다 — 교호작용이 숨겨지지 않고, 무엇이 주효과이고 무엇이 교호작용인지 명확히 구분되니까.</p>
+<p>교호작용을 변수에 나눠줄 필요 없이, <strong>별도의 설명 항목으로 그대로 제시</strong>하면 된다. <span class="arithmatex">\(f_{12}\)</span>는 2차원 heatmap으로 시각화도 가능하다. 단, 순수 교호작용 표는 주효과에 더하는 보정값이라 +와 −가 섞이는 것이 정상이며, 방향은 주효과와 더한 표로 읽는다. 이 방식은 SHAP보다 <strong>더 정직한 설명</strong>이다 — 교호작용이 숨겨지지 않고, 무엇이 주효과이고 무엇이 교호작용인지 명확히 구분되니까.</p>
 <p>EBM이 이 전략을 쓴다. 교호작용을 <strong>2-way까지만 허용</strong>하고 (GA<span class="arithmatex">\(^2\)</span>M의 "²"이 그 뜻이다), 그 중에서도 FAST 알고리즘으로 <strong>유의미한 pair만 선별</strong>한다. 변수 20개 모형이라면:</p>
 <ul>
 <li>main effect: 20개</li>
@@ -5356,12 +5356,12 @@
 <figure>
   <a class="glightbox" data-type="image" data-width="100%" data-height="auto" href="../images/interaction_2way.png" data-desc-position="bottom"><img alt="2-way interaction heatmap" src="../images/interaction_2way.png" width="780"></a>
 <br>
-<figcaption>2-way interaction은 heatmap 한 장으로 패턴이 보인다. 트리가 깊어지고 많아질수록 분할 경계가 누적되어 셀 수가 늘고, 인접 셀끼리 효과 방향이 뒤집히는 구간이 생겨 읽기 어려워진다.</figcaption>
+<figcaption>2-way까지는 heatmap 한 장으로 볼 수 있다. 두 그림 모두 주효과와 교호작용을 더한 값이다(가상 예시). 왼쪽은 깊이 2에 단조 제약을 건 모형으로 9칸 모두 설계 방향이고, 오른쪽은 단조 제약 없이 깊게 학습한 모형으로 분할 경계가 쌓여 42칸이 되고 원으로 표시한 칸에서 방향이 뒤집힌다. 단조 제약을 걸면 깊은 모형도 방향은 뒤집히지 않지만, 칸이 많아 검토하기 어려운 문제는 남는다.</figcaption>
 </figure>
 <figure>
   <a class="glightbox" data-type="image" data-width="100%" data-height="auto" href="../images/interaction_3way_cube.png" data-desc-position="bottom"><img alt="3-way interaction cube" src="../images/interaction_3way_cube.png" width="480"></a>
 <br>
-<figcaption>3-way interaction은 3차원 큐브가 된다. 8개 셀의 방향과 크기를 직관적으로 파악할 수 있는가?</figcaption>
+<figcaption>3-way interaction은 3차원 큐브가 된다. 각 칸은 주효과와 2-way 합에 더하는 보정값인데, 8개 칸의 방향과 크기를 직관적으로 파악할 수 있는가?</figcaption>
 </figure>
 <p><strong>항 수의 폭발</strong>: 변수 20개에서 가능한 interaction 수:</p>
 <table>
@@ -5391,7 +5391,7 @@
 </tbody>
 </table>
 <p>3-way만 허용해도 1,140개의 interaction 항이 가능하다. 이 중 유의미한 것만 선별하더라도, <strong>하나하나의 해석 자체가 어렵다</strong> (3차원을 직관적으로 이해하기 힘드니까). 항 수의 문제와 개별 항의 이해 가능성 문제가 동시에 발생한다.</p>
-<p>이때 SHAP이 빛을 발한다: 교호작용 차수가 아무리 높아도 <strong>변수당 숫자 하나</strong>로 요약해주므로, depth-6 XGBoost 같은 블랙박스에서도 개별 샘플 설명이 가능하다. 교호작용 정보가 숨겨지는 대가를 치르지만, 3-way 이상에서는 그 교호작용을 어차피 해석할 수 없으니 합리적 트레이드오프다.</p>
+<p>이때 SHAP이 빛을 발한다: 교호작용 차수가 아무리 높아도 <strong>변수당 숫자 하나</strong>로 요약해주므로, depth-6 XGBoost 같은 블랙박스에서도 개별 샘플 설명이 가능하다. 교호작용 정보가 숨겨지는 대가를 치르지만, 3-way 이상에서는 그 교호작용을 어차피 해석할 수 없으니 합리적 트레이드오프다. 반대로 이런 모형의 3-way 이상 항을 버리고 주효과와 2-way 표만으로 점수표를 만들면, 단조 제약을 걸었더라도 일부 칸의 방향이 뒤집힐 수 있다(<a href="../../../part4_interpretation/interpretability/#monotone-guarantee">단조 제약은 어디까지 지켜 주나</a>).</p>
 <p><strong>참고 — "설명 가능한 depth 제한"</strong>: depth가 깊더라도, 한 트리 안에서 함께 쓸 수 있는 변수를 2개로 묶어 두면 각 pair는 2D heatmap으로 표현할 수 있다. XGBoost와 LightGBM은 이런 용도의 교호작용 제약(interaction constraints) 옵션을 제공한다. 핵심은 트리의 depth가 아니라 <strong>하나의 interaction 항에 관여하는 변수 수</strong>다. EBM이 2-way로 제한하는 것은 바로 이 이유 — 2차원까지는 그림으로 보여줄 수 있고, 3차원부터는 안 되기 때문이다. 이 가이드북이 해석 조건으로 삼는 "교호작용 2-way 이하, 단조 제약, 점수표 환산 가능"(<a href="../../../part4_interpretation/interpretability/">해석 가능성</a>)도 같은 이유에서 나온다.</p>
 <h3 id="_4">정리<a class="headerlink" href="#_4" title="Permanent link">¶</a></h3>
 <table>

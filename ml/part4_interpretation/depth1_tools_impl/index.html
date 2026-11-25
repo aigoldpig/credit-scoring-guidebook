@@ -5299,7 +5299,7 @@
 <tr>
 <td>히스토그램 bin 수</td>
 <td>필요 시 축소</td>
-<td>분할점 후보를 줄여 곡선의 계단 수를 통제. 최종 점수표는 <a href="../interpretability/">해석 가능 조건</a>(변수당 ≤ 5구간)에 맞춰 묶는다</td>
+<td>분할점 후보를 줄여 곡선의 계단 수를 통제. 운영 평점표 관행(변수당 5개 안팎 구간)에 맞추려면 최종 점수표에서 인접 구간을 묶는다. 구간 수는 <a href="../interpretability/">해석 가능 조건</a>이 아니다</td>
 </tr>
 </tbody>
 </table>
@@ -5468,7 +5468,7 @@
 <td><strong>해석 조건 충족</strong></td>
 <td style="text-align: center;">충족</td>
 <td style="text-align: center;">단조 제약 시 충족</td>
-<td style="text-align: center;">단조 처리 + 점수표용 bin 정리 시 충족</td>
+<td style="text-align: center;">단조 처리 시 충족(운영 평점표로 쓰려면 bin 정리 필요)</td>
 <td style="text-align: center;">사후 요약만 가능</td>
 </tr>
 </tbody>

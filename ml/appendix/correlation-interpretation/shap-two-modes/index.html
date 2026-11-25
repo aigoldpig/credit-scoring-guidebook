@@ -5324,7 +5324,7 @@ v_{\text{obs}}(S) = \mathbb{E}\big[f(\mathbf{X}) \mid \mathbf{X}_S = \mathbf{x}_
 <h2 id="36-shap">3.6 상관 변수에서 SHAP 값이 이상해 보이는 이유<a class="headerlink" href="#36-shap" title="Permanent link">¶</a></h2>
 <p>상관이 강한 두 변수의 SHAP 값이 직관과 다르게 나오는 데에는 두 가지 원인이 겹친다.</p>
 <ol>
-<li><strong>모형 자체가 효과를 임의로 나눠 가진다.</strong> 두 변수가 거의 같은 정보를 담고 있으면, 트리 모형은 어느 쪽으로 분할해도 비슷한 성능을 얻는다. 학습 과정의 우연(분할 순서, 샘플링)에 따라 한 변수가 효과를 거의 다 가져가거나, 두 변수가 반대 부호의 효과로 서로 상쇄하는 모형이 만들어지기도 한다. 이것은 SHAP의 계산 문제가 아니라 <strong>모형이 그렇게 학습된 것</strong>이며, interventional SHAP은 그 모형을 충실하게 보여줄 뿐이다.</li>
+<li><strong>모형 자체가 효과를 임의로 나눠 가진다.</strong> 두 변수가 거의 같은 정보를 담고 있으면, 트리 모형은 어느 쪽으로 분할해도 비슷한 성능을 얻는다. 학습 과정의 우연(분할 순서, 샘플링)에 따라 한 변수가 효과를 거의 다 가져가거나, 단조 제약이 없으면 두 변수가 반대 부호의 효과로 서로 상쇄하는 모형이 만들어지기도 한다(두 변수에 같은 방향의 단조 제약을 걸면 이런 역방향 학습은 막힌다). 이것은 SHAP의 계산 문제가 아니라 <strong>모형이 그렇게 학습된 것</strong>이며, interventional SHAP은 그 모형을 충실하게 보여줄 뿐이다.</li>
 <li><strong>가치함수가 상관을 다루는 방식이 다르다.</strong> 위 예시처럼 observational은 상관된 변수에 몫을 나눠주고, path-dependent는 트리 구조에 따라 일부만 나눠준다.</li>
 </ol>
 <p>Lundberg는 상관을 반영하는 방식을 택하는 이유를 "학습 데이터의 분포(manifold)에서 벗어난 곳에서 모형을 평가하지 않기 위해서"라는 취지로 설명한 바 있다(<a href="https://github.com/shap/shap/issues/288">shap issue #288</a>, 2018). 그리고 이후 <a href="https://github.com/christophM/interpretable-ml-book/issues/142#issuecomment-565145918">interpretable-ml-book issue #142</a> 코멘트에서는 변수가 상관되어 있으면 모형과 데이터 모두에 충실할 수는 없다고 정리했다. shap 라이브러리가 두 모드를 모두 제공하는 것은 <strong>목적에 따라 사용자가 고르라는 것</strong>이며, 선택 기준은 <a href="../practical-guide/">5절</a>에서 다룬다.</p>

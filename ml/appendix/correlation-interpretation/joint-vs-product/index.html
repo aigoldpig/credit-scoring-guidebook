@@ -5414,12 +5414,19 @@ f_1(x_1) = \mathbb{E}_p[f \mid x_1] - \mu, \qquad f_2(x_2) = \mathbb{E}_p[f \mid
 <td style="text-align: center;">데이터가 있는 영역에서 효과를 어떻게 나누는가</td>
 <td style="text-align: center;">— (사용하지 않음)</td>
 </tr>
+<tr>
+<td>단조 제약 모형에서 주효과의 방향</td>
+<td style="text-align: center;">제약 방향 보장</td>
+<td style="text-align: center;">보장 없음</td>
+<td style="text-align: center;">보장 없음</td>
+</tr>
 </tbody>
 </table>
 <ul>
 <li><strong>Product measure 분해</strong>: 재귀 공식과 반복 centering이 같은 답을 준다. 재귀 공식이 더 빠르다.</li>
 <li><strong>Joint measure 분해</strong>: 식 (2)를 만족하는 반복 centering을 쓴다. 조건부 평균을 재귀 공식에 그대로 넣는 방식은 쓰지 않는다.</li>
 <li>두 측도는 <strong>답하는 질문이 다를 뿐 둘 다 수학적으로 유효하다.</strong> intercept <span class="arithmatex">\(f_0\)</span>부터 다르다(위 예시에서 0.85와 1.00). product의 <span class="arithmatex">\(f_0\)</span>는 변수를 독립으로 섞은 가상의 모집단 평균이고, joint의 <span class="arithmatex">\(f_0\)</span>는 실제 데이터의 평균 예측이다.</li>
+<li>단, 단조 제약 모형을 점수표로 옮길 때는 product measure만 방향 유지를 보장한다(<a href="../../../part4_interpretation/interpretability/#monotone-guarantee">단조 제약은 어디까지 지켜 주나</a>).</li>
 </ul>
 <p>다음 페이지에서는 같은 선택이 SHAP에서 어떻게 나타나는지 본다. → <a href="../shap-two-modes/">3절. SHAP의 두 모드</a></p>
 <hr>

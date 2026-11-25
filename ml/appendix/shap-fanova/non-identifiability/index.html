@@ -5539,7 +5539,7 @@ f_0 = -0.25, \quad f_1(X_1) = 0, \quad f_2(X_2) = 0
 </tr>
 </tbody>
 </table>
-<p><strong>네 가지 모두 같은 <span class="arithmatex">\(Y\)</span>를 산출한다.</strong> 그런데 main effect의 부호가 양(②)일 수도, 음(③)일 수도, 0(①④)일 수도 있다. 이것이 non-identifiability의 핵심이다: <strong>제약 조건 없이는 "이 변수의 효과가 양(+)이다/음(-)이다"조차 말할 수 없다.</strong> 그리고 이것은 XOR이라는 특수한 함수에서만 벌어지는 일이 아니다 — 위의 대수식이 보여주듯, 교호작용을 포함하는 <strong>모든 모형</strong>에서 <span class="arithmatex">\(\alpha, \beta\)</span> 선택에 따라 main effect가 달라진다. XOR은 그 효과가 가장 극적으로 드러나는 사례일 뿐이다.</p>
+<p><strong>네 가지 모두 같은 <span class="arithmatex">\(Y\)</span>를 산출한다.</strong> 그런데 main effect의 부호가 양(②)일 수도, 음(③)일 수도, 0(①④)일 수도 있다. 이것이 non-identifiability의 핵심이다: <strong>분해 방식을 정하는 조건(<a href="../functional-anova/">2절</a>의 fANOVA 조건) 없이는 "이 변수의 효과가 양(+)이다/음(-)이다"조차 말할 수 없다.</strong> 여기서 조건은 분해에 대한 약속이며, 학습할 때 거는 단조 제약과는 다른 이야기다. 그리고 이것은 XOR이라는 특수한 함수에서만 벌어지는 일이 아니다 — 위의 대수식이 보여주듯, 교호작용을 포함하는 <strong>모든 모형</strong>에서 <span class="arithmatex">\(\alpha, \beta\)</span> 선택에 따라 main effect가 달라진다. XOR은 그 효과가 가장 극적으로 드러나는 사례일 뿐이다.</p>
 <hr>
 <h2 id="_4">실무에서 이것이 왜 위험한가<a class="headerlink" href="#_4" title="Permanent link">¶</a></h2>
 <p>먼저, 트리 모형에서 이런 "분해"가 어디서 나오는지 짚고 가자. depth-2 트리로 이루어진 XGBoost 모형은 각 leaf가 많아야 두 변수의 조건(예: "DTI &gt; 40% 그리고 소득 &lt; 3,000만 원")으로 정의된다. leaf를 <strong>경로에 등장한 변수 집합별로 모아서 더하면</strong>, 모형 전체가 <span class="arithmatex">\(f_0 + \sum_j f_j(x_j) + \sum_{j&lt;k} f_{jk}(x_j, x_k)\)</span> 형태로 다시 쓰인다. 변수 하나만 쓰는 leaf는 <span class="arithmatex">\(f_j\)</span>로, 두 변수를 쓰는 leaf는 <span class="arithmatex">\(f_{jk}\)</span>로 가는 식이다. 그런데 이 묶음은 <strong>트리가 어떤 순서로 분할했는가</strong>에 따라 정해질 뿐이다. "소득" 효과가 depth-1 분할로 학습되면 main effect에, depth-2 경로의 일부로 학습되면 교호작용 표에 들어간다. 즉, 학습된 그대로의 분해는 위의 ①~④ 중 하나를 우연히 고른 것과 같다.</p>
