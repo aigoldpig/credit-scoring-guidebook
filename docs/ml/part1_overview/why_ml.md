@@ -108,7 +108,7 @@ WoE 구간화도 결국 같은 원리(piecewise-constant 변환)이지만, 트�
 | 결측치 처리 | 별도 구간화 필요 | XGBoost/LightGBM이 자체 처리 |
 | 이상치 처리 | 구간 경계 조정 필요 | 트리 split이 자연스럽게 분리 |
 | 구간화 (Classing) | 수작업 Fine/Coarse Classing | **불필요** — split이 자동 수행 |
-| 단조성 검증 | 수동 확인 필수 | 모형이 자동 학습 (또는 monotone constraint 설정) |
+| 단조성 검증 | 수동 확인 필수 | 제약 없이는 보장되지 않음(깊은 트리는 비단조 패턴을 학습할 수 있음). monotone constraint를 걸면 학습 단계에서 모형 예측 전체의 방향이 보장됨 |
 | 변수 선택 | IV 기준 수작업 선별 | Feature Importance / SHAP 기반 자동화 |
 
 ---

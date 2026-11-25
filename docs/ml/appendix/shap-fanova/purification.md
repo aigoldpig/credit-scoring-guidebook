@@ -437,6 +437,8 @@ purification의 결과는 가중치 \(w\)에 의존한다. Lengerich et al. (202
 
 원논문의 순수 교호작용 정의(Definition 1)는 데이터의 실제 분포 \(p(x)\)를 가중으로 쓰는 것이며, 이는 상관된 변수에 대한 일반화 fANOVA(Hooker, 2007)에 해당한다. 반대로 [2절](functional-anova.md)의 깔끔한 성질들 — 모든 component 간 직교, 분산 분해 — 은 product measure에서만 그대로 성립한다. 결국 empirical 가중으로 purification하면, 그 결과를 데이터 분포 위에서 분산 분해할 때 component 간 교차공분산이 남는다. 측도 선택에 따라 무엇이 달라지는지는 [부록 B 2절](../correlation-interpretation/joint-vs-product.md)에서 수치 예시로 정리한다.
 
+단조 제약을 건 모형이라면 가중 선택은 방향에도 영향을 준다. Uniform(product) 가중으로 정제한 주효과와 '주효과 + 교호작용' 표는 제약 방향을 그대로 따르지만, empirical(결합 분포) 가중은 그런 보장이 없다([단조 제약은 어디까지 지켜 주나](../../part4_interpretation/interpretability.md#monotone-guarantee)).
+
 ---
 
 ## Purification이 실제로 무엇을 바꾸는가 — 실증 사례
@@ -483,7 +485,7 @@ purification의 결과는 가중치 \(w\)에 의존한다. Lengerich et al. (202
 | 모형 | Interaction 처리 | Purification 영향 |
 |------|-----------------|------------------|
 | XGB depth-1 (= GAM) | 없음 | 교호작용이 구조적으로 없으므로, main effect의 평균을 intercept로 옮기는 중심화만 일어난다 |
-| XGB depth-2 이상 | 자동 생성, 분리 설계 없음 | **매우 큼** — main effect 부호까지 변할 수 있음 |
+| XGB depth-2 이상 | 자동 생성, 분리 설계 없음 | **매우 큼** — 학습된 그대로의 분해와 비교하면 main effect 부호까지 변할 수 있음(단조 제약 + product 가중으로 정제한 주효과는 제약 방향을 따른다) |
 | GA\(^2\)M (EBM) | 2단계 학습으로 분리 시도 | 대부분 분리되지만 잔여 누출이 남을 수 있어 purification으로 보정 (아래 참조) |
 
 ---

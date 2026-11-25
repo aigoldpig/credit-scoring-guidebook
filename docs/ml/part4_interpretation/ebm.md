@@ -9,7 +9,7 @@ F(\mathbf{x}) = F_0 + \underbrace{\sum_{j} f_j(x_j)}_{\text{1단계: main effect
 \tag{1}
 $$
 
-\(\mathcal{P}\)는 데이터로 골라낸 소수의 변수 쌍이다. 2-way까지만 허용하는 이유는 사람이 그림 한 장(heatmap)으로 읽을 수 있는 한계가 2차원이기 때문이며, 이는 이 가이드북의 [해석 가능 조건](interpretability.md) 2번과 같은 이유다.
+\(\mathcal{P}\)는 데이터로 골라낸 소수의 변수 쌍이다. 2-way까지만 허용하는 이유는 사람이 그림 한 장(heatmap)으로 읽을 수 있는 한계가 2차원이기 때문이며, 이는 이 가이드북의 [해석 가능 조건](interpretability.md) 1번(교호작용 ≤ 2-way)과 같은 이유다.
 
 이러한 설계를 **ante-hoc**(라틴어 "사전에") 해석이라 부른다. 모형의 구조 자체를 GA²M 가법 구조로 제한해 학습하는 것이다. 이미 학습이 끝난 블랙박스 모형에 SHAP, PDP 등 외부 도구를 적용하는 **post-hoc**(라틴어 "사후에") 해석과 대비된다.
 
@@ -26,7 +26,7 @@ $$
   <figcaption>EBM의 결과물(가상 예시): 각 변수의 main effect는 곡선 하나로, 2-way interaction은 heatmap 한 장으로 표현된다. 모형의 전체 예측은 이 항들의 단순 합산이므로, 어떤 판단 근거도 숨겨지지 않는다.</figcaption>
 </figure>
 
-main effect 곡선 (a~c)을 보면, **각 변수가 모형의 예측에 미치는 영향을 한눈에 읽을 수** 있다. DTI는 40~80%에서 급등하고, 소득은 고소득 구간에서 포화되며, 연체는 1건만으로도 방향이 전환된다. 이것이 변수마다 독립적인 shape function \(f_j(x_j)\)다.
+main effect 곡선 (a~c)을 보면, **각 변수가 모형의 예측에 미치는 영향을 한눈에 읽을 수** 있다. DTI는 40~80%에서 급등하고, 소득은 고소득 구간에서 포화되며, 연체는 1건만 있어도 위험을 높이는 쪽(+)으로 넘어간다. 이것이 변수마다 독립적인 shape function \(f_j(x_j)\)다.
 
 2-way interaction heatmap (d)은 main effect만으로 설명되지 않는 **조합 효과**를 보여준다. 고DTI + 저소득 구간에서 시너지로 위험이 추가 증가하는 패턴이 격자의 색상으로 드러난다.
 
@@ -127,10 +127,10 @@ EBM은 해석 가능 모형이지만, **기본 설정 그대로** 이 가이드�
 | 조건 | EBM 기본값 (InterpretML) | 조건을 맞추려면 |
 |------|------|------|
 | 교호작용 ≤ 2-way | 구조적으로 만족 | — |
-| 단조성 | 제약 없음 | 단조 제약 옵션 사용(0.6.0부터 학습 중 제약 지원) 또는 학습 후 단조화 보정 |
+| 단조성 | 제약 없음 | 단조 제약 옵션 사용(0.6.0부터 학습 중 제약 지원) 또는 학습 후 단조화 보정. 단조 확인은 주효과 곡선만이 아니라, 그 변수가 들어간 '주효과 + 쌍별 표' 합산값으로 한다 |
 | 점수표 환산 | 구조상 가능(main effect 곡선 + 2-way 표), 다만 main effect 최대 1,024 bin, 교호작용 최대 64 bin | 점수표로 쓰려면 bin 수 상한을 낮추거나 사전 구간화(Coarse Classing)한 변수를 입력. 구간 수 자체는 운영 평점표 관행의 문제 |
 
-기본값으로 학습하면 main effect 곡선은 수백 구간의 촘촘한 계단이 되고, 교호작용 heatmap은 최대 64×64 격자가 된다. 곡선은 눈으로 방향을 볼 수 있지만, heatmap을 사람이 칸 단위로 검토하거나 점수표로 옮겨 적기는 어렵다. InterpretML 변경 이력(v0.6.0)은 학습 중 단조 제약을 지원하면서도 **학습 후 보정(post-processed monotonization)을 여전히 더 권장**한다고 밝히고 있으므로, 두 방식을 비교해 선택한다.
+기본값으로 학습하면 main effect 곡선은 수백 구간의 촘촘한 계단이 되고, 교호작용 heatmap은 최대 64×64 격자가 된다. 곡선은 눈으로 방향을 볼 수 있지만, heatmap을 사람이 칸 단위로 검토하거나 점수표로 옮겨 적기는 어렵다. InterpretML 변경 이력(v0.6.0)은 학습 중 단조 제약을 지원하면서도 **학습 후 보정(post-processed monotonization)을 여전히 더 권장**한다고 밝히고 있으므로, 두 방식을 비교해 선택한다. 단조 처리가 주효과 곡선에만 적용되는지, 교호작용 쌍까지 포함하는지는 사용하는 버전의 문서로 확인한다. 주효과만 보정되었다면, 그 변수가 교호작용 쌍에 들어 있을 때 합산값의 방향을 따로 점검한다.
 
 <div class="source-ref">InterpretML 소스 및 변경 이력(기본값: <code>max_bins</code>, <code>max_interaction_bins</code>, <code>outer_bags</code>, <code>learning_rate</code>, <code>interactions</code>; 단조 제약은 v0.6.0에서 추가): <a href="https://github.com/interpretml/interpret/blob/develop/CHANGELOG.md" target="_blank">GitHub CHANGELOG</a></div>
 

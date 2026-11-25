@@ -63,7 +63,7 @@ X1 > 100?
 
 X1의 구간을 더 세밀하게 쪼개는 것이 불순도(분류 트리라면 Gini·Entropy) 감소가 가장 크기 때문이다. 이러면 X2, X3와의 interaction은 아예 나타나지 않는다. 또한, 트리에서 X1 다음에 X2가 분기된다고 해서 반드시 interaction은 아니다 — X2의 main effect가 강해서 **어디서든** 분기될 수 있다. 진짜 interaction은 "X1의 값에 따라 X2의 효과가 **달라지는** 것"인데, 단일 트리의 분기 구조만으로는 이 구분이 어렵다.
 
-결론: 단일 트리는 main effect와 interaction을 구분하지 못한다. 이 구분을 하려면 Joint IV(= 조합 효과에서 개별 효과를 빼는 것)나 잔차 기반 접근(= main effect를 먼저 제거하고 남은 것을 보는 것)이 필요하다.
+결론: 단일 트리는 main effect와 interaction을 구분하지 못한다. 이 구분을 하려면 잔차 기반 접근(= main effect를 먼저 제거하고 남은 것을 보는 것, 위 FAST 알고리즘)이 필요하다. Joint IV는 X2의 고유 main effect와 순수 interaction을 합친 추가 정보의 양만 보여 준다.
 
 ### Feature Importance (Split 기반)
 
